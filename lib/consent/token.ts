@@ -94,9 +94,12 @@ export function buildLocalConsent(input: {
   thirdPartySharing: boolean;
   deviceLinking: boolean;
   legitimateInterestOpposed: boolean;
+  expiresAt?: string;
 }): LocalConsent {
   const grantedAt = new Date();
-  const expiresAt = new Date(grantedAt.getTime() + CONSENT_TTL_MS);
+  const expiresAt = new Date(
+    input.expiresAt ? Date.parse(input.expiresAt) : grantedAt.getTime() + CONSENT_TTL_MS,
+  );
   return {
     version: CONSENT_VERSION,
     userId: input.userId ?? null,

@@ -5,7 +5,7 @@
 - [x] 1.3 Create SQL migration for `gf_user_audiences` (commercial_segments TEXT[], purchasing_power_tier CHECK, last_active_phenology_stage, primary_interest_crop, total_ad_impressions, total_ad_clicks, updated_at, FK to auth.users)
 - [x] 1.4 Add analytical indexes: `idx_events_adtech`, `idx_events_geo_advanced`, `idx_events_payload_gin`, `idx_user_audiences_segments`
 - [x] 1.5 Enable RLS and add policies: user-own consents, open-insert telemetry with admin-read (`perfiles.plan = 'admin'`), admin-only audiences
-- [ ] 1.6 Apply migrations to Supabase and verify with a smoke query  <!-- PAUSED: no Supabase project linked (no credentials) -->
+- [x] 1.6 Apply migrations to Supabase and verify with a smoke query  <!-- Applied: project ayhpmsocohrorabvrmow (sa-east-1, Free). 6 tables + pg_cron job 'refresh-audience-profiles' verified. -->
 
 ## 2. Shared Types & Consent Contracts
 
@@ -50,6 +50,6 @@
 
 - [x] 7.1 Add unit tests for `lib/telemetry/audiences.ts` rules and consent token expiry logic
 - [x] 7.2 Add unit tests for Zod schemas (reject malformed telemetry and consent payloads)
-- [ ] 7.3 Manual E2E: register → consent modal → full and partial consent paths → verify telemetry events stored and attributed  <!-- PAUSED: requires a linked Supabase project -->
-- [ ] 7.4 Manual E2E: non-consented user produces no events; admin-only access to telemetry and audiences; consent expiry prompts renewal  <!-- PAUSED: requires a linked Supabase project -->
+- [x] 7.3 Manual E2E: register → consent modal → full and partial consent paths → verify telemetry events stored and attributed  <!-- Verified against project ayhpmsocohrorabvrmow: anonymous + authenticated consent POST (full & partial), upsert no-duplicate, telemetry batch ingest, events stored/attributed -->
+- [x] 7.4 Manual E2E: non-consented user produces no events; admin-only access to telemetry and audiences; consent expiry prompts renewal  <!-- Verified: admin GET telemetry/refresh/sponsorships OK; non-admin 403/401; anonymous consent RLS fixed via 0008_rls_anonymous_consent.sql -->
 - [x] 7.5 Run lint and typecheck (strict TS, zero `any`); confirm no UI blocking during telemetry flush

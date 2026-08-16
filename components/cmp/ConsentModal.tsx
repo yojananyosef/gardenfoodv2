@@ -23,7 +23,41 @@ export interface ConsentModalProps {
 export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModalProps) {
   const [manage, setManage] = useState(false);
 
-  function grantAll() {
+  async function grantAll() {
+    const draft = {
+      personalizedAds: true,
+      preciseGeo: true,
+      thirdPartySharing: true,
+      deviceLinking: true,
+      legitimateInterestOpposed: false,
+    };
+    try {
+      const response = await fetch("/api/v1/cmp/consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deviceId, ...draft }),
+      });
+      if (response.ok) {
+        const data = (await response.json()) as {
+          consent: { expiresAt: string };
+        };
+        const consent = buildLocalConsent({
+          userId,
+          deviceId,
+          personalizedAds: true,
+          preciseGeo: true,
+          thirdPartySharing: true,
+          deviceLinking: true,
+          legitimateInterestOpposed: false,
+          expiresAt: data.consent.expiresAt,
+        });
+        setLocalConsent(consent);
+        onConsent(consent);
+        return;
+      }
+    } catch {
+      // fall through to local-only consent
+    }
     const consent = buildLocalConsent({
       userId,
       deviceId,
