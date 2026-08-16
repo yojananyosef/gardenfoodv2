@@ -8,7 +8,11 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   const supabase = await createClient();
 
-  const cronSecret = request.headers.get("x-cron-secret");
+  const cronSecret =
+    request.headers.get("x-cron-secret") ??
+    (request.headers.get("authorization")?.startsWith("Bearer ")
+      ? request.headers.get("authorization")!.slice(7)
+      : null);
   const authorizedByCron =
     process.env.CRON_SECRET !== undefined &&
     process.env.CRON_SECRET !== "" &&
