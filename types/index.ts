@@ -113,3 +113,34 @@ export interface Sponsorship {
   active: boolean;
   sortOrder: number;
 }
+
+export type TipoTarea = "riego" | "nutricion" | "sanidad" | "personalizada";
+
+export type EstadoTarea = "pendiente" | "en_proceso" | "completada";
+
+export interface Cultivo {
+  id: string;
+  especie: string;
+  cantidad: number;
+  createdAt: string;
+}
+
+export interface Tarea {
+  id: string;
+  fecha: string;
+  especie: string | null;
+  tipo: TipoTarea;
+  texto: string;
+  origenId: string | null;
+  estado: EstadoTarea;
+  createdAt: string;
+}
+
+export interface RegistroCosecha {
+  id: string;
+  fecha: string;
+  especie: string;
+  nota: string | null;
+  produccionKg: number | null;
+  createdAt: string;
+}

@@ -3,17 +3,25 @@ import { ArrowRight, Droplets, Scissors, Sprout } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ZoneWidget } from "@/components/landing/zone-widget";
+import { ESPECIES, FICHAS } from "@/lib/agronomy";
 
-const ESPECIES = [
-  { nombre: "Duraznero", latino: "Prunus persica" },
-  { nombre: "Palto", latino: "Persea americana" },
-  { nombre: "Tomate", latino: "Solanum lycopersicum" },
-  { nombre: "Frutilla", latino: "Fragaria × ananassa" },
-  { nombre: "Vid", latino: "Vitis vinifera" },
-  { nombre: "Manzano", latino: "Malus domestica" },
-  { nombre: "Limonero", latino: "Citrus × limon" },
-  { nombre: "Frambueso", latino: "Rubus idaeus" },
-];
+const ESPECIES_LANDING = [
+  "duraznero",
+  "palto",
+  "manzano",
+  "frutilla",
+  "vid",
+  "limonero",
+  "frambuesa",
+  "cerezo",
+].map((slug) => {
+  const especie = ESPECIES.find((e) => e.slug === slug)!;
+  return {
+    nombre: especie.nombre,
+    latino: FICHAS[especie.dbKey]?.nc ?? "",
+    slug: especie.slug,
+  };
+});
 
 const ACCIONES = [
   {
@@ -124,10 +132,10 @@ export default function Home() {
               </p>
             </div>
             <ul className="mt-10 grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 lg:grid-cols-4">
-              {ESPECIES.map((especie) => (
-                <li key={especie.nombre} className="bg-card">
+              {ESPECIES_LANDING.map((especie) => (
+                <li key={especie.slug} className="bg-card">
                   <Link
-                    href={`/especies/${especie.nombre.toLowerCase()}`}
+                    href={`/especies/${especie.slug}`}
                     className="flex h-full flex-col justify-between gap-6 p-5 transition-colors hover:bg-muted"
                   >
                     <span className="font-heading text-lg font-semibold">
