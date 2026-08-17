@@ -1,0 +1,120 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Droplets, Scissors, Sprout } from "lucide-react";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MESES, REGIONES, ZONAS, ZONAS_EXTRA } from "@/lib/landing/zonas";
+
+const ACCION_ICON = {
+  Podar: Scissors,
+  Regar: Droplets,
+  Fertilizar: Sprout,
+} as const;
+
+export function ZoneWidget() {
+  const [regionIndex, setRegionIndex] = useState<number | null>(null);
+  const [comunaIndex, setComunaIndex] = useState<number | null>(null);
+
+  const region = regionIndex === null ? null : REGIONES[regionIndex];
+  const comuna =
+    region && comunaIndex !== null ? region.comunas[comunaIndex] : null;
+
+  const mes = useMemo(() => new Date().getMonth(), []);
+  const tareas = comuna ? ZONAS[comuna.zona]?.[mes] ?? [] : [];
+  const zonaExtra = comuna ? ZONAS_EXTRA[comuna.zona] ?? [] : [];
+
+  function handleRegionChange(value: string | null) {
+    if (value === null) return;
+    setRegionIndex(Number(value));
+    setComunaIndex(null);
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Select value={regionIndex === null ? null : regionIndex.toString()} onValueChange={handleRegionChange}>
+          <SelectTrigger className="w-full sm:w-52" size="default">
+            <SelectValue placeholder="Región" />
+          </SelectTrigger>
+          <SelectContent>
+            {REGIONES.map((r, i) => (
+              <SelectItem key={r.nombre} value={i.toString()}>
+                {r.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={comunaIndex === null ? null : comunaIndex.toString()}
+          onValueChange={(v) => {
+            if (v !== null) setComunaIndex(Number(v));
+          }}
+          disabled={!region}
+        >
+          <SelectTrigger className="w-full sm:w-52" size="default">
+            <SelectValue placeholder={region ? "Comuna" : "Elige una región"} />
+          </SelectTrigger>
+          <SelectContent>
+            {region?.comunas.map((c, i) => (
+              <SelectItem key={c.nombre} value={i.toString()}>
+                {c.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {comuna ? (
+        <div className="rounded-xl border bg-card p-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-sm font-semibold">
+              {comuna.nombre} · {comuna.zona}
+            </p>
+            <p className="font-heading text-xs tracking-wide text-muted-foreground">
+              {MESES[mes]}
+            </p>
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {zonaExtra.join(" · ")}
+          </p>
+
+          {tareas.length > 0 ? (
+            <ul className="mt-3 flex flex-col gap-2">
+              {tareas.map((tarea, i) => {
+                const Icon = ACCION_ICON[tarea.accion];
+                return (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2.5 rounded-lg bg-muted px-3 py-2 text-sm"
+                  >
+                    <Icon className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <span>
+                      <span className="font-medium">{tarea.accion}. </span>
+                      {tarea.detalle}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Pausa invernal: prepara el compost y planifica la primavera.
+            </p>
+          )}
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Elige tu región y comuna para ver el calendario de tu zona.
+        </p>
+      )}
+    </div>
+  );
+}

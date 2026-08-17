@@ -1,69 +1,182 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Droplets, Scissors, Sprout } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { ZoneWidget } from "@/components/landing/zone-widget";
+
+const ESPECIES = [
+  { nombre: "Duraznero", latino: "Prunus persica" },
+  { nombre: "Palto", latino: "Persea americana" },
+  { nombre: "Tomate", latino: "Solanum lycopersicum" },
+  { nombre: "Frutilla", latino: "Fragaria × ananassa" },
+  { nombre: "Vid", latino: "Vitis vinifera" },
+  { nombre: "Manzano", latino: "Malus domestica" },
+  { nombre: "Limonero", latino: "Citrus × limon" },
+  { nombre: "Frambueso", latino: "Rubus idaeus" },
+];
+
+const ACCIONES = [
+  {
+    icon: Scissors,
+    titulo: "Podar",
+    descripcion:
+      "Sabe exactamente cuándo podar cada especie según su etapa fenológica y tu zona agroclimática.",
+  },
+  {
+    icon: Droplets,
+    titulo: "Regar",
+    descripcion:
+      "Riego adaptado a tu comuna: ni una gota de más en la costa húmeda, ni una de menos en el norte seco.",
+  },
+  {
+    icon: Sprout,
+    titulo: "Fertilizar",
+    descripcion:
+      "Qué fertilizante y en qué dosis necesita tu tierra, calculado para tu clima y tu suelo.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-full flex-col">
+      <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
+        <div className="mx-auto flex h-12 w-full max-w-5xl items-center justify-between px-4">
+          <Link href="/" className="font-heading text-sm font-semibold tracking-wide">
+            GardenFood
+          </Link>
+          <nav className="flex items-center gap-4 text-sm">
+            <Link href="/explorar" className="text-muted-foreground hover:text-foreground">
+              Explorar
+            </Link>
+            <Button size="sm" variant="outline" render={<Link href="/registro" />}>
+              Registrarme
+            </Button>
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      <main className="flex-1">
+        <section className="border-b">
+          <div className="mx-auto grid w-full max-w-5xl gap-10 px-4 py-16 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
+            <div className="flex flex-col gap-6">
+              <p className="text-xs font-medium tracking-[0.2em] text-primary uppercase">
+                Agronomía doméstica para Chile
+              </p>
+              <h1 className="font-heading text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+                Tu huerto frutal, al ritmo de tu{" "}
+                <span className="text-primary">zona agroclimática</span>
+              </h1>
+              <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
+                GardenFood te dice cuándo podar, regar y fertilizar, comuna por comuna. De
+                Arica a Punta Arenas, 208 comunas en 20 zonas agroclimáticas, con 30
+                especies de fruta.
+              </p>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button size="lg" render={<Link href="/registro" />}>
+                  Crear mi huerto
+                  <ArrowRight data-icon="inline-end" />
+                </Button>
+                <Button size="lg" variant="outline" render={<Link href="/explorar" />}>
+                  Explorar especies
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
+                ¿Qué hago esta semana?
+              </p>
+              <ZoneWidget />
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b">
+          <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:py-20">
+            <h2 className="font-heading max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl">
+              Tres decisiones. En el momento exacto.
+            </h2>
+            <div className="mt-10 grid gap-6 sm:grid-cols-3">
+              {ACCIONES.map((accion) => (
+                <div key={accion.titulo} className="flex flex-col gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                    <accion.icon className="size-5 text-primary" />
+                  </div>
+                  <h3 className="font-heading text-xl font-semibold">{accion.titulo}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {accion.descripcion}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b">
+          <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:py-20">
+            <div className="flex flex-col gap-2">
+              <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+                El catálogo de campo
+              </h2>
+              <p className="max-w-lg text-muted-foreground">
+                Treinta especies frutales, cada una con su ficha de poda, riego y
+                fertilización adaptada a tu zona.
+              </p>
+            </div>
+            <ul className="mt-10 grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 lg:grid-cols-4">
+              {ESPECIES.map((especie) => (
+                <li key={especie.nombre} className="bg-card">
+                  <Link
+                    href={`/especies/${especie.nombre.toLowerCase()}`}
+                    className="flex h-full flex-col justify-between gap-6 p-5 transition-colors hover:bg-muted"
+                  >
+                    <span className="font-heading text-lg font-semibold">
+                      {especie.nombre}
+                    </span>
+                    <span className="text-xs text-muted-foreground italic">
+                      {especie.latino}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <div className="mx-auto flex w-full max-w-5xl flex-col items-start gap-6 px-4 py-16 sm:py-20">
+            <h2 className="font-heading max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl">
+              Tu tierra sabe lo que necesita. Nosotros te ayudamos a entenderla.
+            </h2>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button size="lg" render={<Link href="/registro" />}>
+                  Crear mi huerto gratis
+                  <ArrowRight data-icon="inline-end" />
+                </Button>
+                <Button size="lg" variant="outline" render={<Link href="/explorar" />}>
+                  Ver el catálogo
+                </Button>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer className="border-t">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            <span className="font-heading font-semibold text-foreground">GardenFood</span>{" "}
+            — huertos frutales informados, de Arica a Punta Arenas.
+          </p>
+          <nav className="flex items-center gap-4">
+            <Link href="/explorar" className="hover:text-foreground">
+              Explorar
+            </Link>
+            <Link href="/registro" className="hover:text-foreground">
+              Registro
+            </Link>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }
