@@ -15,6 +15,10 @@ export const dynamic = "force-dynamic";
 //   - payment                      -> one-time sponsorship charge
 //   - preapproval | subscription_preapproval        -> subscription lifecycle
 //   - subscription_authorized_payment               -> each recurring charge
+// Signature: x-signature: ts=<ts>,v1=<hmac> ; x-request-id: <uuid>
+// HMAC-SHA256 over manifest `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` with MP_WEBHOOK_SECRET.
+// If MP_WEBHOOK_SECRET not set we log warn and skip verification (local dev).
+// See https://www.mercadopago.com/developers/en/docs/your-integrations/notifications/webhooks
 
 async function handle(request: Request): Promise<NextResponse> {
   const secret = process.env.MP_WEBHOOK_SECRET;
@@ -33,12 +37,12 @@ async function handle(request: Request): Promise<NextResponse> {
 
   const bodyData = (bodyJson?.data ?? null) as { id?: string } | null;
 
-  let topic: string | undefined =
+  const topic: string | undefined =
     url.searchParams.get("topic") ??
     url.searchParams.get("type") ??
     (typeof bodyJson?.topic === "string" ? bodyJson.topic : undefined) ??
     (typeof bodyJson?.type === "string" ? bodyJson.type : undefined);
-  let id: string | undefined =
+  const id: string | undefined =
     url.searchParams.get("id") ??
     url.searchParams.get("data.id") ??
     url.searchParams.get("resource") ??
@@ -215,6 +219,8 @@ async function handleSubscription(
   );
 }
 
+// Mercado Pago sends `pending` while in free trial before first charge;
+// we map it explicitly to `trialing` so the DB status is meaningful.
 async function applySubscription(
   admin: ReturnType<typeof createAdminClient>,
   userId: string,
@@ -231,7 +237,9 @@ async function applySubscription(
         ? "canceled"
         : mpStatus === "paused"
           ? "inactive"
-          : "trialing";
+          : mpStatus === "pending"
+            ? "trialing"
+            : "trialing";
 
   // Update the user's latest subscription draft row.
   const { data: subs } = await admin

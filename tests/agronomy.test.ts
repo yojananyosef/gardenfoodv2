@@ -20,7 +20,7 @@ describe("agronomy data layer", () => {
     expect(Object.keys(ZONAS)).toHaveLength(20);
   });
 
-  it("tiene 245 comunas mapeadas (cobertura real del legacy)", () => {
+  it("tiene 245 comunas mapeadas (cobertura real del legacy migrada a 254 canónicas)", () => {
     expect(COMUNAS).toHaveLength(245);
     expect(Object.keys(COMUNAS_ZONA)).toHaveLength(245);
   });
@@ -113,5 +113,17 @@ describe("agronomy data layer", () => {
   it("mapea zonas a macrozonas fenológicas", () => {
     expect(getMacrozona(7)).toBe("Santiago-RM");
     expect(getMacrozona(20)).toBe("Sur");
+  });
+
+  it("getEspeciesPorZona(7) clasifica las 30 especies", () => {
+    const { si, riesgo, no } = getEspeciesPorZona(7);
+    expect(si.length + riesgo.length + no.length).toBe(30);
+  });
+
+  it("buscarComuna es case-insensitive", async () => {
+    const { buscarComuna } = await import("@/lib/agronomy/comunas");
+    expect(buscarComuna("la florida")?.zonaId).toBe(8);
+    expect(buscarComuna("La Florida")?.zonaId).toBe(8);
+    expect(buscarComuna("Comuna Inexistente")).toBeNull();
   });
 });

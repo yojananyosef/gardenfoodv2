@@ -9,7 +9,7 @@ import { prepararCultivos } from "@/lib/huerto/nombres";
 import { TareasDelDia } from "@/components/huerto/TareasDelDia";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
-import { ESPECIES, MESES } from "@/lib/agronomy";
+import { ESPECIES, MESES, getEspeciesPorZona, getZonaIdDeComuna } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
 import { getArboles, getCultivos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
 import { getZonaDeComuna } from "@/lib/agronomy";
@@ -47,6 +47,8 @@ export default async function HuertoPage() {
   const especiesDisponibles = ESPECIES.filter(
     (e) => !cultivos.some((c) => c.especie === e.dbKey),
   );
+  const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
+  const recom = getEspeciesPorZona(zonaId);
 
   return (
     <div className="flex flex-col gap-4">
@@ -79,6 +81,20 @@ export default async function HuertoPage() {
           </CardHeader>
         </Card>
       </div>
+
+      <Card className="border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle>Recomendadas para tu zona</CardTitle>
+          <CardDescription>
+            {zona ? `${zona.nombre}: ${recom.si.length} recomendadas · ${recom.riesgo.length} con riesgo · ${recom.no.length} no recomendadas` : "Configura tu comuna para ver qué puedes cultivar"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <a href="/recomendadas" className="inline-flex min-h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground">
+            Ver recomendadas
+          </a>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

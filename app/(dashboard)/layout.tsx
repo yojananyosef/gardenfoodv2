@@ -17,6 +17,9 @@ export default function DashboardLayout({
               <a href="/huerto" className="text-muted-foreground hover:text-foreground">
                 Mi huerto
               </a>
+              <a href="/recomendadas" className="text-muted-foreground hover:text-foreground">
+                Recomendadas
+              </a>
               <a href="/calendario" className="text-muted-foreground hover:text-foreground">
                 Calendario
               </a>

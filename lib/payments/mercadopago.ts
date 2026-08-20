@@ -49,42 +49,71 @@ async function mpFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
+// Yearly = 10× monthly paid in 12× monthly charges (see plans.ts / subscription spec).
+// Monthly = 1× months. Legacy used years+1 which MP sandbox rejects for plan-less preapprovals.
 // Creates a `pending` subscription (preapproval) with inline recurrence and
 // returns its hosted-checkout init_point. Mercado Pago tokenizes the card inside
 // that checkout; the webhook then links it back via external_reference.
 export async function createSubscription(
   input: CreateSubscriptionInput,
 ): Promise<CreateSubscriptionResult> {
-  const notificationUrl =
-    process.env.NEXT_PUBLIC_SITE_URL !== undefined
-      ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/api/v1/payments/webhook`
-      : undefined;
+  const t = process.env.MP_ACCESS_TOKEN ?? "";
+  if (t.startsWith("TEST-")) {
+    console.log("[mercadopago] using TEST token, payer:", input.payerEmail);
+  } else if (t.startsWith("APP_USR-")) {
+    console.warn("[mercadopago] using PROD token - sandbox cards will fail");
+  }
+
+  if (!Number.isInteger(input.transactionAmount) || input.transactionAmount <= 0) {
+    throw new Error("transaction_amount must be positive integer CLP");
+  }
+
+  // Canonical URLs — always validated via new URL()
+  const siteUrlRaw =
+    (process.env.NEXT_PUBLIC_SITE_URL ?? "https://gardenfoodv2.vercel.app").replace(/\/$/, "");
+  let siteUrl: URL;
+  try {
+    siteUrl = new URL(siteUrlRaw);
+  } catch {
+    throw new Error(`NEXT_PUBLIC_SITE_URL is not a valid URL: ${siteUrlRaw}`);
+  }
+  const notificationUrl = `${siteUrl.origin}/api/v1/payments/webhook`;
+  let backUrl = input.backUrl;
+  try {
+    new URL(backUrl);
+  } catch {
+    backUrl = `${siteUrl.origin}/suscripcion/confirmar`;
+  }
+
+  const isYearly = input.interval === "yearly";
   const data = await mpFetch<{
     id: string;
     init_point: string;
+    sandbox_init_point?: string;
   }>("/preapproval", {
     method: "POST",
     body: JSON.stringify({
       reason: input.reason,
       external_reference: input.externalReference,
       payer_email: input.payerEmail,
-      ...(notificationUrl ? { notification_url: notificationUrl } : {}),
+      notification_url: notificationUrl,
       auto_recurring: {
-        frequency: 1,
-        frequency_type: input.interval === "yearly" ? "years" : "months",
+        frequency: isYearly ? 12 : 1,
+        frequency_type: "months",
         transaction_amount: input.transactionAmount,
         currency_id: "CLP",
         ...(input.freeTrialDays
           ? { free_trial: { frequency: input.freeTrialDays, frequency_type: "days" } }
           : {}),
       },
-      back_url: input.backUrl,
+      back_url: backUrl,
       status: "pending",
     }),
   });
   return {
     subscriptionId: data.id,
-    url: data.init_point,
+    // In TEST mode MP returns sandbox_init_point; prefer it for testing but init_point also works with TEST token.
+    url: (data as { sandbox_init_point?: string }).sandbox_init_point ?? data.init_point,
   };
 }
 

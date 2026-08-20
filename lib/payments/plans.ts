@@ -1,6 +1,8 @@
 // Plan definitions for the subscription business model (modelo 1).
-// Prices in CLP. Annual = 10x monthly (≈2 months free).
-// Mercado Pago plan ids are created at runtime and stored in gf_subscription_plans.
+// Prices in CLP. Yearly = 10× monthly (≈2 months free) — paid as single yearly charge via
+// Mercado Pago preapproval with frequency:12, frequency_type:"months" (hosted init_point).
+// Monthly = frequency:1, months. Do not use years; MP sandbox rejects it for plan-less preapprovals.
+// Hosted redirect avoids CSP nonce + secure-fields `fontSize string / No length configuration` errors.
 
 export type PlanTier = "huertero" | "cosecha" | "full";
 export type BillingInterval = "monthly" | "yearly";
@@ -75,4 +77,8 @@ export function mpPlanKey(tier: PlanTier, interval: BillingInterval): string {
 export function planAmount(tier: PlanTier, interval: BillingInterval): number {
   const plan = getPlan(tier);
   return interval === "yearly" ? plan.yearly : plan.monthly;
+}
+
+export function describeInterval(interval: BillingInterval): string {
+  return interval === "yearly" ? "anual (2 meses gratis)" : "mensual";
 }

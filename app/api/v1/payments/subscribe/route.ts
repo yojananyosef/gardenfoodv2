@@ -82,6 +82,19 @@ export async function POST(request: Request) {
     );
   }
 
+  // Optional collector guard for TEST: if MP_COLLECTOR_EMAIL is set we can pre-check
+  const collectorEmail = process.env.MP_COLLECTOR_EMAIL?.toLowerCase().trim();
+  if (collectorEmail && email.toLowerCase() === collectorEmail) {
+    await admin.from("gf_subscriptions").delete().eq("id", draft.id);
+    return NextResponse.json(
+      {
+        error:
+          "Usa un email de prueba distinto al de tu cuenta de Mercado Pago. Crea un test_user en el dashboard de MP (test_user_...@testuser.com).",
+      },
+      { status: 400 },
+    );
+  }
+
   let created;
   try {
     created = await createSubscription({
@@ -94,8 +107,21 @@ export async function POST(request: Request) {
       freeTrialDays: 14,
     });
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     console.error("[payments/subscribe] createSubscription failed", err);
     await admin.from("gf_subscriptions").delete().eq("id", draft.id);
+    const isCollector =
+      msg.toLowerCase().includes("collector") ||
+      msg.toLowerCase().includes("payer and collector");
+    if (isCollector) {
+      return NextResponse.json(
+        {
+          error:
+            "Usa un email de prueba distinto al de tu cuenta de Mercado Pago. Crea un test_user en el dashboard de MP (test_user_...@testuser.com) o inicia sesión con otro email.",
+        },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       { error: "Could not create subscription" },
       { status: 502 },

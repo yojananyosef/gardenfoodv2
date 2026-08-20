@@ -2,9 +2,25 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isPaidTier } from "@/lib/payments/plans";
 
-const RUTAS_PUBLICAS = ["/", "/explorar", "/especies", "/calculadoras", "/registro", "/login", "/api"];
+const RUTAS_PUBLICAS = [
+  "/",
+  "/explorar",
+  "/especies",
+  "/calculadoras",
+  "/pricing",
+  "/registro",
+  "/login",
+  "/api",
+  "/sitemap.xml",
+  "/robots.txt",
+  "/manifest.webmanifest",
+  "/offline.html",
+  "/sw.js",
+  "/og.png",
+  "/icons",
+];
 
-// Rutas que un usuario autenticado con plan gratuito sí puede usar.
+// Rutas que un usuario autenticado con plan gratuito sí puede usar (no requieren tier pago).
 const RUTAS_LIBRES_AUTENTICADO = [
   "/explorar",
   "/especies",

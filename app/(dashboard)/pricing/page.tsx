@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PLANS, type BillingInterval, planAmount } from "@/lib/payments/plans";
+import { PLANS, type BillingInterval } from "@/lib/payments/plans";
 
 function formatCLP(n: number): string {
   return `$${n.toLocaleString("es-CL")}`;
@@ -38,6 +38,7 @@ export default function PricingPage() {
         return;
       }
       // Redirect to Mercado Pago's hosted checkout where the card is entered.
+      // eslint-disable-next-line react-hooks/immutability -- external redirect to Mercado Pago
       window.location.href = data.url;
     } catch {
       setError("Error de red. Intenta nuevamente.");

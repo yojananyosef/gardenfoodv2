@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Droplets, Leaf, Bug, Scissors, CalendarDays, Sprout, Citrus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Droplets, Leaf, Bug, Scissors, CalendarDays, Sprout, Citrus, Info, Lightbulb, Flower2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
-import { type FichaEspecie, type Especie } from "@/lib/agronomy";
+import { type FichaEspecie, type Especie, getFenologia, getConsejos, ZONAS, getZonaIdDeComuna } from "@/lib/agronomy";
+import { createClient } from "@/lib/supabase/client";
 
-type TabId = "calendario" | "riego" | "nutricion" | "sanidad" | "poda" | "cosecha";
+type TabId = "calendario" | "riego" | "nutricion" | "sanidad" | "poda" | "cosecha" | "fenologia" | "consejos" | "info";
 
 const TABS: { id: TabId; l: string; icon: typeof CalendarDays }[] = [
   { id: "calendario", l: "Calendario", icon: CalendarDays },
@@ -17,6 +18,9 @@ const TABS: { id: TabId; l: string; icon: typeof CalendarDays }[] = [
   { id: "sanidad", l: "Sanidad", icon: Bug },
   { id: "poda", l: "Poda", icon: Scissors },
   { id: "cosecha", l: "Cosecha", icon: Sprout },
+  { id: "fenologia", l: "Fenología", icon: Flower2 },
+  { id: "consejos", l: "Consejos", icon: Lightbulb },
+  { id: "info", l: "Info", icon: Info },
 ];
 
 function Descripcion({ desc }: { desc: Record<string, string> }) {
@@ -229,6 +233,81 @@ function TabCosecha({ cos }: { cos: FichaEspecie["cos"] }) {
   );
 }
 
+function TabFenologia({ dbKey }: { dbKey: string }) {
+  const [zonaNombre, setZonaNombre] = useState<string | null>(null);
+  const [entrada, setEntrada] = useState<ReturnType<typeof getFenologia>>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      const comunaPromise = data.user
+        ? supabase.from("perfiles").select("comuna").eq("id", data.user.id).maybeSingle().then(r => r.data?.comuna as string | null)
+        : Promise.resolve(null);
+      comunaPromise.then(comuna => {
+        const zonaId = getZonaIdDeComuna(comuna ?? undefined) ?? 7;
+        const zona = ZONAS[zonaId];
+        setZonaNombre(zona?.nombre ?? null);
+        setEntrada(getFenologia(dbKey, zonaId));
+        setLoading(false);
+      });
+    });
+  }, [dbKey]);
+  if (loading) return <p className="text-sm text-muted-foreground">Cargando fenología…</p>;
+  if (!entrada) return <p className="text-sm text-muted-foreground">Sin datos fenológicos para tu zona {zonaNombre ? `(${zonaNombre})` : ""}.</p>;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Fenología {zonaNombre ? `· ${zonaNombre}` : ""}</CardTitle>
+        <CardDescription>Brotación, floración y cosecha por macrozona</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2 text-sm">
+        <div className="flex justify-between"><span className="text-muted-foreground">Brotación</span><span>{entrada.brotacion}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Floración</span><span>{entrada.floracion}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Cuaja</span><span>{entrada.cuaja}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Cosecha</span><span>{entrada.cos_ini} – {entrada.cos_fin}</span></div>
+        <p className="mt-2 rounded bg-muted px-3 py-2 text-xs text-muted-foreground">{entrada.notas}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TabConsejos({ dbKey }: { dbKey: string }) {
+  const consejos = getConsejos(dbKey);
+  if (consejos.length === 0) return <p className="text-sm text-muted-foreground">Sin consejos para esta especie.</p>;
+  return (
+    <ul className="flex flex-col gap-2">
+      {consejos.map((c, i) => (
+        <li key={i} className="rounded-lg border bg-card px-4 py-3 text-sm">💡 {c}</li>
+      ))}
+    </ul>
+  );
+}
+
+function TabInfo({ ficha, zonaId }: { ficha: FichaEspecie; zonaId: number | null }) {
+  const zona = zonaId ? ZONAS[zonaId] : null;
+  return (
+    <div className="flex flex-col gap-3">
+      <Card>
+        <CardHeader><CardTitle>Botánica</CardTitle></CardHeader>
+        <CardContent><Descripcion desc={ficha.desc} /></CardContent>
+      </Card>
+      {zona ? (
+        <Card>
+          <CardHeader><CardTitle>Tu zona: {zona.nombre}</CardTitle><CardDescription>{zona.region} · {zona.clima}</CardDescription></CardHeader>
+          <CardContent className="grid grid-cols-2 gap-2 text-sm">
+            <div><span className="text-muted-foreground">Tª máx</span><div>{zona.txMax}°C</div></div>
+            <div><span className="text-muted-foreground">Tª mín</span><div>{zona.tnMin}°C</div></div>
+            <div><span className="text-muted-foreground">Precip.</span><div>{zona.pp} mm</div></div>
+            <div><span className="text-muted-foreground">Horas frío</span><div>{zona.hf}</div></div>
+            <div><span className="text-muted-foreground">Heladas</span><div>{zona.heladas}</div></div>
+            <div><span className="text-muted-foreground">Sequía</span><div>{zona.sequia}</div></div>
+          </CardContent>
+        </Card>
+      ) : null}
+    </div>
+  );
+}
+
 export function FichaEspecieView({
   especie,
   ficha,
@@ -237,13 +316,32 @@ export function FichaEspecieView({
   ficha: FichaEspecie;
 }) {
   const [tab, setTab] = useState<TabId>("calendario");
+  const [zonaId, setZonaId] = useState<number | null>(null);
   const ref = useTrackedView<HTMLDivElement>({
     name: "VIEW_FICHA",
     especieId: especie.slug,
   });
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) return;
+      supabase.from("perfiles").select("comuna").eq("id", data.user.id).maybeSingle().then(r => {
+        setZonaId(getZonaIdDeComuna((r.data?.comuna as string | null) ?? undefined) ?? 7);
+      });
+    });
+  }, []);
 
   return (
     <div ref={ref} className="flex flex-col gap-4">
+      <div className="relative h-48 w-full overflow-hidden rounded-xl bg-muted">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={especie.imagen} alt={especie.nombre} width={600} height={300} className="h-full w-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/og.png"; }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <div className="absolute bottom-3 left-3 text-white">
+          <h2 className="text-xl font-semibold drop-shadow">{especie.nombre}</h2>
+          <p className="text-xs italic opacity-90">{ficha.nc}</p>
+        </div>
+      </div>
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -284,6 +382,9 @@ export function FichaEspecieView({
       {tab === "sanidad" && <TabSanidad san={ficha.san} />}
       {tab === "poda" && <TabPoda poda={ficha.poda} />}
       {tab === "cosecha" && <TabCosecha cos={ficha.cos} />}
+      {tab === "fenologia" && <TabFenologia dbKey={especie.dbKey} />}
+      {tab === "consejos" && <TabConsejos dbKey={especie.dbKey} />}
+      {tab === "info" && <TabInfo ficha={ficha} zonaId={zonaId} />}
     </div>
   );
 }

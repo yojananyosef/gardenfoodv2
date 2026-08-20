@@ -3,7 +3,19 @@ import { ArrowRight, Droplets, Scissors, Sprout } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ZoneWidget } from "@/components/landing/zone-widget";
-import { ESPECIES, FICHAS } from "@/lib/agronomy";
+import { ESPECIES } from "@/lib/agronomy";
+
+// Latin names for the 8 highlighted species — avoids importing FICHAS (10k lines) on the landing.
+const LATINO: Record<string, string> = {
+  duraznero: "Prunus persica",
+  palto: "Persea americana",
+  manzano: "Malus domestica",
+  frutilla: "Fragaria × ananassa",
+  vid: "Vitis vinifera",
+  limonero: "Citrus limon",
+  frambuesa: "Rubus idaeus",
+  cerezo: "Prunus avium",
+};
 
 const ESPECIES_LANDING = [
   "duraznero",
@@ -18,7 +30,7 @@ const ESPECIES_LANDING = [
   const especie = ESPECIES.find((e) => e.slug === slug)!;
   return {
     nombre: especie.nombre,
-    latino: FICHAS[especie.dbKey]?.nc ?? "",
+    latino: LATINO[slug] ?? "",
     slug: especie.slug,
   };
 });
@@ -76,7 +88,7 @@ export default function Home() {
               </h1>
               <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
                 GardenFood te dice cuándo podar, regar y fertilizar, comuna por comuna. De
-                Arica a Punta Arenas, 208 comunas en 20 zonas agroclimáticas, con 30
+                Arica a Punta Arenas, 245 comunas en 20 zonas agroclimáticas, con 30
                 especies de fruta.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
