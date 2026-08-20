@@ -40,11 +40,29 @@ un flujo de suscripción que cree la orden en Flow, confirme por webhook y habil
 - **Navegación**: `proxy.ts` gana gating por plan (redirección a `/pricing`).
 - **Config**: reutiliza `FLOW_API_KEY`/`FLOW_SECRET_KEY`/`FLOW_API_URL` y añade `NEXT_PUBLIC_PRICING_*`.
 
+## Precios referencia (investigados, editables)
+
+Benchmark de SaaS B2B agtech / gestión de huertos (precios en USD/EUR; Chile en CLP):
+KernelAg $12–32/mes, Farmbrite $29–59/mes, Solara $29–99/mes, CamoAg $15–99/mes,
+GardenBud $20–30/mes, Farmable €33/mes·$399/año, SeedSort ~£40/año. Patrón dominante:
+**mensual + anual con ~15–20% de descuento** (≈2 meses "gratis") y trial de 14 días.
+
+Precios **referencia** propuestos para GardenFood (CLP, editables luego):
+
+| Plan | Mensual | Anual (ahorro ~17%) |
+|------|---------|---------------------|
+| `premium` (prosumer / huerta pro) | **$9.990 / mes** | **$99.900 / año** (~$8.325/mes) |
+| `business` (restaurantes, cooperativas, municipalidades) | **$29.990 / mes** | **$299.900 / año** |
+
+- Trial: `trial_period_days = 14` (sin cargo).
+- Anual implementado en Flow como `interval = 4` (amount = $99.900 / $299.900).
+
 ## Assumptions (a confirmar)
 
-- **Precio/periodo**: suscripción **mensual** en CLP (monto por confirmar, p.ej. $2.990/mes).
-- **Plan**: un único tier de pago (`premium`); `free` es el default.
+- **Precio/periodo**: suscripción **mensual y anual** en CLP (precios referencia arriba; editables).
+- **Planes**: dos tiers de pago (`premium`, `business`); `free` es el default.
 - **Gating**: se bloquean rutas core (huerto, calendario, cosechas) sin plan; explorar/especies
   quedan libres (lista exacta por confirmar).
-- **Renovación**: Flow maneja el cobro recurrente; el webhook actualiza `current_period_end`.
+- **Renovación**: Flow maneja el cobro recurrente vía planes; el webhook (`urlCallback`) actualiza
+  `current_period_end`.
 - **Cancelación**: el usuario cancela desde `/perfil`; el plan sigue activo hasta `current_period_end`.

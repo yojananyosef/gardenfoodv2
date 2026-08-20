@@ -6,13 +6,15 @@
 
 ## 2. Proveedor de pagos (suscripción)
 
-- [ ] 2.1 Añadir método de suscripción a `PaymentProvider` / conector Flow (orden recurrente)
+- [ ] 2.1 Añadir método de planes/suscripción a `PaymentProvider` / conector Flow
+  (`/plans/create`, `/customers/create`, `/register-card`, `/subscriptions/create`, `/subscriptions/status`)
 - [ ] 2.2 Reutilizar firma HMAC SHA256 existente en `lib/payments/flow.ts`
 
 ## 3. Checkout de suscripción
 
-- [ ] 3.1 `POST /api/v1/flow/subscribe`: auth, monto/plan del servidor, crea suscripción en Flow, guarda `flow_subscription_id`, devuelve `redirect_url`
-- [ ] 3.2 Página `/pricing` con plan y CTA a suscribirse
+- [ ] 3.1 Crear, auth, plan del servidor, crea cliente+tarjeta+suscripción en Flow (guarda `flow_subscription_id`, devuelve `redirect_url`)
+- [ ] 3.2 Configurar credenciales sandbox de Flow (`FLOW_API_KEY`/`FLOW_SECRET_KEY`) y crear planes mensual/anual (`/plans/create`, `interval` 3/4, `trial_period_days=14`) con precios referencia
+- [ ] 3.3 Página `/pricing` con planes (mensual/anual) y CTA a suscribirse
 
 ## 4. Webhook (suscripción)
 

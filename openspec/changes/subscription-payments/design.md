@@ -21,12 +21,26 @@ se apoya en esa base en vez de duplicarla.
 ## Decisions
 
 - **Reutilizar `lib/payments`**: se añade un método de suscripción a `PaymentProvider` (o un
-  conector `FlowSubscription`) en vez de crear un cliente aparte.
+  conector `FlowSubscription`) en vez de crear un cliente aparte. La firma HMAC SHA256 ya está
+  implementada y es idéntica a la que exige Flow para suscripciones.
+- **Modelo de planes de Flow**: se crean los planes con `POST /plans/create`
+  (`interval` 3=mensual / 4=anual, `amount`, `trial_period_days`, `periods_number`, `urlCallback`)
+  y se suscribe al usuario con `POST /subscriptions/create` tras `customers/create` +
+  `register-card`. El webhook `urlCallback` notifica cada cobro recurrente.
 - **Webhook unificado**: `POST /api/v1/flow/webhook` distingue `kind` (`sponsorship` |
-  `subscription`) y enruta a activar slot o plan. Ya verifica vía `getStatus`.
-- **Gating en `proxy.ts`**: el acceso a rutas core chequea `perfiles.plan`; si no es `premium`,
-  redirige a `/pricing`. Esto aprovecha el mecanismo de protección de rutas ya existente.
-- **Monto del servidor**: el precio del plan vive en config/DB, nunca en el cliente.
+  `subscription`) y enruta a activar slot o plan. Para suscripciones, Flow notifica por
+  `urlCallback` y podemos cruzar con `subscriptions/status` para idempotencia.
+- **Gating en `proxy.ts`**: el acceso a rutas core chequea `perfiles.plan`; si no es `premium`/
+  `business`, redirige a `/pricing`. Aprovecha el mecanismo de protección de rutas existente.
+- **Monto del servidor**: el precio del plan vive en config/DB (tabla de planes o constantes),
+  nunca en el cliente.
+
+## Sandbox (pruebas)
+
+- Credenciales `apiKey`/`secretKey`: se obtienen al crear un **comercio de prueba** en el portal
+  de Flow (la página "Credenciales de prueba" solo lista tarjetas de test, no el apiKey/secret).
+- Tarjetas de prueba Chile: `4051885600446623` / 11-27 / 123 (RUT `11111111-1`, clave `123`).
+- Recurrentes (Perú): aceptado `5293138086430769` / CVV 123; rechazado `4551708161768059`.
 
 ## Risks / Trade-offs
 
