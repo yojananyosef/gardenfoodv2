@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sin conexión — GardenFood</title>
+    <style>
+      :root { color-scheme: light; }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: #f7fef9;
+        color: #14532d;
+        text-align: center;
+        padding: 1.5rem;
+      }
+      .mark {
+        width: 96px;
+        height: 96px;
+        border-radius: 22px;
+        background: #15803d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mark svg { width: 56px; height: 56px; }
+      h1 { font-size: 1.25rem; margin: 0; }
+      p { margin: 0; max-width: 32ch; color: #166534; }
+      a {
+        margin-top: .5rem;
+        color: #15803d;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M256 360 V196" />
+          <path d="M256 232 C210 232 178 200 178 156 C232 156 256 188 256 232 Z" fill="#ffffff" stroke="none" />
+          <path d="M256 268 C302 268 334 236 334 192 C280 192 256 224 256 268 Z" fill="#bbf7d0" stroke="none" />
+        </g>
+      </svg>
+    </div>
+    <h1>Estás sin conexión</h1>
+    <p>Revisa tu internet y vuelve a intentarlo. Tu huerto seguirá aquí cuando recuperes la señal.</p>
+    <a href="/">Reintentar</a>
+  </body>
+</html>
