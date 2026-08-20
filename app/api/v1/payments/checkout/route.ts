@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { randomUUID } from "node:crypto";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { flowProvider } from "@/lib/payments/flow";
+import { mercadoPagoProvider } from "@/lib/payments/mercadopago";
 
 export const dynamic = "force-dynamic";
 
@@ -63,19 +62,23 @@ export async function POST(request: Request) {
     );
   }
 
-  const commerceOrder = randomUUID();
   let result;
   try {
-    result = await flowProvider.createPayment({
-      commerceOrder,
-      subject: sponsorship.title,
+    result = await mercadoPagoProvider.createPayment({
       amount,
-      email,
-      urlConfirmation: `${SITE_URL}/api/v1/flow/webhook`,
-      urlReturn: `${SITE_URL}/admin/sponsorships`,
+      currency: "CLP",
+      description: sponsorship.title,
+      externalReference: sponsorshipId,
+      payerEmail: email,
+      backUrls: {
+        success: `${SITE_URL}/admin/sponsorships`,
+        failure: `${SITE_URL}/admin/sponsorships`,
+        pending: `${SITE_URL}/admin/sponsorships`,
+      },
+      notificationUrl: `${SITE_URL}/api/v1/payments/webhook`,
     });
   } catch (err) {
-    console.error("[flow/checkout] createPayment failed", err);
+    console.error("[payments/checkout] createPayment failed", err);
     return NextResponse.json(
       { error: "Could not start payment" },
       { status: 502 },
@@ -84,10 +87,10 @@ export async function POST(request: Request) {
 
   const { error: updateError } = await admin
     .from("gf_sponsorships")
-    .update({ flow_token: result.token, payment_status: "pending" })
+    .update({ provider_token: result.token, payment_status: "pending" })
     .eq("id", sponsorshipId);
   if (updateError) {
-    console.error("[flow/checkout] update failed", updateError);
+    console.error("[payments/checkout] update failed", updateError);
     return NextResponse.json(
       { error: "Could not record payment" },
       { status: 500 },
@@ -95,6 +98,6 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    redirectUrl: `${result.url}?token=${result.token}`,
+    redirectUrl: result.sandboxUrl ?? result.url,
   });
 }

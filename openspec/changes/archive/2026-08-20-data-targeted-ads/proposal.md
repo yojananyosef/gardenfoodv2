@@ -1,7 +1,7 @@
 ## Why
 
 GardenFood tiene tres modelos de negocio: (1) suscripción por uso, (2) patrocinios cobrados con
-Flow (ya implementado en `flow-sponsorships`), y (3) **publicidad potenciada con datos de
+Mercado Pago (ya implementado en el módulo de pagos), y (3) **publicidad potenciada con datos de
 usuario** — el sponsor usa los datos de los usuarios para dirigir sus patrocinios dentro de la
 app, aumentando relevancia y valor del espacio. Este cambio ataca el **modelo 3**: una capa de
 *targeting* sobre `gf_sponsorships` que usa las audiencias ya calculadas en `gf_user_audiences`
@@ -20,8 +20,8 @@ extensión, un sobreprecio del espacio segmentado — ver assumptions).
 - **Consentimiento**: el targeting solo aplica si el usuario consintió personalización en
   `gf_user_consents`; si no, se usan solo patrocinios sin targeting.
 - Admin: selector de segmento/targeting al crear o editar un patrocinio.
-- No es un flujo de pago nuevo: se apoya en `flow-sponsorships` (el sponsor paga el slot; el
-  targeting es una propiedad del slot).
+- No es un flujo de pago nuevo: se apoya en el módulo de pagos (Mercado Pago): el sponsor paga
+  el slot; el targeting es una propiedad del slot.
 
 ## Capabilities
 

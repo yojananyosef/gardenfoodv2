@@ -34,7 +34,7 @@ export default async function HuertoPage() {
     getTareasDelDia(user.id, hoyISO()),
     getPerfil(user.id),
     getArboles(user.id),
-    getActiveSponsorships("huerto"),
+    getActiveSponsorships("huerto", user.id),
   ]);
 
   const zona = getZonaDeComuna(perfil?.comuna);
