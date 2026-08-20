@@ -12,6 +12,7 @@ export const sponsorshipSchema = z
     imageUrl: z.string().max(1000).optional(),
     active: z.boolean().optional(),
     sortOrder: z.number().int().nonnegative().optional(),
+    amount: z.number().nonnegative().optional(),
   })
   .strict();
 

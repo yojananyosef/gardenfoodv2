@@ -100,6 +100,8 @@ export interface AudienceProfile {
 
 export type SponsorshipScreen = "explorar" | "huerto" | "ficha" | "calendario";
 
+export type PaymentStatus = "unpaid" | "pending" | "paid" | "failed";
+
 export interface Sponsorship {
   id: string;
   adUnitId: string;
@@ -112,6 +114,9 @@ export interface Sponsorship {
   imageUrl?: string | null;
   active: boolean;
   sortOrder: number;
+  amount: number;
+  paymentStatus: PaymentStatus;
+  paidAt?: string | null;
 }
 
 export type TipoTarea = "riego" | "nutricion" | "sanidad" | "personalizada";

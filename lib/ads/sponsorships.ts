@@ -13,6 +13,9 @@ interface SponsorshipRow {
   image_url: string | null;
   active: boolean;
   sort_order: number;
+  amount: number;
+  payment_status: string;
+  paid_at: string | null;
 }
 
 export function mapSponsorship(row: SponsorshipRow): Sponsorship {
@@ -28,6 +31,9 @@ export function mapSponsorship(row: SponsorshipRow): Sponsorship {
     imageUrl: row.image_url,
     active: row.active,
     sortOrder: row.sort_order,
+    amount: Number(row.amount ?? 0),
+    paymentStatus: (row.payment_status as Sponsorship["paymentStatus"]) ?? "unpaid",
+    paidAt: row.paid_at,
   };
 }
 

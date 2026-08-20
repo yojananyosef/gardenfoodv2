@@ -53,6 +53,7 @@ export async function POST(request: Request) {
       image_url: parsed.data.imageUrl ?? null,
       active: parsed.data.active ?? true,
       sort_order: parsed.data.sortOrder ?? 0,
+      amount: parsed.data.amount ?? 0,
     })
     .select()
     .single();

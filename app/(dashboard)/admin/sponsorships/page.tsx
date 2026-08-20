@@ -25,6 +25,7 @@ interface SponsorshipForm {
   description: string;
   ctaUrl: string;
   ctaLabel: string;
+  amount: string;
 }
 
 const EMPTY_FORM: SponsorshipForm = {
@@ -35,6 +36,7 @@ const EMPTY_FORM: SponsorshipForm = {
   description: "",
   ctaUrl: "",
   ctaLabel: "",
+  amount: "0",
 };
 
 export default function AdminSponsorshipsPage() {
@@ -44,10 +46,31 @@ export default function AdminSponsorshipsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [payingId, setPayingId] = useState<string | null>(null);
 
   useEffect(() => {
     void load();
   }, []);
+
+  async function pay(sponsorship: Sponsorship) {
+    setPayingId(sponsorship.id);
+    try {
+      const response = await fetch("/api/v1/flow/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sponsorshipId: sponsorship.id }),
+      });
+      if (!response.ok) {
+        setError("No se pudo iniciar el pago.");
+        return;
+      }
+      const data = (await response.json()) as { redirectUrl: string };
+      window.location.href = data.redirectUrl;
+    } catch {
+      setError("No se pudo iniciar el pago.");
+      setPayingId(null);
+    }
+  }
 
   async function load() {
     try {
@@ -84,7 +107,7 @@ export default function AdminSponsorshipsPage() {
       const response = await fetch("/api/v1/admin/sponsorships", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, amount: Number(form.amount) || 0 }),
       });
       if (!response.ok) {
         setError("No se pudo crear el patrocinio.");
@@ -130,6 +153,15 @@ export default function AdminSponsorshipsPage() {
                     ) : (
                       <Badge variant="outline">Inactivo</Badge>
                     )}
+                    <Badge variant="outline">
+                      {sponsorship.paymentStatus === "paid"
+                        ? "Pagado"
+                        : sponsorship.paymentStatus === "pending"
+                          ? "Pendiente"
+                          : sponsorship.paymentStatus === "failed"
+                            ? "Fallido"
+                            : "Sin pagar"}
+                    </Badge>
                     <Button
                       variant="outline"
                       size="sm"
@@ -138,6 +170,20 @@ export default function AdminSponsorshipsPage() {
                     >
                       {sponsorship.active ? "Desactivar" : "Activar"}
                     </Button>
+                    {sponsorship.paymentStatus !== "paid" &&
+                    Number(sponsorship.amount) > 0 ? (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="min-h-9"
+                        disabled={payingId === sponsorship.id}
+                        onClick={() => pay(sponsorship)}
+                      >
+                        {payingId === sponsorship.id
+                          ? "Redirigiendo…"
+                          : "Pagar con Flow"}
+                      </Button>
+                    ) : null}
                   </div>
                 </li>
               ))}
@@ -174,15 +220,26 @@ export default function AdminSponsorshipsPage() {
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="title">Título</Label>
-              <Input
-                id="title"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                required
-              />
-            </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="title">Título</Label>
+                <Input
+                  id="title"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="amount">Precio (CLP)</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={form.amount}
+                  onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                />
+              </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="description">Descripción</Label>
               <Input
