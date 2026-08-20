@@ -94,10 +94,11 @@ export async function POST(request: Request) {
       freeTrialDays: 14,
     });
   } catch (err) {
+    const message = err instanceof Error ? err.message : "Could not create subscription";
     console.error("[payments/subscribe] createSubscription failed", err);
     await admin.from("gf_subscriptions").delete().eq("id", draft.id);
     return NextResponse.json(
-      { error: "Could not create subscription" },
+      { error: `Could not create subscription: ${message}` },
       { status: 502 },
     );
   }

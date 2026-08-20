@@ -27,13 +27,26 @@ export default function PricingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tier, interval }),
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: { url?: string; error?: unknown } = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = {};
+      }
       if (res.status === 401) {
         router.push(`/login?next=/pricing`);
         return;
       }
-      if (!res.ok || data.error || !data.url) {
-        setError(data.error ?? "No se pudo iniciar la suscripción");
+      if (!res.ok || !data.url) {
+        const raw = data.error;
+        const msg =
+          typeof raw === "string"
+            ? raw
+            : raw && typeof raw === "object" && "message" in raw
+              ? String((raw as { message: unknown }).message)
+              : "No se pudo iniciar la suscripción. Intenta de nuevo.";
+        setError(msg);
         setSubmitting(false);
         return;
       }

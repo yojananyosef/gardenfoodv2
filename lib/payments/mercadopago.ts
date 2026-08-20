@@ -55,10 +55,6 @@ async function mpFetch<T>(path: string, init?: RequestInit): Promise<T> {
 export async function createSubscription(
   input: CreateSubscriptionInput,
 ): Promise<CreateSubscriptionResult> {
-  const notificationUrl =
-    process.env.NEXT_PUBLIC_SITE_URL !== undefined
-      ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/api/v1/payments/webhook`
-      : undefined;
   const data = await mpFetch<{
     id: string;
     init_point: string;
@@ -68,7 +64,6 @@ export async function createSubscription(
       reason: input.reason,
       external_reference: input.externalReference,
       payer_email: input.payerEmail,
-      ...(notificationUrl ? { notification_url: notificationUrl } : {}),
       auto_recurring: {
         frequency: 1,
         frequency_type: input.interval === "yearly" ? "years" : "months",
