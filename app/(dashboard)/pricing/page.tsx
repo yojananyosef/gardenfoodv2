@@ -122,6 +122,23 @@ export default function PricingPage() {
           );
         })}
       </div>
+
+      {/* TEST mode helper — visible only when using TEST token (sandbox) */}
+      <details className="mx-auto mt-8 max-w-2xl rounded-lg border bg-muted/30 p-4 text-sm">
+        <summary className="cursor-pointer font-medium">¿Cómo probar en sandbox? (solo TEST)</summary>
+        <div className="mt-3 flex flex-col gap-2 text-muted-foreground">
+          <p>En el checkout de Mercado Pago usa <b>exactamente</b>:</p>
+          <ul className="list-disc pl-5">
+            <li>Tarjeta crédito <b>Mastercard 5416 7526 0258 2580</b> — CVV 123 — Vence 11/30</li>
+            <li>Nombre titular: <b>APRO</b> Apellido: <b>APRO</b> (mayúsculas)</li>
+            <li>Documento: Tipo <b>Otro</b> · Número <b>123456789</b></li>
+            <li>Email distinto al vendedor (`johangutierrez@outlook.cl` es el collector — no lo uses como payer)</li>
+          </ul>
+          <p>Desactiva AdBlock/Brave Shield y permite cookies de terceros para `mercadopago.cl` y `gstatic.com/recaptcha`, o el `matt.mercadopago.cl` y `api.mercadolibre.com/tracks` bloqueados (`ERR_BLOCKED_BY_CLIENT`) harán que el pago aparezca como <i>Tu pago fue rechazado → Pagar con otro medio</i> aunque la tarjeta sea correcta.</p>
+          <p>Si ves <code>preference-id</code> y `rejected` en la URL, es que el titular no fue `APRO` o usaste débito (`4023...4373` es débito — suscripciones requieren crédito).</p>
+          <p className="text-xs">Prueba directa (sin pasar por tu app): <a className="underline" href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_id=8ba5e1478a934b21983797727d4cf3bc&activation=true" target="_blank" rel="noopener">init_point de prueba huertero 9990</a> (payer `gardenfood.tester.1787264643@example.com`).</p>
+        </div>
+      </details>
     </main>
   );
 }
