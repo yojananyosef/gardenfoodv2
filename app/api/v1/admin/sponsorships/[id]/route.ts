@@ -43,6 +43,7 @@ export async function PATCH(
       ...(parsed.data.active !== undefined && { active: parsed.data.active }),
       ...(parsed.data.sortOrder !== undefined && { sort_order: parsed.data.sortOrder }),
       ...(parsed.data.amount !== undefined && { amount: parsed.data.amount }),
+      ...(parsed.data.targeting !== undefined && { targeting: parsed.data.targeting }),
     })
     .eq("id", id)
     .select()

@@ -2,8 +2,8 @@
 
 GardenFood ya calcula audiencias de usuario en `gf_user_audiences` (segmentos comerciales,
 poder adquisitivo, fenología, cultivo de interés, región/comuna) y ya captura consentimiento
-vía CMP en `gf_user_consents`. Los patrocinios (`gf_sponsorships`) se cobran con Flow
-(`flow-sponsorships`) pero son inventario global, sin dirigir. Este modelo de negocio (3) es una
+vía CMP en `gf_user_consents`. Los patrocinios (`gf_sponsorships`) se cobran con Mercado Pago
+(módulo de pagos) pero son inventario global, sin dirigir. Este modelo de negocio (3) es una
 capa de targeting sobre lo ya existente, no un nuevo flujo de pago.
 
 ## Goals / Non-Goals
@@ -15,7 +15,7 @@ capa de targeting sobre lo ya existente, no un nuevo flujo de pago.
 - Exponer el targeting en el admin de patrocinios.
 
 **Non-Goals:**
-- Nuevo flujo de pago (reutiliza `flow-sponsorships`).
+- Nuevo flujo de pago (reutiliza el módulo de pagos con Mercado Pago).
 - Modelado de "venta de datos a terceros" (el dato se usa solo para dirigir dentro de la app).
 
 ## Decisions

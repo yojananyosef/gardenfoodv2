@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+const targetingSchema = z
+  .object({
+    segments: z.array(z.string()).optional(),
+    purchasingPowerTier: z.array(z.string()).optional(),
+    primaryInterestCrop: z.array(z.string()).optional(),
+    region: z.array(z.string()).optional(),
+    comuna: z.array(z.string()).optional(),
+  })
+  .strict()
+  .optional();
+
 export const sponsorshipSchema = z
   .object({
     adUnitId: z.string().min(1).max(120),
@@ -13,6 +24,7 @@ export const sponsorshipSchema = z
     active: z.boolean().optional(),
     sortOrder: z.number().int().nonnegative().optional(),
     amount: z.number().nonnegative().optional(),
+    targeting: targetingSchema,
   })
   .strict();
 

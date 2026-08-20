@@ -54,6 +54,7 @@ export async function POST(request: Request) {
       active: parsed.data.active ?? true,
       sort_order: parsed.data.sortOrder ?? 0,
       amount: parsed.data.amount ?? 0,
+      targeting: parsed.data.targeting ?? null,
     })
     .select()
     .single();

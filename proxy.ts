@@ -1,10 +1,30 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isPaidTier } from "@/lib/payments/plans";
 
 const RUTAS_PUBLICAS = ["/", "/explorar", "/especies", "/calculadoras", "/registro", "/login", "/api"];
 
+// Rutas que un usuario autenticado con plan gratuito sí puede usar.
+const RUTAS_LIBRES_AUTENTICADO = [
+  "/explorar",
+  "/especies",
+  "/calculadoras",
+  "/pricing",
+  "/suscripcion",
+  "/perfil",
+  "/registro",
+  "/login",
+  "/api",
+];
+
 export function esRutaProtegida(pathname: string): boolean {
   return !RUTAS_PUBLICAS.some((ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`));
+}
+
+function esRutaLibreAutenticado(pathname: string): boolean {
+  return RUTAS_LIBRES_AUTENTICADO.some(
+    (ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`),
+  );
 }
 
 export async function proxy(request: NextRequest) {
@@ -47,6 +67,21 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/huerto";
     return NextResponse.redirect(url);
+  }
+
+  // Gating por plan: rutas core requieren suscripción de pago.
+  if (user && !esRutaLibreAutenticado(pathname)) {
+    const { data: profile } = await supabase
+      .from("perfiles")
+      .select("plan")
+      .eq("id", user.id)
+      .maybeSingle();
+    const plan = profile?.plan ?? "gratuito";
+    if (plan !== "admin" && !isPaidTier(plan)) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/pricing";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

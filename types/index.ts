@@ -102,6 +102,36 @@ export type SponsorshipScreen = "explorar" | "huerto" | "ficha" | "calendario";
 
 export type PaymentStatus = "unpaid" | "pending" | "paid" | "failed";
 
+export type PlanTier = "huertero" | "cosecha" | "full";
+export type BillingInterval = "monthly" | "yearly";
+export type SubscriptionStatus =
+  | "inactive"
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "canceled";
+
+export interface Subscription {
+  id: string;
+  userId: string;
+  plan: PlanTier;
+  interval: BillingInterval;
+  status: SubscriptionStatus;
+  currentPeriodStart?: string | null;
+  currentPeriodEnd?: string | null;
+  trialEnd?: string | null;
+  cancelAt?: string | null;
+  paidVia?: string | null;
+}
+
+export interface SponsorshipTargeting {
+  segments?: string[];
+  purchasingPowerTier?: string[];
+  primaryInterestCrop?: string[];
+  region?: string[];
+  comuna?: string[];
+}
+
 export interface Sponsorship {
   id: string;
   adUnitId: string;
@@ -117,6 +147,7 @@ export interface Sponsorship {
   amount: number;
   paymentStatus: PaymentStatus;
   paidAt?: string | null;
+  targeting?: SponsorshipTargeting | null;
 }
 
 export type TipoTarea = "riego" | "nutricion" | "sanidad" | "personalizada";
