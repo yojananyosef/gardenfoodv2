@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   mercadoPagoProvider,
@@ -16,30 +17,50 @@ export const dynamic = "force-dynamic";
 //   - subscription_authorized_payment               -> each recurring charge
 
 async function handle(request: Request): Promise<NextResponse> {
+  const secret = process.env.MP_WEBHOOK_SECRET;
   const url = new URL(request.url);
+  const xSignature = request.headers.get("x-signature") ?? "";
+  const xRequestId = request.headers.get("x-request-id") ?? "";
+
+  let rawBody = "";
+  let bodyJson: Record<string, unknown> | null = null;
+  try {
+    rawBody = await request.text();
+    bodyJson = rawBody ? (JSON.parse(rawBody) as Record<string, unknown>) : null;
+  } catch {
+    // ignore
+  }
+
+  const bodyData = (bodyJson?.data ?? null) as { id?: string } | null;
+
   let topic: string | undefined =
     url.searchParams.get("topic") ??
     url.searchParams.get("type") ??
-    undefined;
+    (typeof bodyJson?.topic === "string" ? bodyJson.topic : undefined) ??
+    (typeof bodyJson?.type === "string" ? bodyJson.type : undefined);
   let id: string | undefined =
     url.searchParams.get("id") ??
     url.searchParams.get("data.id") ??
     url.searchParams.get("resource") ??
-    undefined;
+    (typeof bodyJson?.id === "string" ? bodyJson.id : undefined) ??
+    (bodyData?.id ?? undefined);
 
-  if (!topic || !id) {
-    try {
-      const body = (await request.json()) as {
-        topic?: string;
-        type?: string;
-        id?: string;
-        data?: { id?: string };
-      };
-      topic = topic ?? body.topic ?? body.type;
-      id = id ?? body.id ?? body.data?.id ?? undefined;
-    } catch {
-      // ignore
+  if (secret) {
+    const candidates = [
+      url.searchParams.get("data.id"),
+      url.searchParams.get("id"),
+      bodyData?.id,
+    ].filter((v): v is string => typeof v === "string" && v.length > 0);
+    if (
+      !verifyMercadoPagoSignature(xSignature, xRequestId, candidates, secret)
+    ) {
+      console.error("[payments/webhook] rejected: invalid signature");
+      return NextResponse.json({ error: "invalid signature" }, { status: 401 });
     }
+  } else {
+    console.warn(
+      "[payments/webhook] MP_WEBHOOK_SECRET not set; skipping signature validation",
+    );
   }
 
   if (!topic || !id) {
@@ -58,6 +79,38 @@ async function handle(request: Request): Promise<NextResponse> {
     return await handlePayment(id, admin);
   }
   return NextResponse.json({ ok: true });
+}
+
+function verifyMercadoPagoSignature(
+  xSignature: string,
+  xRequestId: string,
+  dataIdCandidates: string[],
+  secret: string,
+): boolean {
+  let ts: string | null = null;
+  let v1: string | null = null;
+  for (const part of xSignature.split(/[,&]/)) {
+    const idx = part.indexOf("=");
+    if (idx === -1) continue;
+    const key = part.slice(0, idx).trim();
+    const value = part.slice(idx + 1).trim();
+    if (key === "ts") ts = value;
+    if (key === "v1") v1 = value;
+  }
+  if (!ts || !v1) return false;
+
+  const expected = Buffer.from(v1, "utf8");
+  for (const candidate of dataIdCandidates) {
+    const manifest = `id:${candidate};request-id:${xRequestId};ts:${ts};`;
+    const hash = Buffer.from(
+      createHmac("sha256", secret).update(manifest).digest("hex"),
+      "utf8",
+    );
+    if (hash.length === expected.length && timingSafeEqual(hash, expected)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 async function handlePayment(
