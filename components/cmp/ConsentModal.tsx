@@ -11,6 +11,7 @@ const MOTIVATIONAL_COPY = {
   body: "Permítenos crear una experiencia a tu medida donde sepamos exactamente cuándo podar, regar y qué fertilizante necesita tu tierra.",
   primary: "Consentir y Comenzar",
   secondary: "Gestionar opciones",
+  reject: "Rechazar todo",
 };
 
 export interface ConsentModalProps {
@@ -71,6 +72,54 @@ export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModal
     onConsent(consent);
   }
 
+  async function rejectAll() {
+    const draft = {
+      personalizedAds: false,
+      preciseGeo: false,
+      thirdPartySharing: false,
+      deviceLinking: false,
+      legitimateInterestOpposed: true,
+    };
+    try {
+      const response = await fetch("/api/v1/cmp/consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deviceId, ...draft }),
+      });
+      if (response.ok) {
+        const data = (await response.json()) as {
+          consent: { expiresAt: string };
+        };
+        const consent = buildLocalConsent({
+          userId,
+          deviceId,
+          personalizedAds: false,
+          preciseGeo: false,
+          thirdPartySharing: false,
+          deviceLinking: false,
+          legitimateInterestOpposed: true,
+          expiresAt: data.consent.expiresAt,
+        });
+        setLocalConsent(consent);
+        onConsent(consent);
+        return;
+      }
+    } catch {
+      // fall through to local-only rejected consent
+    }
+    const consent = buildLocalConsent({
+      userId,
+      deviceId,
+      personalizedAds: false,
+      preciseGeo: false,
+      thirdPartySharing: false,
+      deviceLinking: false,
+      legitimateInterestOpposed: true,
+    });
+    setLocalConsent(consent);
+    onConsent(consent);
+  }
+
   function saveDraft(draft: ConsentDraft) {
     const consent = buildLocalConsent({
       userId,
@@ -86,8 +135,14 @@ export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModal
     onConsent(consent);
   }
 
+  function handleOpenChange(next: boolean) {
+    if (!next) {
+      void rejectAll();
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={() => {}} modal>
+    <Dialog open={open} onOpenChange={handleOpenChange} modal>
       {manage ? (
         <ConsentPreferences
           title={MOTIVATIONAL_COPY.title}
@@ -98,7 +153,7 @@ export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModal
       ) : (
         <DialogContent
           className="max-w-sm"
-          showCloseButton={false}
+          showCloseButton={true}
           role="alertdialog"
         >
           <DialogTitle className="text-lg font-semibold">
@@ -120,6 +175,13 @@ export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModal
               onClick={() => setManage(true)}
             >
               {MOTIVATIONAL_COPY.secondary}
+            </Button>
+            <Button
+              variant="ghost"
+              className="h-auto min-h-11 w-full justify-center px-2 text-sm font-normal text-muted-foreground hover:underline"
+              onClick={() => void rejectAll()}
+            >
+              {MOTIVATIONAL_COPY.reject}
             </Button>
           </div>
         </DialogContent>

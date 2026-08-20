@@ -1,15 +1,17 @@
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
 import { SponsoredBanner } from "@/components/ads/SponsoredBanner";
 import { AgregarCultivo } from "@/components/huerto/AgregarCultivo";
+import { AgregarArbol } from "@/components/huerto/AgregarArbol";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { ListaCultivos } from "@/components/huerto/ListaCultivos";
+import { ListaArboles } from "@/components/huerto/ListaArboles";
 import { prepararCultivos } from "@/lib/huerto/nombres";
 import { TareasDelDia } from "@/components/huerto/TareasDelDia";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import { ESPECIES, MESES } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
-import { getCultivos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
+import { getArboles, getCultivos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,10 +29,11 @@ export default async function HuertoPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [cultivos, tareas, perfil, sponsorships] = await Promise.all([
+  const [cultivos, tareas, perfil, arboles, sponsorships] = await Promise.all([
     getCultivos(user.id),
     getTareasDelDia(user.id, hoyISO()),
     getPerfil(user.id),
+    getArboles(user.id),
     getActiveSponsorships("huerto"),
   ]);
 
@@ -95,6 +98,19 @@ export default async function HuertoPage() {
         </CardHeader>
         <CardContent>
           <ListaCultivos cultivos={cultivosConNombre} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Tu inventario de árboles</CardTitle>
+          <CardDescription>
+            Registra árboles frutales individuales de tu huerto.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <AgregarArbol especies={ESPECIES} />
+          <ListaArboles arboles={arboles} />
         </CardContent>
       </Card>
 

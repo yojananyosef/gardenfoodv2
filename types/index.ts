@@ -125,6 +125,15 @@ export interface Cultivo {
   createdAt: string;
 }
 
+export interface Arbol {
+  id: string;
+  especie: string;
+  cantidad: number;
+  fechaPlantacion: string | null;
+  observaciones: string | null;
+  createdAt: string;
+}
+
 export interface Tarea {
   id: string;
   fecha: string;

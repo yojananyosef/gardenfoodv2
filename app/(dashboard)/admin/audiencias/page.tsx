@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RefreshAudienciasButton } from "@/components/admin/RefreshAudienciasButton";
 import {
   Select,
   SelectContent,
@@ -103,6 +104,7 @@ export default async function AdminAudienciasPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <RefreshAudienciasButton />
           <form method="get" action="/admin/audiencias" className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="segment">Segmento comercial</Label>

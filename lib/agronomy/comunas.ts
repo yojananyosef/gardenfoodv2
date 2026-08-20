@@ -254,3 +254,15 @@ export const COMUNAS: ComunaEntry[] = [
   { comuna: "Timaukel", zonaId: 20, region: "Magallanes" }
 ];
 
+function normalizar(texto: string): string {
+  return texto.trim().toLowerCase();
+}
+
+const COMUNAS_POR_NOMBRE = new Map<string, ComunaEntry>(
+  COMUNAS.map((c) => [normalizar(c.comuna), c]),
+);
+
+export function buscarComuna(comuna: string): ComunaEntry | null {
+  return COMUNAS_POR_NOMBRE.get(normalizar(comuna)) ?? null;
+}
+

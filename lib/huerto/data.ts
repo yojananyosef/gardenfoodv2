@@ -1,4 +1,4 @@
-import type { Cultivo, Tarea, TipoTarea, EstadoTarea } from "@/types";
+import type { Arbol, Cultivo, Tarea, TipoTarea, EstadoTarea } from "@/types";
 import { createClient } from "@/lib/supabase/server";
 
 interface CultivoRow {
@@ -6,6 +6,26 @@ interface CultivoRow {
   especie: string;
   cantidad: number;
   created_at: string;
+}
+
+interface ArbolRow {
+  id: string;
+  especie: string;
+  cantidad: number;
+  fecha_plantacion: string | null;
+  observaciones: string | null;
+  created_at: string;
+}
+
+export function mapArbol(row: ArbolRow): Arbol {
+  return {
+    id: row.id,
+    especie: row.especie,
+    cantidad: row.cantidad,
+    fechaPlantacion: row.fecha_plantacion,
+    observaciones: row.observaciones,
+    createdAt: row.created_at,
+  };
 }
 
 interface TareaRow {
@@ -51,6 +71,18 @@ export async function getCultivos(userId: string): Promise<Cultivo[]> {
 
   if (error) return [];
   return (data as CultivoRow[]).map(mapCultivo);
+}
+
+export async function getArboles(userId: string): Promise<Arbol[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("gf_arboles")
+    .select("id, especie, cantidad, fecha_plantacion, observaciones, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true });
+
+  if (error) return [];
+  return (data as ArbolRow[]).map(mapArbol);
 }
 
 export async function getTareasDelDia(

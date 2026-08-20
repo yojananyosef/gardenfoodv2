@@ -132,3 +132,77 @@ export async function agregarTarea(input: z.infer<typeof AGREGAR_TAREA>) {
   revalidatePath("/calendario");
   return { ok: true as const };
 }
+
+const AGREGAR_ARBOL = z.object({
+  especie: z.string().min(1).max(80),
+  cantidad: z.number().int().min(1).max(1000).default(1),
+  fechaPlantacion: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  observaciones: z.string().max(500).nullable().optional(),
+});
+
+export async function agregarArbol(input: z.infer<typeof AGREGAR_ARBOL>) {
+  const parsed = AGREGAR_ARBOL.parse(input);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const { error } = await supabase.from("gf_arboles").insert({
+    user_id: user.id,
+    especie: parsed.especie,
+    cantidad: parsed.cantidad,
+    fecha_plantacion: parsed.fechaPlantacion ?? null,
+    observaciones: parsed.observaciones ?? null,
+  });
+
+  if (error) return { error: "No se pudo agregar el árbol." };
+
+  revalidatePath("/huerto");
+  return { ok: true as const };
+}
+
+export async function actualizarArbol(
+  id: string,
+  input: { cantidad?: number; fechaPlantacion?: string | null; observaciones?: string | null },
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const { error } = await supabase
+    .from("gf_arboles")
+    .update({
+      cantidad: input.cantidad,
+      fecha_plantacion: input.fechaPlantacion ?? null,
+      observaciones: input.observaciones ?? null,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) return { error: "No se pudo actualizar el árbol." };
+
+  revalidatePath("/huerto");
+  return { ok: true as const };
+}
+
+export async function eliminarArbol(id: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const { error } = await supabase
+    .from("gf_arboles")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) return { error: "No se pudo eliminar el árbol." };
+
+  revalidatePath("/huerto");
+  return { ok: true as const };
+}

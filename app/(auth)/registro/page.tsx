@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ConsentModal } from "@/components/cmp/ConsentModal";
 import { createClient } from "@/lib/supabase/client";
 import { getDeviceId } from "@/lib/telemetry/device";
+import { buscarComuna } from "@/lib/agronomy";
 
 interface FormState {
   email: string;
@@ -43,6 +44,11 @@ export default function RegistroPage() {
     setError(null);
     setSubmitting(true);
     try {
+      const match = buscarComuna(form.comuna);
+      if (!match) {
+        setError("No encontramos tu comuna en el catálogo. Revisa la escritura (ej. 'La Florida', 'Concepción').");
+        return;
+      }
       const supabase = createClient();
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: form.email,
@@ -61,9 +67,9 @@ export default function RegistroPage() {
           id: data.user.id,
           email: form.email,
           nombre: form.nombre,
-          region: form.region,
-          comuna: form.comuna,
-          zona_agroclimatica: "central",
+          region: match.region,
+          comuna: match.comuna,
+          zona_agroclimatica: String(match.zonaId),
         });
       }
       setShowConsent(true);

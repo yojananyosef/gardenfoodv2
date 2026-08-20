@@ -1,4 +1,4 @@
-import { COMUNAS, type ComunaEntry } from "./comunas";
+import { COMUNAS, buscarComuna, type ComunaEntry } from "./comunas";
 import { CONSEJOS } from "./consejos";
 import { GRUPO_DISTANCIA } from "./distancias";
 import { ESPECIES, type Especie } from "./especies";
@@ -16,7 +16,7 @@ export type {
   Viabilidad,
   ZonaClimatica,
 };
-export { COMUNAS, COMUNAS_ZONA, CONSEJOS, ESPECIES, FENOLOGIA, FICHAS, GRUPO_DISTANCIA, MACROZONA_MAP, VIABILIDAD, ZONAS };
+export { COMUNAS, COMUNAS_ZONA, CONSEJOS, ESPECIES, FENOLOGIA, FICHAS, GRUPO_DISTANCIA, MACROZONA_MAP, VIABILIDAD, ZONAS, buscarComuna };
 
 export const MESES = [
   "Enero",
