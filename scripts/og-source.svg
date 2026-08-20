@@ -1,0 +1,20 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#15803d"/>
+      <stop offset="1" stop-color="#0f5132"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g transform="translate(90, 215)">
+    <rect width="200" height="200" rx="44" fill="#ffffff" opacity="0.12"/>
+    <g transform="translate(100, 100)" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 140 V0"/>
+      <path d="M0 36 C-46 36 -78 4 -78 -40 C-24 -40 0 -8 0 36 Z" fill="#ffffff" stroke="none"/>
+      <path d="M0 72 C46 72 78 40 78 -4 C24 -4 0 28 0 72 Z" fill="#bbf7d0" stroke="none"/>
+    </g>
+  </g>
+  <text x="350" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="700" fill="#ffffff">GardenFood</text>
+  <text x="352" y="370" font-family="system-ui, -apple-system, sans-serif" font-size="34" fill="#d1fae5">Tu huerto frutal, por comuna</text>
+  <text x="352" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#a7f3d0">Consejos agronómicos para Chile</text>
+</svg>
