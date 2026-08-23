@@ -71,7 +71,7 @@ export async function POST(request: Request) {
   // Draft subscription row; its id is the Mercado Pago external_reference.
   const { data: draft, error: insertError } = await admin
     .from("gf_subscriptions")
-    .insert({ user_id: user.id, plan: tier, interval, status: "trialing" })
+    .insert({ user_id: user.id, plan: tier, interval, status: "pending" })
     .select("id")
     .single();
   if (insertError || !draft) {
@@ -104,7 +104,8 @@ export async function POST(request: Request) {
       transactionAmount: amount,
       interval,
       backUrl,
-      freeTrialDays: 14,
+      // freeTrial desactivado temporalmente: el checkout con trial + UNDEFINED SOURCE estaba siendo rechazado por risk en sandbox MLC
+      freeTrialDays: undefined,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -144,7 +145,7 @@ export async function POST(request: Request) {
   const { error: profileError } = await admin
     .from("perfiles")
     .update({
-      subscription_status: "trialing",
+      subscription_status: "pending",
       subscription_id: created.subscriptionId,
       payment_provider: "mercadopago",
     })
