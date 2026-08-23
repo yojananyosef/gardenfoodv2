@@ -47,7 +47,7 @@ export default function ConfirmPage() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-md px-4 py-16">
+    <div className="mx-auto max-w-md py-16">
       <Card>
         <CardHeader>
           <CardTitle>Confirmando tu suscripción</CardTitle>
@@ -105,6 +105,6 @@ export default function ConfirmPage() {
           )}
         </CardContent>
       </Card>
-    </main>
+    </div>
   );
 }

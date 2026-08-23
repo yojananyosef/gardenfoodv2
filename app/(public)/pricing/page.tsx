@@ -47,7 +47,7 @@ export default function PricingPage() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
+    <div className="mx-auto max-w-5xl py-10">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold">Planes GardenFood</h1>
         <p className="mt-2 text-muted-foreground">
@@ -139,6 +139,6 @@ export default function PricingPage() {
           <p className="text-xs">Prueba directa (sin pasar por tu app): <a className="underline" href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_id=8ba5e1478a934b21983797727d4cf3bc&activation=true" target="_blank" rel="noopener">init_point de prueba huertero 9990</a> (payer `gardenfood.tester.1787264643@example.com`).</p>
         </div>
       </details>
-    </main>
+    </div>
   );
 }
