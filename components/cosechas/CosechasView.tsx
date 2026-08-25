@@ -1,7 +1,7 @@
 "use client";
 
-import { useOptimistic, useTransition, useState } from "react";
-import { Plus, Trash2, Trophy } from "lucide-react";
+import { useMemo, useOptimistic, useTransition, useState } from "react";
+import { Plus, Trash2, Trophy, TrendingUp, Leaf } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Pie, PieChart, XAxis, YAxis } from "recharts";
 import { cn } from "@/lib/utils";
 import { agregarRegistro, eliminarRegistro } from "@/lib/cosechas/actions";
 import { calcularLogros, type Logro } from "@/lib/cosechas/logros";
@@ -77,6 +81,120 @@ export function Estadisticas({ registros }: { registros: RegistroCosecha[] }) {
         </div>
       ))}
     </div>
+  );
+}
+
+export function ProduccionChart({ registros }: { registros: RegistroCosecha[] }) {
+  const data = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const r of registros) {
+      if (r.produccionKg == null) continue;
+      const d = new Date(r.fecha);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      map.set(key, (map.get(key) ?? 0) + r.produccionKg);
+    }
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-6)
+      .map(([mes, kg]) => ({ mes: mes.slice(5) + "/" + mes.slice(2, 4), kg: Math.round(kg * 10) / 10 }));
+  }, [registros]);
+
+  if (data.length === 0) {
+    return (
+      <Card className="rounded-2xl border-dashed">
+        <CardContent className="py-8 text-center text-sm text-muted-foreground">Aún sin producción para graficar — registra tu primera cosecha.</CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="rounded-2xl">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <Badge className="gap-1 rounded-full"><TrendingUp className="size-3" /> Producción</Badge>
+          <span className="text-xs text-muted-foreground">kg por mes (últimos 6)</span>
+        </div>
+        <CardTitle className="text-base">Evolución de cosechas</CardTitle>
+        <CardDescription className="text-xs">Suma mensual de kg registrados</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={{ kg: { label: "kg", color: "var(--primary)" } }} className="h-[180px] w-full">
+          <AreaChart data={data}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="mes" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
+            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Area type="monotone" dataKey="kg" stroke="var(--primary)" fill="var(--primary)" fillOpacity={0.15} strokeWidth={2} dot={{ r: 3 }} />
+          </AreaChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function DistribucionEspecieChart({ registros }: { registros: RegistroCosecha[] }) {
+  const data = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const r of registros) {
+      map.set(r.especie, (map.get(r.especie) ?? 0) + (r.produccionKg ?? 1));
+    }
+    const colors = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
+    return Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([especie, kg], i) => ({ especie: nombreEspecie(especie), kg, fill: colors[i % colors.length] }));
+  }, [registros]);
+
+  if (data.length === 0) return null;
+
+  return (
+    <Card className="rounded-2xl">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1 rounded-full"><Leaf className="size-3" /> Especies</Badge>
+          <span className="text-xs text-muted-foreground">top 5 por producción</span>
+        </div>
+        <CardTitle className="text-base">Distribución por especie</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={{ kg: { label: "kg" } }} className="h-[180px] w-full">
+          <BarChart data={data} layout="vertical">
+            <CartesianGrid horizontal={false} strokeDasharray="3 3" />
+            <XAxis type="number" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
+            <YAxis dataKey="especie" type="category" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} width={80} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="kg" radius={[0, 6, 6, 0]} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function LogrosChart({ logros }: { logros: Logro[] }) {
+  const data = useMemo(() => {
+    const unlocked = logros.filter((l) => l.unlocked).length;
+    return [
+      { name: "Desbloqueados", value: unlocked, fill: "var(--primary)" },
+      { name: "Bloqueados", value: logros.length - unlocked, fill: "var(--muted)" },
+    ];
+  }, [logros]);
+
+  return (
+    <Card className="rounded-2xl">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">Progreso de logros</CardTitle>
+        <CardDescription className="text-xs">{data[0].value} de {logros.length} desbloqueados</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={{ value: { label: "logros" } }} className="mx-auto h-[160px] w-full">
+          <PieChart>
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <Pie data={data} dataKey="value" innerRadius={45} outerRadius={65} strokeWidth={2} />
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
   );
 }
 

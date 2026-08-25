@@ -36,6 +36,7 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TareasDonut, AlertasBar } from "@/components/huerto/HuertoCharts";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import { ESPECIES, MESES, getEspeciesPorZona, getZonaIdDeComuna } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
@@ -76,6 +77,18 @@ export default async function HuertoPage() {
   const esHuertoVacio = cultivos.length === 0 && arboles.length === 0;
   const nombre = (user.user_metadata as Record<string, unknown>)?.["nombre"] as string | undefined;
   const nombreCorto = nombre ? nombre.split(" ")[0] : null;
+
+  const tareasChartData = [
+    { name: "Pendiente", value: tareas.filter((t) => t.estado === "pendiente").length, fill: "var(--muted-foreground)" },
+    { name: "En proceso", value: tareas.filter((t) => t.estado === "en_proceso").length, fill: "var(--chart-2)" },
+    { name: "Completada", value: tareas.filter((t) => t.estado === "completada").length, fill: "var(--primary)" },
+  ].filter((d) => d.value > 0);
+  const alertasChartData = (() => {
+    const map = new Map<string, number>();
+    for (const a of alertas) map.set(a.tipo, (map.get(a.tipo) ?? 0) + 1);
+    const colors: Record<string, string> = { helada: "var(--chart-4)", sequia: "var(--chart-2)", lluvia: "var(--chart-3)", calor: "var(--destructive)" };
+    return Array.from(map.entries()).map(([tipo, count]) => ({ tipo, count, fill: colors[tipo] ?? "var(--primary)" }));
+  })();
 
   return (
     <div className="flex flex-col gap-5">
@@ -496,6 +509,18 @@ export default async function HuertoPage() {
                 </CardContent>
               </Card>
 
+              <Card className="rounded-2xl">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <CheckCircle2 className="size-4 text-primary" /> Estado de hoy
+                  </CardTitle>
+                  <CardDescription className="text-xs">Donut por estado</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <TareasDonut data={tareasChartData} />
+                </CardContent>
+              </Card>
+
               <Card className="rounded-2xl border-dashed bg-muted/20">
                 <CardContent className="p-4">
                   <p className="flex items-center gap-1.5 text-xs font-medium">
@@ -553,6 +578,7 @@ export default async function HuertoPage() {
                     <CloudRain className="size-3" /> Lluvia
                   </span>
                 </div>
+                <AlertasBar data={alertasChartData} />
               </CardContent>
             </Card>
 

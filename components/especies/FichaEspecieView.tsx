@@ -324,7 +324,23 @@ function TabCosecha({ cos }: { cos: FichaEspecie["cos"] }) {
   );
 }
 
-function TabFenologia({ dbKey, riego, especieNombre }: { dbKey: string; riego?: FichaEspecie["riego"]; especieNombre?: string }) {
+const MESES_ABBR = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"] as const;
+const MES_TO_NUM: Record<string, number> = Object.fromEntries(MESES_ABBR.map((m, i) => [m.toLowerCase(), i + 1])) as Record<string, number>;
+function parseMesRange(s: string): number[] | null {
+  if (!s || s.trim() === "—" || s.trim() === "-") return null;
+  const parts = s.split("-").map((p) => p.trim().slice(0, 3).toLowerCase());
+  if (parts.length === 1) {
+    const n = MES_TO_NUM[parts[0]];
+    return n ? [n] : null;
+  }
+  const a = MES_TO_NUM[parts[0]];
+  const b = MES_TO_NUM[parts[1]];
+  if (!a || !b) return null;
+  if (a <= b) return Array.from({ length: b - a + 1 }, (_, i) => a + i);
+  return [...Array.from({ length: 12 - a + 1 }, (_, i) => a + i), ...Array.from({ length: b }, (_, i) => i + 1)];
+}
+
+function TabFenologia({ dbKey, ficha }: { dbKey: string; ficha: FichaEspecie }) {
   const [zonaNombre, setZonaNombre] = useState<string | null>(null);
   const [entrada, setEntrada] = useState<ReturnType<typeof getFenologia>>(null);
   const [loading, setLoading] = useState(true);
@@ -347,7 +363,73 @@ function TabFenologia({ dbKey, riego, especieNombre }: { dbKey: string; riego?: 
   if (!entrada) return <p className="text-sm text-muted-foreground">Sin datos para tu zona {zonaNombre ? `(${zonaNombre})` : ""}.</p>;
   return (
     <div className="flex flex-col gap-4">
-      {riego && especieNombre ? <CurvaDemandaHidrica riego={riego} especieNombre={especieNombre} /> : null}
+      {/* Gantt bento — todas las macrozonas */}
+      <Card className="overflow-hidden rounded-2xl">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Badge className="gap-1 rounded-full"><Flower2 className="size-3" /> Fenología por macrozona</Badge>
+            {zonaNombre ? <Badge variant="outline" className="rounded-full border-primary/30 bg-primary/5 text-primary">Tu zona: {zonaNombre}</Badge> : null}
+          </div>
+          <CardDescription className="text-xs">Brotación · Floración · Cuaja · Cosecha · Poda a lo largo del año</CardDescription>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <div className="min-w-[640px]">
+            <div className="grid grid-cols-[110px_repeat(12,1fr)] gap-1 text-[11px] font-medium">
+              <div className="text-muted-foreground">Macrozona</div>
+              {MESES_ABBR.map((m) => (
+                <div key={m} className="text-center font-mono text-muted-foreground">{m}</div>
+              ))}
+              {(ficha.fenologia as unknown as Array<{ macrozona: string; codigo: string; brotacion: string; floracion: string; cuaja: string; cosIni: string; cosFin: string; poda: string; nota: string }>).map((row) => {
+                const isMine = row.macrozona === zonaNombre;
+                return (
+                  <div key={row.macrozona} className={cn("contents", isMine && "[&>div]:bg-primary/5")}>
+                    <div className={cn("flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs", isMine ? "bg-primary text-primary-foreground font-medium" : "bg-muted")}>
+                      <span className="hidden size-1.5 rounded-full bg-current sm:inline-block" aria-hidden />
+                      {row.macrozona}
+                    </div>
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const mesNum = i + 1;
+                      const inBrot = parseMesRange(row.brotacion)?.includes(mesNum);
+                      const inFlor = parseMesRange(row.floracion)?.includes(mesNum);
+                      const inCuaja = parseMesRange(row.cuaja)?.includes(mesNum);
+                      const inCos = (() => {
+                        const r = parseMesRange(row.cosIni);
+                        const r2 = parseMesRange(row.cosFin);
+                        if (!r || !r2) return false;
+                        // Cosecha es rango cosIni-cosFin
+                        const start = r[0];
+                        const end = r2[0];
+                        if (start <= end) return mesNum >= start && mesNum <= end;
+                        return mesNum >= start || mesNum <= end;
+                      })();
+                      const inPoda = parseMesRange(row.poda)?.includes(mesNum);
+                      return (
+                        <div key={i} className="flex flex-col gap-1 py-1">
+                          <div className="grid grid-rows-5 gap-0.5">
+                            <div className={cn("h-1.5 rounded-full", inBrot ? "bg-emerald-500" : "bg-transparent")} title={`Brotación: ${row.brotacion}`} />
+                            <div className={cn("h-1.5 rounded-full", inFlor ? "bg-pink-500" : "bg-transparent")} title={`Floración: ${row.floracion}`} />
+                            <div className={cn("h-1.5 rounded-full", inCuaja ? "bg-amber-500" : "bg-transparent")} title={`Cuaja: ${row.cuaja}`} />
+                            <div className={cn("h-1.5 rounded-full", inCos ? "bg-primary" : "bg-transparent")} title={`Cosecha: ${row.cosIni}–${row.cosFin}`} />
+                            <div className={cn("h-1.5 rounded-full", inPoda ? "bg-slate-500" : "bg-transparent")} title={`Poda: ${row.poda}`} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2 text-xs">
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-emerald-500" /> Brotación</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-pink-500" /> Floración</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-amber-500" /> Cuaja</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-primary" /> Cosecha</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-slate-500" /> Poda</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {[
         { k: "Brotación", v: entrada.brotacion },
@@ -460,7 +542,7 @@ export function FichaEspecieView({ especie, ficha }: { especie: Especie; ficha: 
         <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
         <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
         <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
-        <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} riego={ficha.riego} especieNombre={especie.nombre} /></TabsContent>
+        <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} /></TabsContent>
         <TabsContent value="consejos"><TabConsejos dbKey={especie.dbKey} /></TabsContent>
         <TabsContent value="info"><TabInfo ficha={ficha} zonaId={zonaId} /></TabsContent>
       </Tabs>

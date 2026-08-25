@@ -3,6 +3,9 @@ import {
   Estadisticas,
   Historial,
   Logros,
+  ProduccionChart,
+  DistribucionEspecieChart,
+  LogrosChart,
 } from "@/components/cosechas/CosechasView";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { calcularLogros } from "@/lib/cosechas/logros";
@@ -22,36 +25,45 @@ export default async function CosechasPage() {
   const especies = ESPECIES.map((e) => e.dbKey);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div>
         <h1 className="font-fraunces text-2xl font-semibold">Cosechas</h1>
-        <p className="text-sm text-muted-foreground">
-          Bitácora de tu producción y logros del huerto.
-        </p>
+        <p className="text-sm text-muted-foreground">Bitácora de tu producción y logros — ahora visual.</p>
       </div>
 
       <Estadisticas registros={registros} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Registrar cosecha</CardTitle>
-          <CardDescription>
-            Anota qué produjo tu huerto esta temporada.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AgregarRegistro especies={especies} />
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-8">
+          <ProduccionChart registros={registros} />
+        </div>
+        <div className="lg:col-span-4">
+          <DistribucionEspecieChart registros={registros} />
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Logros</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Logros logros={logros} />
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-12">
+        <Card className="lg:col-span-7">
+          <CardHeader>
+            <CardTitle>Registrar cosecha</CardTitle>
+            <CardDescription>Anota qué produjo tu huerto esta temporada.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AgregarRegistro especies={especies} />
+          </CardContent>
+        </Card>
+        <div className="flex flex-col gap-4 lg:col-span-5">
+          <LogrosChart logros={logros} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Logros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Logros logros={logros} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       <Card>
         <CardHeader>

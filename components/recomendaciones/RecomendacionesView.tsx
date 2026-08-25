@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Pie, PieChart } from "recharts";
 import type { EspeciePorZona } from "@/lib/agronomy";
 
 function ViabBadge({ v }: { v: string }) {
@@ -64,17 +68,34 @@ export function RecomendacionesView({ si, riesgo, no, zonaNombre, comuna, isFall
     );
   }
 
+  const chartData = [
+    { name: "Recomendadas", value: si.length, fill: "var(--primary)" },
+    { name: "Con riesgo", value: riesgo.length, fill: "var(--chart-2)" },
+    { name: "No recomendadas", value: no.length, fill: "var(--muted)" },
+  ];
+
   return (
     <div className="flex flex-col gap-6">
-      <Card>
+      <Card className="overflow-hidden rounded-2xl">
         <CardHeader>
           <CardTitle>Recomendadas para {zonaNombre}</CardTitle>
           <CardDescription>{comuna} {isFallback ? "· zona por defecto (Santiago Norte)" : ""} — 30 especies clasificadas</CardDescription>
         </CardHeader>
-        <CardContent className="flex gap-4 text-sm">
-          <span className="text-emerald-700 font-medium">{si.length} recomendadas</span>
-          <span className="text-amber-600 font-medium">{riesgo.length} con riesgo</span>
-          <span className="text-muted-foreground">{no.length} no recomendadas</span>
+        <CardContent className="grid gap-4 sm:grid-cols-[1.2fr_0.8fr] sm:items-center">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap gap-2 text-sm">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 font-medium text-emerald-700"><span className="size-2 rounded-full bg-emerald-500" />{si.length} recomendadas</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 font-medium text-amber-700"><span className="size-2 rounded-full bg-amber-500" />{riesgo.length} con riesgo</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-muted-foreground">{no.length} no recomendadas</span>
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">Basado en viabilidad por zona agroclimática — filtrado para tu comuna, no genérico.</p>
+          </div>
+          <ChartContainer config={{ value: { label: "especies" } }} className="mx-auto h-[140px] w-full">
+            <PieChart>
+              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+              <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={36} outerRadius={58} strokeWidth={2} />
+            </PieChart>
+          </ChartContainer>
         </CardContent>
       </Card>
       <Section title="Recomendadas" items={si} />
