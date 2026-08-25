@@ -5,6 +5,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConsentPreferences } from "@/components/cmp/ConsentPreferences";
+import { TerrenoSection } from "@/components/perfil/TerrenoSection";
 import { UbicacionForm } from "@/components/perfil/UbicacionForm";
 import { getDeviceId } from "@/lib/telemetry/device";
 
@@ -28,6 +29,14 @@ export default function PerfilPage() {
               recomendaciones de cultivo.
             </p>
             <UbicacionForm />
+          </div>
+          <div className="flex flex-col gap-2 border-t pt-4">
+            <p className="text-sm font-medium">Tu terreno</p>
+            <p className="text-xs text-muted-foreground">
+              Ubícate en el mapa y dibuja los bordes de tu huerto para calcular
+              la superficie real de tu terreno.
+            </p>
+            <TerrenoSection />
           </div>
           <div className="flex items-center justify-between gap-4 border-t pt-4">
             <div>

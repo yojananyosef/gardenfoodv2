@@ -1,7 +1,16 @@
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const CACHE = `gardenfood-${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline.html";
 const PRECACHE = ["/", OFFLINE_URL];
+
+function cacheable(response) {
+  return response && response.ok && response.type === "basic";
+}
+
+function putInCache(request, response) {
+  if (!cacheable(response)) return;
+  caches.open(CACHE).then((cache) => cache.put(request, response.clone()));
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -36,8 +45,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
+          putInCache(request, response);
           return response;
         })
         .catch(() =>
@@ -56,8 +64,7 @@ self.addEventListener("fetch", (event) => {
       caches.match(request).then((cached) => {
         const network = fetch(request)
           .then((response) => {
-            const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(request, copy));
+            putInCache(request, response);
             return response;
           })
           .catch(() => cached);
