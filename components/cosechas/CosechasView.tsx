@@ -167,8 +167,8 @@ export function Historial({
   const [, startTransition] = useTransition();
 
   function handleEliminar(registro: RegistroCosecha) {
-    setOptimistic((prev) => prev.filter((r) => r.id !== registro.id));
     startTransition(async () => {
+      setOptimistic((prev) => prev.filter((r) => r.id !== registro.id));
       const result = await eliminarRegistro(registro.id);
       if (result.error) toast.error(result.error);
     });

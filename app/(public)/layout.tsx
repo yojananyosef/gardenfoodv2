@@ -20,7 +20,7 @@ export default async function PublicLayout({
         <TopBar />
         <main
           className={cn(
-            "mx-auto w-full max-w-2xl flex-1 px-4 py-6",
+            "mx-auto w-full max-w-6xl flex-1 px-4 py-6",
             user && "pb-24 md:pb-6",
           )}
         >

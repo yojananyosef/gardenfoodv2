@@ -19,12 +19,12 @@ const ACCION_ICON = {
 } as const;
 
 export function ZoneWidget() {
-  const [regionIndex, setRegionIndex] = useState<number | null>(null);
-  const [comunaIndex, setComunaIndex] = useState<number | null>(null);
+  const [regionName, setRegionName] = useState<string | null>(null);
+  const [comunaName, setComunaName] = useState<string | null>(null);
 
-  const region = regionIndex === null ? null : REGIONES[regionIndex];
+  const region = regionName ? REGIONES.find((r) => r.nombre === regionName) ?? null : null;
   const comuna =
-    region && comunaIndex !== null ? region.comunas[comunaIndex] : null;
+    region && comunaName ? region.comunas.find((c) => c.nombre === comunaName) ?? null : null;
 
   const mes = useMemo(() => new Date().getMonth(), []);
   const tareas = comuna ? ZONAS[comuna.zona]?.[mes] ?? [] : [];
@@ -32,20 +32,20 @@ export function ZoneWidget() {
 
   function handleRegionChange(value: string | null) {
     if (value === null) return;
-    setRegionIndex(Number(value));
-    setComunaIndex(null);
+    setRegionName(value);
+    setComunaName(null);
   }
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2 sm:flex-row">
-        <Select value={regionIndex === null ? null : regionIndex.toString()} onValueChange={handleRegionChange}>
+        <Select value={regionName} onValueChange={handleRegionChange}>
           <SelectTrigger className="w-full sm:w-52" size="default">
             <SelectValue placeholder="Región" />
           </SelectTrigger>
           <SelectContent>
-            {REGIONES.map((r, i) => (
-              <SelectItem key={r.nombre} value={i.toString()}>
+            {REGIONES.map((r) => (
+              <SelectItem key={r.nombre} value={r.nombre}>
                 {r.nombre}
               </SelectItem>
             ))}
@@ -53,9 +53,9 @@ export function ZoneWidget() {
         </Select>
 
         <Select
-          value={comunaIndex === null ? null : comunaIndex.toString()}
+          value={comunaName}
           onValueChange={(v) => {
-            if (v !== null) setComunaIndex(Number(v));
+            if (v !== null) setComunaName(v);
           }}
           disabled={!region}
         >
@@ -63,8 +63,8 @@ export function ZoneWidget() {
             <SelectValue placeholder={region ? "Comuna" : "Elige una región"} />
           </SelectTrigger>
           <SelectContent>
-            {region?.comunas.map((c, i) => (
-              <SelectItem key={c.nombre} value={i.toString()}>
+            {region?.comunas.map((c) => (
+              <SelectItem key={c.nombre} value={c.nombre}>
                 {c.nombre}
               </SelectItem>
             ))}

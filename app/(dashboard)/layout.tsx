@@ -11,7 +11,7 @@ export default function DashboardLayout({
     <TelemetryProvider>
       <div className="flex min-h-full flex-col">
         <TopBar />
-        <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-24 pt-6 md:pb-6">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-24 pt-6 md:pb-6">
           {children}
         </main>
         <BottomNav />

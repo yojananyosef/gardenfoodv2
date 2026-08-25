@@ -13,8 +13,8 @@ export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
   const [, startTransition] = useTransition();
 
   function handleEliminar(id: string) {
-    setOptimistic((prev) => prev.filter((a) => a.id !== id));
     startTransition(async () => {
+      setOptimistic((prev) => prev.filter((a) => a.id !== id));
       const result = await eliminarArbol(id);
       if (result.error) {
         toast.error(result.error);

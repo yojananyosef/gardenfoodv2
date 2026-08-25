@@ -66,18 +66,18 @@ export function CalendarioView({
   function handleAvanzar(tarea: Tarea) {
     const estados = ["pendiente", "en_proceso", "completada"] as const;
     const siguiente = estados[(estados.indexOf(tarea.estado) + 1) % estados.length];
-    setOptimistic((prev) =>
-      prev.map((t) => (t.id === tarea.id ? { ...t, estado: siguiente } : t)),
-    );
     startTransition(async () => {
+      setOptimistic((prev) =>
+        prev.map((t) => (t.id === tarea.id ? { ...t, estado: siguiente } : t)),
+      );
       const result = await avanzarEstadoTarea(tarea.id, tarea.estado);
       if (result.error) toast.error(result.error);
     });
   }
 
   function handleEliminar(tarea: Tarea) {
-    setOptimistic((prev) => prev.filter((t) => t.id !== tarea.id));
     startTransition(async () => {
+      setOptimistic((prev) => prev.filter((t) => t.id !== tarea.id));
       const result = await eliminarTarea(tarea.id);
       if (result.error) toast.error(result.error);
     });

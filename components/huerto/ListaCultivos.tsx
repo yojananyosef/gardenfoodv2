@@ -12,8 +12,8 @@ export function ListaCultivos({ cultivos }: { cultivos: CultivoLite[] }) {
   const [, startTransition] = useTransition();
 
   function handleEliminar(especie: string) {
-    setOptimistic((prev) => prev.filter((c) => c.especie !== especie));
     startTransition(async () => {
+      setOptimistic((prev) => prev.filter((c) => c.especie !== especie));
       const result = await eliminarCultivo(especie);
       if (result.error) {
         toast.error(result.error);

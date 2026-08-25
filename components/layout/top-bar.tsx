@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Calculator, Compass, LogIn, User } from "lucide-react";
+import { Calculator, Compass, LogIn, Sprout, User } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { createClient } from "@/lib/supabase/server";
@@ -15,29 +16,27 @@ const LINKS_USUARIO = [
 
 function GuestNav() {
   return (
-    <nav className="flex items-center gap-1 sm:gap-4">
-      <Link
-        href="/explorar"
-        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
-      >
-        <Compass className="size-4" aria-hidden />
-        <span className="hidden sm:inline">Explorar</span>
+    <nav className="flex items-center gap-1 sm:gap-1.5">
+      <Button variant="ghost" size="sm" className="hidden h-8 rounded-full sm:inline-flex" render={<Link href="/explorar" />}>
+        <Compass data-icon="inline-start" />
+        Explorar
+      </Button>
+      <Button variant="ghost" size="sm" className="hidden h-8 rounded-full sm:inline-flex" render={<Link href="/calculadoras" />}>
+        <Calculator data-icon="inline-start" />
+        Calculadoras
+      </Button>
+      {/* mobile compact */}
+      <Link href="/explorar" className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Explorar">
+        <Compass className="size-4" />
       </Link>
-      <Link
-        href="/calculadoras"
-        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
-      >
-        <Calculator className="size-4" aria-hidden />
-        <span className="hidden sm:inline">Calculadoras</span>
+      <Link href="/calculadoras" className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Calculadoras">
+        <Calculator className="size-4" />
       </Link>
-      <Link
-        href="/login"
-        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
-      >
-        <LogIn className="size-4" aria-hidden />
-        <span className="hidden sm:inline">Entrar</span>
-      </Link>
-      <Button size="sm" render={<Link href="/registro" />}>
+      <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/login" />}>
+        <LogIn data-icon="inline-start" />
+        Entrar
+      </Button>
+      <Button size="sm" className="h-8 rounded-full px-3" render={<Link href="/registro" />}>
         Registrarme
       </Button>
     </nav>
@@ -46,25 +45,18 @@ function GuestNav() {
 
 function UserNav() {
   return (
-    <nav className="flex items-center gap-4">
-      <div className="hidden items-center gap-4 text-sm md:flex">
+    <nav className="flex items-center gap-1 sm:gap-3">
+      <div className="hidden items-center gap-1 text-sm md:flex">
         {LINKS_USUARIO.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="text-muted-foreground hover:text-foreground"
-          >
+          <Button key={href} variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href={href} />}>
             {label}
-          </Link>
+          </Button>
         ))}
       </div>
-      <Link
-        href="/perfil"
-        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
-      >
-        <User className="size-4" aria-hidden />
+      <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/perfil" />}>
+        <User data-icon="inline-start" />
         <span className="hidden lg:inline">Perfil</span>
-      </Link>
+      </Button>
       <SignOutButton />
     </nav>
   );
@@ -77,10 +69,16 @@ export async function TopBar() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-12 w-full max-w-5xl items-center justify-between px-4">
-        <Link href="/" className="font-heading text-sm font-semibold tracking-wide">
-          GardenFood
+    <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4">
+        <Link href="/" className="inline-flex items-center gap-2.5">
+          <span className="inline-flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <Sprout className="size-4" aria-hidden />
+          </span>
+          <span className="font-heading text-[15px] font-semibold tracking-tight">GardenFood</span>
+          <Badge variant="secondary" className="hidden rounded-full px-1.5 py-0 text-[10px] sm:inline-flex">
+            CHILE
+          </Badge>
         </Link>
         {user ? <UserNav /> : <GuestNav />}
       </div>

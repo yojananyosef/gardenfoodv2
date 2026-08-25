@@ -115,10 +115,10 @@ export function TareasDelDia({ tareas }: { tareas: Tarea[] }) {
   function handleAvanzar(tarea: Tarea) {
     const siguiente =
       ESTADOS[(ESTADOS.indexOf(tarea.estado) + 1) % ESTADOS.length];
-    setOptimistic((prev) =>
-      prev.map((t) => (t.id === tarea.id ? { ...t, estado: siguiente } : t)),
-    );
     startTransition(async () => {
+      setOptimistic((prev) =>
+        prev.map((t) => (t.id === tarea.id ? { ...t, estado: siguiente } : t)),
+      );
       const result = await avanzarEstadoTarea(tarea.id, tarea.estado);
       if (result.error) return;
     });
