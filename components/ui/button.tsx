@@ -47,10 +47,17 @@ function Button({
   render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  // Base UI: nativeButton true for <button>, false for <a> (Link). Distinguish by href prop.
+  const isLink =
+    render != null &&
+    typeof render === "object" &&
+    "props" in (render as unknown as Record<string, unknown>) &&
+    (render as unknown as { props?: { href?: unknown } }).props?.href !== undefined;
+  const nativeButton = render === undefined ? true : isLink ? false : true;
   return (
     <ButtonPrimitive
       data-slot="button"
-      nativeButton={render === undefined}
+      nativeButton={nativeButton}
       render={render}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
