@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
 import { type FichaEspecie, type Especie, getFenologia, getConsejos, ZONAS, getZonaIdDeComuna } from "@/lib/agronomy";
@@ -25,6 +27,56 @@ const TABS: { id: TabId; l: string; icon: typeof CalendarDays; desc: string }[] 
   { id: "consejos", l: "Consejos", icon: Lightbulb, desc: "Tips" },
   { id: "info", l: "Info", icon: Info, desc: "Ficha" },
 ];
+
+function CurvaDemandaHidrica({ riego, especieNombre }: { riego: FichaEspecie["riego"]; especieNombre: string }) {
+  const data = useMemo(() => {
+    return riego.map((r) => {
+      const m = r.vol.match(/(\d+)\s*[-–]\s*(\d+)/);
+      const low = m ? parseInt(m[1], 10) : 5;
+      const high = m ? parseInt(m[2], 10) : low + 5;
+      const mid = Math.round((low + high) / 2);
+      // Normaliza etiquetas cortas para X
+      const short = r.etapa.split(" ")[0].slice(0, 8);
+      return { etapa: r.etapa, short, litros: mid, rango: r.vol, freq: r.freq, senal: r.senal };
+    });
+  }, [riego]);
+
+  const config = { litros: { label: "Litros/semana", color: "var(--primary)" } } as const;
+
+  return (
+    <Card className="overflow-hidden rounded-2xl border-primary/20 shadow-sm">
+      <CardHeader className="gap-1 pb-2">
+        <div className="flex items-center gap-2">
+          <Badge className="gap-1 rounded-full"><Droplets className="size-3" /> Curva de demanda hídrica</Badge>
+          <span className="font-mono text-xs text-muted-foreground">{especieNombre}</span>
+        </div>
+        <CardTitle className="text-base leading-tight">Litros por árbol por semana — fenología del cultivo</CardTitle>
+        <CardDescription className="text-xs">Curva sigmoide típica: bajo en receso, pico en engorde final. Basado en ficha técnica de riego.</CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <ChartContainer config={config} className="h-[280px] w-full">
+          <LineChart data={data} margin={{ left: 12, right: 24, top: 24, bottom: 8 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis dataKey="short" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} interval={0} />
+            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} domain={[0, 110]} ticks={[0, 5, 20, 30, 45, 85, 100, 110]} label={{ value: "Litros por árbol por semana", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "var(--muted-foreground)" } }} />
+            <ChartTooltip content={<ChartTooltipContent labelKey="etapa" />} />
+            <Line type="monotone" dataKey="litros" stroke="var(--primary)" strokeWidth={3} dot={{ r: 6, fill: "white", stroke: "var(--primary)", strokeWidth: 2 }} activeDot={{ r: 7 }} />
+          </LineChart>
+        </ChartContainer>
+        <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-7">
+          {data.map((d) => (
+            <div key={d.etapa} className="flex flex-col items-center gap-1 rounded-xl border bg-muted/20 px-2 py-2 text-center">
+              <span className="text-[11px] font-semibold leading-none">{d.etapa}</span>
+              <span className="font-mono text-xs font-medium text-primary">{d.rango}</span>
+              <span className="text-[11px] text-muted-foreground">{d.freq}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 text-center font-mono text-[11px] uppercase tracking-wide text-muted-foreground">Fenología del cultivo — como en tu imagen de duraznero/nectarín</p>
+      </CardContent>
+    </Card>
+  );
+}
 
 function Descripcion({ desc }: { desc: Record<string, string> }) {
   return (
@@ -109,11 +161,13 @@ function TabCalendario({ cal }: { cal: FichaEspecie["cal"] }) {
   );
 }
 
-function TabRiego({ riego }: { riego: FichaEspecie["riego"] }) {
+function TabRiego({ riego, especieNombre }: { riego: FichaEspecie["riego"]; especieNombre: string }) {
   const mesActualAbbr = new Date().toLocaleDateString("es-CL", { month: "short" }).replace(".", "").toLowerCase();
   const isActive = (meses: string) => meses.toLowerCase().includes(mesActualAbbr.slice(0,3)) || meses.toLowerCase().includes(new Date().toLocaleDateString("es-CL",{month:"long"}).toLowerCase().slice(0,3));
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="flex flex-col gap-4">
+      <CurvaDemandaHidrica riego={riego} especieNombre={especieNombre} />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {riego.map((r, i) => {
         const active = isActive(r.meses);
         return (
@@ -137,6 +191,7 @@ function TabRiego({ riego }: { riego: FichaEspecie["riego"] }) {
           </Card>
         );
       })}
+      </div>
     </div>
   );
 }
@@ -269,7 +324,7 @@ function TabCosecha({ cos }: { cos: FichaEspecie["cos"] }) {
   );
 }
 
-function TabFenologia({ dbKey }: { dbKey: string }) {
+function TabFenologia({ dbKey, riego, especieNombre }: { dbKey: string; riego?: FichaEspecie["riego"]; especieNombre?: string }) {
   const [zonaNombre, setZonaNombre] = useState<string | null>(null);
   const [entrada, setEntrada] = useState<ReturnType<typeof getFenologia>>(null);
   const [loading, setLoading] = useState(true);
@@ -291,7 +346,9 @@ function TabFenologia({ dbKey }: { dbKey: string }) {
   if (loading) return <p className="text-sm text-muted-foreground">Cargando fenología…</p>;
   if (!entrada) return <p className="text-sm text-muted-foreground">Sin datos para tu zona {zonaNombre ? `(${zonaNombre})` : ""}.</p>;
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="flex flex-col gap-4">
+      {riego && especieNombre ? <CurvaDemandaHidrica riego={riego} especieNombre={especieNombre} /> : null}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {[
         { k: "Brotación", v: entrada.brotacion },
         { k: "Floración", v: entrada.floracion },
@@ -303,6 +360,7 @@ function TabFenologia({ dbKey }: { dbKey: string }) {
         </Card>
       ))}
       <Card className="rounded-2xl sm:col-span-2 lg:col-span-4"><CardContent className="pt-6"><p className="rounded-xl bg-muted px-3 py-2 text-xs leading-relaxed text-muted-foreground">{entrada.notas}</p><p className="mt-2 text-xs text-muted-foreground">Zona: {zonaNombre}</p></CardContent></Card>
+      </div>
     </div>
   );
 }
@@ -397,12 +455,12 @@ export function FichaEspecieView({ especie, ficha }: { especie: Especie; ficha: 
         </TabsList>
 
         <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
-        <TabsContent value="riego"><TabRiego riego={ficha.riego} /></TabsContent>
+        <TabsContent value="riego"><TabRiego riego={ficha.riego} especieNombre={especie.nombre} /></TabsContent>
         <TabsContent value="nutricion"><TabNutricion fert={ficha.fert} /></TabsContent>
         <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
         <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
         <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
-        <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} /></TabsContent>
+        <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} riego={ficha.riego} especieNombre={especie.nombre} /></TabsContent>
         <TabsContent value="consejos"><TabConsejos dbKey={especie.dbKey} /></TabsContent>
         <TabsContent value="info"><TabInfo ficha={ficha} zonaId={zonaId} /></TabsContent>
       </Tabs>
