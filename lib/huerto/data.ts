@@ -127,14 +127,19 @@ export async function getTareasDelMes(
 export async function getPerfil(userId: string): Promise<{
   comuna: string | null;
   zonaAgroclimatica: string | null;
+  plan: string;
 } | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("perfiles")
-    .select("comuna, zona_agroclimatica")
+    .select("comuna, zona_agroclimatica, plan")
     .eq("id", userId)
     .maybeSingle();
 
   if (error || !data) return null;
-  return { comuna: data.comuna ?? null, zonaAgroclimatica: data.zona_agroclimatica ?? null };
+  return {
+    comuna: data.comuna ?? null,
+    zonaAgroclimatica: data.zona_agroclimatica ?? null,
+    plan: data.plan ?? "gratuito",
+  };
 }

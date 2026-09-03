@@ -107,7 +107,10 @@ export default function RegistroPage() {
   }
 
   function handleConsentDone() {
-    router.push("/huerto");
+    const next = new URLSearchParams(window.location.search).get("next");
+    const destino =
+      next && next.startsWith("/") && !next.startsWith("//") ? next : "/huerto";
+    router.push(destino);
     router.refresh();
   }
 

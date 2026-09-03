@@ -41,6 +41,7 @@ import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import { ESPECIES, MESES, getEspeciesPorZona, getZonaIdDeComuna } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
 import { getArboles, getCultivos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
+import { limitesDe, type PlanAcceso } from "@/lib/payments/plans";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
 
@@ -74,6 +75,7 @@ export default async function HuertoPage() {
   const especiesDisponibles = ESPECIES.filter((e) => !cultivos.some((c) => c.especie === e.dbKey));
   const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
   const recom = getEspeciesPorZona(zonaId);
+  const limites = limitesDe((perfil?.plan as PlanAcceso) ?? "gratuito");
   const esHuertoVacio = cultivos.length === 0 && arboles.length === 0;
   const nombre = (user.user_metadata as Record<string, unknown>)?.["nombre"] as string | undefined;
   const nombreCorto = nombre ? nombre.split(" ")[0] : null;
@@ -324,7 +326,7 @@ export default async function HuertoPage() {
                           <span className="text-xs text-muted-foreground">Frutilla o limonero para principiante</span>
                         </div>
                       </div>
-                      <AgregarCultivo especies={especiesDisponibles} />
+                      <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
                     </div>
                     <p className="text-xs text-muted-foreground">
                       ¿Dudas?{" "}
@@ -352,7 +354,7 @@ export default async function HuertoPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1">
-                  <AgregarCultivo especies={especiesDisponibles} />
+                  <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
                 </CardContent>
                 <div className="px-6 pb-4">
                   <div className="rounded-xl bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
@@ -401,7 +403,7 @@ export default async function HuertoPage() {
                   <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
                     <div className="rounded-xl border bg-card p-4">
                       <p className="mb-3 text-sm font-medium">Registrar árbol</p>
-                      <AgregarArbol especies={ESPECIES} />
+                      <AgregarArbol especies={ESPECIES} uso={{ actual: arboles.length, limite: limites.arboles }} />
                     </div>
                     <div className="flex flex-col gap-3">
                       {arboles.length === 0 ? (

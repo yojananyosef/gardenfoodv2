@@ -1,6 +1,16 @@
 # GardenFood V2
 
-Plataforma SaaS de agronomía doméstica para Chile: 245 comunas (canónico migrado a 254 en spec), 16 regiones y 20 zonas agroclimáticas, con catálogo de 30 especies frutales y 30 fichas técnicas. Ayuda a usuarios a saber **qué cultivar en su zona y cuándo podar, regar y qué fertilizante necesita su tierra**.
+Plataforma SaaS de agronomía doméstica para Chile: 245 comunas, 16 regiones y 20 zonas agroclimáticas, con catálogo de 30 especies frutales y 30 fichas técnicas. Ayuda a usuarios a saber **qué cultivar en su zona y cuándo podar, regar y qué fertilizante necesita su tierra**.
+
+## Funnel freemium (3 capas)
+
+| Capa | Acceso | Monetización |
+|---|---|---|
+| **Anónimo** | Landing, `/explorar` (30 especies visibles; solo `duraznero` desbloqueada como muestra, resto con candado + ficha bloqueada con SEO server-side), ficha del duraznero completa, pricing. `/calculadoras` y core → redirect a `/registro?next=` | Teaser → registro |
+| **Registrado gratuito** | Core completo con límites: máx 3 cultivos, 1 árbol, anuncios visibles, sin logros ni analítica de producción. Catálogo y calculadoras desbloqueados | Audiencia ad-tech → suscripción |
+| **Pagos (MP)** | Huertero: ilimitado + sin anuncios + logros · Cosecha: + analítica/comparativas/export · Full: + equipo | `isPaidTier` en `lib/payments/plans.ts` (`FREE_LIMITS`) |
+
+Los límites se validan en server actions (`lib/huerto/actions.ts`); el gating de rutas vive en `proxy.ts` (auth + `/admin` por `isAdmin`).
 
 ## Modelo de negocio híbrido
 

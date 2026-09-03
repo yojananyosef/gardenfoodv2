@@ -64,6 +64,41 @@ export function isPaidTier(plan: string | null | undefined): plan is PlanTier {
   return !!plan && (PAID_TIERS as string[]).includes(plan);
 }
 
+export type PlanAcceso = PlanTier | "gratuito" | "admin";
+
+export const FREE_LIMITS = {
+  cultivos: 3,
+  arboles: 1,
+} as const;
+
+function tieneAccesoIlimitado(plan: PlanAcceso): boolean {
+  return plan === "admin" || isPaidTier(plan);
+}
+
+export function puedeAgregarCultivo(
+  cultivosActuales: number,
+  plan: PlanAcceso,
+): boolean {
+  if (tieneAccesoIlimitado(plan)) return true;
+  return cultivosActuales < FREE_LIMITS.cultivos;
+}
+
+export function puedeAgregarArbol(
+  arbolesActuales: number,
+  plan: PlanAcceso,
+): boolean {
+  if (tieneAccesoIlimitado(plan)) return true;
+  return arbolesActuales < FREE_LIMITS.arboles;
+}
+
+export function limitesDe(plan: PlanAcceso): {
+  cultivos: number | null;
+  arboles: number | null;
+} {
+  if (tieneAccesoIlimitado(plan)) return { cultivos: null, arboles: null };
+  return { cultivos: FREE_LIMITS.cultivos, arboles: FREE_LIMITS.arboles };
+}
+
 export function getPlan(tier: PlanTier): PlanDef {
   const plan = PLANS.find((p) => p.tier === tier);
   if (!plan) throw new Error(`Unknown plan tier: ${tier}`);

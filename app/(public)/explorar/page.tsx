@@ -1,6 +1,8 @@
+import { Lock } from "lucide-react";
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
-import { ESPECIES } from "@/lib/agronomy";
+import { ESPECIES, esMuestraGratuis } from "@/lib/agronomy";
+import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 const GRUPO_ORDEN = [
@@ -14,14 +16,26 @@ const GRUPO_ORDEN = [
 ];
 
 export default async function ExplorarPage() {
-  const sponsorships = await getActiveSponsorships("explorar");
+  const [sponsorships, user] = await Promise.all([
+    getActiveSponsorships("explorar"),
+    (async () => {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      return user;
+    })(),
+  ]);
+  const esAnonimo = !user;
 
   return (
     <div className="flex flex-col gap-4">
       <div>
         <h1 className="font-fraunces text-2xl font-semibold">Explorar especies</h1>
         <p className="text-sm text-muted-foreground">
-          {ESPECIES.length} frutales con ficha técnica y calendario agronómico.
+          {esAnonimo
+            ? `${ESPECIES.length} frutales con ficha técnica. El duraznero está desbloqueado como muestra; regístrate gratis para ver los demás.`
+            : `${ESPECIES.length} frutales con ficha técnica y calendario agronómico.`}
         </p>
       </div>
 
@@ -34,28 +48,45 @@ export default async function ExplorarPage() {
               {grupo}
             </h2>
             <ul className="flex flex-col gap-2">
-              {especies.map((especie) => (
-                <li key={especie.slug}>
-                  <a
-                    href={`/especies/${especie.slug}`}
-                    className="flex min-h-12 items-center justify-between gap-3 rounded-lg border bg-card px-4 text-sm font-medium text-card-foreground"
-                  >
-                    <span>{especie.nombre}</span>
-                    <span
+              {especies.map((especie) => {
+                const bloqueada = esAnonimo && !esMuestraGratuis(especie.slug);
+                return (
+                  <li key={especie.slug}>
+                    <a
+                      href={`/especies/${especie.slug}`}
                       className={cn(
-                        "shrink-0 rounded-full px-2 py-0.5 text-[11px]",
-                        especie.dificultad === "Fácil"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : especie.dificultad === "Moderado"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-orange-100 text-orange-700",
+                        "flex min-h-12 items-center justify-between gap-3 rounded-lg border bg-card px-4 text-sm font-medium text-card-foreground",
+                        bloqueada && "opacity-75",
                       )}
                     >
-                      {especie.dificultad}
-                    </span>
-                  </a>
-                </li>
-              ))}
+                      <span className="flex items-center gap-2">
+                        {especie.nombre}
+                        {bloqueada ? (
+                          <Lock className="size-3.5 text-muted-foreground" aria-label="Ficha bloqueada" />
+                        ) : null}
+                      </span>
+                      {bloqueada ? (
+                        <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                          Con registro
+                        </span>
+                      ) : (
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-full px-2 py-0.5 text-[11px]",
+                            especie.dificultad === "Fácil"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : especie.dificultad === "Moderado"
+                                ? "bg-amber-100 text-amber-700"
+                                : "bg-orange-100 text-orange-700",
+                          )}
+                        >
+                          {especie.dificultad}
+                        </span>
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         );

@@ -3,6 +3,24 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import {
+  FREE_LIMITS,
+  puedeAgregarArbol,
+  puedeAgregarCultivo,
+  type PlanAcceso,
+} from "@/lib/payments/plans";
+
+async function getPlanDe(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<PlanAcceso> {
+  const { data } = await supabase
+    .from("perfiles")
+    .select("plan")
+    .eq("id", userId)
+    .maybeSingle();
+  return (data?.plan as PlanAcceso | undefined) ?? "gratuito";
+}
 
 const AGREGAR_CULTIVO = z.object({
   especie: z.string().min(1).max(80),
@@ -16,6 +34,20 @@ export async function agregarCultivo(input: { especie: string; cantidad?: number
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "No autenticado." };
+
+  const plan = await getPlanDe(supabase, user.id);
+  if (plan === "gratuito") {
+    const { count } = await supabase
+      .from("gf_cultivos")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id);
+    if (!puedeAgregarCultivo(count ?? 0, plan)) {
+      return {
+        error: `Llegaste al límite de ${FREE_LIMITS.cultivos} cultivos del plan gratuito. Pásate a Huertero para cultivar sin límites.`,
+        limite: true as const,
+      };
+    }
+  }
 
   const { error } = await supabase
     .from("gf_cultivos")
@@ -147,6 +179,20 @@ export async function agregarArbol(input: z.infer<typeof AGREGAR_ARBOL>) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "No autenticado." };
+
+  const plan = await getPlanDe(supabase, user.id);
+  if (plan === "gratuito") {
+    const { count } = await supabase
+      .from("gf_arboles")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id);
+    if (!puedeAgregarArbol(count ?? 0, plan)) {
+      return {
+        error: `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para registrar sin límites.`,
+        limite: true as const,
+      };
+    }
+  }
 
   const { error } = await supabase.from("gf_arboles").insert({
     user_id: user.id,

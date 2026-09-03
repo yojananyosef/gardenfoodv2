@@ -1,12 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isPaidTier } from "@/lib/payments/plans";
 
 const RUTAS_PUBLICAS = [
   "/",
   "/explorar",
   "/especies",
-  "/calculadoras",
   "/pricing",
   "/registro",
   "/login",
@@ -20,27 +18,8 @@ const RUTAS_PUBLICAS = [
   "/icons",
 ];
 
-// Rutas que un usuario autenticado con plan gratuito sí puede usar (no requieren tier pago).
-const RUTAS_LIBRES_AUTENTICADO = [
-  "/explorar",
-  "/especies",
-  "/calculadoras",
-  "/pricing",
-  "/suscripcion",
-  "/perfil",
-  "/registro",
-  "/login",
-  "/api",
-];
-
 export function esRutaProtegida(pathname: string): boolean {
   return !RUTAS_PUBLICAS.some((ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`));
-}
-
-function esRutaLibreAutenticado(pathname: string): boolean {
-  return RUTAS_LIBRES_AUTENTICADO.some(
-    (ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`),
-  );
 }
 
 export async function proxy(request: NextRequest) {
@@ -74,7 +53,7 @@ export async function proxy(request: NextRequest) {
 
   if (!user && esRutaProtegida(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/registro";
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
@@ -85,17 +64,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Gating por plan: rutas core requieren suscripción de pago.
-  if (user && !esRutaLibreAutenticado(pathname)) {
+  if (user && (pathname === "/admin" || pathname.startsWith("/admin/"))) {
     const { data: profile } = await supabase
       .from("perfiles")
       .select("plan")
       .eq("id", user.id)
       .maybeSingle();
-    const plan = profile?.plan ?? "gratuito";
-    if (plan !== "admin" && !isPaidTier(plan)) {
+    if (profile?.plan !== "admin") {
       const url = request.nextUrl.clone();
-      url.pathname = "/pricing";
+      url.pathname = "/";
       return NextResponse.redirect(url);
     }
   }

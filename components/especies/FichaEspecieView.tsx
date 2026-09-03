@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Droplets, Leaf, Bug, Scissors, CalendarDays, Sprout, Citrus, Info, Lightbulb, Flower2, MapPinned, ChevronDown, ChevronUp, Eye } from "lucide-react";
+import Link from "next/link";
+import { Droplets, Leaf, Bug, Scissors, CalendarDays, Sprout, Citrus, Info, Lightbulb, Flower2, MapPinned, ChevronDown, ChevronUp, Eye, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -474,7 +475,15 @@ function TabInfo({ ficha, zonaId }: { ficha: FichaEspecie; zonaId: number | null
   );
 }
 
-export function FichaEspecieView({ especie, ficha }: { especie: Especie; ficha: FichaEspecie }) {
+export function FichaEspecieView({
+  especie,
+  ficha,
+  locked = false,
+}: {
+  especie: Especie;
+  ficha: FichaEspecie;
+  locked?: boolean;
+}) {
   const [zonaId, setZonaId] = useState<number | null>(null);
   const ref = useTrackedView<HTMLDivElement>({ name: "VIEW_FICHA", especieId: especie.slug });
   useEffect(() => {
@@ -527,25 +536,59 @@ export function FichaEspecieView({ especie, ficha }: { especie: Especie; ficha: 
 
       <Card className="rounded-2xl lg:col-span-12"><CardContent className="pt-6"><Descripcion desc={ficha.desc} /></CardContent></Card>
 
-      <Tabs defaultValue="calendario" className="w-full gap-4">
-        <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1">
-          {TABS.map((t) => (
-            <TabsTrigger key={t.id} value={t.id} className="gap-1.5 whitespace-nowrap">
-              <t.icon className="size-4" /> {t.l}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      {(() => {
+        const tabs = (
+          <Tabs defaultValue="calendario" className="w-full gap-4">
+            <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1">
+              {TABS.map((t) => (
+                <TabsTrigger key={t.id} value={t.id} className="gap-1.5 whitespace-nowrap">
+                  <t.icon className="size-4" /> {t.l}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-        <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
-        <TabsContent value="riego"><TabRiego riego={ficha.riego} especieNombre={especie.nombre} /></TabsContent>
-        <TabsContent value="nutricion"><TabNutricion fert={ficha.fert} /></TabsContent>
-        <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
-        <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
-        <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
-        <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} /></TabsContent>
-        <TabsContent value="consejos"><TabConsejos dbKey={especie.dbKey} /></TabsContent>
-        <TabsContent value="info"><TabInfo ficha={ficha} zonaId={zonaId} /></TabsContent>
-      </Tabs>
+            <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
+            <TabsContent value="riego"><TabRiego riego={ficha.riego} especieNombre={especie.nombre} /></TabsContent>
+            <TabsContent value="nutricion"><TabNutricion fert={ficha.fert} /></TabsContent>
+            <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
+            <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
+            <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
+            <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} /></TabsContent>
+            <TabsContent value="consejos"><TabConsejos dbKey={especie.dbKey} /></TabsContent>
+            <TabsContent value="info"><TabInfo ficha={ficha} zonaId={zonaId} /></TabsContent>
+          </Tabs>
+        );
+
+        if (!locked) return tabs;
+
+        return (
+          <Card className="relative overflow-hidden rounded-2xl">
+            <div aria-hidden className="pointer-events-none select-none blur-[6px] saturate-50">
+              {tabs}
+            </div>
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 p-6">
+              <div className="flex max-w-sm flex-col items-center gap-3 rounded-2xl border bg-card p-6 text-center shadow-lg">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Lock className="size-6" aria-hidden />
+                </span>
+                <CardTitle className="text-lg leading-tight">Ficha técnica bloqueada</CardTitle>
+                <CardDescription className="text-sm leading-relaxed">
+                  Calendario mensual, riego por etapa, nutrición, plagas y poda para {especie.nombre}. Crea tu cuenta gratis para verla completa.
+                </CardDescription>
+                <Button className="w-full" render={<Link href={`/registro?next=/especies/${especie.slug}`} />}>
+                  Regístrate gratis
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  ¿Ya tienes cuenta?{" "}
+                  <Link href="/login" className="font-medium underline underline-offset-2">
+                    Inicia sesión
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </Card>
+        );
+      })()}
     </div>
   );
 }

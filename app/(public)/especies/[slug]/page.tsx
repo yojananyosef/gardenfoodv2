@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { FichaEspecieView } from "@/components/especies/FichaEspecieView";
-import { getEspeciePorSlug, getFicha } from "@/lib/agronomy";
+import { esMuestraGratuis, getEspeciePorSlug, getFicha } from "@/lib/agronomy";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function EspeciePage({
   params,
@@ -14,5 +15,11 @@ export default async function EspeciePage({
   const ficha = getFicha(especie.dbKey);
   if (!ficha) notFound();
 
-  return <FichaEspecieView especie={especie} ficha={ficha} />;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const locked = !user && !esMuestraGratuis(slug);
+
+  return <FichaEspecieView especie={especie} ficha={ficha} locked={locked} />;
 }

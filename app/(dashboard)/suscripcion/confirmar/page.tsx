@@ -30,7 +30,7 @@ export default function ConfirmPage() {
         grantsAccess: data.grantsAccess,
         message:
           data.status === "trialing"
-            ? "¡Suscripción en periodo de prueba activada! (14 días gratis)"
+            ? "¡Suscripción confirmada! Tu plan ya está activo."
             : data.status === "active"
               ? "¡Suscripción activada!"
               : `Estado: ${data.status}`,

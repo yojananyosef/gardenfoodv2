@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +72,55 @@ export default function PricingPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-4">
+        <Card className="flex flex-col border-dashed">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Gratis</CardTitle>
+              <Badge variant="secondary">Para empezar</Badge>
+            </div>
+            <CardDescription>Prueba el huerto sin pagar nada.</CardDescription>
+            <div className="mt-3">
+              <span className="text-3xl font-bold">$0</span>
+              <span className="text-muted-foreground">/para siempre</span>
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <ul className="space-y-2 text-sm">
+              {[
+                "Hasta 3 cultivos y 1 árbol",
+                "Calendario y tareas",
+                "Registro de cosechas",
+                "Fichas técnicas completas",
+                "Calculadoras y diagnóstico",
+                "Con anuncios patrocinados",
+              ].map((f) => (
+                <li key={f} className="flex gap-2">
+                  <span className="text-primary">✓</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-4 space-y-2 border-t pt-4 text-sm text-muted-foreground">
+              {["Sin logros", "Sin analítica de producción"].map((f) => (
+                <li key={f} className="flex gap-2">
+                  <span>✕</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+          <CardFooter>
+            <Button
+              variant="outline"
+              className="w-full"
+              render={<Link href="/registro?next=/huerto" />}
+            >
+              Crear cuenta gratis
+            </Button>
+          </CardFooter>
+        </Card>
+
         {PLANS.map((plan) => {
           const price = interval === "yearly" ? plan.yearly : plan.monthly;
           const active = selectedTier === plan.tier;

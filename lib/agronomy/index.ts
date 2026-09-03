@@ -42,6 +42,12 @@ export type EspeciePorZona = Especie & {
 
 const ZONA_FALLBACK_ID = 7;
 
+export const ESPECIE_MUESTRA_GRATIS = "duraznero";
+
+export function esMuestraGratuis(slug: string): boolean {
+  return slug === ESPECIE_MUESTRA_GRATIS;
+}
+
 export function getZonaIdDeComuna(comuna?: string | null): number | null {
   if (!comuna) return null;
   const entry = COMUNAS_ZONA[comuna];

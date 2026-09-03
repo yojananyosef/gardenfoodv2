@@ -140,7 +140,7 @@ export default function Home() {
 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Check className="size-3.5 text-primary" aria-hidden />
-                  <span>Gratis para siempre · Sin tarjeta · 2 min para empezar</span>
+                  <span>Empieza gratis con 3 cultivos · Sin tarjeta · Desde $9.990/mes si necesitas más</span>
                 </div>
 
                 {/* Stats — as harvested strip */}
