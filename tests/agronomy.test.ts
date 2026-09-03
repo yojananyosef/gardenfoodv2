@@ -25,6 +25,25 @@ describe("agronomy data layer", () => {
     expect(Object.keys(COMUNAS_ZONA)).toHaveLength(346);
   });
 
+  it("cada comuna aporta al flujo: su zona tiene perfil climático, viabilidad y macrozona", () => {
+    for (const comuna of COMUNAS) {
+      const zona = ZONAS[comuna.zonaId];
+      expect(zona, `${comuna.comuna}: zona ${comuna.zonaId} sin perfil climático`).toBeTruthy();
+      expect(zona.txMax).toBeGreaterThan(0);
+      expect(
+        COMUNAS_ZONA[comuna.comuna],
+        `${comuna.comuna}: falta en COMUNAS_ZONA`,
+      ).toBeTruthy();
+      expect(getMacrozona(comuna.zonaId), `${comuna.comuna}: sin macrozona`).toBeTruthy();
+      for (const especie of ESPECIES) {
+        expect(
+          VIABILIDAD[especie.dbKey]?.[comuna.zonaId],
+          `${especie.dbKey} en ${comuna.comuna} (zona ${comuna.zonaId}): sin viabilidad`,
+        ).toBeTruthy();
+      }
+    }
+  });
+
   it("tiene un catálogo de 30 especies", () => {
     expect(ESPECIES).toHaveLength(30);
     expect(ESPECIES.every((e) => e.slug && e.dbKey)).toBe(true);
