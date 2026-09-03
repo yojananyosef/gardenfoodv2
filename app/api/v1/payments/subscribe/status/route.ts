@@ -2,26 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mercadoPagoProvider } from "@/lib/payments/mercadopago";
-import type { SubscriptionStatus } from "@/lib/payments/types";
+import { mapPreapprovalStatus } from "@/lib/payments/preapproval";
 
 export const dynamic = "force-dynamic";
-
-function mapStatus(
-  mp: string,
-): { sub: SubscriptionStatus; grantsAccess: boolean } {
-  switch (mp) {
-    case "authorized":
-      return { sub: "active", grantsAccess: true };
-    case "pending":
-      return { sub: "trialing", grantsAccess: true };
-    case "cancelled":
-      return { sub: "canceled", grantsAccess: false };
-    case "paused":
-      return { sub: "inactive", grantsAccess: false };
-    default:
-      return { sub: "trialing", grantsAccess: true };
-  }
-}
 
 export async function POST() {
   const supabase = await createClient();
@@ -61,7 +44,7 @@ export async function POST() {
     return NextResponse.json({ error: "Could not verify subscription" }, { status: 502 });
   }
 
-  const { sub, grantsAccess } = mapStatus(statusResult.status);
+  const { sub, grantsAccess } = mapPreapprovalStatus(statusResult.status);
 
   const { error: updateError } = await admin
     .from("gf_subscriptions")
@@ -81,8 +64,7 @@ export async function POST() {
     subscription_id: draft.provider_subscription_id,
     payment_provider: "mercadopago",
   };
-  // Pending/trialing already grants access (free_trial 14d). Active also does.
-  // Only canceled/paused revoke. Keep tier for trialing.
+  // Solo `authorized` concede el plan; pending/cancelled/paused/desconocido no.
   if (grantsAccess) profileUpdate.plan = draft.plan;
   else if (sub === "canceled") profileUpdate.plan = "gratuito";
 

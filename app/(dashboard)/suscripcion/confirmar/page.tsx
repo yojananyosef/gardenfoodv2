@@ -29,11 +29,11 @@ export default function ConfirmPage() {
         status: "ok",
         grantsAccess: data.grantsAccess,
         message:
-          data.status === "trialing"
-            ? "¡Suscripción confirmada! Tu plan ya está activo."
-            : data.status === "active"
-              ? "¡Suscripción activada!"
-              : `Estado: ${data.status}`,
+          data.status === "active"
+            ? "¡Suscripción activada!"
+            : data.grantsAccess
+              ? "¡Suscripción confirmada! Tu plan ya está activo."
+              : "Pago pendiente de confirmación. Re-verifica en unos segundos.",
       });
     } catch {
       setResult({ status: "error", message: "Error de red." });

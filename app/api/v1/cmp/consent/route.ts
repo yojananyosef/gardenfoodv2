@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { consentUpdateSchema } from "@/lib/consent/schemas";
 import { CONSENT_COOKIE_NAME, CONSENT_TTL_MS } from "@/lib/consent/token";
 
@@ -53,6 +54,8 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const admin = createAdminClient();
+
   const { deviceId, ...purposes } = parsed.data;
   const ipAddress =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
@@ -61,7 +64,7 @@ export async function POST(request: Request) {
   const expiresAt = new Date(consentTimestamp.getTime() + CONSENT_TTL_MS);
 
   const existing = await (async () => {
-    const query = supabase
+    const query = admin
       .from("gf_user_consents")
       .select("*")
       .eq("device_id", deviceId);
@@ -90,11 +93,8 @@ export async function POST(request: Request) {
   };
 
   const { error } = existing
-    ? await supabase
-        .from("gf_user_consents")
-        .update(row)
-        .eq("id", existing.id)
-    : await supabase.from("gf_user_consents").insert(row);
+    ? await admin.from("gf_user_consents").update(row).eq("id", existing.id)
+    : await admin.from("gf_user_consents").insert(row);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -70,7 +70,7 @@ SUPABASE_SERVICE_ROLE_KEY=
 CRON_SECRET=            # opcional: secreto para el cron de audiencias
 IPGEO_URL=              # opcional: servicio de geolocalización por IP
 MP_ACCESS_TOKEN=        # TEST-... en sandbox, APP_USR-... en prod (Mercado Pago)
-MP_WEBHOOK_SECRET=      # x-signature HMAC de webhooks MP
+MP_WEBHOOK_SECRET=      # OBLIGATORIO en producción: sin él el webhook rechaza con 500 (x-signature HMAC)
 MP_COLLECTOR_EMAIL=     # opcional: guard collector==payer en TEST
 NEXT_PUBLIC_SITE_URL=   # https://gardenfoodv2.vercel.app
 ```

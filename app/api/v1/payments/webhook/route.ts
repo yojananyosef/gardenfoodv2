@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { createHmac, timingSafeEqual } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   mercadoPagoProvider,
   getAuthorizedPayment,
 } from "@/lib/payments/mercadopago";
-import type { PaymentStatus, SubscriptionStatus } from "@/lib/payments/types";
+import { mapPreapprovalStatus } from "@/lib/payments/preapproval";
+import { verifyMercadoPagoSignature } from "@/lib/payments/signature";
+import type { PaymentStatus } from "@/lib/payments/types";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export const dynamic = "force-dynamic";
 //   - subscription_authorized_payment               -> each recurring charge
 // Signature: x-signature: ts=<ts>,v1=<hmac> ; x-request-id: <uuid>
 // HMAC-SHA256 over manifest `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` with MP_WEBHOOK_SECRET.
-// If MP_WEBHOOK_SECRET not set we log warn and skip verification (local dev).
+// Required in production (missing secret -> 500); dev-only warn-and-process otherwise.
 // See https://www.mercadopago.com/developers/en/docs/your-integrations/notifications/webhooks
 
 async function handle(request: Request): Promise<NextResponse> {
@@ -61,9 +62,17 @@ async function handle(request: Request): Promise<NextResponse> {
       console.error("[payments/webhook] rejected: invalid signature");
       return NextResponse.json({ error: "invalid signature" }, { status: 401 });
     }
+  } else if (process.env.NODE_ENV === "production") {
+    console.error(
+      "[payments/webhook] rejected: MP_WEBHOOK_SECRET not set in production",
+    );
+    return NextResponse.json(
+      { error: "webhook secret not configured" },
+      { status: 500 },
+    );
   } else {
     console.warn(
-      "[payments/webhook] MP_WEBHOOK_SECRET not set; skipping signature validation",
+      "[payments/webhook] MP_WEBHOOK_SECRET not set; skipping signature validation (dev)",
     );
   }
 
@@ -83,38 +92,6 @@ async function handle(request: Request): Promise<NextResponse> {
     return await handlePayment(id, admin);
   }
   return NextResponse.json({ ok: true });
-}
-
-function verifyMercadoPagoSignature(
-  xSignature: string,
-  xRequestId: string,
-  dataIdCandidates: string[],
-  secret: string,
-): boolean {
-  let ts: string | null = null;
-  let v1: string | null = null;
-  for (const part of xSignature.split(/[,&]/)) {
-    const idx = part.indexOf("=");
-    if (idx === -1) continue;
-    const key = part.slice(0, idx).trim();
-    const value = part.slice(idx + 1).trim();
-    if (key === "ts") ts = value;
-    if (key === "v1") v1 = value;
-  }
-  if (!ts || !v1) return false;
-
-  const expected = Buffer.from(v1, "utf8");
-  for (const candidate of dataIdCandidates) {
-    const manifest = `id:${candidate};request-id:${xRequestId};ts:${ts};`;
-    const hash = Buffer.from(
-      createHmac("sha256", secret).update(manifest).digest("hex"),
-      "utf8",
-    );
-    if (hash.length === expected.length && timingSafeEqual(hash, expected)) {
-      return true;
-    }
-  }
-  return false;
 }
 
 async function handlePayment(
@@ -200,7 +177,8 @@ async function handleSubscription(
     return NextResponse.json({ ok: true });
   }
 
-  // The external_reference is our gf_subscriptions draft id.
+  // The external_reference is our gf_subscriptions draft id: update that exact
+  // row (not the user's latest draft, which another checkout could have created).
   const { data: subRow } = await admin
     .from("gf_subscriptions")
     .select("id, user_id, plan, interval")
@@ -210,9 +188,9 @@ async function handleSubscription(
 
   return applySubscription(
     admin,
+    subRow.id,
     subRow.user_id,
     subRow.plan ?? "huertero",
-    subRow.interval ?? "monthly",
     mpStatus,
     subscriptionId,
     raw.next_payment_date as string | undefined,
@@ -220,58 +198,38 @@ async function handleSubscription(
 }
 
 // Mercado Pago sends `pending` while in free trial before first charge;
-// we map it explicitly to `trialing` so the DB status is meaningful.
+// the shared mapping keeps it `trialing` without granting the paid plan.
 async function applySubscription(
   admin: ReturnType<typeof createAdminClient>,
+  draftId: string,
   userId: string,
   tier: string,
-  interval: string,
   mpStatus: string,
   subscriptionId: string,
   periodEnd?: string,
 ): Promise<NextResponse> {
-  const subStatus: SubscriptionStatus =
-    mpStatus === "authorized"
-      ? "active"
-      : mpStatus === "cancelled"
-        ? "canceled"
-        : mpStatus === "paused"
-          ? "inactive"
-          : mpStatus === "pending"
-            ? "trialing"
-            : "trialing";
+  const { sub } = mapPreapprovalStatus(mpStatus);
 
-  // Update the user's latest subscription draft row.
-  const { data: subs } = await admin
+  const { error: subError } = await admin
     .from("gf_subscriptions")
-    .select("id")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(1);
-  const subId = subs?.[0]?.id;
-
-  if (subId) {
-    const { error: subError } = await admin
-      .from("gf_subscriptions")
-      .update({
-        status: subStatus,
-        current_period_end: periodEnd ?? null,
-        paid_via: "mercadopago",
-        provider_subscription_id: subscriptionId,
-      })
-      .eq("id", subId);
-    if (subError) {
-      console.error("[payments/webhook] subscription update failed", subError);
-    }
+    .update({
+      status: sub,
+      current_period_end: periodEnd ?? null,
+      paid_via: "mercadopago",
+      provider_subscription_id: subscriptionId,
+    })
+    .eq("id", draftId);
+  if (subError) {
+    console.error("[payments/webhook] subscription update failed", subError);
   }
 
   const profileUpdate: Record<string, unknown> = {
-    subscription_status: subStatus,
+    subscription_status: sub,
     subscription_id: subscriptionId,
     payment_provider: "mercadopago",
   };
-  if (subStatus === "active") profileUpdate.plan = tier;
-  else if (subStatus === "canceled") profileUpdate.plan = "gratuito";
+  if (sub === "active") profileUpdate.plan = tier;
+  else if (sub === "canceled") profileUpdate.plan = "gratuito";
 
   const { error: profileError } = await admin
     .from("perfiles")

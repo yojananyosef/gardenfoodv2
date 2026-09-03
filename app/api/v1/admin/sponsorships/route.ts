@@ -21,6 +21,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const supabase = await createClient();
+  if (!(await isAdmin(supabase))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -33,11 +38,6 @@ export async function POST(request: Request) {
       { error: "Invalid sponsorship payload", issues: parsed.error.issues },
       { status: 400 },
     );
-  }
-
-  const supabase = await createClient();
-  if (!(await isAdmin(supabase))) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { data, error } = await supabase

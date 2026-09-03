@@ -67,6 +67,7 @@ export async function getActiveSponsorships(
     .from("gf_sponsorships")
     .select("*")
     .eq("active", true)
+    .eq("payment_status", "paid")
     .eq("screen", screen)
     .order("sort_order", { ascending: true });
 

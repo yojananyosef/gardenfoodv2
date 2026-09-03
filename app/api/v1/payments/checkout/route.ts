@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAdmin } from "@/lib/auth/admin";
 import { mercadoPagoProvider } from "@/lib/payments/mercadopago";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,9 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await isAdmin(supabase))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const email = user.email;
   if (!email) {

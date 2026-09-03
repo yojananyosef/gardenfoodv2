@@ -22,7 +22,12 @@ export type PaymentStatus =
   | "failed"
   | "refunded";
 
-export type SubscriptionStatus = "inactive" | "trialing" | "active" | "canceled";
+export type SubscriptionStatus =
+  | "inactive"
+  | "trialing"
+  | "active"
+  | "canceled"
+  | "past_due";
 
 // --- One-time payment (Mercado Pago Checkout Pro) ---
 
