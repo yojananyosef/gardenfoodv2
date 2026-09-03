@@ -1,6 +1,6 @@
 # GardenFood V2
 
-Plataforma SaaS de agronomía doméstica para Chile: 245 comunas, 16 regiones y 20 zonas agroclimáticas, con catálogo de 30 especies frutales y 30 fichas técnicas. Ayuda a usuarios a saber **qué cultivar en su zona y cuándo podar, regar y qué fertilizante necesita su tierra**.
+Plataforma SaaS de agronomía doméstica para Chile: 346 comunas (fuente oficial SUBDERE DPA), 16 regiones y 20 zonas agroclimáticas, con catálogo de 30 especies frutales y 30 fichas técnicas. Ayuda a usuarios a saber **qué cultivar en su zona y cuándo podar, regar y qué fertilizante necesita su tierra**.
 
 ## Funnel freemium (3 capas)
 

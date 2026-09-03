@@ -25,9 +25,9 @@
 | Headers de seguridad | `next.config.ts` sin HSTS/X-Frame-Options/`poweredByHeader:false` |
 | PWA | Cache de navegaciones sin límite; `/frutas/*.webp` no cacheadas; versión del SW manual |
 | Tests | Sin cobertura de route handlers ni de `lib/supabase`; sin script `test:coverage` pese a tener `@vitest/coverage-v8` |
-| Spec drift | `garden/agronomy-data` menciona "254 comunas canónicas"; código tenía 245 (ver change en curso del selector) |
 
 ## 🟢 Cerrado
 
 - Funnel de 3 capas (anónimo con muestra duraznero / gratuito con límites / pago) — `add-freemium-funnel` (commit `cbfe23e`).
-- P0 seguridad: escalada RLS a admin, self-upgrade vía polling, webhook sin firma/anti-replay, telemetría falsable, consents anónimos world-writable, sponsorships no pagadas públicas, gates admin/checkout, `timingSafeEqual` — `harden-payments-and-rls`.
+- P0 seguridad: escalada RLS a admin, self-upgrade vía polling, webhook sin firma/anti-replay, telemetría falsable, consents anónimos world-writable, sponsorships no pagadas públicas, gates admin/checkout, `timingSafeEqual` — `harden-payments-and-rls` (commit `540b891`).
+- Catálogo completo de 346 comunas oficiales (SUBDERE DPA) + selector del landing derivado del catálogo canónico — `complete-comunas-catalog`.

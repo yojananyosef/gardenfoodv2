@@ -20,9 +20,9 @@ describe("agronomy data layer", () => {
     expect(Object.keys(ZONAS)).toHaveLength(20);
   });
 
-  it("tiene 245 comunas mapeadas (cobertura real del legacy migrada a 254 canónicas)", () => {
-    expect(COMUNAS).toHaveLength(245);
-    expect(Object.keys(COMUNAS_ZONA)).toHaveLength(245);
+  it("tiene las 346 comunas oficiales de Chile (SUBDERE DPA)", () => {
+    expect(COMUNAS).toHaveLength(346);
+    expect(Object.keys(COMUNAS_ZONA)).toHaveLength(346);
   });
 
   it("tiene un catálogo de 30 especies", () => {

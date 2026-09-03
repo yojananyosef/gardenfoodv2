@@ -81,7 +81,7 @@ const ACCIONES = [
 ];
 
 const STATS = [
-  { value: "245", label: "comunas", sub: "De Arica a Punta Arenas" },
+  { value: "346", label: "comunas", sub: "De Arica a Punta Arenas" },
   { value: "20", label: "zonas", sub: "Agroclimáticas" },
   { value: "30", label: "especies", sub: "Fichas completas" },
 ];
@@ -210,7 +210,7 @@ export default function Home() {
                     <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                       Ficha de campo · GardenFood
                     </span>
-                    <span className="ml-auto font-mono text-[10px] text-muted-foreground">245 comunas</span>
+                    <span className="ml-auto font-mono text-[10px] text-muted-foreground">346 comunas</span>
                   </div>
                 </Card>
 
@@ -406,7 +406,7 @@ export default function Home() {
                     </ul>
                     <Separator className="my-1 bg-white/10" />
                     <div className="flex items-center justify-between text-xs text-white/60">
-                      <span>245 comunas · 20 zonas</span>
+                      <span>346 comunas · 20 zonas</span>
                       <span className="font-mono">v2 · 2026</span>
                     </div>
                   </div>

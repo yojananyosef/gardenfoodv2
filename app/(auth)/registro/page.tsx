@@ -241,7 +241,7 @@ export default function RegistroPage() {
                   </ComboboxContent>
                 </Combobox>
                 <FieldDescription className="text-xs">
-                  254 comunas — escribe y elige. Región y zona se asignan solas.
+                  346 comunas — escribe y elige. Región y zona se asignan solas.
                 </FieldDescription>
                 {comunaMeta ? (
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -296,7 +296,7 @@ export default function RegistroPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1">
-              <Check className="size-3 text-primary" /> 245 comunas
+              <Check className="size-3 text-primary" /> 346 comunas
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1">
               <Check className="size-3 text-primary" /> 20 zonas

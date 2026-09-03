@@ -1,136 +1,88 @@
+import { COMUNAS } from "@/lib/agronomy/comunas";
+
 export type Tarea = {
   accion: "Podar" | "Regar" | "Fertilizar";
   detalle: string;
 };
 
-export type Comuna = {
+export type ComunaLanding = {
   nombre: string;
   zona: string;
 };
 
 export type Region = {
   nombre: string;
-  comunas: Comuna[];
+  comunas: ComunaLanding[];
 };
 
-export const REGIONES: Region[] = [
-  {
-    nombre: "Arica y Parinacota",
-    comunas: [
-      { nombre: "Arica", zona: "Norte Grande" },
-      { nombre: "Putre", zona: "Altiplano" },
-    ],
-  },
-  {
-    nombre: "Tarapacá",
-    comunas: [
-      { nombre: "Iquique", zona: "Norte Grande" },
-      { nombre: "Pozo Almonte", zona: "Norte Grande" },
-    ],
-  },
-  {
-    nombre: "Antofagasta",
-    comunas: [
-      { nombre: "Antofagasta", zona: "Norte Grande" },
-      { nombre: "Calama", zona: "Norte Grande" },
-    ],
-  },
-  {
-    nombre: "Atacama",
-    comunas: [
-      { nombre: "Copiapó", zona: "Norte Chico" },
-      { nombre: "Vallenar", zona: "Norte Chico" },
-    ],
-  },
-  {
-    nombre: "Coquimbo",
-    comunas: [
-      { nombre: "La Serena", zona: "Norte Chico" },
-      { nombre: "Ovalle", zona: "Norte Chico" },
-      { nombre: "Illapel", zona: "Norte Chico" },
-    ],
-  },
-  {
-    nombre: "Valparaíso",
-    comunas: [
-      { nombre: "Valparaíso", zona: "Costa Central" },
-      { nombre: "Viña del Mar", zona: "Costa Central" },
-      { nombre: "Quillota", zona: "Valle Central" },
-      { nombre: "Los Andes", zona: "Valle Cordillerano" },
-    ],
-  },
-  {
-    nombre: "Metropolitana",
-    comunas: [
-      { nombre: "Santiago", zona: "Valle Central" },
-      { nombre: "Pirque", zona: "Valle Cordillerano" },
-      { nombre: "Melipilla", zona: "Valle Central" },
-    ],
-  },
-  {
-    nombre: "O'Higgins",
-    comunas: [
-      { nombre: "Rancagua", zona: "Valle Central" },
-      { nombre: "San Vicente", zona: "Valle Central" },
-    ],
-  },
-  {
-    nombre: "Maule",
-    comunas: [
-      { nombre: "Talca", zona: "Valle Central" },
-      { nombre: "Constitución", zona: "Costa Central" },
-    ],
-  },
-  {
-    nombre: "Ñuble",
-    comunas: [
-      { nombre: "Chillán", zona: "Valle Central" },
-      { nombre: "Quirihue", zona: "Costa Central" },
-    ],
-  },
-  {
-    nombre: "Biobío",
-    comunas: [
-      { nombre: "Concepción", zona: "Costa Sur" },
-      { nombre: "Los Ángeles", zona: "Valle Central" },
-    ],
-  },
-  {
-    nombre: "La Araucanía",
-    comunas: [
-      { nombre: "Temuco", zona: "Zona Sur" },
-      { nombre: "Villarrica", zona: "Zona Sur" },
-    ],
-  },
-  {
-    nombre: "Los Ríos",
-    comunas: [
-      { nombre: "Valdivia", zona: "Zona Sur" },
-      { nombre: "La Unión", zona: "Zona Sur" },
-    ],
-  },
-  {
-    nombre: "Los Lagos",
-    comunas: [
-      { nombre: "Puerto Montt", zona: "Zona Sur" },
-      { nombre: "Osorno", zona: "Zona Sur" },
-    ],
-  },
-  {
-    nombre: "Aysén",
-    comunas: [
-      { nombre: "Coyhaique", zona: "Patagonia" },
-      { nombre: "Aysén", zona: "Patagonia" },
-    ],
-  },
-  {
-    nombre: "Magallanes",
-    comunas: [
-      { nombre: "Punta Arenas", zona: "Patagonia" },
-      { nombre: "Puerto Natales", zona: "Patagonia" },
-    ],
-  },
+// Zona grosera del landing (para las tablas de tareas) a partir de la zona
+// agroclimática canónica (zonaId) y la región de la comuna.
+export function zonaLandingDe(zonaId: number, region: string): string {
+  switch (zonaId) {
+    case 1:
+      return "Norte Grande";
+    case 2:
+      return region === "Antofagasta" ? "Norte Grande" : "Norte Chico";
+    case 3:
+    case 4:
+      return "Norte Chico";
+    case 5:
+    case 9:
+    case 11:
+      return "Costa Central";
+    case 6:
+      return "Valle Cordillerano";
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+      return "Valle Central";
+    case 17:
+      return "Costa Sur";
+    case 18:
+    case 19:
+      return "Zona Sur";
+    case 20:
+      return region === "Aysén" || region === "Magallanes" ? "Patagonia" : "Zona Sur";
+    default:
+      return "Valle Central";
+  }
+}
+
+const ORDEN_REGIONES = [
+  "Arica y Parinacota",
+  "Tarapacá",
+  "Antofagasta",
+  "Atacama",
+  "Coquimbo",
+  "Valparaíso",
+  "Metropolitana",
+  "O'Higgins",
+  "Maule",
+  "Ñuble",
+  "Biobío",
+  "Araucanía",
+  "Los Ríos",
+  "Los Lagos",
+  "Aysén",
+  "Magallanes",
 ];
+
+const ZONA_POR_COMUNA = new Map(
+  COMUNAS.map((c) => [c.comuna, zonaLandingDe(c.zonaId, c.region)]),
+);
+
+// Derivado del catálogo canónico de 346 comunas (SUBDERE DPA) — selector
+// completo del landing, siempre en sync con lib/agronomy/comunas.ts.
+export const REGIONES: Region[] = ORDEN_REGIONES.map((nombre) => ({
+  nombre,
+  comunas: COMUNAS.filter((c) => c.region === nombre)
+    .map((c) => ({ nombre: c.comuna, zona: ZONA_POR_COMUNA.get(c.comuna) ?? "Valle Central" })),
+}));
 
 export const MESES = [
   "Enero",
