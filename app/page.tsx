@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { TopBar } from "@/components/layout/top-bar";
 import { ZoneWidget } from "@/components/landing/zone-widget";
+import { MapaChile } from "@/components/landing/mapa-chile";
 import { ESPECIES } from "@/lib/agronomy";
 
 const LATINO: Record<string, string> = {
@@ -288,6 +289,22 @@ export default function Home() {
                 <Button variant="outline" className="hidden sm:inline-flex rounded-full" render={<Link href="/explorar" />}>
                   Ver 30 especies <ArrowRight data-icon="inline-end" />
                 </Button>
+              </div>
+
+              <div className="mt-10 rounded-3xl border bg-muted/20 p-5 sm:p-8">
+                <div className="mb-6 flex flex-col gap-2">
+                  <Badge variant="outline" className="w-fit gap-1.5 rounded-full">
+                    <MapPinned className="size-3" /> Chile por bandas climáticas
+                  </Badge>
+                  <h3 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
+                    Pasa por una zona y mira qué es fácil cultivar ahí
+                  </h3>
+                  <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    Solo los frutales <span className="font-medium text-foreground">Fácil</span> que la matriz de viabilidad marca
+                    viables en esa banda. Tu comuna exacta la eliges después, entre las 346.
+                  </p>
+                </div>
+                <MapaChile />
               </div>
 
               <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
