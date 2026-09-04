@@ -23,39 +23,6 @@ import { Separator } from "@/components/ui/separator";
 import { TopBar } from "@/components/layout/top-bar";
 import { ZoneWidget } from "@/components/landing/zone-widget";
 import { MapaChile } from "@/components/landing/mapa-chile";
-import { ESPECIES } from "@/lib/agronomy";
-
-const LATINO: Record<string, string> = {
-  duraznero: "Prunus persica",
-  palto: "Persea americana",
-  manzano: "Malus domestica",
-  frutilla: "Fragaria × ananassa",
-  vid: "Vitis vinifera",
-  limonero: "Citrus limon",
-  frambuesa: "Rubus idaeus",
-  cerezo: "Prunus avium",
-};
-
-const ESPECIES_LANDING = [
-  "duraznero",
-  "palto",
-  "manzano",
-  "frutilla",
-  "vid",
-  "limonero",
-  "frambuesa",
-  "cerezo",
-].map((slug) => {
-  const especie = ESPECIES.find((e) => e.slug === slug)!;
-  return {
-    nombre: especie.nombre,
-    latino: LATINO[slug] ?? "",
-    slug: especie.slug,
-    grupo: especie.grupo,
-    clima: especie.clima,
-    dificultad: especie.dificultad,
-  };
-});
 
 const ACCIONES = [
   {
@@ -307,67 +274,13 @@ export default function Home() {
                 <MapaChile />
               </div>
 
-              <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {ESPECIES_LANDING.map((especie) => (
-                  <Link
-                    key={especie.slug}
-                    href={`/especies/${especie.slug}`}
-                    className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-foreground/5 hover:border-primary/20"
-                  >
-                    {/* top stripe by grupo */}
-                    <div
-                      className="absolute inset-x-0 top-0 h-1"
-                      style={{
-                        background:
-                          especie.grupo === "Carozo"
-                            ? "linear-gradient(90deg, #10b981, #f59e0b)"
-                            : especie.grupo === "Cítrico"
-                              ? "linear-gradient(90deg, #f59e0b, #eab308)"
-                              : especie.grupo === "Baya"
-                                ? "linear-gradient(90deg, #8b5cf6, #ec4899)"
-                                : especie.grupo === "Pomácea"
-                                  ? "linear-gradient(90deg, #ef4444, #f97316)"
-                                  : "linear-gradient(90deg, #06b6d4, #10b981)",
-                      }}
-                      aria-hidden
-                    />
-                    <div className="mt-2 flex items-start justify-between gap-2">
-                      <Badge variant="secondary" className="rounded-full px-2 py-0 text-[10px] font-medium uppercase tracking-wide">
-                        {especie.grupo}
-                      </Badge>
-                      <Badge variant="outline" className="rounded-full text-[10px]">{especie.dificultad}</Badge>
-                    </div>
-                    <span className="font-heading mt-4 text-lg font-semibold leading-tight">{especie.nombre}</span>
-                    <span className="font-mono text-[11px] tracking-wide text-muted-foreground italic">{especie.latino}</span>
-                    <span className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{especie.clima}</span>
-                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-70 transition-all group-hover:gap-1.5 group-hover:opacity-100">
-                      Ver ficha <ArrowRight className="size-3" />
-                    </span>
-                    <span className="pointer-events-none absolute -right-6 -bottom-6 font-heading text-6xl font-black leading-none text-muted/40 transition-colors group-hover:text-primary/10">
-                      {especie.nombre[0]}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-
               <div className="mt-6 flex justify-center sm:hidden">
                 <Button variant="outline" className="w-full rounded-full" render={<Link href="/explorar" />}>
                   Ver las 30 especies <ArrowRight data-icon="inline-end" />
                 </Button>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/30 px-3 py-1">
-                  <span className="size-2 rounded-full bg-emerald-500" /> Fácil · principiante
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/30 px-3 py-1">
-                  <span className="size-2 rounded-full bg-amber-500" /> Moderado · con guía
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/30 px-3 py-1">
-                  <span className="size-2 rounded-full bg-red-500" /> Avanzado · clima exigente
-                </span>
-              </div>
-            </div>
+                          </div>
           </section>
 
           {/* CTA final — greenhouse */}
