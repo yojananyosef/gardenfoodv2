@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Lock } from "lucide-react";
 
 import { ESPECIES } from "@/lib/agronomy/especies";
 import { VIABILIDAD } from "@/lib/agronomy/viabilidad";
-import { createClient } from "@/lib/supabase/client";
 
 const VIEWBOX = "0 0 520.0 136.8";
 const PATHS: string[] = [
@@ -44,18 +42,10 @@ function facilesDe(banda: Banda): string[] {
   ).map((e) => e.dbKey);
 }
 
-const MUESTRA = "Duraznero";
-
 export function MapaChile() {
   const contenedor = useRef<HTMLDivElement>(null);
-  const [logueado, setLogueado] = useState<boolean | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setLogueado(!!data.user));
-  }, []);
 
   const facilesPorBanda = useMemo(
     () => Object.fromEntries(BANDAS.map((b) => [b.id, facilesDe(b)])),
@@ -79,11 +69,8 @@ export function MapaChile() {
 
   const banda = BANDAS.find((b) => b.id === hoverId) ?? null;
   const dbKeys = banda ? facilesPorBanda[banda.id] ?? [] : [];
-  const esAnonimo = logueado === false;
-  // Anónimo: solo la muestra gratuita (duraznero). El resto se promete, no se revela.
-  const visibles = esAnonimo
-    ? dbKeys.filter((k) => k === MUESTRA).slice(0, 1)
-    : dbKeys.slice(0, 3);
+  // Teaser público: hasta 3 nombres por banda. El detalle (ficha) sí exige cuenta.
+  const visibles = dbKeys.slice(0, 3);
   const ocultas = Math.max(0, dbKeys.length - visibles.length);
 
   const nombrePorDbKey = useMemo(() => {
@@ -138,13 +125,10 @@ export function MapaChile() {
               : null}
             {ocultas > 0 ? (
               <Link
-                href="/registro"
-                className="flex items-center gap-1.5 rounded-lg border border-dashed px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                href="/explorar"
+                className="rounded-lg border border-dashed px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
               >
-                <Lock className="size-3" />
-                {esAnonimo
-                  ? `+${ocultas} fáciles más — crea tu cuenta gratis`
-                  : `+${ocultas} más`}
+                +{ocultas} más en el catálogo
               </Link>
             ) : null}
             {dbKeys.length === 0 ? (

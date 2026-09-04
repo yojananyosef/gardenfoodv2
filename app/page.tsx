@@ -246,11 +246,11 @@ export default function Home() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div className="flex flex-col gap-2">
                   <Badge variant="outline" className="w-fit gap-1.5 rounded-full">
-                    <Leaf className="size-3" /> Catálogo de campo · 30 especies
+                    <MapPinned className="size-3" /> Chile por bandas climáticas
                   </Badge>
-                  <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">El catálogo de semillas</h2>
+                  <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">¿Qué se da fácil en cada zona?</h2>
                   <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
-                    Cada ficha trae poda, riego y fertilización adaptada a tu zona. No buscamos “frutales”, buscamos tu frutal.
+                    Pasa el cursor por el mapa: 2–3 frutales <span className="font-medium text-foreground">Fáciles</span> y viables por banda. Cada ficha trae poda, riego y fertilización adaptada a tu comuna. No buscamos “frutales”, buscamos tu frutal.
                   </p>
                 </div>
                 <Button variant="outline" className="hidden sm:inline-flex rounded-full" render={<Link href="/explorar" />}>
@@ -259,18 +259,6 @@ export default function Home() {
               </div>
 
               <div className="mt-10 rounded-3xl border bg-muted/20 p-5 sm:p-8">
-                <div className="mb-6 flex flex-col gap-2">
-                  <Badge variant="outline" className="w-fit gap-1.5 rounded-full">
-                    <MapPinned className="size-3" /> Chile por bandas climáticas
-                  </Badge>
-                  <h3 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                    Pasa por una zona y mira qué es fácil cultivar ahí
-                  </h3>
-                  <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-                    Solo los frutales <span className="font-medium text-foreground">Fácil</span> que la matriz de viabilidad marca
-                    viables en esa banda. Tu comuna exacta la eliges después, entre las 346.
-                  </p>
-                </div>
                 <MapaChile />
               </div>
 
