@@ -22,7 +22,7 @@ import {
   latLngDesdePos,
   puntoEnPoligono,
 } from "@/lib/huerto/plano";
-import { svgArbolHtml } from "@/components/huerto/IconoArbol";
+import { medidasIconoArbol, svgArbolPorEspecie } from "@/components/huerto/IconoArbol";
 
 const OSM_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_ATTR =
@@ -72,6 +72,7 @@ type TerrenoMapProps = {
   ) => Promise<string | null>;
   onEditarArbol: (id: string) => void;
   onFueraHuerto: () => void;
+  nombreArbol: (especie: string) => string;
 };
 
 function comoPolygon(layer: Leaflet.Layer): Leaflet.Polygon {
@@ -117,6 +118,7 @@ export function TerrenoMap({
   onMarcarArbol,
   onEditarArbol,
   onFueraHuerto,
+  nombreArbol,
 }: TerrenoMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Leaflet.Map | null>(null);
@@ -136,7 +138,9 @@ export function TerrenoMap({
   const onMarcarArbolRef = useRef(onMarcarArbol);
   const onEditarArbolRef = useRef(onEditarArbol);
   const onFueraHuertoRef = useRef(onFueraHuerto);
+  const nombreArbolRef = useRef(nombreArbol);
   const [mapaListo, setMapaListo] = useState(false);
+  const [cargandoSatelite, setCargandoSatelite] = useState(true);
 
   useEffect(() => {
     puedeDibujarRef.current = puedeDibujar;
@@ -148,7 +152,8 @@ export function TerrenoMap({
     onMarcarArbolRef.current = onMarcarArbol;
     onEditarArbolRef.current = onEditarArbol;
     onFueraHuertoRef.current = onFueraHuerto;
-  }, [puedeDibujar, modoMarca, onCrear, onEditar, onEliminar, onLimite, onMarcarArbol, onEditarArbol, onFueraHuerto]);
+    nombreArbolRef.current = nombreArbol;
+  }, [puedeDibujar, modoMarca, onCrear, onEditar, onEliminar, onLimite, onMarcarArbol, onEditarArbol, onFueraHuerto, nombreArbol]);
 
   const [areaPantalla, setAreaPantalla] = useState<{
     total: number;
@@ -199,6 +204,14 @@ export function TerrenoMap({
         });
         satelite.addTo(map);
         limites.addTo(map);
+        // Distintivo de carga: se oculta con los primeros tiles o por
+        // seguridad a los 15 s (red lenta con tiles 404 persistentes).
+        satelite.once("load", () => {
+          if (!cancelled) setCargandoSatelite(false);
+        });
+        window.setTimeout(() => {
+          if (!cancelled) setCargandoSatelite(false);
+        }, 15_000);
         L.control
           .layers(
             {
@@ -210,7 +223,9 @@ export function TerrenoMap({
           )
           .addTo(map);
 
-        map.setView([CENTRO_DEFAULT.lat, CENTRO_DEFAULT.lng], ZOOM_DEFAULT);
+        // Sin vista por defecto aquí: se fija UNA sola vez más abajo (huertos
+        // → fitBounds, si no → vista país). Fijar dos vistas en el mismo tick
+        // aborta la carga de tiles y deja el satélite en gris (#3002).
 
         function mostrarUbicacion(
           lat: number,
@@ -284,41 +299,56 @@ export function TerrenoMap({
         // tiles "Map data not yet available". Tope en 18: el nivel 19 de Esri
         // no es uniforme y un falso positivo deja tiles 404 (fondo blanco).
         const zoomNativoCache = new Map<string, number>();
+        let ajustandoZoom = false;
         async function ajustarZoomNativo() {
-          if (cancelled || mapRef.current !== map) return;
+          if (cancelled || mapRef.current !== map || ajustandoZoom) return;
           const capa = sateliteRef.current;
           if (!capa) return;
           const zoom = Math.round(map.getZoom());
           if (zoom < ZOOM_NATIVO_MIN) return;
-          const centro = map.getCenter();
-          for (const nivel of [MAPA_MAX_ZOOM - 1, ZOOM_NATIVO_MIN]) {
-            const { x, y } = tileDeCentro(centro.lat, centro.lng, nivel);
-            const clave = `${x}_${y}_${nivel}`;
-            let disponible = zoomNativoCache.get(clave);
-            if (disponible === undefined) {
-              try {
-                const res = await fetch(
-                  `https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tilemap/${nivel}/${y}/${x}?width=1&height=1&f=json`,
-                );
-                const json = (await res.json()) as { data?: number[] };
-                disponible =
-                  Array.isArray(json.data) && json.data.some((v) => v === 1)
-                    ? nivel
-                    : 0;
-              } catch {
-                disponible = 0;
+          ajustandoZoom = true;
+          try {
+            const centro = map.getCenter();
+            for (const nivel of [MAPA_MAX_ZOOM - 1, ZOOM_NATIVO_MIN]) {
+              const { x, y } = tileDeCentro(centro.lat, centro.lng, nivel);
+              const clave = `${x}_${y}_${nivel}`;
+              let disponible = zoomNativoCache.get(clave);
+              if (disponible === undefined) {
+                try {
+                  const res = await fetch(
+                    `https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tilemap/${nivel}/${y}/${x}?width=1&height=1&f=json`,
+                  );
+                  const json = (await res.json()) as { data?: number[] };
+                  disponible =
+                    Array.isArray(json.data) && json.data.some((v) => v === 1)
+                      ? nivel
+                      : 0;
+                } catch {
+                  disponible = 0;
+                }
+                zoomNativoCache.set(clave, disponible);
               }
-              zoomNativoCache.set(clave, disponible);
-            }
-            if (disponible >= nivel) {
-              if (capa.options.maxNativeZoom !== nivel) {
-                capa.options.maxNativeZoom = nivel;
-                capa.redraw();
+              if (disponible >= nivel) {
+                if (capa.options.maxNativeZoom !== nivel) {
+                  capa.options.maxNativeZoom = nivel;
+                  capa.redraw();
+                }
+                return;
               }
-              return;
             }
+          } finally {
+            ajustandoZoom = false;
           }
         }
+
+        map.on("moveend", () => {
+          void ajustarZoomNativo();
+        });
+        // El ajuste nativo corre tras la primera carga, no en el mismo tick
+        // de la vista inicial (evita redraw encima de tiles en vuelo).
+        map.once("load", () => {
+          void ajustarZoomNativo();
+        });
 
         map.on("moveend", () => {
           void ajustarZoomNativo();
@@ -424,31 +454,41 @@ export function TerrenoMap({
           capasRef.current.set(capa, huerto.id);
         }
 
+        // Vista inicial ÚNICA: con huertos encuadra sus bounds; sin ellos,
+        // vista país (la geolocalización la refina async si está disponible).
         if (capasRef.current.size > 0) {
           const grupo = L.featureGroup([...capasRef.current.keys()]);
           map.fitBounds(grupo.getBounds(), { padding: [24, 24] });
           actualizarAreaPantalla();
-          void ajustarZoomNativo();
-        } else if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              if (cancelled || mapRef.current !== map) return;
-              map.setView(
-                [pos.coords.latitude, pos.coords.longitude],
-                Math.min(ZOOM_UBICACION, MAPA_MAX_ZOOM),
-              );
-              mostrarUbicacion(
-                pos.coords.latitude,
-                pos.coords.longitude,
-                pos.coords.accuracy,
-              );
-            },
-            () => {
-              if (cancelled || mapRef.current !== map) return;
-            },
-            { enableHighAccuracy: true, timeout: 10_000, maximumAge: 60_000 },
-          );
+        } else {
+          map.setView([CENTRO_DEFAULT.lat, CENTRO_DEFAULT.lng], ZOOM_DEFAULT);
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                if (cancelled || mapRef.current !== map) return;
+                map.setView(
+                  [pos.coords.latitude, pos.coords.longitude],
+                  Math.min(ZOOM_UBICACION, MAPA_MAX_ZOOM),
+                );
+                mostrarUbicacion(
+                  pos.coords.latitude,
+                  pos.coords.longitude,
+                  pos.coords.accuracy,
+                );
+              },
+              () => {
+                if (cancelled || mapRef.current !== map) return;
+              },
+              { enableHighAccuracy: true, timeout: 10_000, maximumAge: 60_000 },
+            );
+          }
         }
+
+        // Revalida el tamaño tras el primer pintado: si el layout aún no
+        // asentó el contenedor, Leaflet calcula mal los tiles (gris parcial).
+        requestAnimationFrame(() => {
+          if (!cancelled && mapRef.current === map) map.invalidateSize();
+        });
 
         if (!cancelled) setMapaListo(true);
       } catch {
@@ -499,16 +539,33 @@ export function TerrenoMap({
     }
 
     for (const [id, { arbol, latlng }] of deseados) {
-      if (marcadoresRef.current.has(id)) continue;
+      const nombre = nombreArbolRef.current(arbol.especie);
+      const med = medidasIconoArbol(arbol.especie);
+      const existente = marcadoresRef.current.get(id);
+      if (existente) {
+        // La especie o la posición pueden haber cambiado: se actualiza el
+        // icono en vez de conservar el anterior.
+        existente.setLatLng(latlng);
+        existente.setIcon(
+          Ll.divIcon({
+            className: "",
+            html: svgArbolPorEspecie(arbol.especie),
+            iconSize: [med.ancho, med.alto],
+            iconAnchor: [med.anchorX, med.anchorY],
+          }),
+        );
+        existente.setTooltipContent(nombre);
+        continue;
+      }
       const icono = Ll.divIcon({
         className: "",
-        html: svgArbolHtml(arbol.especie),
-        iconSize: [26, 32],
-        iconAnchor: [13, 16],
+        html: svgArbolPorEspecie(arbol.especie),
+        iconSize: [med.ancho, med.alto],
+        iconAnchor: [med.anchorX, med.anchorY],
       });
       const marker = Ll.marker(latlng, { icon: icono, keyboard: false })
         .addTo(map)
-        .bindTooltip(arbol.especie)
+        .bindTooltip(nombre)
         .on("click", () => onEditarArbolRef.current(id));
       marcadoresRef.current.set(id, marker);
     }
@@ -636,11 +693,18 @@ export function TerrenoMap({
 
   return (
     <div className="flex flex-col gap-2">
-      <div
-        ref={containerRef}
-        className={`h-80 w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
-        aria-label="Mapa para delimitar tus huertos y marcar árboles"
-      />
+      <div className="relative">
+        <div
+          ref={containerRef}
+          className={`h-80 w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
+          aria-label="Mapa para delimitar tus huertos y marcar árboles"
+        />
+        {cargandoSatelite && (
+          <p className="pointer-events-none absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[11px] text-white">
+            Cargando satélite…
+          </p>
+        )}
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">
           {dibujando && areaPantalla !== null

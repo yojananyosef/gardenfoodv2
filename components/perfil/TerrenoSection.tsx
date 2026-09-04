@@ -346,6 +346,9 @@ export function TerrenoSection() {
           setArbolEditando(arboles.find((a) => a.id === id) ?? null)
         }
         onFueraHuerto={handleFueraHuerto}
+        nombreArbol={(especie) =>
+          especies.find((e) => e.dbKey === especie)?.nombre ?? especie
+        }
       />
       {huertos.length === 0 ? (
         <p className="text-xs text-muted-foreground">

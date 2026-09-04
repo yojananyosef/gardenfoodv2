@@ -6,11 +6,15 @@ Permite al usuario ver su ubicación sobre un mapa y delimitar los bordes de sus
 ## Requirements
 
 ### Requirement: Visualización del mapa con ubicación del usuario
-El sistema SHALL mostrar un mapa interactivo (calles y vista satelital conmutables) centrado en la ubicación del usuario, sin requerir claves de API ni servicios pagos.
+El sistema SHALL mostrar un mapa interactivo (calles y vista satelital conmutables) centrado en la ubicación del usuario, sin requerir claves de API ni servicios pagos. La vista inicial SHALL fijarse una sola vez (huertos → encuadre de sus límites; si no → vista país con refinamiento async por geolocalización) para no abortar la carga de teselas, SHALL revalidar el tamaño del contenedor tras el primer pintado y SHALL mostrar un distintivo "Cargando satélite…" hasta los primeros tiles.
 
 #### Scenario: Mapa se centra en la geolocalización del navegador
 - **WHEN** el usuario autoriza el permiso de geolocalización al abrir el mapa
 - **THEN** el sistema centra el mapa en las coordenadas obtenidas y muestra un marcador aproximado
+
+#### Scenario: Primera carga muestra el satélite sin interacción
+- **WHEN** el usuario abre el mapa con huertos guardados
+- **THEN** el satélite carga visible sin necesidad de mover o hacer zoom, con distintivo de carga hasta los primeros tiles
 
 #### Scenario: Fallback sin permiso de geolocalización
 - **WHEN** el usuario deniega el permiso o el navegador no soporta geolocalización
@@ -115,7 +119,7 @@ El sistema SHALL cargar el mapa y sus herramientas únicamente desde dependencia
 - **THEN** el mapa sigue operativo para editar los polígonos previamente dibujados y guardar cambios cuando la conectividad lo permita
 
 ### Requirement: Marcado de árboles sobre el mapa
-El sistema SHALL permitir al usuario contar sus árboles directamente sobre el mapa satelital: en modo "Marcar árboles", cada tap dentro de un polígono delimitado SHALL registrar un árbol individual (cantidad 1) asignado al huerto que contiene el punto, con posición normalizada derivada de lat/lng; los marcadores de árboles SHALL permanecer visibles y ser editables (especie, fecha, observaciones, quitar, eliminar) tocándolos. El límite del plan gratuito SHALL aplicar al marcado (validación server-side y upsell en el 2º árbol).
+El sistema SHALL permitir al usuario contar sus árboles directamente sobre el mapa satelital: en modo "Marcar árboles", cada tap dentro de un polígono delimitado SHALL registrar un árbol individual (cantidad 1) asignado al huerto que contiene el punto, con posición normalizada derivada de lat/lng; los marcadores de árboles SHALL permanecer visibles y ser editables (especie, fecha, observaciones, quitar, eliminar) tocándolos, con icono propio por especie (silueta, color de copa y frutos derivados del catálogo de modelos) y tooltip con el nombre de la especie; al cambiar la especie o posición de un árbol, su marcador SHALL actualizarse. El límite del plan gratuito SHALL aplicar al marcado (validación server-side y upsell en el 2º árbol).
 
 #### Scenario: Conteo por taps con especie activa
 - **WHEN** el usuario activa el modo de marcado, elige una especie y toca N puntos dentro de un polígono
@@ -132,6 +136,10 @@ El sistema SHALL permitir al usuario contar sus árboles directamente sobre el m
 #### Scenario: Edición desde el marcador
 - **WHEN** el usuario toca un marcador existente
 - **THEN** el sistema abre la edición individual del árbol (misma que el plano)
+
+#### Scenario: Marcador distingue especies y se actualiza
+- **WHEN** el plano tiene árboles de varias especies o cambia la especie de uno
+- **THEN** cada marcador muestra la silueta y frutos de su especie con tooltip del nombre, y se actualiza sin recargar el mapa
 
 #### Scenario: Límite gratuito en el marcado
 - **WHEN** un usuario gratuito con 1 árbol intenta marcar el segundo
