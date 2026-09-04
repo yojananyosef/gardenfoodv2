@@ -20,7 +20,46 @@ import type { TerrenoPolygonCoordinates } from "@/lib/huerto/terreno";
 export type Arbol3D = { id: string; especie: string; posX: number; posY: number };
 
 const ALTURA_POLIGONO = 0.35;
-const EXPANSION_PLATO = 1.18;
+const EXPANSION_PLATO = 1.1;
+
+// `colorDeEspecie` devuelve `hsl(H S% L%)` (sintaxis moderna sin comas) que
+// el parser de THREE.Color no entiende → la copa quedaba blanca. Se convierte
+// a HSL numérico.
+function colorEspecieThree(especie: string): THREE.Color {
+  const css = colorDeEspecie(especie);
+  const m = css.match(/hsl\(([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\)/);
+  if (!m) return new THREE.Color("#2f7a2f");
+  return new THREE.Color().setHSL(
+    Number(m[1]) / 360,
+    Number(m[2]) / 100,
+    Number(m[3]) / 100,
+    THREE.SRGBColorSpace,
+  );
+}
+
+function hashId(id: string): number {
+  let h = 0;
+  for (const ch of id) h = (h * 31 + (ch.codePointAt(0) ?? 0)) >>> 0;
+  return h;
+}
+
+function puntoEnPoligonoXY(
+  x: number,
+  y: number,
+  poli: { x: number; y: number }[],
+): boolean {
+  let dentro = false;
+  for (let i = 0, j = poli.length - 1; i < poli.length; j = i++) {
+    const xi = poli[i].x;
+    const yi = poli[i].y;
+    const xj = poli[j].x;
+    const yj = poli[j].y;
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      dentro = !dentro;
+    }
+  }
+  return dentro;
+}
 
 function texturaTierraProcedural(): THREE.CanvasTexture {
   const c = document.createElement("canvas");
@@ -115,17 +154,16 @@ export function PlanoHuerto3D({
     cont.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
-    const dist = 13;
-    camera.position.set(dist * 0.55, -dist * 0.75, dist * 0.62);
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
+    camera.position.set(6, -7.5, 6.5);
     camera.up.set(0, 0, 1);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0, 0.3);
+    controls.target.set(0, 0, 0.4);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.minDistance = 4;
-    controls.maxDistance = 42;
+    controls.minDistance = 3.5;
+    controls.maxDistance = 30;
     // Elevación 28°-88° ↔ polar 2°-62°
     controls.minPolarAngle = 0.12;
     controls.maxPolarAngle = 1.13;
@@ -133,8 +171,8 @@ export function PlanoHuerto3D({
     const vistaInicial = camera.position.clone();
     const objetivoInicial = controls.target.clone();
 
-    scene.add(new THREE.HemisphereLight(0xdff2ff, 0x2d3a1a, 0.95));
-    const sol = new THREE.DirectionalLight(0xfff6e0, 1.6);
+    scene.add(new THREE.HemisphereLight(0xdff2ff, 0x2d3a1a, 1.0));
+    const sol = new THREE.DirectionalLight(0xfff6e0, 1.8);
     sol.position.set(7, -5, 11);
     sol.castShadow = true;
     sol.shadow.mapSize.set(1024, 1024);
@@ -143,6 +181,9 @@ export function PlanoHuerto3D({
     sol.shadow.camera.top = 9;
     sol.shadow.camera.bottom = -9;
     scene.add(sol);
+    const relleno = new THREE.DirectionalLight(0xcfe8ff, 0.4);
+    relleno.position.set(-6, 5, 6);
+    scene.add(relleno);
 
     // --- Plato base: bbox expandido, MISMA proyección que el polígono ---
     const platoW = (anchoM / k) * EXPANSION_PLATO;
@@ -170,11 +211,17 @@ export function PlanoHuerto3D({
       depth: ALTURA_POLIGONO,
       bevelEnabled: false,
     });
+    // Tapas (0) con satélite / pasto, laterales (1) de tierra oscura para que
+    // el polígono "asiente" sobre el plato en vez de flotar con caras negras.
     const matPoli = new THREE.MeshStandardMaterial({
       color: "#4d7c3a",
       roughness: 0.95,
     });
-    const mallaPoli = new THREE.Mesh(geoPoli, matPoli);
+    const matLateral = new THREE.MeshStandardMaterial({
+      color: "#3a4520",
+      roughness: 1,
+    });
+    const mallaPoli = new THREE.Mesh(geoPoli, [matPoli, matLateral]);
     mallaPoli.castShadow = true;
     mallaPoli.receiveShadow = true;
     scene.add(mallaPoli);
@@ -235,20 +282,104 @@ export function PlanoHuerto3D({
       }
     })();
 
-    // --- Árboles low-poly con sombra real ---
-    const troncoGeo = new THREE.CylinderGeometry(0.05, 0.07, 0.55, 7);
-    const copaGeo = new THREE.IcosahedronGeometry(0.34, 1);
+    // Grilla de matriz sobre la cara superior (solo segmentos dentro del
+    // polígono, para que se lea como una sola capa y no como fondo aparte).
+    {
+      const escena = anilloExt.map((p) => {
+        const { sx, sy } = aEscena(p.x, p.y);
+        return { x: sx, y: sy };
+      });
+      const minSx = Math.min(...escena.map((p) => p.x));
+      const maxSx = Math.max(...escena.map((p) => p.x));
+      const minSy = Math.min(...escena.map((p) => p.y));
+      const maxSy = Math.max(...escena.map((p) => p.y));
+      const DIV = 10;
+      const pts: THREE.Vector3[] = [];
+      const z = ALTURA_POLIGONO + 0.015;
+      for (let i = 1; i < DIV; i++) {
+        const fx = minSx + ((maxSx - minSx) * i) / DIV;
+        const fy = minSy + ((maxSy - minSy) * i) / DIV;
+        // vertical: recorre en tramos y conserva los que caen dentro
+        let prevY = minSy;
+        const STEPS = 40;
+        for (let s = 1; s <= STEPS; s++) {
+          const y = minSy + ((maxSy - minSy) * s) / STEPS;
+          const inside =
+            puntoEnPoligonoXY(fx, (prevY + y) / 2, escena) &&
+            puntoEnPoligonoXY(fx, y, escena);
+          if (inside) {
+            pts.push(new THREE.Vector3(fx, prevY, z), new THREE.Vector3(fx, y, z));
+          }
+          prevY = y;
+        }
+        let prevX = minSx;
+        for (let s = 1; s <= STEPS; s++) {
+          const x = minSx + ((maxSx - minSx) * s) / STEPS;
+          const inside =
+            puntoEnPoligonoXY((prevX + x) / 2, fy, escena) &&
+            puntoEnPoligonoXY(x, fy, escena);
+          if (inside) {
+            pts.push(new THREE.Vector3(prevX, fy, z), new THREE.Vector3(x, fy, z));
+          }
+          prevX = x;
+        }
+      }
+      if (pts.length > 0) {
+        const grilla = new THREE.LineSegments(
+          new THREE.BufferGeometry().setFromPoints(pts),
+          new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.28 }),
+        );
+        scene.add(grilla);
+      }
+    }
+
+    // --- Árboles: tronco vertical + copa en 2 capas + sombra de contacto ---
+    // OJO: la escena es Z-up (camera.up 0,0,1) pero CylinderGeometry nace con
+    // su eje en Y → sin rotateX queda ACOSTADO. Se rota la geometría una vez.
+    const troncoGeo = new THREE.CylinderGeometry(0.07, 0.1, 0.7, 8);
+    troncoGeo.rotateX(Math.PI / 2);
+    const copaGeo = new THREE.IcosahedronGeometry(0.5, 1);
+    const copaAltaGeo = new THREE.IcosahedronGeometry(0.32, 1);
+    const brilloGeo = new THREE.IcosahedronGeometry(0.14, 0);
+    const sombraGeo = new THREE.CircleGeometry(0.42, 20);
     const troncoMat = new THREE.MeshStandardMaterial({ color: "#7a4a21", roughness: 1 });
+    const sombraMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.28,
+      depthWrite: false,
+    });
+    const brilloMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.22,
+      roughness: 0.4,
+    });
     const copaMats = new Map<string, THREE.MeshStandardMaterial>();
+    const copaClaraMats = new Map<string, THREE.MeshStandardMaterial>();
     const copaDe = (especie: string) => {
       let m = copaMats.get(especie);
       if (!m) {
         m = new THREE.MeshStandardMaterial({
-          color: new THREE.Color(colorDeEspecie(especie)),
-          roughness: 0.85,
+          color: colorEspecieThree(especie),
+          roughness: 0.9,
           flatShading: true,
         });
         copaMats.set(especie, m);
+      }
+      return m;
+    };
+    const copaClaraDe = (especie: string) => {
+      let m = copaClaraMats.get(especie);
+      if (!m) {
+        const base = colorEspecieThree(especie);
+        base.offsetHSL(0, 0.02, 0.09);
+        m = new THREE.MeshStandardMaterial({
+          color: base,
+          roughness: 0.9,
+          flatShading: true,
+        });
+        copaClaraMats.set(especie, m);
       }
       return m;
     };
@@ -258,18 +389,31 @@ export function PlanoHuerto3D({
       const nx = a.posX - 0.5;
       const ny = -(a.posY - 0.5);
       const { sx, sy } = aEscena(nx, ny);
+      const h = hashId(a.id);
+      const escala = 0.9 + ((h % 40) / 100); // 0.9–1.29 variación natural
+      const giro = ((h >> 3) % 628) / 100;
       const g = new THREE.Group();
+      const sombra = new THREE.Mesh(sombraGeo, sombraMat);
+      sombra.position.z = ALTURA_POLIGONO + 0.012;
       const tronco = new THREE.Mesh(troncoGeo, troncoMat);
-      tronco.position.z = ALTURA_POLIGONO + 0.27;
+      tronco.position.z = ALTURA_POLIGONO + 0.35;
       tronco.castShadow = true;
       const copa = new THREE.Mesh(copaGeo, copaDe(a.especie));
-      copa.position.z = ALTURA_POLIGONO + 0.72;
+      copa.position.z = ALTURA_POLIGONO + 0.95;
       copa.castShadow = true;
       copa.userData.arbolId = a.id;
-      g.add(tronco, copa);
+      const copaAlta = new THREE.Mesh(copaAltaGeo, copaClaraDe(a.especie));
+      copaAlta.position.set(0.2, 0.12, ALTURA_POLIGONO + 1.32);
+      copaAlta.castShadow = true;
+      copaAlta.userData.arbolId = a.id;
+      const brillo = new THREE.Mesh(brilloGeo, brilloMat);
+      brillo.position.set(-0.18, -0.12, ALTURA_POLIGONO + 1.18);
+      g.add(sombra, tronco, copa, copaAlta, brillo);
       g.position.set(sx, sy, 0);
+      g.rotation.z = giro;
+      g.scale.setScalar(escala);
       grupoArboles.add(g);
-      golpeables.push(copa);
+      golpeables.push(copa, copaAlta);
     }
     scene.add(grupoArboles);
 
@@ -336,6 +480,7 @@ export function PlanoHuerto3D({
       texTierra.dispose();
       (matPoli.map as THREE.Texture | null)?.dispose();
       matPoli.dispose();
+      matLateral.dispose();
       renderer!.dispose();
       renderer!.domElement.remove();
       renderer = null;

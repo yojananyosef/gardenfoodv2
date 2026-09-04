@@ -1,11 +1,11 @@
 "use client";
 
-import { useId, useMemo, useState, useTransition } from "react";
+import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, RefreshCw } from "lucide-react";
+import { MapPin, Maximize, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -66,8 +66,61 @@ export function PlanoHuerto({
   const [modo, setModo] = useState<Modo>("2d");
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
+  // Zoom/pan del 2D: el plano ocupa más pantalla y se puede explorar.
+  const [zoom2d, setZoom2d] = useState(1);
+  const [pan2d, setPan2d] = useState({ x: 0, y: 0 });
+  const [arrastrando2d, setArrastrando2d] = useState(false);
+  const panRef = useRef<{ x: number; y: number; px: number; py: number; activo: boolean } | null>(null);
+  const marco2dRef = useRef<HTMLDivElement>(null);
 
   const en3d = modo === "3d";
+
+  function elegirHuerto(id: string | null) {
+    setHuertoId(id);
+    setZoom2d(1);
+    setPan2d({ x: 0, y: 0 });
+  }
+
+  // Rueda → zoom (listener no pasivo para poder prevenir el scroll).
+  useEffect(() => {
+    if (en3d) return;
+    const el = marco2dRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setZoom2d((z) => Math.max(0.6, Math.min(2.8, z * (e.deltaY > 0 ? 0.9 : 1.1))));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [en3d]);
+
+  function iniciarPan2d(e: React.PointerEvent<HTMLDivElement>) {
+    if ((e.target as HTMLElement).closest("button")) return;
+    panRef.current = { x: e.clientX, y: e.clientY, px: pan2d.x, py: pan2d.y, activo: false };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+
+  function moverPan2d(e: React.PointerEvent<HTMLDivElement>) {
+    const arr = panRef.current;
+    if (!arr) return;
+    const dx = e.clientX - arr.x;
+    const dy = e.clientY - arr.y;
+    if (!arr.activo && Math.hypot(dx, dy) > 4) {
+      arr.activo = true;
+      setArrastrando2d(true);
+    }
+    if (arr.activo) setPan2d({ x: arr.px + dx, y: arr.py + dy });
+  }
+
+  function terminarPan2d() {
+    panRef.current = null;
+    setArrastrando2d(false);
+  }
+
+  function centrar2d() {
+    setZoom2d(1);
+    setPan2d({ x: 0, y: 0 });
+  }
 
   const huerto = huertos.find((h) => h.id === huertoId) ?? huertos[0] ?? null;
   const arbolesPlano = useMemo(
@@ -166,7 +219,7 @@ export function PlanoHuerto({
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         {huertos.length > 1 ? (
-          <Select value={huerto?.id ?? undefined} onValueChange={setHuertoId}>
+          <Select value={huerto?.id ?? undefined} onValueChange={elegirHuerto}>
             <SelectTrigger className="w-52 min-h-9" aria-label="Huerto del plano">
               <SelectValue>
                 {(value: string | null) =>
@@ -226,7 +279,7 @@ export function PlanoHuerto({
       </div>
 
       {en3d ? (
-        <div className="relative h-80 overflow-hidden rounded-xl border bg-[#0b1a12]">
+        <div className="relative h-[440px] overflow-hidden rounded-xl border bg-[#0b1a12] md:h-[500px]">
           {vista && feature ? (
             <PlanoHuerto3D
               coordinates={feature.geometry.coordinates}
@@ -249,8 +302,61 @@ export function PlanoHuerto({
         </div>
       ) : (
       <div
-        className="relative flex h-80 items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 p-4 dark:from-sky-950/50 dark:to-emerald-950/30"
+        ref={marco2dRef}
+        className={`relative h-[440px] overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 md:h-[500px] dark:from-sky-950/50 dark:to-emerald-950/30 ${
+          arrastrando2d ? "cursor-grabbing" : "cursor-grab"
+        }`}
+        style={{ touchAction: "none" }}
+        onPointerDown={iniciarPan2d}
+        onPointerMove={moverPan2d}
+        onPointerUp={terminarPan2d}
+        onPointerCancel={terminarPan2d}
       >
+          {/* Controles de zoom */}
+          <div className="absolute left-2 top-2 z-30 flex items-center gap-1 rounded-full border bg-white/90 p-1 shadow-sm">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="size-7 rounded-full px-0"
+              onClick={() => setZoom2d((z) => Math.max(0.6, z / 1.2))}
+              aria-label="Acercar menos"
+            >
+              <ZoomOut className="size-4" />
+            </Button>
+            <span className="min-w-11 text-center font-mono text-[11px] text-muted-foreground">
+              {Math.round(zoom2d * 100)}%
+            </span>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="size-7 rounded-full px-0"
+              onClick={() => setZoom2d((z) => Math.min(2.8, z * 1.2))}
+              aria-label="Acercar más"
+            >
+              <ZoomIn className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="size-7 rounded-full px-0"
+              onClick={centrar2d}
+              disabled={zoom2d === 1 && pan2d.x === 0 && pan2d.y === 0}
+              aria-label="Centrar plano"
+              title="Centrar plano"
+            >
+              <Maximize className="size-4" />
+            </Button>
+          </div>
+          <div
+            className="absolute inset-0 flex items-center justify-center p-4"
+            style={{
+              transform: `translate(${pan2d.x}px, ${pan2d.y}px) scale(${zoom2d})`,
+              transition: arrastrando2d ? "none" : "transform 200ms ease-out",
+            }}
+          >
           <div
             className="relative max-h-full rounded-md shadow-[0_18px_35px_rgba(0,0,0,0.30)]"
             style={{
@@ -333,6 +439,7 @@ export function PlanoHuerto({
             </p>
           ) : null}
           </div>
+          </div>
       </div>
       )}
 
@@ -341,7 +448,7 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz"}</span>
+        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Arrastra para mover · rueda o botones para zoom · toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz"}</span>
       </div>
 
       {leyenda.length > 0 ? (
