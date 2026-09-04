@@ -83,6 +83,16 @@ export function PlanoHuerto({
       ).length,
     [arboles, huerto?.id],
   );
+  const unidadesNuevas = useMemo(
+    () =>
+      expandirUnidades(
+        arboles
+          .filter((a) => !a.huertoId)
+          .map((a) => ({ especie: a.especie, cantidad: a.cantidad })),
+      ).length,
+    [arboles],
+  );
+  const nadaPorSincronizar = unidadesALanzar === 0 && arbolesPlano.length === 0;
   const leyenda = useMemo(() => {
     const conteo = new Map<string, number>();
     for (const a of arbolesPlano) {
@@ -180,10 +190,12 @@ export function PlanoHuerto({
             size="sm"
             className="rounded-full"
             onClick={sincronizar}
-            disabled={pending || !huerto?.feature}
+            disabled={pending || !huerto?.feature || nadaPorSincronizar}
           >
             <RefreshCw className={pending ? "animate-spin" : undefined} />
-            {pending ? "Sincronizando…" : "Sincronizar árboles"}
+            {pending
+              ? "Sincronizando…"
+              : `Sincronizar árboles${unidadesNuevas > 0 ? ` (${unidadesNuevas})` : ""}`}
           </Button>
         </div>
       </div>
@@ -253,8 +265,9 @@ export function PlanoHuerto({
           )}
           {vista && arbolesPlano.length === 0 ? (
             <p className="pointer-events-none absolute inset-x-4 top-1/2 z-20 -translate-y-1/2 text-center text-xs text-muted-foreground">
-              Sin árboles en este plano. Sincroniza tu inventario para
-              distribuirlos en la matriz.
+              {nadaPorSincronizar
+                ? "Aún no tienes árboles. Regístralos en el inventario y luego sincroniza para distribuirlos en la matriz."
+                : `Tienes ${unidadesNuevas} árbol${unidadesNuevas === 1 ? "" : "es"} por sincronizar. Pulsa «Sincronizar árboles».`}
             </p>
           ) : null}
         </div>

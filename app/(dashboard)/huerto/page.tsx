@@ -387,7 +387,11 @@ export default async function HuertoPage() {
                   <ListaCultivos cultivos={cultivosConNombre} />
                 </CardContent>
               </Card>
+            </div>
+          )}
 
+          {/* Inventario, plano y terreno — siempre visibles, incluso con huerto vacío */}
+          <div className="grid gap-4 lg:grid-cols-12">
               {/* Inventario árboles — full width bento, split inside */}
               <Card className="rounded-2xl shadow-sm lg:col-span-12">
                 <CardHeader className="pb-3">
@@ -441,7 +445,8 @@ export default async function HuertoPage() {
                       <div className="flex flex-col gap-1">
                         <CardTitle className="text-base">Plano de tus huertos</CardTitle>
                         <CardDescription className="text-xs">
-                          Matriz de árboles sobre el polígono dibujado en el mapa.
+                          Sincroniza tu inventario de árboles con el polígono del
+                          mapa y edítalos en la matriz.
                         </CardDescription>
                       </div>
                     </div>
@@ -512,8 +517,7 @@ export default async function HuertoPage() {
                   </div>
                 ) : null}
               </Card>
-            </div>
-          )}
+          </div>
 
           {sponsorships.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
