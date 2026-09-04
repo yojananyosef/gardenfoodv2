@@ -30,9 +30,19 @@ const ESRI_REF_URL =
   "https://services.arcgisonline.com/arcgis/rest/services/Reference/World_Reference_Overlay/MapServer/tile/{z}/{y}/{x}";
 const ESRI_REF_ATTR = "© Esri — Reference Overlay";
 
+export type HuertoMapa = {
+  id: string;
+  nombre: string;
+  feature: TerrenoFeature;
+};
+
 type TerrenoMapProps = {
-  featureInicial: TerrenoFeature | null;
-  onChange: (feature: TerrenoFeature | null) => void;
+  huertosIniciales: HuertoMapa[];
+  puedeDibujar: boolean;
+  onCrear: (feature: TerrenoFeature) => Promise<string | null>;
+  onEditar: (id: string, feature: TerrenoFeature) => void;
+  onEliminar: (id: string) => Promise<boolean>;
+  onLimite: () => void;
 };
 
 function comoPolygon(layer: Leaflet.Layer): Leaflet.Polygon {
@@ -44,18 +54,39 @@ function anilloDePolygon(capa: Leaflet.Polygon): PuntoMapa[] {
   return (latlngs[0] ?? []).map((p) => ({ lat: p.lat, lng: p.lng }));
 }
 
-export function TerrenoMap({ featureInicial, onChange }: TerrenoMapProps) {
+export function TerrenoMap({
+  huertosIniciales,
+  puedeDibujar,
+  onCrear,
+  onEditar,
+  onEliminar,
+  onLimite,
+}: TerrenoMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Leaflet.Map | null>(null);
-  const capaRef = useRef<Leaflet.Polygon | null>(null);
+  const capasRef = useRef<Map<Leaflet.Polygon, string>>(new Map());
   const leafletRef = useRef<typeof Leaflet | null>(null);
   const ubicacionMarkerRef = useRef<Leaflet.CircleMarker | null>(null);
   const ubicacionCirculoRef = useRef<Leaflet.Circle | null>(null);
-  const onChangeRef = useRef(onChange);
+  const inicialesRef = useRef(huertosIniciales);
+  const puedeDibujarRef = useRef(puedeDibujar);
+  const onCrearRef = useRef(onCrear);
+  const onEditarRef = useRef(onEditar);
+  const onEliminarRef = useRef(onEliminar);
+  const onLimiteRef = useRef(onLimite);
+
   useEffect(() => {
-    onChangeRef.current = onChange;
-  }, [onChange]);
-  const [areaM2, setAreaM2] = useState<number | null>(null);
+    puedeDibujarRef.current = puedeDibujar;
+    onCrearRef.current = onCrear;
+    onEditarRef.current = onEditar;
+    onEliminarRef.current = onEliminar;
+    onLimiteRef.current = onLimite;
+  }, [puedeDibujar, onCrear, onEditar, onEliminar, onLimite]);
+
+  const [areaPantalla, setAreaPantalla] = useState<{
+    total: number;
+    huertos: number;
+  } | null>(null);
   const [dibujando, setDibujando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [localizando, setLocalizando] = useState(false);
@@ -151,33 +182,49 @@ export function TerrenoMap({ featureInicial, onChange }: TerrenoMapProps) {
           removalMode: true,
         });
 
-        const emitirFeature = (capa: Leaflet.Polygon | null) => {
-          if (!capa) {
-            setAreaM2(null);
-            onChangeRef.current(null);
+        function featureDeCapa(capa: Leaflet.Polygon): TerrenoFeature | null {
+          const puntos = anilloDePolygon(capa);
+          if (puntos.length < 3) return null;
+          return featureDesdePuntos(puntos);
+        }
+
+        function actualizarAreaPantalla() {
+          let total = 0;
+          for (const capa of capasRef.current.keys()) {
+            total += terrenoAreaM2(
+              featureDeCapa(capa)?.geometry.coordinates ?? [],
+            );
+          }
+          setAreaPantalla({ total, huertos: capasRef.current.size });
+        }
+
+        map.on("pm:drawstart", () => {
+          if (!puedeDibujarRef.current) {
+            map.pm.disableDraw();
+            onLimiteRef.current();
             return;
           }
-          const puntos = anilloDePolygon(capa);
-          if (puntos.length < 3) return;
-          const feature = featureDesdePuntos(puntos);
-          setAreaM2(terrenoAreaM2(feature.geometry.coordinates));
-          onChangeRef.current(feature);
-        };
-
-        map.on("pm:create", (e) => {
-          const capa = comoPolygon(e.layer);
-          if (capaRef.current) map.removeLayer(capaRef.current);
-          capaRef.current = capa;
-          map.pm.disableDraw();
-          setDibujando(false);
-          map.pm.Toolbar.setButtonDisabled("drawPolygon", true);
-          emitirFeature(capa);
+          setDibujando(true);
         });
 
-        map.on("pm:drawstart", () => setDibujando(true));
-        map.on("pm:drawend", () => {
+        map.on("pm:drawend", () => setDibujando(false));
+
+        map.on("pm:create", (e) => {
           setDibujando(false);
-          emitirFeature(capaRef.current);
+          const capa = comoPolygon(e.layer);
+          const feature = featureDeCapa(capa);
+          if (!feature) return;
+          void (async () => {
+            const id = await onCrearRef.current(feature);
+            if (cancelled) return;
+            if (id) {
+              capasRef.current.set(capa, id);
+              capa.bindTooltip("Huerto");
+              actualizarAreaPantalla();
+            } else {
+              map.removeLayer(capa);
+            }
+          })();
         });
 
         map.on("pm:vertexadded", (e) => {
@@ -186,37 +233,55 @@ export function TerrenoMap({ featureInicial, onChange }: TerrenoMapProps) {
           if (!workingLayer) return;
           const puntos = anilloDePolygon(workingLayer);
           if (puntos.length < 3) {
-            setAreaM2(null);
+            setAreaPantalla(null);
             return;
           }
-          setAreaM2(
-            terrenoAreaM2(featureDesdePuntos(puntos).geometry.coordinates),
-          );
+          setAreaPantalla({
+            total: terrenoAreaM2(
+              featureDesdePuntos(puntos).geometry.coordinates,
+            ),
+            huertos: capasRef.current.size,
+          });
         });
 
         map.on("pm:edit", (e) => {
-          if (e.layer && comoPolygon(e.layer) === capaRef.current) {
-            emitirFeature(capaRef.current);
-          }
+          const capa = comoPolygon(e.layer);
+          const id = capasRef.current.get(capa);
+          if (!id) return;
+          const feature = featureDeCapa(capa);
+          if (!feature) return;
+          onEditarRef.current(id, feature);
+          actualizarAreaPantalla();
         });
 
         map.on("pm:remove", (e) => {
-          if (e.layer && comoPolygon(e.layer) === capaRef.current) {
-            capaRef.current = null;
-            setAreaM2(null);
-            onChangeRef.current(null);
-            map.pm.Toolbar.setButtonDisabled("drawPolygon", false);
-          }
+          const capa = comoPolygon(e.layer);
+          const id = capasRef.current.get(capa);
+          if (!id) return;
+          capasRef.current.delete(capa);
+          void (async () => {
+            const confirmado = await onEliminarRef.current(id);
+            if (cancelled) return;
+            if (!confirmado) {
+              capasRef.current.set(capa, id);
+              capa.addTo(map);
+            }
+            actualizarAreaPantalla();
+          })();
         });
 
-        if (featureInicial && puntosDesdeFeature(featureInicial).length >= 3) {
-          const capa = L.polygon(puntosDesdeFeature(featureInicial));
-          capa.addTo(map);
-          capaRef.current = capa;
-          setAreaM2(terrenoAreaM2(featureInicial.geometry.coordinates));
-          onChangeRef.current(featureInicial);
-          map.fitBounds(capa.getBounds(), { padding: [24, 24] });
-          map.pm.Toolbar.setButtonDisabled("drawPolygon", true);
+        for (const huerto of inicialesRef.current) {
+          const puntos = puntosDesdeFeature(huerto.feature);
+          if (puntos.length < 3) continue;
+          const capa = L.polygon(puntos).addTo(map);
+          capa.bindTooltip(huerto.nombre);
+          capasRef.current.set(capa, huerto.id);
+        }
+
+        if (capasRef.current.size > 0) {
+          const grupo = L.featureGroup([...capasRef.current.keys()]);
+          map.fitBounds(grupo.getBounds(), { padding: [24, 24] });
+          actualizarAreaPantalla();
         } else if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -246,11 +311,13 @@ export function TerrenoMap({ featureInicial, onChange }: TerrenoMapProps) {
       cancelled = true;
       mapRef.current?.remove();
       mapRef.current = null;
-      capaRef.current = null;
+      capasRef.current = new Map();
       ubicacionMarkerRef.current = null;
       ubicacionCirculoRef.current = null;
     };
-  }, [featureInicial]);
+    // El mapa se monta una sola vez; los huertos iniciales ya están cargados
+    // cuando la sección lo renderiza (se oculta mientras carga).
+  }, []);
 
   function centrarEnMiUbicacion() {
     const map = mapRef.current;
@@ -352,13 +419,15 @@ export function TerrenoMap({ featureInicial, onChange }: TerrenoMapProps) {
       <div
         ref={containerRef}
         className="h-80 w-full overflow-hidden rounded-md border"
-        aria-label="Mapa para delimitar tu terreno"
+        aria-label="Mapa para delimitar tus huertos"
       />
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">
-          {areaM2 !== null
-            ? `Superficie aproximada: ${formatAreaM2(areaM2)}`
-            : "Activa el ícono de polígono y toca las esquinas de tu terreno."}
+          {dibujando && areaPantalla !== null
+            ? `Superficie aproximada: ${formatAreaM2(areaPantalla.total)}`
+            : areaPantalla && areaPantalla.huertos > 0
+              ? `${areaPantalla.huertos} ${areaPantalla.huertos === 1 ? "huerto" : "huertos"} · Superficie total: ${formatAreaM2(areaPantalla.total)}`
+              : "Activa el ícono de polígono y toca las esquinas de tu terreno."}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -391,7 +460,10 @@ export function TerrenoMap({ featureInicial, onChange }: TerrenoMapProps) {
         </p>
       )}
       <p className="text-[11px] text-muted-foreground">
-        Vista Satélite muestra límites y nombres gracias a Esri Reference; usa el control de capas (arriba a la derecha) para alternar a Calles.
+        Dibuja cada huerto con el ícono de polígono; puedes tener varios. Edita
+        vértices o borra con las herramientas del mapa. Vista Satélite muestra
+        límites y nombres gracias a Esri Reference; usa el control de capas
+        (arriba a la derecha) para alternar a Calles.
       </p>
     </div>
   );

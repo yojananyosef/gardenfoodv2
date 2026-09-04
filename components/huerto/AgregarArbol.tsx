@@ -22,7 +22,6 @@ type Uso = { actual: number; limite: number | null };
 
 export function AgregarArbol({ especies, uso }: { especies: Especie[]; uso?: Uso }) {
   const [especie, setEspecie] = useState<string | null>(null);
-  const [cantidad, setCantidad] = useState("1");
   const [fechaPlantacion, setFechaPlantacion] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [pending, startTransition] = useTransition();
@@ -36,11 +35,9 @@ export function AgregarArbol({ especies, uso }: { especies: Especie[]; uso?: Uso
       toast.error("Selecciona una especie.");
       return;
     }
-    const cant = Math.max(1, Math.min(1000, Number(cantidad) || 1));
     startTransition(async () => {
       const result = await agregarArbol({
         especie,
-        cantidad: cant,
         fechaPlantacion: fechaPlantacion ? fechaPlantacion : null,
         observaciones: observaciones.trim() ? observaciones.trim() : null,
       });
@@ -56,7 +53,6 @@ export function AgregarArbol({ especies, uso }: { especies: Especie[]; uso?: Uso
       }
       toast.success("Árbol agregado a tu inventario.");
       setEspecie(null);
-      setCantidad("1");
       setFechaPlantacion("");
       setObservaciones("");
     });
@@ -107,18 +103,6 @@ export function AgregarArbol({ especies, uso }: { especies: Especie[]; uso?: Uso
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="arbol-cantidad">Cantidad</Label>
-          <Input
-            id="arbol-cantidad"
-            type="number"
-            min={1}
-            max={1000}
-            value={cantidad}
-            onChange={(e) => setCantidad(e.target.value)}
-            className="min-h-12"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
           <Label htmlFor="arbol-fecha">Fecha de plantación</Label>
           <Input
             id="arbol-fecha"
@@ -128,17 +112,21 @@ export function AgregarArbol({ especies, uso }: { especies: Especie[]; uso?: Uso
             className="min-h-12"
           />
         </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="arbol-obs">Observaciones</Label>
+          <Input
+            id="arbol-obs"
+            value={observaciones}
+            maxLength={500}
+            onChange={(e) => setObservaciones(e.target.value)}
+            className="min-h-12"
+          />
+        </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="arbol-obs">Observaciones</Label>
-        <Input
-          id="arbol-obs"
-          value={observaciones}
-          maxLength={500}
-          onChange={(e) => setObservaciones(e.target.value)}
-          className="min-h-12"
-        />
-      </div>
+      <p className="text-xs text-muted-foreground">
+        Se registra con 1 planta; puedes ajustar la cantidad después desde el
+        inventario.
+      </p>
       <Button type="submit" className="min-h-12 w-full" disabled={pending}>
         {pending ? "Agregando…" : "Agregar árbol"}
       </Button>

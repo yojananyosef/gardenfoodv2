@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -22,7 +21,6 @@ type Uso = { actual: number; limite: number | null };
 
 export function AgregarCultivo({ especies, uso }: { especies: Especie[]; uso?: Uso }) {
   const [especie, setEspecie] = useState<string | null>(null);
-  const [cantidad, setCantidad] = useState("1");
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -34,9 +32,8 @@ export function AgregarCultivo({ especies, uso }: { especies: Especie[]; uso?: U
       toast.error("Selecciona una especie.");
       return;
     }
-    const cant = Math.max(1, Math.min(1000, Number(cantidad) || 1));
     startTransition(async () => {
-      const result = await agregarCultivo({ especie, cantidad: cant });
+      const result = await agregarCultivo({ especie });
       if (result.error) {
         if ("limite" in result && result.limite) {
           toast.error(result.error, {
@@ -49,7 +46,6 @@ export function AgregarCultivo({ especies, uso }: { especies: Especie[]; uso?: U
       }
       toast.success("Cultivo agregado a tu huerto.");
       setEspecie(null);
-      setCantidad("1");
     });
   }
 
@@ -97,16 +93,10 @@ export function AgregarCultivo({ especies, uso }: { especies: Especie[]; uso?: U
         </Select>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="cantidad">Cantidad de plantas</Label>
-        <Input
-          id="cantidad"
-          type="number"
-          min={1}
-          max={1000}
-          value={cantidad}
-          onChange={(e) => setCantidad(e.target.value)}
-          className="min-h-12"
-        />
+        <p className="text-xs text-muted-foreground">
+          Se agrega con 1 planta; puedes ajustar la cantidad después desde tu
+          lista de cultivos.
+        </p>
       </div>
       <Button type="submit" className="min-h-12 w-full" disabled={pending}>
         {pending ? "Agregando…" : "Agregar al huerto"}

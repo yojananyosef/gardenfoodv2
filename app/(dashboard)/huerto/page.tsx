@@ -40,7 +40,11 @@ import { TareasDonut, AlertasBar } from "@/components/huerto/HuertoCharts";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import { ESPECIES, MESES, getEspeciesPorZona, getZonaIdDeComuna } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
-import { getArboles, getCultivos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
+import { getArboles, getCultivos, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
+import {
+  formatAreaM2,
+  formatCoordenadas,
+} from "@/lib/huerto/terreno";
 import { limitesDe, type PlanAcceso } from "@/lib/payments/plans";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
@@ -59,11 +63,12 @@ export default async function HuertoPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [cultivos, tareas, perfil, arboles, sponsorships] = await Promise.all([
+  const [cultivos, tareas, perfil, arboles, huertos, sponsorships] = await Promise.all([
     getCultivos(user.id),
     getTareasDelDia(user.id, hoyISO()),
     getPerfil(user.id),
     getArboles(user.id),
+    getHuertos(user.id),
     getActiveSponsorships("huerto", user.id),
   ]);
 
@@ -299,7 +304,7 @@ export default async function HuertoPage() {
                   <div className="grid w-full max-w-xl gap-3 text-left sm:grid-cols-3">
                     {[
                       { step: "1", title: "Elige especie", desc: "30 fichas", icon: Leaf },
-                      { step: "2", title: "Agrega plantas", desc: "Cantidad + calendario", icon: Plus },
+                      { step: "2", title: "Agrega al huerto", desc: "1 toque, ajustas después", icon: Plus },
                       { step: "3", title: "Sigue tareas", desc: "Tareas y alertas", icon: CalendarDays },
                     ].map((s) => (
                       <div key={s.step} className="flex flex-col gap-2 rounded-2xl border bg-card p-3 shadow-sm">
@@ -349,7 +354,7 @@ export default async function HuertoPage() {
                     </span>
                     <div className="flex flex-col">
                       <CardTitle className="text-base">Agregar cultivo</CardTitle>
-                      <CardDescription className="text-xs">Elige especie y cantidad.</CardDescription>
+                      <CardDescription className="text-xs">Elige una especie y listo.</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -422,6 +427,66 @@ export default async function HuertoPage() {
                     </div>
                   </div>
                 </CardContent>
+              </Card>
+              {/* Tu terreno — vinculación con el mapa del perfil */}
+              <Card className="rounded-2xl shadow-sm lg:col-span-12">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex gap-3">
+                      <span className="hidden size-9 items-center justify-center rounded-xl bg-primary/10 text-primary sm:inline-flex">
+                        <MapPinned className="size-4" />
+                      </span>
+                      <div className="flex flex-col gap-1">
+                        <CardTitle className="text-base">Tu terreno</CardTitle>
+                        <CardDescription className="text-xs">
+                          Huertos delimitados en el mapa de tu perfil.
+                        </CardDescription>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="shrink-0 rounded-full">
+                      {huertos.length} {huertos.length === 1 ? "huerto" : "huertos"}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {huertos.length === 0 ? (
+                    <div className="flex flex-col items-start gap-3 rounded-xl border border-dashed bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        Aún no delimitas tu huerto en el mapa. Dibuja sus bordes
+                        para ver superficie y coordenadas.
+                      </p>
+                      <Button variant="outline" size="sm" className="shrink-0 rounded-full" render={<Link href="/perfil" />}>
+                        Delimitar en el mapa <ArrowRight data-icon="inline-end" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <ul className="flex flex-col gap-2">
+                      {huertos.map((h) => (
+                        <li
+                          key={h.id}
+                          className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-3"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">{h.nombre}</span>
+                            <span className="font-mono text-xs text-muted-foreground">
+                              {h.centro ? formatCoordenadas(h.centro) : "—"}
+                            </span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            {formatAreaM2(h.superficieM2)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+                {huertos.length > 0 ? (
+                  <div className="px-6 pb-4">
+                    <Button variant="outline" size="sm" className="w-full rounded-full sm:w-fit" render={<Link href="/perfil" />}>
+                      Editar en el mapa <ArrowRight data-icon="inline-end" />
+                    </Button>
+                  </div>
+                ) : null}
               </Card>
             </div>
           )}

@@ -33,8 +33,8 @@ export default function PerfilPage() {
           <div className="flex flex-col gap-2 border-t pt-4">
             <p className="text-sm font-medium">Tu terreno</p>
             <p className="text-xs text-muted-foreground">
-              Ubícate en el mapa y dibuja los bordes de tu huerto para calcular
-              la superficie real de tu terreno.
+              Ubícate en el mapa y dibuja los bordes de cada huerto (puedes
+              tener varios) para ver su superficie y coordenadas.
             </p>
             <TerrenoSection />
           </div>

@@ -170,6 +170,13 @@ export interface Arbol {
   createdAt: string;
 }
 
+export interface HuertoResumen {
+  id: string;
+  nombre: string;
+  superficieM2: number;
+  centro: { lat: number; lng: number } | null;
+}
+
 export interface Tarea {
   id: string;
   fecha: string;

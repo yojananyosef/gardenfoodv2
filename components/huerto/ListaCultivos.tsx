@@ -4,12 +4,23 @@ import { useOptimistic, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { eliminarCultivo } from "@/lib/huerto/actions";
+import { actualizarCultivo, eliminarCultivo } from "@/lib/huerto/actions";
+import { ControlCantidad } from "@/components/huerto/ControlCantidad";
 import type { CultivoLite } from "@/lib/huerto/nombres";
 
 export function ListaCultivos({ cultivos }: { cultivos: CultivoLite[] }) {
   const [optimistic, setOptimistic] = useOptimistic(cultivos);
   const [, startTransition] = useTransition();
+
+  function handleCantidad(especie: string, cantidad: number) {
+    setOptimistic((prev) =>
+      prev.map((c) => (c.especie === especie ? { ...c, cantidad } : c)),
+    );
+    startTransition(async () => {
+      const result = await actualizarCultivo(especie, { cantidad });
+      if (result.error) toast.error(result.error);
+    });
+  }
 
   function handleEliminar(especie: string) {
     startTransition(async () => {
@@ -44,10 +55,12 @@ export function ListaCultivos({ cultivos }: { cultivos: CultivoLite[] }) {
               <span className="text-xs text-muted-foreground">{c.grupo}</span>
             ) : null}
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
-              {c.cantidad} {c.cantidad === 1 ? "planta" : "plantas"}
-            </span>
+          <div className="flex items-center gap-2">
+            <ControlCantidad
+              valor={c.cantidad}
+              onCambio={(nueva) => handleCantidad(c.especie, nueva)}
+              etiqueta={c.nombre ?? c.especie}
+            />
             <Button
               type="button"
               variant="ghost"

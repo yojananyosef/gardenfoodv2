@@ -1,5 +1,6 @@
-import type { Arbol, Cultivo, Tarea, TipoTarea, EstadoTarea } from "@/types";
+import type { Arbol, Cultivo, HuertoResumen, Tarea, TipoTarea, EstadoTarea } from "@/types";
 import { createClient } from "@/lib/supabase/server";
+import { parseTerrenoFeature, terrenoCentro } from "@/lib/huerto/terreno";
 
 interface CultivoRow {
   id: string;
@@ -122,6 +123,26 @@ export async function getTareasDelMes(
 
   if (error) return [];
   return (data as TareaRow[]).map(mapTarea);
+}
+
+export async function getHuertos(userId: string): Promise<HuertoResumen[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("gf_huertos")
+    .select("id, nombre, terreno_geojson, superficie_m2, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true });
+
+  if (error) return [];
+  return (data as Array<Record<string, unknown>>).map((row) => {
+    const feature = parseTerrenoFeature(row.terreno_geojson);
+    return {
+      id: row.id as string,
+      nombre: (row.nombre as string) ?? "Mi huerto",
+      superficieM2: Number(row.superficie_m2 ?? 0),
+      centro: feature ? terrenoCentro(feature.geometry.coordinates) : null,
+    };
+  });
 }
 
 export async function getPerfil(userId: string): Promise<{

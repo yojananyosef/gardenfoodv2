@@ -112,3 +112,42 @@ export function formatAreaM2(areaM2: number): string {
   }
   return `${Math.round(areaM2).toLocaleString("es-CL")} m²`;
 }
+
+export function terrenoCentro(coordinates: TerrenoPolygonCoordinates): PuntoMapa {
+  const ring = abrirAnillo(coordinates[0] ?? []);
+  if (ring.length === 0) return { lat: CENTRO_DEFAULT.lat, lng: CENTRO_DEFAULT.lng };
+
+  if (ring.length < 3) {
+    const suma = ring.reduce((acc, [lng, lat]) => ({ lat: acc.lat + lat, lng: acc.lng + lng }), {
+      lat: 0,
+      lng: 0,
+    });
+    return { lat: suma.lat / ring.length, lng: suma.lng / ring.length };
+  }
+
+  let areaDoble = 0;
+  let centroLat = 0;
+  let centroLng = 0;
+  for (let i = 0; i < ring.length; i++) {
+    const [lng1, lat1] = ring[i];
+    const [lng2, lat2] = ring[(i + 1) % ring.length];
+    const cruz = lng1 * lat2 - lng2 * lat1;
+    areaDoble += cruz;
+    centroLng += (lng1 + lng2) * cruz;
+    centroLat += (lat1 + lat2) * cruz;
+  }
+
+  if (Math.abs(areaDoble) < 1e-12) {
+    const suma = ring.reduce((acc, [lng, lat]) => ({ lat: acc.lat + lat, lng: acc.lng + lng }), {
+      lat: 0,
+      lng: 0,
+    });
+    return { lat: suma.lat / ring.length, lng: suma.lng / ring.length };
+  }
+
+  return { lat: centroLat / (3 * areaDoble), lng: centroLng / (3 * areaDoble) };
+}
+
+export function formatCoordenadas(punto: PuntoMapa): string {
+  return `${punto.lat.toFixed(5)}, ${punto.lng.toFixed(5)}`;
+}

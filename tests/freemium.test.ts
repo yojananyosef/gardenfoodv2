@@ -4,13 +4,14 @@ import {
   limitesDe,
   puedeAgregarArbol,
   puedeAgregarCultivo,
+  puedeAgregarHuerto,
 } from "@/lib/payments/plans";
 import { esMuestraGratuis } from "@/lib/agronomy";
 import { esRutaProtegida } from "@/proxy";
 
 describe("límites del tier gratuito", () => {
-  it("define 3 cultivos y 1 árbol", () => {
-    expect(FREE_LIMITS).toEqual({ cultivos: 3, arboles: 1 });
+  it("define 3 cultivos, 1 árbol y 1 huerto", () => {
+    expect(FREE_LIMITS).toEqual({ cultivos: 3, arboles: 1, huertos: 1 });
   });
 
   it("gratuito puede agregar hasta el límite de cultivos", () => {
@@ -27,17 +28,24 @@ describe("límites del tier gratuito", () => {
     expect(puedeAgregarArbol(5, "gratuito")).toBe(false);
   });
 
+  it("gratuito puede agregar hasta el límite de huertos", () => {
+    expect(puedeAgregarHuerto(0, "gratuito")).toBe(true);
+    expect(puedeAgregarHuerto(1, "gratuito")).toBe(false);
+    expect(puedeAgregarHuerto(5, "gratuito")).toBe(false);
+  });
+
   it("tiers pagos y admin son ilimitados", () => {
     for (const plan of ["huertero", "cosecha", "full", "admin"] as const) {
       expect(puedeAgregarCultivo(500, plan)).toBe(true);
       expect(puedeAgregarArbol(500, plan)).toBe(true);
+      expect(puedeAgregarHuerto(500, plan)).toBe(true);
     }
   });
 
   it("limitesDe expone null para ilimitados y números para gratuito", () => {
-    expect(limitesDe("gratuito")).toEqual({ cultivos: 3, arboles: 1 });
-    expect(limitesDe("huertero")).toEqual({ cultivos: null, arboles: null });
-    expect(limitesDe("admin")).toEqual({ cultivos: null, arboles: null });
+    expect(limitesDe("gratuito")).toEqual({ cultivos: 3, arboles: 1, huertos: 1 });
+    expect(limitesDe("huertero")).toEqual({ cultivos: null, arboles: null, huertos: null });
+    expect(limitesDe("admin")).toEqual({ cultivos: null, arboles: null, huertos: null });
   });
 });
 

@@ -10,7 +10,7 @@ import {
   type PlanAcceso,
 } from "@/lib/payments/plans";
 
-async function getPlanDe(
+export async function getPlanDe(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
 ): Promise<PlanAcceso> {
@@ -27,7 +27,7 @@ const AGREGAR_CULTIVO = z.object({
   cantidad: z.number().int().min(1).max(1000).default(1),
 });
 
-export async function agregarCultivo(input: { especie: string; cantidad?: number }) {
+export async function agregarCultivo(input: z.input<typeof AGREGAR_CULTIVO>) {
   const parsed = AGREGAR_CULTIVO.parse(input);
   const supabase = await createClient();
   const {
@@ -78,6 +78,33 @@ export async function eliminarCultivo(especie: string) {
     .eq("especie", especie);
 
   if (error) return { error: "No se pudo eliminar el cultivo." };
+
+  revalidatePath("/huerto");
+  return { ok: true as const };
+}
+
+const ACTUALIZAR_CULTIVO = z.object({
+  cantidad: z.number().int().min(1).max(1000),
+});
+
+export async function actualizarCultivo(
+  especie: string,
+  input: { cantidad: number },
+) {
+  const parsed = ACTUALIZAR_CULTIVO.parse(input);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const { error } = await supabase
+    .from("gf_cultivos")
+    .update({ cantidad: parsed.cantidad })
+    .eq("user_id", user.id)
+    .eq("especie", especie);
+
+  if (error) return { error: "No se pudo actualizar el cultivo." };
 
   revalidatePath("/huerto");
   return { ok: true as const };
@@ -172,7 +199,7 @@ const AGREGAR_ARBOL = z.object({
   observaciones: z.string().max(500).nullable().optional(),
 });
 
-export async function agregarArbol(input: z.infer<typeof AGREGAR_ARBOL>) {
+export async function agregarArbol(input: z.input<typeof AGREGAR_ARBOL>) {
   const parsed = AGREGAR_ARBOL.parse(input);
   const supabase = await createClient();
   const {
@@ -218,13 +245,15 @@ export async function actualizarArbol(
   } = await supabase.auth.getUser();
   if (!user) return { error: "No autenticado." };
 
+  const patch: Record<string, unknown> = {};
+  if (input.cantidad !== undefined) patch.cantidad = input.cantidad;
+  if (input.fechaPlantacion !== undefined) patch.fecha_plantacion = input.fechaPlantacion;
+  if (input.observaciones !== undefined) patch.observaciones = input.observaciones;
+  if (Object.keys(patch).length === 0) return { ok: true as const };
+
   const { error } = await supabase
     .from("gf_arboles")
-    .update({
-      cantidad: input.cantidad,
-      fecha_plantacion: input.fechaPlantacion ?? null,
-      observaciones: input.observaciones ?? null,
-    })
+    .update(patch)
     .eq("id", id)
     .eq("user_id", user.id);
 

@@ -69,6 +69,7 @@ export type PlanAcceso = PlanTier | "gratuito" | "admin";
 export const FREE_LIMITS = {
   cultivos: 3,
   arboles: 1,
+  huertos: 1,
 } as const;
 
 function tieneAccesoIlimitado(plan: PlanAcceso): boolean {
@@ -91,12 +92,21 @@ export function puedeAgregarArbol(
   return arbolesActuales < FREE_LIMITS.arboles;
 }
 
+export function puedeAgregarHuerto(
+  huertosActuales: number,
+  plan: PlanAcceso,
+): boolean {
+  if (tieneAccesoIlimitado(plan)) return true;
+  return huertosActuales < FREE_LIMITS.huertos;
+}
+
 export function limitesDe(plan: PlanAcceso): {
   cultivos: number | null;
   arboles: number | null;
+  huertos: number | null;
 } {
-  if (tieneAccesoIlimitado(plan)) return { cultivos: null, arboles: null };
-  return { cultivos: FREE_LIMITS.cultivos, arboles: FREE_LIMITS.arboles };
+  if (tieneAccesoIlimitado(plan)) return { cultivos: null, arboles: null, huertos: null };
+  return { cultivos: FREE_LIMITS.cultivos, arboles: FREE_LIMITS.arboles, huertos: FREE_LIMITS.huertos };
 }
 
 export function getPlan(tier: PlanTier): PlanDef {

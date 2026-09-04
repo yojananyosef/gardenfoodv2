@@ -4,13 +4,24 @@ import { useOptimistic, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { eliminarArbol } from "@/lib/huerto/actions";
+import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
+import { ControlCantidad } from "@/components/huerto/ControlCantidad";
 import { getEspeciePorDbKey } from "@/lib/agronomy";
 import type { Arbol } from "@/types";
 
 export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
   const [optimistic, setOptimistic] = useOptimistic(arboles);
   const [, startTransition] = useTransition();
+
+  function handleCantidad(id: string, cantidad: number) {
+    setOptimistic((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, cantidad } : a)),
+    );
+    startTransition(async () => {
+      const result = await actualizarArbol(id, { cantidad });
+      if (result.error) toast.error(result.error);
+    });
+  }
 
   function handleEliminar(id: string) {
     startTransition(async () => {
@@ -44,21 +55,27 @@ export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
             <div className="flex flex-col">
               <span className="text-sm font-medium">{nombre}</span>
               <span className="text-xs text-muted-foreground">
-                {a.cantidad} {a.cantidad === 1 ? "planta" : "plantas"}
-                {a.fechaPlantacion ? ` · Plantado: ${a.fechaPlantacion}` : ""}
+                {a.fechaPlantacion ? `Plantado: ${a.fechaPlantacion}` : "Sin fecha de plantación"}
                 {a.observaciones ? ` · ${a.observaciones}` : ""}
               </span>
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label={`Eliminar ${nombre}`}
-              className="min-h-12 min-w-12 text-muted-foreground hover:text-destructive"
-              onClick={() => handleEliminar(a.id)}
-            >
-              <Trash2 className="size-4" aria-hidden />
-            </Button>
+            <div className="flex items-center gap-2">
+              <ControlCantidad
+                valor={a.cantidad}
+                onCambio={(nueva) => handleCantidad(a.id, nueva)}
+                etiqueta={nombre}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={`Eliminar ${nombre}`}
+                className="min-h-12 min-w-12 text-muted-foreground hover:text-destructive"
+                onClick={() => handleEliminar(a.id)}
+              >
+                <Trash2 className="size-4" aria-hidden />
+              </Button>
+            </div>
           </li>
         );
       })}

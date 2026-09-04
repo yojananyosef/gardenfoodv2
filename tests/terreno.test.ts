@@ -3,8 +3,10 @@ import {
   anilloAreaM2,
   featureDesdePuntos,
   formatAreaM2,
+  formatCoordenadas,
   parseTerrenoFeature,
   puntosDesdeFeature,
+  terrenoCentro,
   terrenoFeatureSchema,
   terrenoAreaM2,
   TERRENO_MAX_POSICIONES_ANILLO,
@@ -223,5 +225,64 @@ describe("formatAreaM2", () => {
 
   it("formatea hectáreas desde 10.000 m²", () => {
     expect(formatAreaM2(25_000)).toMatch(/2,5 ha|2.5 ha/);
+  });
+});
+
+describe("terrenoCentro", () => {
+  it("calcula el centro exacto de un cuadrado", () => {
+    const centro = terrenoCentro([cuadrado(0.01)]);
+    expect(centro.lat).toBeCloseTo(0.005, 9);
+    expect(centro.lng).toBeCloseTo(0.005, 9);
+  });
+
+  it("es independiente de la orientación del anillo", () => {
+    const horario = terrenoCentro([cuadrado(0.01)]);
+    const antihorario = terrenoCentro([[...cuadrado(0.01)].reverse()]);
+    expect(horario.lat).toBeCloseTo(antihorario.lat, 9);
+    expect(horario.lng).toBeCloseTo(antihorario.lng, 9);
+  });
+
+  it("falla a un promedio simple para anillos degenerados", () => {
+    const centro = terrenoCentro([
+      [
+        [1, 2],
+        [3, 4],
+      ],
+    ]);
+    expect(centro.lat).toBe(3);
+    expect(centro.lng).toBe(2);
+  });
+
+  it("usa el centro por defecto sin coordenadas", () => {
+    const centro = terrenoCentro([]);
+    expect(Number.isFinite(centro.lat)).toBe(true);
+    expect(Number.isFinite(centro.lng)).toBe(true);
+  });
+
+  it("centra un polígono real de Santiago", () => {
+    const santiago: TerrenoPosition[] = [
+      [-70.65, -33.46],
+      [-70.6, -33.46],
+      [-70.6, -33.42],
+      [-70.65, -33.42],
+      [-70.65, -33.46],
+    ];
+    const centro = terrenoCentro([santiago]);
+    expect(centro.lat).toBeCloseTo(-33.44, 6);
+    expect(centro.lng).toBeCloseTo(-70.625, 6);
+  });
+});
+
+describe("formatCoordenadas", () => {
+  it("formatea con 5 decimales y separador coma", () => {
+    expect(formatCoordenadas({ lat: -33.4489, lng: -70.6693 })).toBe(
+      "-33.44890, -70.66930",
+    );
+  });
+
+  it("redondea al quinto decimal", () => {
+    expect(formatCoordenadas({ lat: -33.444444444, lng: -70.666666666 })).toBe(
+      "-33.44444, -70.66667",
+    );
   });
 });

@@ -1,24 +1,8 @@
-# garden/terreno Specification
-
 ## Purpose
+
 Permite al usuario ver su ubicación sobre un mapa y delimitar los bordes de sus huertos dibujando polígonos (uno o varios), persistiendo cada uno como huerto con nombre para usos agronómicos posteriores (superficie, coordenadas, zonificación). Todo sobre servicios gratuitos y sin límite de uso, con límite freemium de huertos por plan.
 
-## Requirements
-
-### Requirement: Visualización del mapa con ubicación del usuario
-El sistema SHALL mostrar un mapa interactivo (calles y vista satelital conmutables) centrado en la ubicación del usuario, sin requerir claves de API ni servicios pagos.
-
-#### Scenario: Mapa se centra en la geolocalización del navegador
-- **WHEN** el usuario autoriza el permiso de geolocalización al abrir el mapa
-- **THEN** el sistema centra el mapa en las coordenadas obtenidas y muestra un marcador aproximado
-
-#### Scenario: Fallback sin permiso de geolocalización
-- **WHEN** el usuario deniega el permiso o el navegador no soporta geolocalización
-- **THEN** el sistema centra el mapa usando la comuna guardada del perfil si existe coordenada conocida, o un centro por defecto definido por la app
-
-#### Scenario: Conmutación entre vista de calles y satelital
-- **WHEN** el usuario cambia la capa base del mapa
-- **THEN** el sistema alterna entre teselas de OpenStreetMap (calles) y ESRI World Imagery (satélite) manteniendo el centro, zoom y polígonos actuales
+## MODIFIED Requirements
 
 ### Requirement: Dibujo del polígono del terreno
 El sistema SHALL permitir al usuario autenticado dibujar uno o varios polígonos haciendo clic en los vértices de los bordes de cada huerto, cerrando explícitamente cada figura. Cada polígono cerrado SHALL persistirse como un huerto independiente con nombre asignado automáticamente y editable.
@@ -81,6 +65,8 @@ El sistema SHALL persistir cada huerto como una fila con GeoJSON asociado exclus
 - **WHEN** el usuario crea, edita o elimina un huerto
 - **THEN** el sistema muestra y persiste la superficie total en m² como suma de todos sus huertos
 
+## ADDED Requirements
+
 ### Requirement: Coordenadas del centro de cada huerto
 El sistema SHALL mostrar para cada huerto las coordenadas geográficas de su centro (latitud y longitud a 5 decimales) junto a su superficie, y SHALL permitir copiarlas al portapapeles.
 
@@ -102,14 +88,3 @@ El sistema SHALL limitar el plan gratuito (`perfiles.plan = "gratuito"`) a 1 hue
 #### Scenario: Usuario pago crea varios huertos
 - **WHEN** un usuario Huertero (o superior) dibuja más de un huerto
 - **THEN** el sistema los crea sin restricción
-
-### Requirement: Funcionamiento offline-friendly y gratuito
-El sistema SHALL cargar el mapa y sus herramientas únicamente desde dependencias de código abierto gratuitas (Leaflet + plugin de dibujo) y teselas públicas gratuitas (OpenStreetMap, ESRI World Imagery), sin límites de uso impuestos por la aplicación ni claves privadas expuestas al cliente.
-
-#### Scenario: Sin credenciales en el cliente
-- **WHEN** el navegador carga el mapa
-- **THEN** no se requiere ninguna clave de API ni token para renderizar teselas o usar las herramientas de dibujo
-
-#### Scenario: Degradación sin conexión a teselas
-- **WHEN** las teselas fallan al cargarse por red
-- **THEN** el mapa sigue operativo para editar los polígonos previamente dibujados y guardar cambios cuando la conectividad lo permita
