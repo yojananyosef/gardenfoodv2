@@ -96,7 +96,7 @@ El sistema SHALL permitir sincronizar el inventario de árboles con un huerto de
 
 ### Requirement: Vista 2D/3D del plano
 
-El sistema SHALL mostrar el plano del huerto fiel al mapa: en 2D, el polígono dibujado sobre un plato con textura de tierra verdosa (generada proceduralmente, sin imágenes remotas) cuya proporción respeta el aspecto real en metros y cuya grilla de matriz está recortada al interior del polígono (clipPath), con un árbol dibujado por punto coloreado por especie, leyenda y conteos. El 2D SHALL ocupar un marco amplio con zoom (botones, rueda, 60–280%) y arrastre para mover el plano, con control para centrar. En 3D, el sistema SHALL renderizar una escena WebGL real (Three.js, carga diferida solo al activar 3D) con el polígono extruido sobre el plato alineado por la misma proyección métrica, textura satelital Esri sobre la cara superior (con fallback procedural si falla la descarga/CORS), árboles de pie (tronco vertical, copa en dos tonos verdes por especie con brillo y sombra de contacto) con sombras reales y controles orbitales (rotar/zoom, elevación acotada, botón Vista inicial). Sin WebGL SHALL ofrecer la vista 2D.
+El sistema SHALL mostrar el plano del huerto fiel al mapa: en 2D, el polígono dibujado sobre un plato con textura de tierra verdosa (generada proceduralmente, sin imágenes remotas) cuya proporción respeta el aspecto real en metros y cuya grilla de matriz está recortada al interior del polígono (clipPath), con un árbol dibujado por punto coloreado por especie, leyenda y conteos. El 2D SHALL ocupar un marco amplio con zoom (botones, rueda, 60–280%) y arrastre para mover el plano, con control para centrar. En 3D, el sistema SHALL renderizar una escena WebGL real (Three.js, carga diferida solo al activar 3D) de 3D puro procedural: plato de tierra marrón-verdosa y polígono extruido de tierra cultivada oliva alineados por la misma proyección métrica, sin capas de imagen satelital. Cada especie SHALL tener su propio porte 3D (tronco, copa y frutos: olivo grisáceo, cítricos con frutos, nogal/palto grandes, vid/kiwi en parrón, berries en arbusto, papayo en penacho, avellano multitronco), con sombras reales y controles orbitales (rotar/zoom, elevación acotada, botón Vista inicial). Sin WebGL SHALL ofrecer la vista 2D.
 
 #### Scenario: Vista plana con plato sincronizado
 
@@ -113,15 +113,15 @@ El sistema SHALL mostrar el plano del huerto fiel al mapa: en 2D, el polígono d
 - **WHEN** el usuario arrastra el terreno en modo 3D (mouse o dedo)
 - **THEN** la cámara orbita alrededor del plano (azimut libre, elevación acotada) con zoom por rueda/pinzamiento; el control «Vista inicial» restaura la perspectiva por defecto
 
-#### Scenario: Textura satelital con fallback
+#### Scenario: 3D puro sin capa satelital
 
-- **WHEN** el 3D carga los tiles Esri del bbox (máx 4×4 a z18)
-- **THEN** la cara superior del polígono muestra el satélite real; si la descarga falla, muestra el suelo procedural y un distintivo visible del modo activo
+- **WHEN** el usuario activa la vista 3D
+- **THEN** el terreno es geometría procedural (plato marrón-verdoso + polígono oliva extruido con grilla de matriz) sin imágenes planas superpuestas que metan ruido
 
 #### Scenario: Puntos como árboles coloreados por especie
 
 - **WHEN** el plano tiene árboles de varias especies
-- **THEN** cada punto se dibuja como un árbol con su tono verde estable por especie (copa en 2D y en 3D, tronco vertical en 3D) y la leyenda resume especies con conteos
+- **THEN** en 2D cada punto se dibuja como un árbol con su tono verde estable por especie y en 3D cada especie muestra su propio porte (forma de copa, tronco y frutos: un olivo se distingue de un duraznero); la leyenda resume especies con conteos
 
 ### Requirement: Edición individual de cada árbol del plano
 

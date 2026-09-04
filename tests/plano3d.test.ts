@@ -1,17 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  modeloDeArbol,
+  normalizarEspecie,
+} from "@/lib/huerto/arbolModelo";
+import {
   bboxDe,
   bboxEnMetros,
   poligonoAMetros,
   posAMetrosNormalizados,
 } from "@/lib/huerto/plano";
-import {
-  lngLatATile,
-  mosaicoDeTiles,
-  tilesParaBbox,
-  urlTileEsri,
-  uvDeLngLat,
-} from "@/lib/huerto/satelite";
 
 describe("bboxEnMetros", () => {
   it("respeta el aspecto real con cos(lat)", () => {
@@ -65,38 +62,43 @@ describe("posAMetrosNormalizados", () => {
   });
 });
 
-describe("satelite tiles", () => {
-  it("convierte Maipú a tile z18 y genera URL Esri", () => {
-    const t = lngLatATile(-70.74, -33.51, 18);
-    expect(t.z).toBe(18);
-    expect(urlTileEsri(t)).toMatch(/^https:\/\/server\.arcgisonline\.com.*\/18\//);
+describe("modeloDeArbol", () => {
+  it("da un olivo grisáceo distinto de un duraznero", () => {
+    const olivo = modeloDeArbol("Olivo");
+    const duraznero = modeloDeArbol("Duraznero");
+    expect(olivo.forma).toBe("olivo");
+    expect(duraznero.forma).toBe("esferico");
+    expect(olivo.colorCopa).not.toBe(duraznero.colorCopa);
   });
 
-  it("limita el mosaico a 4x4 para no descargar media comuna", () => {
-    const { tiles, cols, rows } = tilesParaBbox(
-      { minX: -71, maxX: -70, minY: -34, maxY: -33 },
-      18,
-    );
-    expect(cols).toBeLessThanOrEqual(4);
-    expect(rows).toBeLessThanOrEqual(4);
-    expect(tiles.length).toBe(cols * rows);
+  it("normaliza tildes, mayúsculas y slugs con guion", () => {
+    expect(modeloDeArbol("níspero japonés").forma).toBe("esferico");
+    expect(modeloDeArbol("avellano-europeo").forma).toBe("multitronco");
+    expect(modeloDeArbol("  PALTO ").forma).toBe("grande");
   });
 
-  it("mapea UV dentro de 0..1 y acota fuera del mosaico", () => {
-    const mosaico = mosaicoDeTiles([
-      { x: 10, y: 10, z: 18 },
-      { x: 11, y: 11, z: 18 },
-    ]);
-    const dentro = uvDeLngLat(
-      (mosaico.oeste + mosaico.este) / 2,
-      (mosaico.norte + mosaico.sur) / 2,
-      { minX: 0, maxX: 1, minY: 0, maxY: 1 },
-      mosaico,
+  it("resuelve alias de nombre de fruto", () => {
+    expect(modeloDeArbol("Cereza").forma).toBe("esferico");
+    expect(modeloDeArbol("Cereza").frutos?.color).toBe("#dc2626");
+    expect(modeloDeArbol("uva").forma).toBe("parron");
+  });
+
+  it("los cítricos llevan frutos y los grandes son de mayor escala", () => {
+    expect(modeloDeArbol("Naranjo").frutos?.color).toBe("#f59e0b");
+    expect(modeloDeArbol("Nogal").escala).toBeGreaterThan(
+      modeloDeArbol("Frutilla").escala,
     );
-    expect(dentro.u).toBeGreaterThan(0.2);
-    expect(dentro.u).toBeLessThan(0.8);
-    const fuera = uvDeLngLat(999, 999, { minX: 0, maxX: 1, minY: 0, maxY: 1 }, mosaico);
-    expect(fuera.u).toBeLessThanOrEqual(1);
-    expect(fuera.v).toBeLessThanOrEqual(1);
+  });
+
+  it("especie desconocida cae a esférico genérico estable", () => {
+    const a = modeloDeArbol("Kumquat Misterioso");
+    const b = modeloDeArbol("Kumquat Misterioso");
+    expect(a.forma).toBe("esferico");
+    expect(a).toEqual(b);
+  });
+
+  it("normalizarEspecie quita tildes y guiones", () => {
+    expect(normalizarEspecie("Níspero Japonés")).toBe("nispero japones");
+    expect(normalizarEspecie("avellano-europeo")).toBe("avellano europeo");
   });
 });

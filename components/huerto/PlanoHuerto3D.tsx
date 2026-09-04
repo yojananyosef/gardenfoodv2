@@ -3,45 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import {
-  bboxDe,
-  colorDeEspecie,
-  poligonoAMetros,
-} from "@/lib/huerto/plano";
-import {
-  mosaicoDeTiles,
-  SAT_ZOOM,
-  tilesParaBbox,
-  urlTileEsri,
-  uvDeLngLat,
-} from "@/lib/huerto/satelite";
+import { poligonoAMetros } from "@/lib/huerto/plano";
+import { construirArbol } from "@/components/huerto/modelosArbol3D";
 import type { TerrenoPolygonCoordinates } from "@/lib/huerto/terreno";
 
 export type Arbol3D = { id: string; especie: string; posX: number; posY: number };
 
 const ALTURA_POLIGONO = 0.35;
 const EXPANSION_PLATO = 1.1;
-
-// `colorDeEspecie` devuelve `hsl(H S% L%)` (sintaxis moderna sin comas) que
-// el parser de THREE.Color no entiende → la copa quedaba blanca. Se convierte
-// a HSL numérico.
-function colorEspecieThree(especie: string): THREE.Color {
-  const css = colorDeEspecie(especie);
-  const m = css.match(/hsl\(([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\)/);
-  if (!m) return new THREE.Color("#2f7a2f");
-  return new THREE.Color().setHSL(
-    Number(m[1]) / 360,
-    Number(m[2]) / 100,
-    Number(m[3]) / 100,
-    THREE.SRGBColorSpace,
-  );
-}
-
-function hashId(id: string): number {
-  let h = 0;
-  for (const ch of id) h = (h * 31 + (ch.codePointAt(0) ?? 0)) >>> 0;
-  return h;
-}
 
 function puntoEnPoligonoXY(
   x: number,
@@ -66,17 +35,18 @@ function texturaTierraProcedural(): THREE.CanvasTexture {
   c.width = 256;
   c.height = 256;
   const ctx = c.getContext("2d")!;
+  // Tierra marrón-verdosa: base parda con matiz oliva.
   const grad = ctx.createLinearGradient(0, 0, 256, 256);
-  grad.addColorStop(0, "#5e6f36");
-  grad.addColorStop(1, "#42501f");
+  grad.addColorStop(0, "#77683a");
+  grad.addColorStop(1, "#4a3f22");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 256, 256);
-  // Ruido en dos escalas
+  // Ruido en dos escalas: terrones oscuros + pasto seco claro.
   for (const [n, alpha, size] of [[2600, 0.16, 1.6], [500, 0.12, 3.2]] as const) {
     for (let i = 0; i < n; i++) {
       const x = Math.random() * 256;
       const y = Math.random() * 256;
-      ctx.fillStyle = Math.random() > 0.5 ? `rgba(20,30,10,${alpha})` : `rgba(190,200,130,${alpha})`;
+      ctx.fillStyle = Math.random() > 0.5 ? `rgba(35,26,10,${alpha})` : `rgba(208,196,138,${alpha})`;
       ctx.beginPath();
       ctx.arc(x, y, Math.random() * size + 0.4, 0, Math.PI * 2);
       ctx.fill();
@@ -86,16 +56,6 @@ function texturaTierraProcedural(): THREE.CanvasTexture {
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
-}
-
-function cargarImagen(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`tile ${url}`));
-    img.src = url;
-  });
 }
 
 export function PlanoHuerto3D({
@@ -108,9 +68,7 @@ export function PlanoHuerto3D({
   onEditar: (id: string) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [estado, setEstado] = useState<"cargando" | "satelite" | "procedural" | "sin-webgl">(
-    "cargando",
-  );
+  const [sinWebgl, setSinWebgl] = useState(false);
   const onEditarRef = useRef(onEditar);
   useEffect(() => {
     onEditarRef.current = onEditar;
@@ -123,13 +81,12 @@ export function PlanoHuerto3D({
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     } catch {
-      queueMicrotask(() => setEstado("sin-webgl"));
+      queueMicrotask(() => setSinWebgl(true));
       return;
     }
-    const bbox = bboxDe(coordinates);
     const metrico = poligonoAMetros(coordinates);
-    if (!bbox || !metrico) {
-      queueMicrotask(() => setEstado("sin-webgl"));
+    if (!metrico) {
+      queueMicrotask(() => setSinWebgl(true));
       return;
     }
     const { anchoM, altoM } = metrico;
@@ -137,15 +94,6 @@ export function PlanoHuerto3D({
     const aEscena = (nx: number, ny: number) => ({
       sx: (nx * anchoM) / k,
       sy: (ny * altoM) / k,
-    });
-    const dLng = Math.max(bbox.maxX - bbox.minX, 1e-9);
-    const dLat = Math.max(bbox.maxY - bbox.minY, 1e-9);
-    const centroLng = (bbox.minX + bbox.maxX) / 2;
-    const centroLat = (bbox.minY + bbox.maxY) / 2;
-    const escenaALngLat = (sx: number, sy: number) => ({
-      // Inversa de poligonoAMetros + escala escena (lineal, equirectangular)
-      lng: centroLng + ((sx * k) / anchoM) * dLng,
-      lat: centroLat - ((sy * k) / altoM) * dLat,
     });
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -190,15 +138,14 @@ export function PlanoHuerto3D({
     const platoH = (altoM / k) * EXPANSION_PLATO;
     const texTierra = texturaTierraProcedural();
     texTierra.repeat.set(2, 2);
-    const plato = new THREE.Mesh(
-      new THREE.BoxGeometry(platoW, platoH, 0.6),
-      new THREE.MeshStandardMaterial({ map: texTierra, roughness: 1 }),
-    );
+    const platoGeo = new THREE.BoxGeometry(platoW, platoH, 0.6);
+    const platoMat = new THREE.MeshStandardMaterial({ map: texTierra, roughness: 1 });
+    const plato = new THREE.Mesh(platoGeo, platoMat);
     plato.position.z = -0.31;
     plato.receiveShadow = true;
     scene.add(plato);
 
-    // --- Polígono extruido sobre el plato ---
+    // --- Polígono extruido sobre el plato: 3D puro procedural ---
     const anilloExt = metrico.anillos[0] ?? [];
     const shape = new THREE.Shape();
     anilloExt.forEach((p, i) => {
@@ -211,14 +158,14 @@ export function PlanoHuerto3D({
       depth: ALTURA_POLIGONO,
       bevelEnabled: false,
     });
-    // Tapas (0) con satélite / pasto, laterales (1) de tierra oscura para que
-    // el polígono "asiente" sobre el plato en vez de flotar con caras negras.
+    // Tapas (0) de tierra cultivada oliva, laterales (1) de tierra oscura para
+    // que el polígono "asiente" sobre el plato en vez de flotar.
     const matPoli = new THREE.MeshStandardMaterial({
-      color: "#4d7c3a",
-      roughness: 0.95,
+      color: "#68713b",
+      roughness: 1,
     });
     const matLateral = new THREE.MeshStandardMaterial({
-      color: "#3a4520",
+      color: "#38311f",
       roughness: 1,
     });
     const mallaPoli = new THREE.Mesh(geoPoli, [matPoli, matLateral]);
@@ -231,59 +178,24 @@ export function PlanoHuerto3D({
       const { sx, sy } = aEscena(p.x, p.y);
       return new THREE.Vector3(sx, sy, ALTURA_POLIGONO + 0.02);
     });
+    let borde: THREE.Line | null = null;
+    let bordeGeo: THREE.BufferGeometry | null = null;
     if (bordePts.length > 1) {
       bordePts.push(bordePts[0].clone());
-      const borde = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(bordePts),
-        new THREE.LineBasicMaterial({ color: 0xd9f99d }),
+      bordeGeo = new THREE.BufferGeometry().setFromPoints(bordePts);
+      borde = new THREE.Line(
+        bordeGeo,
+        new THREE.LineBasicMaterial({ color: 0xe7f5c0 }),
       );
       scene.add(borde);
     }
 
-    // --- Textura satélite Esri sobre la cara superior (con fallback) ---
-    let cancelado = false;
-    (async () => {
-      try {
-        const { tiles, cols, rows } = tilesParaBbox(bbox, SAT_ZOOM);
-        const mosaico = mosaicoDeTiles(tiles);
-        const canvas = document.createElement("canvas");
-        canvas.width = cols * 256;
-        canvas.height = rows * 256;
-        const ctx = canvas.getContext("2d")!;
-        const minX = Math.min(...tiles.map((t) => t.x));
-        const minY = Math.min(...tiles.map((t) => t.y));
-        await Promise.all(
-          tiles.map(async (t) => {
-            const img = await cargarImagen(urlTileEsri(t));
-            ctx.drawImage(img, (t.x - minX) * 256, (t.y - minY) * 256, 256, 256);
-          }),
-        );
-        if (cancelado) return;
-        const texSat = new THREE.CanvasTexture(canvas);
-        texSat.colorSpace = THREE.SRGBColorSpace;
-        texSat.anisotropy = 4;
-        // Re-mapear UVs de la cara superior a u,v del mosaico
-        const pos = geoPoli.attributes.position;
-        const uv = geoPoli.attributes.uv;
-        for (let i = 0; i < pos.count; i++) {
-          const sx = pos.getX(i);
-          const sy = pos.getY(i);
-          const { lng, lat } = escenaALngLat(sx, sy);
-          const { u, v } = uvDeLngLat(lng, lat, bbox, mosaico);
-          uv.setXY(i, u, v);
-        }
-        uv.needsUpdate = true;
-        matPoli.map = texSat;
-        matPoli.color.set("#ffffff");
-        matPoli.needsUpdate = true;
-        setEstado("satelite");
-      } catch {
-        if (!cancelado) setEstado("procedural");
-      }
-    })();
+    // Nota: antes la cara superior llevaba mosaico satélite Esri, pero al no
+    // ser 3D metía ruido visual. Ahora es 3D puro procedural.
 
     // Grilla de matriz sobre la cara superior (solo segmentos dentro del
     // polígono, para que se lea como una sola capa y no como fondo aparte).
+    let grillaGeo: THREE.BufferGeometry | null = null;
     {
       const escena = anilloExt.map((p) => {
         const { sx, sy } = aEscena(p.x, p.y);
@@ -325,95 +237,26 @@ export function PlanoHuerto3D({
         }
       }
       if (pts.length > 0) {
+        grillaGeo = new THREE.BufferGeometry().setFromPoints(pts);
         const grilla = new THREE.LineSegments(
-          new THREE.BufferGeometry().setFromPoints(pts),
+          grillaGeo,
           new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.28 }),
         );
         scene.add(grilla);
       }
     }
 
-    // --- Árboles: tronco vertical + copa en 2 capas + sombra de contacto ---
-    // OJO: la escena es Z-up (camera.up 0,0,1) pero CylinderGeometry nace con
-    // su eje en Y → sin rotateX queda ACOSTADO. Se rota la geometría una vez.
-    const troncoGeo = new THREE.CylinderGeometry(0.07, 0.1, 0.7, 8);
-    troncoGeo.rotateX(Math.PI / 2);
-    const copaGeo = new THREE.IcosahedronGeometry(0.5, 1);
-    const copaAltaGeo = new THREE.IcosahedronGeometry(0.32, 1);
-    const brilloGeo = new THREE.IcosahedronGeometry(0.14, 0);
-    const sombraGeo = new THREE.CircleGeometry(0.42, 20);
-    const troncoMat = new THREE.MeshStandardMaterial({ color: "#7a4a21", roughness: 1 });
-    const sombraMat = new THREE.MeshBasicMaterial({
-      color: 0x000000,
-      transparent: true,
-      opacity: 0.28,
-      depthWrite: false,
-    });
-    const brilloMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.22,
-      roughness: 0.4,
-    });
-    const copaMats = new Map<string, THREE.MeshStandardMaterial>();
-    const copaClaraMats = new Map<string, THREE.MeshStandardMaterial>();
-    const copaDe = (especie: string) => {
-      let m = copaMats.get(especie);
-      if (!m) {
-        m = new THREE.MeshStandardMaterial({
-          color: colorEspecieThree(especie),
-          roughness: 0.9,
-          flatShading: true,
-        });
-        copaMats.set(especie, m);
-      }
-      return m;
-    };
-    const copaClaraDe = (especie: string) => {
-      let m = copaClaraMats.get(especie);
-      if (!m) {
-        const base = colorEspecieThree(especie);
-        base.offsetHSL(0, 0.02, 0.09);
-        m = new THREE.MeshStandardMaterial({
-          color: base,
-          roughness: 0.9,
-          flatShading: true,
-        });
-        copaClaraMats.set(especie, m);
-      }
-      return m;
-    };
+    // --- Árboles por especie (porte propio: olivo ≠ duraznero) ---
     const grupoArboles = new THREE.Group();
     const golpeables: THREE.Object3D[] = [];
     for (const a of arboles) {
       const nx = a.posX - 0.5;
       const ny = -(a.posY - 0.5);
       const { sx, sy } = aEscena(nx, ny);
-      const h = hashId(a.id);
-      const escala = 0.9 + ((h % 40) / 100); // 0.9–1.29 variación natural
-      const giro = ((h >> 3) % 628) / 100;
-      const g = new THREE.Group();
-      const sombra = new THREE.Mesh(sombraGeo, sombraMat);
-      sombra.position.z = ALTURA_POLIGONO + 0.012;
-      const tronco = new THREE.Mesh(troncoGeo, troncoMat);
-      tronco.position.z = ALTURA_POLIGONO + 0.35;
-      tronco.castShadow = true;
-      const copa = new THREE.Mesh(copaGeo, copaDe(a.especie));
-      copa.position.z = ALTURA_POLIGONO + 0.95;
-      copa.castShadow = true;
-      copa.userData.arbolId = a.id;
-      const copaAlta = new THREE.Mesh(copaAltaGeo, copaClaraDe(a.especie));
-      copaAlta.position.set(0.2, 0.12, ALTURA_POLIGONO + 1.32);
-      copaAlta.castShadow = true;
-      copaAlta.userData.arbolId = a.id;
-      const brillo = new THREE.Mesh(brilloGeo, brilloMat);
-      brillo.position.set(-0.18, -0.12, ALTURA_POLIGONO + 1.18);
-      g.add(sombra, tronco, copa, copaAlta, brillo);
-      g.position.set(sx, sy, 0);
-      g.rotation.z = giro;
-      g.scale.setScalar(escala);
-      grupoArboles.add(g);
-      golpeables.push(copa, copaAlta);
+      const { grupo, golpeables: hits } = construirArbol(a.id, a.especie);
+      grupo.position.set(sx, sy, ALTURA_POLIGONO);
+      grupoArboles.add(grupo);
+      golpeables.push(...hits);
     }
     scene.add(grupoArboles);
 
@@ -467,18 +310,20 @@ export function PlanoHuerto3D({
     };
 
     return () => {
-      cancelado = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
       renderer!.domElement.removeEventListener("pointerdown", onDown);
       renderer!.domElement.removeEventListener("pointerup", onUp);
       controls.dispose();
-      scene.traverse((o) => {
-        const m = o as THREE.Mesh;
-        if (m.geometry) m.geometry.dispose();
-      });
+      // OJO: no se recorre la escena liberando geometrías: los árboles usan
+      // geometrías/materiales compartidos en caché entre montajes.
+      platoGeo.dispose();
+      platoMat.dispose();
+      geoPoli.dispose();
+      bordeGeo?.dispose();
+      (borde?.material as THREE.Material | undefined)?.dispose();
+      grillaGeo?.dispose();
       texTierra.dispose();
-      (matPoli.map as THREE.Texture | null)?.dispose();
       matPoli.dispose();
       matLateral.dispose();
       renderer!.dispose();
@@ -491,7 +336,7 @@ export function PlanoHuerto3D({
     <div className="relative size-full bg-gradient-to-b from-sky-200 to-emerald-100 dark:from-sky-950 dark:to-emerald-950">
       <div ref={ref} className="absolute inset-0 cursor-grab active:cursor-grabbing [&>canvas]:block" />
       <div className="pointer-events-none absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[11px] text-white">
-        {estado === "cargando" ? "Cargando 3D…" : estado === "satelite" ? "3D · satélite" : estado === "procedural" ? "3D · suelo procedural" : "3D no disponible"}
+        3D
       </div>
       <button
         type="button"
@@ -503,7 +348,7 @@ export function PlanoHuerto3D({
       >
         Vista inicial
       </button>
-      {estado === "sin-webgl" ? (
+      {sinWebgl ? (
         <p className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
           Tu navegador no soporta WebGL; usa la vista 2D.
         </p>
