@@ -10,6 +10,12 @@ import {
   type TerrenoFeature,
 } from "@/lib/huerto/terreno";
 import { FREE_LIMITS, puedeAgregarHuerto } from "@/lib/payments/plans";
+import {
+  PLANO_MAX_ARBOLES,
+  disponerEnMatriz,
+  expandirUnidades,
+  type FilaArbol,
+} from "@/lib/huerto/plano";
 
 const NOMBRE_MAX = 60;
 
@@ -190,4 +196,91 @@ export async function eliminarHuerto(id: string): Promise<EliminarHuertoResult> 
   revalidatePath("/perfil");
   revalidatePath("/huerto");
   return { ok: true };
+}
+
+export type SincronizarPlanoResult =
+  | { ok: true; total: number }
+  | { ok: false; error: string };
+
+export async function sincronizarPlanoHuerto(
+  huertoId: string,
+): Promise<SincronizarPlanoResult> {
+  const uuid = z.string().uuid().safeParse(huertoId);
+  if (!uuid.success) return { ok: false, error: "Huerto inválido." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "No autenticado." };
+
+  const { data: huertoData } = await supabase
+    .from("gf_huertos")
+    .select("terreno_geojson")
+    .eq("id", uuid.data)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const feature = parseTerrenoFeature(huertoData?.terreno_geojson);
+  if (!feature) {
+    return { ok: false, error: "Ese huerto no tiene un polígono válido en el mapa." };
+  }
+
+  const { data: filas, error: errorSeleccion } = await supabase
+    .from("gf_arboles")
+    .select("id, especie, cantidad, fecha_plantacion, observaciones")
+    .eq("user_id", user.id)
+    .or(`huerto_id.is.null,huerto_id.eq.${uuid.data}`);
+  if (errorSeleccion) {
+    return { ok: false, error: "No se pudo leer tu inventario de árboles." };
+  }
+
+  const unidades = expandirUnidades((filas ?? []) as FilaArbol[]);
+  if (unidades.length === 0) {
+    return {
+      ok: false,
+      error: "No hay árboles para sincronizar. Registra árboles en tu inventario primero.",
+    };
+  }
+  if (unidades.length > PLANO_MAX_ARBOLES) {
+    return {
+      ok: false,
+      error: `El plano admite hasta ${PLANO_MAX_ARBOLES} árboles. Divide tu plantación en más huertos o reduce el inventario.`,
+    };
+  }
+
+  const posiciones = disponerEnMatriz(unidades.length, feature.geometry.coordinates);
+  const aInsertar = unidades.map((unidad, i) => ({
+    user_id: user.id,
+    especie: unidad.especie,
+    cantidad: 1,
+    fecha_plantacion: unidad.fecha_plantacion,
+    observaciones: unidad.observaciones,
+    huerto_id: uuid.data,
+    pos_x: posiciones[i]?.x ?? 0.5,
+    pos_y: posiciones[i]?.y ?? 0.5,
+  }));
+
+  const { error: errorInsercion } = await supabase.from("gf_arboles").insert(aInsertar);
+  if (errorInsercion) {
+    return { ok: false, error: "No se pudo crear el plano. Tu inventario sigue intacto." };
+  }
+
+  const idsAnteriores = (filas ?? []).map((fila) => fila.id);
+  if (idsAnteriores.length > 0) {
+    const { error: errorLimpieza } = await supabase
+      .from("gf_arboles")
+      .delete()
+      .in("id", idsAnteriores)
+      .eq("user_id", user.id);
+    if (errorLimpieza) {
+      return {
+        ok: false,
+        error:
+          "El plano se creó, pero quedó inventario duplicado sin asignar. Vuelve a sincronizar para limpiarlo.",
+      };
+    }
+  }
+
+  revalidatePath("/huerto");
+  return { ok: true, total: unidades.length };
 }

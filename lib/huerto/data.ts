@@ -15,6 +15,9 @@ interface ArbolRow {
   cantidad: number;
   fecha_plantacion: string | null;
   observaciones: string | null;
+  huerto_id: string | null;
+  pos_x: number | null;
+  pos_y: number | null;
   created_at: string;
 }
 
@@ -25,6 +28,9 @@ export function mapArbol(row: ArbolRow): Arbol {
     cantidad: row.cantidad,
     fechaPlantacion: row.fecha_plantacion,
     observaciones: row.observaciones,
+    huertoId: row.huerto_id,
+    posX: row.pos_x,
+    posY: row.pos_y,
     createdAt: row.created_at,
   };
 }
@@ -78,7 +84,9 @@ export async function getArboles(userId: string): Promise<Arbol[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("gf_arboles")
-    .select("id, especie, cantidad, fecha_plantacion, observaciones, created_at")
+    .select(
+      "id, especie, cantidad, fecha_plantacion, observaciones, huerto_id, pos_x, pos_y, created_at",
+    )
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
@@ -141,6 +149,7 @@ export async function getHuertos(userId: string): Promise<HuertoResumen[]> {
       nombre: (row.nombre as string) ?? "Mi huerto",
       superficieM2: Number(row.superficie_m2 ?? 0),
       centro: feature ? terrenoCentro(feature.geometry.coordinates) : null,
+      feature,
     };
   });
 }

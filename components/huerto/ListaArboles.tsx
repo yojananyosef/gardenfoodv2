@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { Trash2 } from "lucide-react";
+import { MapPin, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
@@ -60,11 +60,17 @@ export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <ControlCantidad
-                valor={a.cantidad}
-                onCambio={(nueva) => handleCantidad(a.id, nueva)}
-                etiqueta={nombre}
-              />
+              {a.huertoId ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1.5 text-[11px] text-muted-foreground">
+                  <MapPin className="size-3" /> En plano
+                </span>
+              ) : (
+                <ControlCantidad
+                  valor={a.cantidad}
+                  onCambio={(nueva) => handleCantidad(a.id, nueva)}
+                  etiqueta={nombre}
+                />
+              )}
               <Button
                 type="button"
                 variant="ghost"

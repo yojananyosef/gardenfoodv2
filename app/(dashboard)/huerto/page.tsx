@@ -7,6 +7,7 @@ import {
   MapPinned,
   Plus,
   ArrowRight,
+  Box,
   Trees,
   CheckCircle2,
   Sun,
@@ -27,6 +28,7 @@ import { AgregarArbol } from "@/components/huerto/AgregarArbol";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { ListaCultivos } from "@/components/huerto/ListaCultivos";
 import { ListaArboles } from "@/components/huerto/ListaArboles";
+import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { prepararCultivos } from "@/lib/huerto/nombres";
 import { TareasDelDia } from "@/components/huerto/TareasDelDia";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -428,6 +430,28 @@ export default async function HuertoPage() {
                   </div>
                 </CardContent>
               </Card>
+              {/* Plano del huerto — matriz de árboles sobre el polígono del mapa */}
+              <Card className="rounded-2xl shadow-sm lg:col-span-12">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex gap-3">
+                      <span className="hidden size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 sm:inline-flex">
+                        <Box className="size-4" />
+                      </span>
+                      <div className="flex flex-col gap-1">
+                        <CardTitle className="text-base">Plano de tus huertos</CardTitle>
+                        <CardDescription className="text-xs">
+                          Matriz de árboles sobre el polígono dibujado en el mapa.
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} />
+                </CardContent>
+              </Card>
+
               {/* Tu terreno — vinculación con el mapa del perfil */}
               <Card className="rounded-2xl shadow-sm lg:col-span-12">
                 <CardHeader className="pb-3">

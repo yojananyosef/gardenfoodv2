@@ -5,6 +5,8 @@ export const TELEMETRY_CATEGORIES = [
   "COMMERCE_INTENT",
 ] as const;
 
+import type { TerrenoFeature } from "@/lib/huerto/terreno";
+
 export type TelemetryEventCategory = (typeof TELEMETRY_CATEGORIES)[number];
 
 export const TELEMETRY_EVENT_NAMES = [
@@ -167,6 +169,9 @@ export interface Arbol {
   cantidad: number;
   fechaPlantacion: string | null;
   observaciones: string | null;
+  huertoId: string | null;
+  posX: number | null;
+  posY: number | null;
   createdAt: string;
 }
 
@@ -175,6 +180,7 @@ export interface HuertoResumen {
   nombre: string;
   superficieM2: number;
   centro: { lat: number; lng: number } | null;
+  feature: TerrenoFeature | null;
 }
 
 export interface Tarea {

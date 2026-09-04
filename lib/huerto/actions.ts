@@ -235,20 +235,62 @@ export async function agregarArbol(input: z.input<typeof AGREGAR_ARBOL>) {
   return { ok: true as const };
 }
 
+const ACTUALIZAR_ARBOL = z.object({
+  especie: z.string().min(1).max(80).optional(),
+  cantidad: z.number().int().min(1).max(1000).optional(),
+  fechaPlantacion: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  observaciones: z.string().max(500).nullable().optional(),
+  huertoId: z.string().uuid().nullable().optional(),
+});
+
 export async function actualizarArbol(
   id: string,
-  input: { cantidad?: number; fechaPlantacion?: string | null; observaciones?: string | null },
+  input: z.input<typeof ACTUALIZAR_ARBOL>,
 ) {
+  const parsed = ACTUALIZAR_ARBOL.parse(input);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "No autenticado." };
 
+  if (parsed.huertoId !== undefined && parsed.huertoId !== null) {
+    const { data: huerto } = await supabase
+      .from("gf_huertos")
+      .select("id")
+      .eq("id", parsed.huertoId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!huerto) return { error: "Ese huerto no existe en tu mapa." };
+  }
+
+  if (parsed.cantidad !== undefined) {
+    const { data: fila } = await supabase
+      .from("gf_arboles")
+      .select("huerto_id")
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (fila?.huerto_id) {
+      return {
+        error:
+          "Este árbol está en un plano del mapa: cambia la cantidad desde el plano (agrega o elimina unidades).",
+      };
+    }
+  }
+
   const patch: Record<string, unknown> = {};
-  if (input.cantidad !== undefined) patch.cantidad = input.cantidad;
-  if (input.fechaPlantacion !== undefined) patch.fecha_plantacion = input.fechaPlantacion;
-  if (input.observaciones !== undefined) patch.observaciones = input.observaciones;
+  if (parsed.especie !== undefined) patch.especie = parsed.especie;
+  if (parsed.cantidad !== undefined) patch.cantidad = parsed.cantidad;
+  if (parsed.fechaPlantacion !== undefined) patch.fecha_plantacion = parsed.fechaPlantacion;
+  if (parsed.observaciones !== undefined) patch.observaciones = parsed.observaciones;
+  if (parsed.huertoId !== undefined) {
+    patch.huerto_id = parsed.huertoId;
+    if (parsed.huertoId === null) {
+      patch.pos_x = null;
+      patch.pos_y = null;
+    }
+  }
   if (Object.keys(patch).length === 0) return { ok: true as const };
 
   const { error } = await supabase
