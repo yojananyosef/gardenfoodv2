@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   FREE_LIMITS,
+  REGIONES_EXPLORACION_LIBRE,
+  esRegionExploracionLibre,
   limitesDe,
   puedeAgregarArbol,
   puedeAgregarCultivo,
   puedeAgregarHuerto,
+  puedeExplorarRegion,
 } from "@/lib/payments/plans";
 import { esMuestraGratuis } from "@/lib/agronomy";
 import { esRutaProtegida } from "@/proxy";
@@ -54,6 +57,41 @@ describe("muestra gratuita del catálogo", () => {
     expect(esMuestraGratuis("duraznero")).toBe(true);
     expect(esMuestraGratuis("cerezo")).toBe(false);
     expect(esMuestraGratuis("")).toBe(false);
+  });
+});
+
+describe("exploración libre por región (landing)", () => {
+  it("libera exactamente Metropolitana, O'Higgins y Ñuble", () => {
+    expect([...REGIONES_EXPLORACION_LIBRE].sort()).toEqual(
+      ["Metropolitana", "O'Higgins", "Ñuble"].sort(),
+    );
+  });
+
+  it("anónimo solo explora las 3 regiones libres", () => {
+    expect(esRegionExploracionLibre("Metropolitana")).toBe(true);
+    expect(esRegionExploracionLibre("O'Higgins")).toBe(true);
+    expect(esRegionExploracionLibre("Ñuble")).toBe(true);
+    expect(esRegionExploracionLibre("Maule")).toBe(false);
+    expect(esRegionExploracionLibre("Valparaíso")).toBe(false);
+    expect(esRegionExploracionLibre("Magallanes")).toBe(false);
+    expect(esRegionExploracionLibre("")).toBe(false);
+    expect(esRegionExploracionLibre(null)).toBe(false);
+    expect(esRegionExploracionLibre(undefined)).toBe(false);
+  });
+
+  it("logueado desbloquea cualquier región", () => {
+    for (const region of ["Metropolitana", "Maule", "Magallanes", "Arica y Parinacota"]) {
+      expect(puedeExplorarRegion(region, { isAuthenticated: true })).toBe(true);
+    }
+  });
+
+  it("anónimo bloquea el resto e invita a registrarse", () => {
+    expect(puedeExplorarRegion("Metropolitana", { isAuthenticated: false })).toBe(true);
+    expect(puedeExplorarRegion("Ñuble", { isAuthenticated: false })).toBe(true);
+    expect(puedeExplorarRegion("O'Higgins", { isAuthenticated: false })).toBe(true);
+    expect(puedeExplorarRegion("Maule", { isAuthenticated: false })).toBe(false);
+    expect(puedeExplorarRegion("Biobío", { isAuthenticated: false })).toBe(false);
+    expect(puedeExplorarRegion(null, { isAuthenticated: false })).toBe(false);
   });
 });
 

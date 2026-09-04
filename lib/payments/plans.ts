@@ -72,6 +72,24 @@ export const FREE_LIMITS = {
   huertos: 1,
 } as const;
 
+// Exploración libre anónima del widget del landing (`/`): solo estas 3
+// regiones muestran tareas sin sesión. El resto invita a login/registro.
+// Usuarios logueados (cualquier plan) ven las 16 desbloqueadas.
+export const REGIONES_EXPLORACION_LIBRE = ["Metropolitana", "O'Higgins", "Ñuble"] as const;
+
+export function esRegionExploracionLibre(region: string | null | undefined): boolean {
+  if (!region) return false;
+  return (REGIONES_EXPLORACION_LIBRE as readonly string[]).includes(region);
+}
+
+export function puedeExplorarRegion(
+  region: string | null | undefined,
+  opts: { isAuthenticated: boolean },
+): boolean {
+  if (opts.isAuthenticated) return true;
+  return esRegionExploracionLibre(region);
+}
+
 function tieneAccesoIlimitado(plan: PlanAcceso): boolean {
   return plan === "admin" || isPaidTier(plan);
 }

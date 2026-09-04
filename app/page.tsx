@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { TelemetryProvider } from "@/components/analytics/TelemetryProvider";
+import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +55,13 @@ const STATS = [
   { value: "30", label: "especies", sub: "Fichas completas" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
+
   return (
     <TelemetryProvider>
       <div className="flex min-h-full flex-col bg-background">
@@ -129,7 +136,7 @@ export default function Home() {
 
                 <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5">
-                    <MapPinned className="size-3.5" /> Cobertura nacional: 16 regiones
+                    <MapPinned className="size-3.5" /> Exploración libre: RM · Ñuble · O&rsquo;Higgins · 16 regiones con cuenta
                   </span>
                   <span className="size-1 rounded-full bg-border" aria-hidden />
                   <span className="inline-flex items-center gap-1.5">
@@ -152,7 +159,9 @@ export default function Home() {
                           <CardTitle className="text-[15px] font-semibold">¿Qué hago esta semana?</CardTitle>
                         </div>
                         <CardDescription className="text-[13px] leading-relaxed">
-                          Calendario vivo — elige tu comuna y ve tus tareas exactas
+                          {isAuthenticated
+                            ? "Calendario vivo — elige tu comuna y ve tus tareas exactas"
+                            : "Calendario vivo — prueba gratis con RM, Ñuble u O'Higgins"}
                         </CardDescription>
                       </div>
                       <Badge variant="outline" className="shrink-0 gap-1 rounded-full border-primary/20 bg-primary/10 text-primary">
@@ -162,7 +171,7 @@ export default function Home() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <ZoneWidget />
+                    <ZoneWidget isAuthenticated={isAuthenticated} />
                     <div className="mt-4 flex items-center gap-2 rounded-xl bg-muted/60 px-3 py-2.5 text-xs text-muted-foreground">
                       <Sun className="size-3.5 shrink-0" aria-hidden />
                       <span>Basado en fenología y 20 zonas agroclimáticas — no es consejo genérico.</span>
@@ -178,7 +187,9 @@ export default function Home() {
                     <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                       Ficha de campo · GardenFood
                     </span>
-                    <span className="ml-auto font-mono text-[10px] text-muted-foreground">346 comunas</span>
+                    <span className="ml-auto font-mono text-[10px] text-muted-foreground">
+                      {isAuthenticated ? "346 comunas" : "3 regiones libres · 16 con cuenta"}
+                    </span>
                   </div>
                 </Card>
 
