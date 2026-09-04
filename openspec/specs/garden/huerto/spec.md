@@ -96,17 +96,22 @@ El sistema SHALL permitir sincronizar el inventario de árboles con un huerto de
 
 ### Requirement: Vista 2D/3D del plano
 
-El sistema SHALL mostrar el plano del huerto como una imagen 2D/3D fiel al mapa: el polígono dibujado con su grilla de matriz y un punto por árbol coloreado por especie con leyenda y conteos, alternable entre vista 2D plana y vista isométrica 3D sin dependencias de WebGL.
+El sistema SHALL mostrar el plano del huerto como una imagen 2D/3D fiel al mapa: el polígono dibujado sobre un terreno con textura de tierra verdosa (generada proceduralmente, sin imágenes remotas) con su grilla de matriz y un árbol dibujado por punto (copa, tronco y sombra) coloreado por especie con leyenda y conteos, alternable entre vista 2D plana y vista isométrica 3D sin dependencias de WebGL. El plano SHALL poder arrastrarse para moverse en pantalla (útil en 3D, donde puede salir del marco) y restaurarse con un control de centrado.
 
 #### Scenario: Vista plana e isométrica
 
 - **WHEN** el usuario alterna entre 2D y 3D
 - **THEN** el mismo plano se muestra plano o en proyección isométrica con los árboles levantados, manteniendo la interacción
 
-#### Scenario: Puntos coloreados por especie
+#### Scenario: Arrastre del plano
+
+- **WHEN** el usuario arrastra el terreno (mouse o dedo) en 2D o 3D
+- **THEN** el plano se desplaza siguiendo el puntero sin perder los árboles interactivos, y el control «Centrar» restaura la vista original
+
+#### Scenario: Puntos como árboles coloreados por especie
 
 - **WHEN** el plano tiene árboles de varias especies
-- **THEN** cada punto usa un color estable por especie y la leyenda resume especies con conteos
+- **THEN** cada punto se dibuja como un árbol (copa verde con tronco y sombra) con un tono estable por especie y la leyenda resume especies con conteos
 
 ### Requirement: Edición individual de cada árbol del plano
 

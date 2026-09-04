@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, RefreshCw } from "lucide-react";
+import { Focus, MapPin, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -34,6 +34,15 @@ const TRANSICION =
 const ISO = "rotateX(60deg) rotateZ(45deg)";
 const ISO_INVERSA = "rotateZ(-45deg) rotateX(-60deg)";
 
+// Textura de tierra verdosa: ruido fractal SVG (feTurbulence) generado en
+// el navegador, sin dependencias ni imágenes remotas.
+const TEXTURA_TIERRA = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><filter id="t"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="11"/><feColorMatrix values="0 0 0 0 0.31  0 0 0 0 0.38  0 0 0 0 0.17  0 0 0 0.6 0"/></filter><rect width="220" height="220" filter="url(#t)"/></svg>`,
+)})`;
+const TEXTURA_TIERRA_GRUESA = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="t"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.34  0 0 0 0 0.14  0 0 0 0.45 0"/></filter><rect width="140" height="140" filter="url(#t)"/></svg>`,
+)})`;
+
 const LINEAS_MATRIZ = Array.from(
   { length: 9 },
   (_, i) => `M${(i + 1) * 10} 0 V100 M0 ${(i + 1) * 10} H100`,
@@ -57,6 +66,46 @@ export function PlanoHuerto({
   const [modo, setModo] = useState<Modo>("2d");
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const arrastreRef = useRef<{
+    x: number;
+    y: number;
+    px: number;
+    py: number;
+    activo: boolean;
+  } | null>(null);
+  const [arrastrando, setArrastrando] = useState(false);
+
+  function iniciarArrastre(e: React.PointerEvent<HTMLDivElement>) {
+    if ((e.target as HTMLElement).closest("button, select, input")) return;
+    arrastreRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      px: pan.x,
+      py: pan.y,
+      activo: false,
+    };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+
+  function moverArrastre(e: React.PointerEvent<HTMLDivElement>) {
+    const arrastre = arrastreRef.current;
+    if (!arrastre) return;
+    const dx = e.clientX - arrastre.x;
+    const dy = e.clientY - arrastre.y;
+    if (!arrastre.activo && Math.hypot(dx, dy) > 4) {
+      arrastre.activo = true;
+      setArrastrando(true);
+    }
+    if (arrastre.activo) setPan({ x: arrastre.px + dx, y: arrastre.py + dy });
+  }
+
+  function terminarArrastre() {
+    arrastreRef.current = null;
+    setArrastrando(false);
+  }
+
+  const planoCentrado = pan.x === 0 && pan.y === 0;
 
   const huerto = huertos.find((h) => h.id === huertoId) ?? huertos[0] ?? null;
   const arbolesPlano = useMemo(
@@ -161,6 +210,17 @@ export function PlanoHuerto({
           <span className="text-sm font-medium">{huerto?.nombre}</span>
         )}
         <div className="ml-auto flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-h-8 rounded-full"
+            onClick={() => setPan({ x: 0, y: 0 })}
+            disabled={planoCentrado}
+            title="Centrar plano"
+          >
+            <Focus className="size-4" /> Centrar
+          </Button>
           <div className="flex items-center rounded-lg border p-0.5" role="group" aria-label="Modo de vista">
             <Button
               type="button"
@@ -200,15 +260,35 @@ export function PlanoHuerto({
         </div>
       </div>
 
-      <div className="relative flex h-80 items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-b from-sky-50 to-emerald-50 dark:from-sky-950/40 dark:to-emerald-950/30">
+      <div
+        className={`relative flex h-80 items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 dark:from-sky-950/50 dark:to-emerald-950/30 ${
+          arrastrando ? "cursor-grabbing" : "cursor-grab"
+        }`}
+        style={{ touchAction: "none" }}
+        onPointerDown={iniciarArrastre}
+        onPointerMove={moverArrastre}
+        onPointerUp={terminarArrastre}
+        onPointerCancel={terminarArrastre}
+      >
         <div
-          className="relative h-[86%] w-[86%]"
           style={{
-            transformStyle: "preserve-3d",
-            transform: modo === "3d" ? ISO : "none",
-            transition: TRANSICION,
+            transform: `translate(${pan.x}px, ${pan.y}px)`,
+            transition: arrastrando ? "none" : "transform 250ms ease-out",
           }}
+          className="flex size-full items-center justify-center"
         >
+          <div
+            className="relative h-[86%] w-[86%] rounded-lg shadow-[0_18px_35px_rgba(0,0,0,0.25)]"
+            style={{
+              transformStyle: "preserve-3d",
+              transform: modo === "3d" ? ISO : "none",
+              transition: TRANSICION,
+              backgroundColor: "#4c5a2c",
+              backgroundImage: `${TEXTURA_TIERRA}, ${TEXTURA_TIERRA_GRUESA}, linear-gradient(155deg, #5e6f36, #42501f)`,
+              backgroundBlendMode: "soft-light, overlay, normal",
+              backgroundSize: "220px 220px, 140px 140px, cover",
+            }}
+          >
           {vista ? (
             <>
               <svg
@@ -217,11 +297,11 @@ export function PlanoHuerto({
                 className="absolute inset-0 size-full"
                 aria-hidden
               >
-                <path d={LINEAS_MATRIZ} stroke="currentColor" strokeWidth={0.15} className="text-foreground" opacity={0.12} fill="none" />
+                <path d={LINEAS_MATRIZ} stroke="currentColor" strokeWidth={0.15} className="text-white" opacity={0.14} fill="none" />
                 <path
                   d={vista.path}
                   fillRule="evenodd"
-                  className="fill-emerald-500/15 stroke-emerald-600 dark:stroke-emerald-400"
+                  className="fill-emerald-300/25 stroke-lime-200/90 dark:stroke-lime-100/80"
                   strokeWidth={0.7}
                   strokeLinejoin="round"
                 />
@@ -263,17 +343,18 @@ export function PlanoHuerto({
               })}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-emerald-50/80">
               Este huerto no tiene un polígono válido en el mapa.
             </p>
           )}
           {vista && arbolesPlano.length === 0 ? (
-            <p className="pointer-events-none absolute inset-x-4 top-1/2 z-20 -translate-y-1/2 text-center text-xs text-muted-foreground">
+            <p className="pointer-events-none absolute inset-x-4 top-1/2 z-20 -translate-y-1/2 text-center text-xs text-emerald-50/85">
               {nadaPorSincronizar
                 ? "Aún no tienes árboles. Regístralos en el inventario y luego sincroniza para distribuirlos en la matriz."
                 : `Tienes ${unidadesNuevas} árbol${unidadesNuevas === 1 ? "" : "es"} por sincronizar. Pulsa «Sincronizar árboles».`}
             </p>
           ) : null}
+          </div>
         </div>
       </div>
 
@@ -282,7 +363,7 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz</span>
+        <span>Arrastra el terreno para moverlo · Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz</span>
       </div>
 
       {leyenda.length > 0 ? (
