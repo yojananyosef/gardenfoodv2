@@ -19,10 +19,10 @@ import {
   type TerrenoFeature,
 } from "@/lib/huerto/terreno";
 import {
-  colorDeEspecie,
   latLngDesdePos,
   puntoEnPoligono,
 } from "@/lib/huerto/plano";
+import { svgArbolHtml } from "@/components/huerto/IconoArbol";
 
 const OSM_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_ATTR =
@@ -121,7 +121,7 @@ export function TerrenoMap({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Leaflet.Map | null>(null);
   const capasRef = useRef<Map<Leaflet.Polygon, string>>(new Map());
-  const marcadoresRef = useRef<Map<string, Leaflet.CircleMarker>>(new Map());
+  const marcadoresRef = useRef<Map<string, Leaflet.Marker>>(new Map());
   const sateliteRef = useRef<Leaflet.TileLayer | null>(null);
   const leafletRef = useRef<typeof Leaflet | null>(null);
   const ubicacionMarkerRef = useRef<Leaflet.CircleMarker | null>(null);
@@ -203,7 +203,7 @@ export function TerrenoMap({
           .layers(
             {
               "Satélite (Esri)": satelite,
-              "Sentinel-2 (global)": sentinel,
+              "Sentinel-2 (global, menos detalle)": sentinel,
               "Calles (OSM)": calles,
             },
             { "Límites y lugares": limites },
@@ -281,7 +281,8 @@ export function TerrenoMap({
         // Zoom nativo dinámico: consulta el tilemap de Esri para el tile
         // central y fija maxNativeZoom al nivel realmente disponible, para
         // que Leaflet reescale el último nivel existente en lugar de mostrar
-        // tiles "Map data not yet available".
+        // tiles "Map data not yet available". Tope en 18: el nivel 19 de Esri
+        // no es uniforme y un falso positivo deja tiles 404 (fondo blanco).
         const zoomNativoCache = new Map<string, number>();
         async function ajustarZoomNativo() {
           if (cancelled || mapRef.current !== map) return;
@@ -290,7 +291,7 @@ export function TerrenoMap({
           const zoom = Math.round(map.getZoom());
           if (zoom < ZOOM_NATIVO_MIN) return;
           const centro = map.getCenter();
-          for (const nivel of [MAPA_MAX_ZOOM, MAPA_MAX_ZOOM - 1, ZOOM_NATIVO_MIN]) {
+          for (const nivel of [MAPA_MAX_ZOOM - 1, ZOOM_NATIVO_MIN]) {
             const { x, y } = tileDeCentro(centro.lat, centro.lng, nivel);
             const clave = `${x}_${y}_${nivel}`;
             let disponible = zoomNativoCache.get(clave);
@@ -499,13 +500,13 @@ export function TerrenoMap({
 
     for (const [id, { arbol, latlng }] of deseados) {
       if (marcadoresRef.current.has(id)) continue;
-      const marker = Ll.circleMarker(latlng, {
-        radius: 7,
-        color: "#ffffff",
-        weight: 2,
-        fillColor: colorDeEspecie(arbol.especie),
-        fillOpacity: 0.95,
-      })
+      const icono = Ll.divIcon({
+        className: "",
+        html: svgArbolHtml(arbol.especie),
+        iconSize: [26, 32],
+        iconAnchor: [13, 16],
+      });
+      const marker = Ll.marker(latlng, { icon: icono, keyboard: false })
         .addTo(map)
         .bindTooltip(arbol.especie)
         .on("click", () => onEditarArbolRef.current(id));
@@ -514,7 +515,9 @@ export function TerrenoMap({
   }, [arboles, mapaListo]);
 
   // En modo marca se apagan las herramientas de geoman para no interferir
-  // con los taps de conteo.
+  // con los taps de conteo. Se consulta primero si están activas: apagar un
+  // modo inactivo hace que geoman llame _off con listeners indefinidos
+  // ("wrong listener type: undefined").
   useEffect(() => {
     const map = mapRef.current;
     if (!mapaListo || !map) return;
@@ -522,9 +525,17 @@ export function TerrenoMap({
       map.pm.Toolbar.setButtonDisabled(boton, modoMarca);
     }
     if (modoMarca) {
-      map.pm.disableDraw();
-      map.pm.disableGlobalEditMode();
-      map.pm.disableGlobalRemovalMode();
+      const pm = map.pm as unknown as {
+        globalEditModeEnabled?: () => boolean;
+        globalRemovalModeEnabled?: () => boolean;
+        disableGlobalEditMode?: () => void;
+        disableGlobalRemovalMode?: () => void;
+        disableDraw?: () => void;
+        Draw?: { getActive?: () => boolean };
+      };
+      if (pm.globalEditModeEnabled?.()) pm.disableGlobalEditMode?.();
+      if (pm.globalRemovalModeEnabled?.()) pm.disableGlobalRemovalMode?.();
+      if (pm.Draw?.getActive?.()) pm.disableDraw?.();
     }
   }, [modoMarca, mapaListo]);
 

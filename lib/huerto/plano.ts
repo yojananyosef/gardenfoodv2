@@ -265,7 +265,9 @@ export function colorDeEspecie(especie: string): string {
   for (const ch of especie) {
     hash = (hash * 31 + (ch.codePointAt(0) ?? 0)) >>> 0;
   }
-  return `hsl(${hash % 360} 55% 42%)`;
+  // Tonos verdes frondosos (95-144°) para que las copas parezcan árboles
+  // y sigan distinguiéndose entre especies.
+  return `hsl(${95 + (hash % 50)} 60% 34%)`;
 }
 
 export type FilaArbol = {

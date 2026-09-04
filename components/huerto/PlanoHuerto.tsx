@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
+import { IconoArbol } from "@/components/huerto/IconoArbol";
 import { sincronizarPlanoHuerto } from "@/lib/huerto/huertos";
 import {
   colorDeEspecie,
@@ -240,19 +241,23 @@ export function PlanoHuerto({
                       transformStyle: "preserve-3d",
                       transform:
                         modo === "3d"
-                          ? "translate(-50%, -50%) translateZ(20px)"
-                          : "translate(-50%, -50%)",
+                          ? "translate(-50%, -80%) translateZ(20px)"
+                          : "translate(-50%, -80%)",
                       transition: TRANSICION,
                     }}
                   >
                     <span
-                      className="block size-6 rounded-full border-2 border-white shadow-md outline-none transition-[transform,box-shadow] hover:scale-125 focus-visible:ring-2 focus-visible:ring-primary focus-visible:scale-125"
+                      className="block outline-none transition-transform hover:scale-125 focus-visible:scale-125"
                       style={{
-                        backgroundColor: colorDeEspecie(arbol.especie),
                         transform: modo === "3d" ? ISO_INVERSA : undefined,
                         transition: TRANSICION,
                       }}
-                    />
+                    >
+                      <IconoArbol
+                        especie={arbol.especie}
+                        className="block h-9 w-7 drop-shadow-md"
+                      />
+                    </span>
                   </button>
                 );
               })}
