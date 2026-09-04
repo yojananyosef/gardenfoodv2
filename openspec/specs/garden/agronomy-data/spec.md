@@ -1,12 +1,12 @@
 # garden/agronomy-data Specification
-
 ## Purpose
-Validates Chilean region/comuna input against the catalog of 245 comunas and derives the correct agroclimatic zone so every location-dependent feature resolves accurately.
+
+Validates Chilean region/comuna input against the catalog of 346 official comunas and derives the correct agroclimatic zone so every location-dependent feature resolves accurately.
 
 ## Requirements
 
 ### Requirement: Comuna validation against the catalog
-The system SHALL expose a validation function that verifies a `comuna` (and its `region`) exists in the catalog of **254** comunas and returns the matching agroclimatic zone, or signals invalid input. The catalog size of 208 in legacy docs is superseded; 254 is the canonical 2026 count.
+The system SHALL expose a validation function that verifies a `comuna` (and its `region`) exists in the catalog of **346** comunas — the official SUBDERE División Político Administrativa count (16 regiones / 56 provincias / 346 comunas, per BCN and INE) — and returns the matching agroclimatic zone, or signals invalid input. The catalog sizes of 208 (legacy docs) and 254 are superseded; 346 is the canonical count.
 
 #### Scenario: Known comuna resolves a zone
 - **WHEN** given a comuna present in the catalog together with its correct region
@@ -24,7 +24,7 @@ Registration and profile-editing flows SHALL derive `zona_agroclimatica` exclusi
 - **THEN** the stored zone comes from the catalog lookup, never from a constant string
 
 ### Requirement: Agroclimatic zones and commune mapping
-The system SHALL provide a data source with the 20 Chilean agroclimatic zones, the **254** communes mapped to their region and agroclimatic zone, and climate profile data per zone (temperature range, precipitation, frost risk).
+The system SHALL provide a data source with the 20 Chilean agroclimatic zones and the **346** official communes mapped to their region and agroclimatic zone (with `COMUNAS_ZONA` derived from the single `COMUNAS` list), and climate profile data per zone (temperature range, precipitation, frost risk). The public landing region/comuna selector SHALL consume the same canonical catalog so it always offers the complete set.
 
 #### Scenario: Zone resolved from commune
 - **WHEN** a user profile specifies a commune
@@ -33,6 +33,10 @@ The system SHALL provide a data source with the 20 Chilean agroclimatic zones, t
 #### Scenario: Unrecognized commune
 - **WHEN** a commune does not match any known commune in the catalog
 - **THEN** the system falls back to a default neutral zone (Santiago Norte id 7) without failing
+
+#### Scenario: Landing selector offers the full catalog
+- **WHEN** an anonymous visitor opens the landing zone selector
+- **THEN** they can choose any of the 16 regions and any of the 346 official comunas, and the widget resolves tasks from the comuna's canonical zone
 
 ### Requirement: Species catalog
 The system SHALL provide a catalog of 30 fruit species, each with a slug, common name, latin name, cultivation difficulty, and **locally hosted image** reference (`/frutas/<slug>.webp`), grouped by fruit family (carozo, pomácea, cítrico, baya, fruto seco, subtropical, otros). Images SHALL NOT be fetched from `commons.wikimedia.org` at runtime to avoid HTTP 429.
@@ -62,3 +66,14 @@ The system SHALL provide a viability matrix of 30 species × 20 zones classifyin
 #### Scenario: Species viability for a zone
 - **WHEN** a user browses species for their agroclimatic zone via recommendations
 - **THEN** the system shows each species classified as recommended, at risk, or not recommended for that zone with its `razon`
+
+### Requirement: Muestra gratuita del catálogo
+The system SHALL expose `duraznero` as the free catalog sample (`ESPECIE_MUESTRA_GRATIS`) and a pure helper `esMuestraGratuis(slug)`. Anonymous visitors SHALL be able to open the sample's full technical ficha; every other species SHALL be presented as locked (visual lock + upsell CTA) while the underlying content remains server-rendered for SEO.
+
+#### Scenario: Sample constant resolves
+- **WHEN** any caller checks `esMuestraGratuis("duraznero")`
+- **THEN** it returns `true`, and any other slug returns `false`
+
+#### Scenario: Locked species keep SEO rendering
+- **WHEN** a locked species page is requested
+- **THEN** the response HTML contains the full ficha content regardless of the locked presentation

@@ -1,17 +1,10 @@
 # AVISO — Pendientes de operación y deuda conocida
 
-Última actualización: 2026-09-03 (cambios `add-freemium-funnel` + `harden-payments-and-rls`).
+Última actualización: 2026-09-03 (migraciones 0018 + 0019 aplicadas a producción; pendientes operacionales #1–#3 verificados).
 
 ## 🔴 Acción requerida (operación, no código)
 
-1. **Push de la migración 0018** — `supabase/migrations/0018_security_hardening.sql` (trigger guard de `perfiles.plan` + RLS de telemetría/sponsorships/consents) vive en el repo pero **aún no se aplicó a la DB**:
-   ```bash
-   pnpm exec supabase link --project-ref <ref>   # si no está linkeado
-   pnpm exec supabase db push
-   ```
-   Orden recomendado: deployar el código (que ya tolera ambas configs de RLS) → push de la migración.
-2. **Verificar `MP_WEBHOOK_SECRET` en producción** (Vercel env). Desde `harden-payments-and-rls`, el webhook **rechaza con 500** si falta el secret en `NODE_ENV=production` — intencional. Sin esta var, Mercado Pago no podrá confirmar suscripciones.
-3. **Sincronizar `CRON_SECRET`** — el job pg_cron de audiencias (`gf_cron_config.cron_secret`) y la env `CRON_SECRET` deben seguir iguales; nada automatiza esto.
+Ninguna. Los 3 pendientes de `harden-payments-and-rls` quedaron cerrados (ver 🟢).
 
 ## 🟡 Deuda conocida (de la auditoría, sin change abierto)
 
@@ -25,9 +18,15 @@
 | Headers de seguridad | `next.config.ts` sin HSTS/X-Frame-Options/`poweredByHeader:false` |
 | PWA | Cache de navegaciones sin límite; `/frutas/*.webp` no cacheadas; versión del SW manual |
 | Tests | Sin cobertura de route handlers ni de `lib/supabase`; sin script `test:coverage` pese a tener `@vitest/coverage-v8` |
+| Advisors Supabase (pre-existentes) | `is_admin()` SECURITY DEFINER ejecutable vía RPC por anon/authenticated (⚠️ no revocar EXECUTE: las políticas RLS dependen de él); `set_updated_at` con search_path mutable; `pg_net` en schema `public` (default Supabase); `gf_cron_config` con RLS sin políticas (intencional: solo service role); Leaked Password Protection deshabilitado en Auth |
+| Historial de migraciones | Versiones remotas con timestamp (p.ej. `20260904004500`) vs filenames `NNNN_*` del repo — no usar `supabase db push` sin reconciliar (reintentaría migraciones ya aplicadas); las migraciones se aplican vía MCP `apply_migration` |
 
 ## 🟢 Cerrado
 
+- Migración `0018_security_hardening` aplicada a producción (MCP `apply_migration`, versión `20260904004500`): trigger guard `perfiles.plan`, RLS de telemetría/sponsorships/consents. Verificado post-aplicación: políticas nuevas presentes y antiguas eliminadas, trigger habilitado, smoke tests (anon ve 0 consents y solo sponsorships paid+active; update autenticado de `plan` bloqueado con excepción del guard, rollback).
+- Migración `0019_revoke_plan_guard_rpc` (nueva): `REVOKE EXECUTE` de `bloquea_cambio_plan_perfiles()` a `public/anon/authenticated` — cierra el único hallazgo nuevo del security advisor (la RPC ya fallaba por ser trigger function; el revoke elimina la superficie). Re-verificado: RPC denegada, trigger sigue activo.
+- `MP_WEBHOOK_SECRET` verificado presente en producción (Vercel; valor no extraíble por diseño "Sensitive" del CLI).
+- `CRON_SECRET` sincronizado: verificado funcionalmente replicando el POST del job pg_cron desde la DB (pg_net con el secret de `gf_cron_config`) → `200 {"processed":0,"errors":[]}`.
 - Funnel de 3 capas (anónimo con muestra duraznero / gratuito con límites / pago) — `add-freemium-funnel` (commit `cbfe23e`).
 - P0 seguridad: escalada RLS a admin, self-upgrade vía polling, webhook sin firma/anti-replay, telemetría falsable, consents anónimos world-writable, sponsorships no pagadas públicas, gates admin/checkout, `timingSafeEqual` — `harden-payments-and-rls` (commit `540b891`).
 - Catálogo completo de 346 comunas oficiales (SUBDERE DPA) + selector del landing derivado del catálogo canónico — `complete-comunas-catalog`.
