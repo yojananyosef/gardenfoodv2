@@ -4,7 +4,7 @@ import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Focus, MapPin, RefreshCw } from "lucide-react";
+import { MapPin, RefreshCw, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -31,8 +31,9 @@ type Modo = "2d" | "3d";
 
 const TRANSICION =
   "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)";
-const ISO = "rotateX(60deg) rotateZ(45deg)";
-const ISO_INVERSA = "rotateZ(-45deg) rotateX(-60deg)";
+const ORBITA_INICIAL = { rotX: 60, rotZ: 45 };
+const PERSPECTIVA = 1400;
+const ESCALA_3D = 0.85;
 
 // Textura de tierra verdosa: ruido fractal SVG (feTurbulence) generado en
 // el navegador, sin dependencias ni imágenes remotas.
@@ -66,30 +67,31 @@ export function PlanoHuerto({
   const [modo, setModo] = useState<Modo>("2d");
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const arrastreRef = useRef<{
+  const [orbita, setOrbita] = useState(ORBITA_INICIAL);
+  const orbitaArrastreRef = useRef<{
     x: number;
     y: number;
-    px: number;
-    py: number;
+    rotX: number;
+    rotZ: number;
     activo: boolean;
   } | null>(null);
   const [arrastrando, setArrastrando] = useState(false);
 
-  function iniciarArrastre(e: React.PointerEvent<HTMLDivElement>) {
+  function iniciarGiro(e: React.PointerEvent<HTMLDivElement>) {
+    if (modo !== "3d") return;
     if ((e.target as HTMLElement).closest("button, select, input")) return;
-    arrastreRef.current = {
+    orbitaArrastreRef.current = {
       x: e.clientX,
       y: e.clientY,
-      px: pan.x,
-      py: pan.y,
+      rotX: orbita.rotX,
+      rotZ: orbita.rotZ,
       activo: false,
     };
     e.currentTarget.setPointerCapture(e.pointerId);
   }
 
-  function moverArrastre(e: React.PointerEvent<HTMLDivElement>) {
-    const arrastre = arrastreRef.current;
+  function girar(e: React.PointerEvent<HTMLDivElement>) {
+    const arrastre = orbitaArrastreRef.current;
     if (!arrastre) return;
     const dx = e.clientX - arrastre.x;
     const dy = e.clientY - arrastre.y;
@@ -97,15 +99,24 @@ export function PlanoHuerto({
       arrastre.activo = true;
       setArrastrando(true);
     }
-    if (arrastre.activo) setPan({ x: arrastre.px + dx, y: arrastre.py + dy });
+    if (arrastre.activo) {
+      setOrbita({
+        rotX: Math.max(28, Math.min(88, arrastre.rotX - dy * 0.35)),
+        rotZ: arrastre.rotZ + dx * 0.45,
+      });
+    }
   }
 
-  function terminarArrastre() {
-    arrastreRef.current = null;
+  function terminarGiro() {
+    orbitaArrastreRef.current = null;
     setArrastrando(false);
   }
 
-  const planoCentrado = pan.x === 0 && pan.y === 0;
+  const rotZNormalizado = ((orbita.rotZ % 360) + 360) % 360;
+  const vistaInicial =
+    Math.abs(orbita.rotX - ORBITA_INICIAL.rotX) < 0.5 &&
+    Math.abs(rotZNormalizado - ORBITA_INICIAL.rotZ) < 0.5;
+  const en3d = modo === "3d";
 
   const huerto = huertos.find((h) => h.id === huertoId) ?? huertos[0] ?? null;
   const arbolesPlano = useMemo(
@@ -215,11 +226,11 @@ export function PlanoHuerto({
             variant="outline"
             size="sm"
             className="min-h-8 rounded-full"
-            onClick={() => setPan({ x: 0, y: 0 })}
-            disabled={planoCentrado}
-            title="Centrar plano"
+            onClick={() => setOrbita(ORBITA_INICIAL)}
+            disabled={!en3d || vistaInicial}
+            title="Vista inicial en 3D"
           >
-            <Focus className="size-4" /> Centrar
+            <RotateCcw className="size-4" /> Vista inicial
           </Button>
           <div className="flex items-center rounded-lg border p-0.5" role="group" aria-label="Modo de vista">
             <Button
@@ -262,27 +273,23 @@ export function PlanoHuerto({
 
       <div
         className={`relative flex h-80 items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 dark:from-sky-950/50 dark:to-emerald-950/30 ${
-          arrastrando ? "cursor-grabbing" : "cursor-grab"
+          en3d ? (arrastrando ? "cursor-grabbing" : "cursor-grab") : ""
         }`}
-        style={{ touchAction: "none" }}
-        onPointerDown={iniciarArrastre}
-        onPointerMove={moverArrastre}
-        onPointerUp={terminarArrastre}
-        onPointerCancel={terminarArrastre}
+        style={{ touchAction: en3d ? "none" : "auto" }}
+        onPointerDown={iniciarGiro}
+        onPointerMove={girar}
+        onPointerUp={terminarGiro}
+        onPointerCancel={terminarGiro}
       >
-        <div
-          style={{
-            transform: `translate(${pan.x}px, ${pan.y}px)`,
-            transition: arrastrando ? "none" : "transform 250ms ease-out",
-          }}
-          className="flex size-full items-center justify-center"
-        >
           <div
-            className="relative h-[86%] w-[86%] rounded-lg shadow-[0_18px_35px_rgba(0,0,0,0.25)]"
+            className="relative h-[74%] w-[74%] rounded-lg shadow-[0_26px_45px_rgba(0,0,0,0.35)]"
             style={{
               transformStyle: "preserve-3d",
-              transform: modo === "3d" ? ISO : "none",
-              transition: TRANSICION,
+              transform:
+                modo === "3d"
+                  ? `perspective(${PERSPECTIVA}px) rotateX(${orbita.rotX}deg) rotateZ(${orbita.rotZ}deg) scale(${ESCALA_3D})`
+                  : "none",
+              transition: arrastrando ? "transform 0ms" : TRANSICION,
               backgroundColor: "#4c5a2c",
               backgroundImage: `${TEXTURA_TIERRA}, ${TEXTURA_TIERRA_GRUESA}, linear-gradient(155deg, #5e6f36, #42501f)`,
               backgroundBlendMode: "soft-light, overlay, normal",
@@ -306,6 +313,27 @@ export function PlanoHuerto({
                   strokeLinejoin="round"
                 />
               </svg>
+              {en3d
+                ? arbolesPlano.map((arbol) => {
+                    const p = posAVista({ x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 }, vista);
+                    return (
+                      <span
+                        key={`sombra-${arbol.id}`}
+                        aria-hidden
+                        className="pointer-events-none absolute z-[5] block"
+                        style={{
+                          left: `${p.x}%`,
+                          top: `${p.y}%`,
+                          width: "24px",
+                          height: "13px",
+                          borderRadius: "50%",
+                          background:
+                            "radial-gradient(ellipse, rgba(0,0,0,0.38), transparent 72%)",
+                        }}
+                      />
+                    );
+                  })
+                : null}
               {arbolesPlano.map((arbol) => {
                 const p = posAVista({ x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 }, vista);
                 return (
@@ -319,25 +347,39 @@ export function PlanoHuerto({
                       left: `${p.x}%`,
                       top: `${p.y}%`,
                       transformStyle: "preserve-3d",
-                      transform:
-                        modo === "3d"
-                          ? "translate(-50%, -80%) translateZ(20px)"
-                          : "translate(-50%, -80%)",
+                      transform: en3d
+                        ? "translate(-50%, -100%) translateZ(10px)"
+                        : "translate(-50%, -80%)",
                       transition: TRANSICION,
                     }}
                   >
-                    <span
-                      className="block outline-none transition-transform hover:scale-125 focus-visible:scale-125"
-                      style={{
-                        transform: modo === "3d" ? ISO_INVERSA : undefined,
-                        transition: TRANSICION,
-                      }}
-                    >
-                      <IconoArbol
-                        especie={arbol.especie}
-                        className="block h-9 w-7 drop-shadow-md"
-                      />
-                    </span>
+                    {en3d ? (
+                      <span
+                        className="relative block h-11 w-7 outline-none"
+                        style={{
+                          transform: `rotateZ(${-orbita.rotZ}deg) rotateX(${-orbita.rotX}deg)`,
+                          transformStyle: "preserve-3d",
+                          transformOrigin: "50% 100%",
+                          transition: arrastrando ? "transform 0ms" : TRANSICION,
+                        }}
+                      >
+                        <span
+                          className="absolute bottom-0 left-1/2 w-[3px] -translate-x-1/2 rounded-sm bg-[#7a4a21]"
+                          style={{ height: "15px" }}
+                        />
+                        <span
+                          className="absolute bottom-[12px] left-1/2 size-6 -translate-x-1/2 rounded-full border-2 border-white shadow-md outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          style={{ backgroundColor: colorDeEspecie(arbol.especie) }}
+                        />
+                      </span>
+                    ) : (
+                      <span className="block outline-none transition-transform hover:scale-125 focus-visible:scale-125">
+                        <IconoArbol
+                          especie={arbol.especie}
+                          className="block h-9 w-7 drop-shadow-md"
+                        />
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -355,7 +397,6 @@ export function PlanoHuerto({
             </p>
           ) : null}
           </div>
-        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
@@ -363,7 +404,7 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>Arrastra el terreno para moverlo · Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz</span>
+        <span>En 3D, arrastra para girar la vista · Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz</span>
       </div>
 
       {leyenda.length > 0 ? (

@@ -103,10 +103,10 @@ El sistema SHALL mostrar el plano del huerto como una imagen 2D/3D fiel al mapa:
 - **WHEN** el usuario alterna entre 2D y 3D
 - **THEN** el mismo plano se muestra plano o en proyección isométrica con los árboles levantados, manteniendo la interacción
 
-#### Scenario: Arrastre del plano
+#### Scenario: Giro orbital de la vista en 3D
 
-- **WHEN** el usuario arrastra el terreno (mouse o dedo) en 2D o 3D
-- **THEN** el plano se desplaza siguiendo el puntero sin perder los árboles interactivos, y el control «Centrar» restaura la vista original
+- **WHEN** el usuario arrastra el terreno en modo 3D (mouse o dedo)
+- **THEN** la vista orbita alrededor del plano: el arrastre horizontal gira el azimut y el vertical inclina la elevación (acotada), permitiendo ver el huerto desde distintos ángulos; el control «Vista inicial» restaura la perspectiva por defecto
 
 #### Scenario: Puntos como árboles coloreados por especie
 
