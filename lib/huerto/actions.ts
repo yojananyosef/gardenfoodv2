@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { ESPECIES } from "@/lib/agronomy";
 import {
   FREE_LIMITS,
   puedeAgregarArbol,
@@ -20,6 +21,12 @@ export async function getPlanDe(
     .eq("id", userId)
     .maybeSingle();
   return (data?.plan as PlanAcceso | undefined) ?? "gratuito";
+}
+
+export async function listarEspecies(): Promise<
+  { dbKey: string; nombre: string }[]
+> {
+  return ESPECIES.map((e) => ({ dbKey: e.dbKey, nombre: e.nombre }));
 }
 
 const AGREGAR_CULTIVO = z.object({

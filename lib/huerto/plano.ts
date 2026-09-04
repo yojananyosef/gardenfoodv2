@@ -99,7 +99,9 @@ export function proyectarADentro(
 export function disponerEnMatriz(
   cantidad: number,
   coordinates: TerrenoPolygonCoordinates,
+  opciones: { ocupadas?: PosicionPlano[]; separacion?: number } = {},
 ): PosicionPlano[] {
+  const { ocupadas = [], separacion = 0.04 } = opciones;
   const n = Math.max(0, Math.floor(cantidad) || 0);
   if (n === 0) return [];
   const bbox = bboxDe(coordinates);
@@ -119,29 +121,81 @@ export function disponerEnMatriz(
   const cols = Math.max(1, Math.min(n, Math.round(Math.sqrt(n * aspecto))));
   const rows = Math.ceil(n / cols);
 
-  const posiciones: PosicionPlano[] = [];
+  const celdas: PosicionPlano[] = [];
+  for (let fila = 0; fila < rows; fila++) {
+    for (let col = 0; col < cols; col++) {
+      let x = (col + 0.5) / cols;
+      let y = (fila + 0.5) / rows;
+      if (anillo.length >= 3) {
+        const punto: PuntoMapa = {
+          lng: bbox.minX + x * dLng,
+          lat: bbox.minY + y * dLat,
+        };
+        if (!puntoEnPoligono(punto, anillo)) {
+          const ajustado = proyectarADentro(punto, anillo);
+          x = (ajustado.lng - bbox.minX) / dLng;
+          y = (ajustado.lat - bbox.minY) / dLat;
+        }
+      }
+      celdas.push({
+        x: Math.max(0, Math.min(1, x)),
+        y: Math.max(0, Math.min(1, y)),
+      });
+    }
+  }
+
+  const sep2 = separacion * separacion;
+  const evitadas = ocupadas.map((o) => ({ x: o.x, y: o.y }));
+  const colocadas: PosicionPlano[] = [];
+  let cursor = 0;
   for (let i = 0; i < n; i++) {
-    const col = i % cols;
-    const fila = Math.floor(i / cols);
-    let x = (col + 0.5) / cols;
-    let y = (fila + 0.5) / rows;
-    if (anillo.length >= 3) {
-      const punto: PuntoMapa = {
-        lng: bbox.minX + x * dLng,
-        lat: bbox.minY + y * dLat,
-      };
-      if (!puntoEnPoligono(punto, anillo)) {
-        const ajustado = proyectarADentro(punto, anillo);
-        x = (ajustado.lng - bbox.minX) / dLng;
-        y = (ajustado.lat - bbox.minY) / dLat;
+    let elegida: PosicionPlano | null = null;
+    for (let k = 0; k < celdas.length; k++) {
+      const idx = (cursor + k) % celdas.length;
+      const celda = celdas[idx];
+      if (evitadas.every((o) => (celda.x - o.x) ** 2 + (celda.y - o.y) ** 2 >= sep2)) {
+        elegida = celda;
+        cursor = (idx + 1) % celdas.length;
+        break;
       }
     }
-    posiciones.push({
-      x: Math.max(0, Math.min(1, x)),
-      y: Math.max(0, Math.min(1, y)),
-    });
+    if (!elegida) {
+      elegida = celdas[cursor % celdas.length];
+      cursor = (cursor + 1) % celdas.length;
+    }
+    colocadas.push(elegida);
+    evitadas.push(elegida);
   }
-  return posiciones;
+  return colocadas;
+}
+
+export function posDesdeLatLng(
+  punto: PuntoMapa,
+  coordinates: TerrenoPolygonCoordinates,
+): PosicionPlano {
+  const bbox = bboxDe(coordinates);
+  if (!bbox) return { x: 0.5, y: 0.5 };
+  const dLng = bbox.maxX - bbox.minX;
+  const dLat = bbox.maxY - bbox.minY;
+  if (dLng <= 0 || dLat <= 0) return { x: 0.5, y: 0.5 };
+  return {
+    x: Math.max(0, Math.min(1, (punto.lng - bbox.minX) / dLng)),
+    y: Math.max(0, Math.min(1, (punto.lat - bbox.minY) / dLat)),
+  };
+}
+
+export function latLngDesdePos(
+  pos: PosicionPlano,
+  coordinates: TerrenoPolygonCoordinates,
+): PuntoMapa {
+  const bbox = bboxDe(coordinates);
+  if (!bbox) return { ...CENTRO_DEFAULT };
+  const dLng = bbox.maxX - bbox.minX;
+  const dLat = bbox.maxY - bbox.minY;
+  return {
+    lng: dLng <= 0 ? bbox.minX : bbox.minX + pos.x * dLng,
+    lat: dLat <= 0 ? bbox.minY : bbox.minY + pos.y * dLat,
+  };
 }
 
 export type VistaPlano = {

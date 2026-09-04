@@ -7,14 +7,18 @@ import { getPlanDe } from "@/lib/huerto/actions";
 import {
   parseTerrenoFeature,
   terrenoAreaM2,
+  type PuntoMapa,
   type TerrenoFeature,
 } from "@/lib/huerto/terreno";
-import { FREE_LIMITS, puedeAgregarHuerto } from "@/lib/payments/plans";
+import { FREE_LIMITS, puedeAgregarArbol, puedeAgregarHuerto } from "@/lib/payments/plans";
 import {
   PLANO_MAX_ARBOLES,
   disponerEnMatriz,
   expandirUnidades,
+  puntoEnPoligono,
+  posDesdeLatLng,
   type FilaArbol,
+  type PosicionPlano,
 } from "@/lib/huerto/plano";
 
 const NOMBRE_MAX = 60;
@@ -199,7 +203,7 @@ export async function eliminarHuerto(id: string): Promise<EliminarHuertoResult> 
 }
 
 export type SincronizarPlanoResult =
-  | { ok: true; total: number }
+  | { ok: true; total: number; nuevas: number }
   | { ok: false; error: string };
 
 export async function sincronizarPlanoHuerto(
@@ -227,28 +231,52 @@ export async function sincronizarPlanoHuerto(
 
   const { data: filas, error: errorSeleccion } = await supabase
     .from("gf_arboles")
-    .select("id, especie, cantidad, fecha_plantacion, observaciones")
+    .select("id, especie, cantidad, fecha_plantacion, observaciones, huerto_id, pos_x, pos_y")
     .eq("user_id", user.id)
     .or(`huerto_id.is.null,huerto_id.eq.${uuid.data}`);
   if (errorSeleccion) {
     return { ok: false, error: "No se pudo leer tu inventario de árboles." };
   }
 
-  const unidades = expandirUnidades((filas ?? []) as FilaArbol[]);
-  if (unidades.length === 0) {
+  // Los árboles ya posicionados (marcados a mano en el mapa) se protegen:
+  // la sincronización solo reemplaza filas sin posición.
+  const posicionadas = (filas ?? []).filter(
+    (fila) =>
+      fila.huerto_id === uuid.data &&
+      fila.pos_x !== null &&
+      fila.pos_y !== null,
+  );
+  const aReemplazar = (filas ?? []).filter(
+    (fila) =>
+      !(
+        fila.huerto_id === uuid.data &&
+        fila.pos_x !== null &&
+        fila.pos_y !== null
+      ),
+  );
+
+  const unidades = expandirUnidades(aReemplazar as FilaArbol[]);
+  if (unidades.length === 0 && posicionadas.length === 0) {
     return {
       ok: false,
-      error: "No hay árboles para sincronizar. Registra árboles en tu inventario primero.",
+      error: "No hay árboles para sincronizar. Registra o marca árboles primero.",
     };
   }
-  if (unidades.length > PLANO_MAX_ARBOLES) {
+  const cupo = PLANO_MAX_ARBOLES - posicionadas.length;
+  if (unidades.length > cupo) {
     return {
       ok: false,
-      error: `El plano admite hasta ${PLANO_MAX_ARBOLES} árboles. Divide tu plantación en más huertos o reduce el inventario.`,
+      error: `El plano admite hasta ${PLANO_MAX_ARBOLES} árboles y ya hay ${posicionadas.length} marcados. Reduce tu inventario o divide en más huertos.`,
     };
   }
 
-  const posiciones = disponerEnMatriz(unidades.length, feature.geometry.coordinates);
+  const ocupadas: PosicionPlano[] = posicionadas.map((fila) => ({
+    x: Number(fila.pos_x),
+    y: Number(fila.pos_y),
+  }));
+  const posiciones = disponerEnMatriz(unidades.length, feature.geometry.coordinates, {
+    ocupadas,
+  });
   const aInsertar = unidades.map((unidad, i) => ({
     user_id: user.id,
     especie: unidad.especie,
@@ -260,27 +288,118 @@ export async function sincronizarPlanoHuerto(
     pos_y: posiciones[i]?.y ?? 0.5,
   }));
 
-  const { error: errorInsercion } = await supabase.from("gf_arboles").insert(aInsertar);
-  if (errorInsercion) {
-    return { ok: false, error: "No se pudo crear el plano. Tu inventario sigue intacto." };
-  }
+  if (aInsertar.length > 0) {
+    const { error: errorInsercion } = await supabase.from("gf_arboles").insert(aInsertar);
+    if (errorInsercion) {
+      return { ok: false, error: "No se pudo completar la matriz. Tu inventario sigue intacto." };
+    }
 
-  const idsAnteriores = (filas ?? []).map((fila) => fila.id);
-  if (idsAnteriores.length > 0) {
-    const { error: errorLimpieza } = await supabase
-      .from("gf_arboles")
-      .delete()
-      .in("id", idsAnteriores)
-      .eq("user_id", user.id);
-    if (errorLimpieza) {
-      return {
-        ok: false,
-        error:
-          "El plano se creó, pero quedó inventario duplicado sin asignar. Vuelve a sincronizar para limpiarlo.",
-      };
+    const idsAnteriores = aReemplazar.map((fila) => fila.id);
+    if (idsAnteriores.length > 0) {
+      const { error: errorLimpieza } = await supabase
+        .from("gf_arboles")
+        .delete()
+        .in("id", idsAnteriores)
+        .eq("user_id", user.id);
+      if (errorLimpieza) {
+        return {
+          ok: false,
+          error:
+            "La matriz se completó, pero quedó inventario duplicado sin asignar. Vuelve a sincronizar para limpiarlo.",
+        };
+      }
     }
   }
 
   revalidatePath("/huerto");
-  return { ok: true, total: unidades.length };
+  return {
+    ok: true,
+    total: posicionadas.length + unidades.length,
+    nuevas: unidades.length,
+  };
+}
+
+const MARCAR_ARBOL = z.object({
+  huertoId: z.string().uuid(),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  especie: z.string().trim().min(1).max(80),
+});
+
+export type ArbolEnMapaResult =
+  | {
+      ok: true;
+      arbol: {
+        id: string;
+        especie: string;
+        huertoId: string;
+        posX: number;
+        posY: number;
+      };
+    }
+  | { ok: false; error: string; limite?: true };
+
+export async function agregarArbolEnMapa(
+  input: z.input<typeof MARCAR_ARBOL>,
+): Promise<ArbolEnMapaResult> {
+  const parsed = MARCAR_ARBOL.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Datos de marcaje inválidos." };
+  const { huertoId, lat, lng, especie } = parsed.data;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "No autenticado." };
+
+  const { data: huertoData } = await supabase
+    .from("gf_huertos")
+    .select("terreno_geojson")
+    .eq("id", huertoId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const feature = parseTerrenoFeature(huertoData?.terreno_geojson);
+  if (!feature) {
+    return { ok: false, error: "Ese huerto no tiene un polígono válido en el mapa." };
+  }
+
+  const punto: PuntoMapa = { lat, lng };
+  if (!puntoEnPoligono(punto, feature.geometry.coordinates[0] ?? [])) {
+    return { ok: false, error: "Marca dentro de un huerto delimitado." };
+  }
+
+  const plan = await getPlanDe(supabase, user.id);
+  const { count } = await supabase
+    .from("gf_arboles")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+  if (!puedeAgregarArbol(count ?? 0, plan)) {
+    return {
+      ok: false,
+      error: `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para marcar todos los árboles que ves.`,
+      limite: true,
+    };
+  }
+
+  const pos = posDesdeLatLng(punto, feature.geometry.coordinates);
+  const { data, error } = await supabase
+    .from("gf_arboles")
+    .insert({
+      user_id: user.id,
+      especie,
+      cantidad: 1,
+      huerto_id: huertoId,
+      pos_x: pos.x,
+      pos_y: pos.y,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) return { ok: false, error: "No se pudo marcar el árbol." };
+
+  revalidatePath("/huerto");
+  return {
+    ok: true,
+    arbol: { id: String(data.id), especie, huertoId, posX: pos.x, posY: pos.y },
+  };
 }

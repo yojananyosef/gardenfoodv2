@@ -20,6 +20,7 @@ Ninguna. Los 3 pendientes de `harden-payments-and-rls` quedaron cerrados (ver �
 | Tests | Sin cobertura de route handlers ni de `lib/supabase`; sin script `test:coverage` pese a tener `@vitest/coverage-v8` |
 | Advisors Supabase (pre-existentes) | `is_admin()` SECURITY DEFINER ejecutable vía RPC por anon/authenticated (⚠️ no revocar EXECUTE: las políticas RLS dependen de él); `set_updated_at` con search_path mutable; `pg_net` en schema `public` (default Supabase); `gf_cron_config` con RLS sin políticas (intencional: solo service role); Leaked Password Protection deshabilitado en Auth |
 | Historial de migraciones | Versiones remotas con timestamp (p.ej. `20260904004500`) vs filenames `NNNN_*` del repo — no usar `supabase db push` sin reconciliar (reintentaría migraciones ya aplicadas); las migraciones se aplican vía MCP `apply_migration` |
+| Datasets oficiales (referencia futura) | CIREN Catastro Frutícola: MapServer público `https://esri.ciren.cl/server/rest/services/IDEMINAGRI/CATASTRO_FRUTICOLA/MapServer` + CSV 1999–2025 en `datos.odepa.gob.cl` (comercial >0,5 ha, actualización trianual — no cubre huertos caseros). IDE Minagri WMS: `ide.minagri.gob.cl/directorio-de-servicios`. INIA Agromet (estaciones agroclimáticas). Candidatos a overlays/capas de referencia en iteraciones futuras |
 
 ## 🟢 Cerrado
 

@@ -4,10 +4,8 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, MapPinOff, RefreshCw, Trash2 } from "lucide-react";
+import { MapPin, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -15,13 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
+import { Dialog } from "@/components/ui/dialog";
+import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { sincronizarPlanoHuerto } from "@/lib/huerto/huertos";
 import {
   colorDeEspecie,
@@ -149,7 +142,11 @@ export function PlanoHuerto({
         {huertos.length > 1 ? (
           <Select value={huerto?.id ?? undefined} onValueChange={setHuertoId}>
             <SelectTrigger className="w-52 min-h-9" aria-label="Huerto del plano">
-              <SelectValue placeholder="Elige un huerto…" />
+              <SelectValue>
+                {(value: string | null) =>
+                  huertos.find((h) => h.id === value)?.nombre ?? "Elige un huerto…"
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {huertos.map((h) => (
@@ -195,7 +192,9 @@ export function PlanoHuerto({
             <RefreshCw className={pending ? "animate-spin" : undefined} />
             {pending
               ? "Sincronizando…"
-              : `Sincronizar árboles${unidadesNuevas > 0 ? ` (${unidadesNuevas})` : ""}`}
+              : arbolesPlano.length > 0
+                ? `Completar matriz${unidadesNuevas > 0 ? ` (${unidadesNuevas})` : ""}`
+                : `Sincronizar árboles${unidadesNuevas > 0 ? ` (${unidadesNuevas})` : ""}`}
           </Button>
         </div>
       </div>
@@ -310,137 +309,3 @@ export function PlanoHuerto({
   );
 }
 
-function EditarArbolDialog({
-  arbol,
-  especies,
-  onCerrar,
-}: {
-  arbol: Arbol;
-  especies: Especie[];
-  onCerrar: () => void;
-}) {
-  const router = useRouter();
-  const [especie, setEspecie] = useState(arbol.especie);
-  const [fecha, setFecha] = useState(arbol.fechaPlantacion ?? "");
-  const [observaciones, setObservaciones] = useState(arbol.observaciones ?? "");
-  const [pending, startTransition] = useTransition();
-
-  function guardar() {
-    startTransition(async () => {
-      const result = await actualizarArbol(arbol.id, {
-        especie,
-        fechaPlantacion: fecha ? fecha : null,
-        observaciones: observaciones.trim() ? observaciones.trim() : null,
-      });
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success("Árbol actualizado.");
-      onCerrar();
-      router.refresh();
-    });
-  }
-
-  function quitarDelPlano() {
-    startTransition(async () => {
-      const result = await actualizarArbol(arbol.id, { huertoId: null });
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success("Árbol quitado del plano. Vuelve a sincronizar para incluirlo.");
-      onCerrar();
-      router.refresh();
-    });
-  }
-
-  function eliminar() {
-    if (!window.confirm(`¿Eliminar este ${nombreDeEspecie(arbol.especie)} del inventario?`)) {
-      return;
-    }
-    startTransition(async () => {
-      const result = await eliminarArbol(arbol.id);
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success("Árbol eliminado.");
-      onCerrar();
-      router.refresh();
-    });
-  }
-
-  return (
-    <DialogContent className="max-w-md">
-      <DialogTitle className="text-lg font-semibold">
-        {nombreDeEspecie(arbol.especie)}
-      </DialogTitle>
-      <DialogDescription className="text-sm text-muted-foreground">
-        Árbol individual del plano. Cada unidad se edita por separado.
-      </DialogDescription>
-      <div className="mt-2 flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="plano-especie">Especie</Label>
-          <Select value={especie} onValueChange={(value) => setEspecie(value ?? "")}>
-            <SelectTrigger id="plano-especie" className="w-full min-h-11">
-              <SelectValue placeholder="Elige una especie…" />
-            </SelectTrigger>
-            <SelectContent className="max-h-72">
-              {especies.map((e) => (
-                <SelectItem key={e.dbKey} value={e.dbKey}>
-                  {e.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="plano-fecha">Fecha de plantación</Label>
-          <Input
-            id="plano-fecha"
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            className="min-h-11"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="plano-obs">Observaciones</Label>
-          <Input
-            id="plano-obs"
-            value={observaciones}
-            maxLength={500}
-            onChange={(e) => setObservaciones(e.target.value)}
-            className="min-h-11"
-          />
-        </div>
-        <Button type="button" className="min-h-11 w-full" onClick={guardar} disabled={pending}>
-          {pending ? "Guardando…" : "Guardar cambios"}
-        </Button>
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={quitarDelPlano}
-            disabled={pending}
-          >
-            <MapPinOff data-icon="inline-start" /> Quitar del plano
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1 text-destructive hover:text-destructive"
-            onClick={eliminar}
-            disabled={pending}
-          >
-            <Trash2 data-icon="inline-start" /> Eliminar
-          </Button>
-        </div>
-      </div>
-    </DialogContent>
-  );
-}

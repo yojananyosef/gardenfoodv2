@@ -4,8 +4,10 @@ import {
   crearVistaPlano,
   disponerEnMatriz,
   expandirUnidades,
+  latLngDesdePos,
   puntoEnPoligono,
   posAVista,
+  posDesdeLatLng,
   proyectarADentro,
   type FilaArbol,
   type PosicionPlano,
@@ -114,6 +116,39 @@ describe("disponerEnMatriz", () => {
       expect(pos.x).toBe(0.5);
       expect(pos.y).toBe(0.5);
     }
+  });
+
+  it("evita las celdas ocupadas por árboles ya posicionados", () => {
+    const anillo = cuadrado(0.01);
+    const ocupada: PosicionPlano = { x: 0.25, y: 0.25 };
+    const posiciones = disponerEnMatriz(3, [anillo], { ocupadas: [ocupada] });
+    expect(posiciones).toHaveLength(3);
+    for (const pos of posiciones) {
+      const distancia = Math.hypot(pos.x - ocupada.x, pos.y - ocupada.y);
+      expect(distancia).toBeGreaterThanOrEqual(0.04);
+    }
+  });
+});
+
+describe("posDesdeLatLng ↔ latLngDesdePos", () => {
+  it("normaliza un punto dentro del bounding box", () => {
+    const pos = posDesdeLatLng({ lng: 0.0025, lat: 0.0075 }, [cuadrado(0.01)]);
+    expect(pos.x).toBeCloseTo(0.25, 9);
+    expect(pos.y).toBeCloseTo(0.75, 9);
+  });
+
+  it("hace el viaje de ida y vuelta", () => {
+    const anillo = cuadrado(0.01);
+    const pos = posDesdeLatLng({ lng: 0.0071, lat: 0.0023 }, [anillo]);
+    const recuperado = latLngDesdePos(pos, [anillo]);
+    expect(recuperado.lng).toBeCloseTo(0.0071, 9);
+    expect(recuperado.lat).toBeCloseTo(0.0023, 9);
+  });
+
+  it("acota puntos fuera del bbox al rango 0..1", () => {
+    const pos = posDesdeLatLng({ lng: 5, lat: 5 }, [cuadrado(0.01)]);
+    expect(pos.x).toBe(1);
+    expect(pos.y).toBe(1);
   });
 });
 

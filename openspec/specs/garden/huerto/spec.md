@@ -67,12 +67,17 @@ The system SHALL show on the huerto dashboard a "Tu terreno" card listing the ma
 
 ### Requirement: Plano del huerto con matriz de árboles
 
-El sistema SHALL permitir sincronizar el inventario de árboles con un huerto delimitado en el mapa: cada fila con `cantidad N` se expande en N árboles individuales (`cantidad 1`) distribuidos en una matriz regular dentro del polígono, cada uno con posición normalizada y `huerto_id`. El alcance de la sincronización SHALL ser el inventario sin asignar más el del huerto elegido, dejando intacto el de otros huertos, con un techo de 200 árboles por plano.
+El sistema SHALL permitir sincronizar el inventario de árboles con un huerto delimitado en el mapa: cada fila con `cantidad N` sin posición se expande en N árboles individuales (`cantidad 1`) distribuidos en una matriz regular dentro del polígono. Los árboles ya posicionados (marcados a mano en el mapa) SHALL permanecer intactos: la sincronización solo completa la matriz de filas sin posición, evitando sus celdas, y el techo de 200 árboles por plano SHALL considerar el total (posicionados + nuevas).
 
 #### Scenario: Sincronizar inventario con un huerto
 
 - **WHEN** el usuario sincroniza el plano de un huerto teniendo filas de inventario (aunque compartan especie) en el alcance
 - **THEN** el sistema crea una unidad por árbol con posición dentro del polígono y muestra la matriz en el plano
+
+#### Scenario: Los marcados a mano se preservan
+
+- **WHEN** el usuario ya marcó árboles a mano en el mapa y sincroniza inventario nuevo
+- **THEN** los marcados conservan su posición exacta y las nuevas unidades se ubican evitando sus celdas
 
 #### Scenario: Celdas fuera del polígono se reubican
 
@@ -81,7 +86,7 @@ El sistema SHALL permitir sincronizar el inventario de árboles con un huerto de
 
 #### Scenario: Techo de árboles por plano
 
-- **WHEN** la expansión supera 200 unidades
+- **WHEN** la expansión supera el cupo restante (200 menos los ya posicionados)
 - **THEN** el sistema rechaza la sincronización con un mensaje accionable sin alterar el inventario
 
 #### Scenario: Sincronización segura ante fallos
