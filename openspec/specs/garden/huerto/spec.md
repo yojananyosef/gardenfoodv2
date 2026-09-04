@@ -96,17 +96,22 @@ El sistema SHALL permitir sincronizar el inventario de árboles con un huerto de
 
 ### Requirement: Vista 2D/3D del plano
 
-El sistema SHALL mostrar el plano del huerto como una imagen 2D/3D fiel al mapa: el polígono dibujado sobre un terreno con textura de tierra verdosa (generada proceduralmente, sin imágenes remotas) con su grilla de matriz y un árbol dibujado por punto (copa, tronco y sombra) coloreado por especie con leyenda y conteos, alternable entre vista 2D plana y vista isométrica 3D sin dependencias de WebGL. El plano SHALL poder arrastrarse para moverse en pantalla (útil en 3D, donde puede salir del marco) y restaurarse con un control de centrado.
+El sistema SHALL mostrar el plano del huerto fiel al mapa: en 2D, el polígono dibujado sobre un plato con textura de tierra verdosa (generada proceduralmente, sin imágenes remotas) cuya proporción respeta el aspecto real en metros y cuya grilla de matriz está recortada al interior del polígono (clipPath), con un árbol dibujado por punto coloreado por especie, leyenda y conteos. En 3D, el sistema SHALL renderizar una escena WebGL real (Three.js, carga diferida solo al activar 3D) con el polígono extruido sobre el plato alineado por la misma proyección métrica, textura satelital Esri sobre la cara superior (con fallback procedural si falla la descarga/CORS), árboles low-poly (tronco + copa) con sombras reales y controles orbitales (rotar/zoom, elevación acotada, botón Vista inicial). Sin WebGL SHALL ofrecer la vista 2D.
 
-#### Scenario: Vista plana e isométrica
+#### Scenario: Vista plana con plato sincronizado
 
-- **WHEN** el usuario alterna entre 2D y 3D
-- **THEN** el mismo plano se muestra plano o en proyección isométrica con los árboles levantados, manteniendo la interacción
+- **WHEN** el usuario ve el plano en 2D
+- **THEN** el plato adopta el aspecto real del bbox en metros y la grilla solo se dibuja dentro del polígono, sin verse como una segunda capa flotante
 
 #### Scenario: Giro orbital de la vista en 3D
 
 - **WHEN** el usuario arrastra el terreno en modo 3D (mouse o dedo)
-- **THEN** la vista orbita alrededor del plano: el arrastre horizontal gira el azimut y el vertical inclina la elevación (acotada), permitiendo ver el huerto desde distintos ángulos; el control «Vista inicial» restaura la perspectiva por defecto
+- **THEN** la cámara orbita alrededor del plano (azimut libre, elevación acotada) con zoom por rueda/pinzamiento; el control «Vista inicial» restaura la perspectiva por defecto
+
+#### Scenario: Textura satelital con fallback
+
+- **WHEN** el 3D carga los tiles Esri del bbox (máx 4×4 a z18)
+- **THEN** la cara superior del polígono muestra el satélite real; si la descarga falla, muestra el suelo procedural y un distintivo visible del modo activo
 
 #### Scenario: Puntos como árboles coloreados por especie
 

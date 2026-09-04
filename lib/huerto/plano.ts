@@ -6,15 +6,16 @@ import {
 } from "@/lib/huerto/terreno";
 
 export const PLANO_MAX_ARBOLES = 200;
-const ANCHO_VISTA = 100;
-const ALTO_VISTA = 100;
-const MARGEN_VISTA = 6;
+export const ANCHO_VISTA = 100;
+export const ALTO_VISTA = 100;
+export const MARGEN_VISTA = 6;
+
+const RADIO_TIERRA_M = 6371008.8;
 
 export type PosicionPlano = { x: number; y: number };
+export type BboxPlano = { minX: number; maxX: number; minY: number; maxY: number };
 
-function bboxDe(
-  coordinates: TerrenoPolygonCoordinates,
-): { minX: number; maxX: number; minY: number; maxY: number } | null {
+export function bboxDe(coordinates: TerrenoPolygonCoordinates): BboxPlano | null {
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
@@ -268,6 +269,58 @@ export function colorDeEspecie(especie: string): string {
   // Tonos verdes frondosos (95-144°) para que las copas parezcan árboles
   // y sigan distinguiéndose entre especies.
   return `hsl(${95 + (hash % 50)} 60% 34%)`;
+}
+
+// --- Proyección métrica compartida 2D/3D -----------------------------------
+// Convierte lng/lat a metros locales (equirectangular centrado) para que el
+// plato y el polígono compartan la misma forma en SVG y en Three.js.
+
+export type PuntoMetros = { x: number; y: number };
+
+export function bboxEnMetros(bbox: BboxPlano): {
+  anchoM: number;
+  altoM: number;
+  aspecto: number;
+  latMedia: number;
+} {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const latMedia = (bbox.minY + bbox.maxY) / 2;
+  const anchoM =
+    Math.max(bbox.maxX - bbox.minX, 1e-9) * ((Math.PI / 180) * RADIO_TIERRA_M) * Math.cos(toRad(latMedia));
+  const altoM = Math.max(bbox.maxY - bbox.minY, 1e-9) * ((Math.PI / 180) * RADIO_TIERRA_M);
+  return { anchoM, altoM, aspecto: anchoM / altoM, latMedia };
+}
+
+export function poligonoAMetros(coordinates: TerrenoPolygonCoordinates): {
+  anillos: PuntoMetros[][];
+  anchoM: number;
+  altoM: number;
+  aspecto: number;
+} | null {
+  const bbox = bboxDe(coordinates);
+  if (!bbox) return null;
+  const { anchoM, altoM, aspecto } = bboxEnMetros(bbox);
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const centroLng = (bbox.minX + bbox.maxX) / 2;
+  const centroLat = (bbox.minY + bbox.maxY) / 2;
+  const cosLat = Math.cos(toRad(centroLat));
+  const kx = ((Math.PI / 180) * RADIO_TIERRA_M * cosLat) / Math.max(anchoM, 1e-9);
+  const ky = (((Math.PI / 180) * RADIO_TIERRA_M) / Math.max(altoM, 1e-9)) * -1;
+  // Normalizado a -0.5..0.5 en cada eje: misma forma que en metros pero
+  // independiente de la escala, listo para Three.js y para aspect-ratio CSS.
+  const anillos = coordinates.map((anillo) =>
+    anillo.map(([lng, lat]) => ({
+      x: (lng - centroLng) * ((Math.PI / 180) * RADIO_TIERRA_M * cosLat) / Math.max(anchoM, 1e-9),
+      y: (lat - centroLat) * ((Math.PI / 180) * RADIO_TIERRA_M) / Math.max(altoM, 1e-9) * -1,
+    })),
+  );
+  void kx;
+  void ky;
+  return { anillos, anchoM, altoM, aspecto };
+}
+
+export function posAMetrosNormalizados(pos: PosicionPlano): PuntoMetros {
+  return { x: pos.x - 0.5, y: (pos.y - 0.5) * -1 };
 }
 
 export type FilaArbol = {

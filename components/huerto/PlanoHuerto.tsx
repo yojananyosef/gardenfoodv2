@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useId, useMemo, useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, RefreshCw, RotateCcw } from "lucide-react";
+import { MapPin, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,6 +19,7 @@ import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { IconoArbol } from "@/components/huerto/IconoArbol";
 import { sincronizarPlanoHuerto } from "@/lib/huerto/huertos";
 import {
+  bboxEnMetros,
   colorDeEspecie,
   crearVistaPlano,
   expandirUnidades,
@@ -29,14 +31,11 @@ import type { Arbol, HuertoResumen } from "@/types";
 
 type Modo = "2d" | "3d";
 
-const TRANSICION =
-  "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)";
-const ORBITA_INICIAL = { rotX: 60, rotZ: 45 };
-const PERSPECTIVA = 1400;
-const ESCALA_3D = 0.85;
+const PlanoHuerto3D = dynamic(
+  () => import("@/components/huerto/PlanoHuerto3D").then((m) => m.PlanoHuerto3D),
+  { ssr: false, loading: () => <p className="text-xs text-muted-foreground">Cargando 3D…</p> },
+);
 
-// Textura de tierra verdosa: ruido fractal SVG (feTurbulence) generado en
-// el navegador, sin dependencias ni imágenes remotas.
 const TEXTURA_TIERRA = `url("data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><filter id="t"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="11"/><feColorMatrix values="0 0 0 0 0.31  0 0 0 0 0.38  0 0 0 0 0.17  0 0 0 0.6 0"/></filter><rect width="220" height="220" filter="url(#t)"/></svg>`,
 )})`;
@@ -67,55 +66,7 @@ export function PlanoHuerto({
   const [modo, setModo] = useState<Modo>("2d");
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
-  const [orbita, setOrbita] = useState(ORBITA_INICIAL);
-  const orbitaArrastreRef = useRef<{
-    x: number;
-    y: number;
-    rotX: number;
-    rotZ: number;
-    activo: boolean;
-  } | null>(null);
-  const [arrastrando, setArrastrando] = useState(false);
 
-  function iniciarGiro(e: React.PointerEvent<HTMLDivElement>) {
-    if (modo !== "3d") return;
-    if ((e.target as HTMLElement).closest("button, select, input")) return;
-    orbitaArrastreRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      rotX: orbita.rotX,
-      rotZ: orbita.rotZ,
-      activo: false,
-    };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  }
-
-  function girar(e: React.PointerEvent<HTMLDivElement>) {
-    const arrastre = orbitaArrastreRef.current;
-    if (!arrastre) return;
-    const dx = e.clientX - arrastre.x;
-    const dy = e.clientY - arrastre.y;
-    if (!arrastre.activo && Math.hypot(dx, dy) > 4) {
-      arrastre.activo = true;
-      setArrastrando(true);
-    }
-    if (arrastre.activo) {
-      setOrbita({
-        rotX: Math.max(28, Math.min(88, arrastre.rotX - dy * 0.35)),
-        rotZ: arrastre.rotZ + dx * 0.45,
-      });
-    }
-  }
-
-  function terminarGiro() {
-    orbitaArrastreRef.current = null;
-    setArrastrando(false);
-  }
-
-  const rotZNormalizado = ((orbita.rotZ % 360) + 360) % 360;
-  const vistaInicial =
-    Math.abs(orbita.rotX - ORBITA_INICIAL.rotX) < 0.5 &&
-    Math.abs(rotZNormalizado - ORBITA_INICIAL.rotZ) < 0.5;
   const en3d = modo === "3d";
 
   const huerto = huertos.find((h) => h.id === huertoId) ?? huertos[0] ?? null;
@@ -128,6 +79,20 @@ export function PlanoHuerto({
     () => (feature ? crearVistaPlano(feature.geometry.coordinates) : null),
     [feature],
   );
+  const clipId = useId().replace(/[^a-zA-Z0-9]/g, "");
+  // Aspecto real en metros: el plato y el polígono comparten proyección.
+  // Sin esto, un huerto alargado/diagonal se ve como un rombo flotando
+  // sobre un rectángulo genérico (preserveAspectRatio="none" lo estiraba).
+  const aspectoTerreno = useMemo(() => {
+    if (!vista) return 16 / 9;
+    try {
+      const m = bboxEnMetros(vista.bbox);
+      if (!Number.isFinite(m.aspecto) || m.aspecto <= 0) return 16 / 9;
+      return Math.max(0.35, Math.min(3.5, m.aspecto));
+    } catch {
+      return 16 / 9;
+    }
+  }, [vista]);
   const unidadesALanzar = useMemo(
     () =>
       expandirUnidades(
@@ -221,17 +186,6 @@ export function PlanoHuerto({
           <span className="text-sm font-medium">{huerto?.nombre}</span>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="min-h-8 rounded-full"
-            onClick={() => setOrbita(ORBITA_INICIAL)}
-            disabled={!en3d || vistaInicial}
-            title="Vista inicial en 3D"
-          >
-            <RotateCcw className="size-4" /> Vista inicial
-          </Button>
           <div className="flex items-center rounded-lg border p-0.5" role="group" aria-label="Modo de vista">
             <Button
               type="button"
@@ -271,25 +225,39 @@ export function PlanoHuerto({
         </div>
       </div>
 
+      {en3d ? (
+        <div className="relative h-80 overflow-hidden rounded-xl border bg-[#0b1a12]">
+          {vista && feature ? (
+            <PlanoHuerto3D
+              coordinates={feature.geometry.coordinates}
+              arboles={arbolesPlano.map((a) => ({
+                id: a.id,
+                especie: a.especie,
+                posX: a.posX ?? 0.5,
+                posY: a.posY ?? 0.5,
+              }))}
+              onEditar={(id) => {
+                const encontrado = arbolesPlano.find((a) => a.id === id);
+                if (encontrado) setEditando(encontrado);
+              }}
+            />
+          ) : (
+            <p className="flex h-full items-center justify-center text-sm text-emerald-50/80">
+              Este huerto no tiene un polígono válido en el mapa.
+            </p>
+          )}
+        </div>
+      ) : (
       <div
-        className={`relative flex h-80 items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 dark:from-sky-950/50 dark:to-emerald-950/30 ${
-          en3d ? (arrastrando ? "cursor-grabbing" : "cursor-grab") : ""
-        }`}
-        style={{ touchAction: en3d ? "none" : "auto" }}
-        onPointerDown={iniciarGiro}
-        onPointerMove={girar}
-        onPointerUp={terminarGiro}
-        onPointerCancel={terminarGiro}
+        className="relative flex h-80 items-center justify-center overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 p-4 dark:from-sky-950/50 dark:to-emerald-950/30"
       >
           <div
-            className="relative h-[74%] w-[74%] rounded-lg shadow-[0_26px_45px_rgba(0,0,0,0.35)]"
+            className="relative max-h-full rounded-md shadow-[0_18px_35px_rgba(0,0,0,0.30)]"
             style={{
-              transformStyle: "preserve-3d",
-              transform:
-                modo === "3d"
-                  ? `perspective(${PERSPECTIVA}px) rotateX(${orbita.rotX}deg) rotateZ(${orbita.rotZ}deg) scale(${ESCALA_3D})`
-                  : "none",
-              transition: arrastrando ? "transform 0ms" : TRANSICION,
+              aspectRatio: `${aspectoTerreno}`,
+              height: aspectoTerreno >= 1.4 ? "auto" : "88%",
+              width: aspectoTerreno >= 1.4 ? "88%" : "auto",
+              maxWidth: "100%",
               backgroundColor: "#4c5a2c",
               backgroundImage: `${TEXTURA_TIERRA}, ${TEXTURA_TIERRA_GRUESA}, linear-gradient(155deg, #5e6f36, #42501f)`,
               backgroundBlendMode: "soft-light, overlay, normal",
@@ -304,36 +272,29 @@ export function PlanoHuerto({
                 className="absolute inset-0 size-full"
                 aria-hidden
               >
-                <path d={LINEAS_MATRIZ} stroke="currentColor" strokeWidth={0.15} className="text-white" opacity={0.14} fill="none" />
+                <defs>
+                  <clipPath id={`plano-${clipId}`}>
+                    <path d={vista.path} clipRule="evenodd" />
+                  </clipPath>
+                </defs>
+                {/* Plato base: textura tierra a todo el bbox */}
+                <rect x="0" y="0" width="100" height="100" fill="transparent" />
+                {/* Relleno + grilla RECORTADOS al polígono: ya no flotan como segunda capa */}
+                <g clipPath={`url(#plano-${clipId})`}>
+                  <rect x="0" y="0" width="100" height="100" className="fill-emerald-200/30" />
+                  <path d={LINEAS_MATRIZ} stroke="currentColor" strokeWidth={0.15} className="text-white" opacity={0.22} fill="none" />
+                </g>
+                {/* Borde del polígono: la única línea que define el huerto */}
                 <path
                   d={vista.path}
+                  fill="none"
                   fillRule="evenodd"
-                  className="fill-emerald-300/25 stroke-lime-200/90 dark:stroke-lime-100/80"
-                  strokeWidth={0.7}
+                  className="stroke-lime-100"
+                  strokeWidth={0.9}
                   strokeLinejoin="round"
+                  opacity={0.95}
                 />
               </svg>
-              {en3d
-                ? arbolesPlano.map((arbol) => {
-                    const p = posAVista({ x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 }, vista);
-                    return (
-                      <span
-                        key={`sombra-${arbol.id}`}
-                        aria-hidden
-                        className="pointer-events-none absolute z-[5] block"
-                        style={{
-                          left: `${p.x}%`,
-                          top: `${p.y}%`,
-                          width: "24px",
-                          height: "13px",
-                          borderRadius: "50%",
-                          background:
-                            "radial-gradient(ellipse, rgba(0,0,0,0.38), transparent 72%)",
-                        }}
-                      />
-                    );
-                  })
-                : null}
               {arbolesPlano.map((arbol) => {
                 const p = posAVista({ x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 }, vista);
                 return (
@@ -346,40 +307,15 @@ export function PlanoHuerto({
                     style={{
                       left: `${p.x}%`,
                       top: `${p.y}%`,
-                      transformStyle: "preserve-3d",
-                      transform: en3d
-                        ? "translate(-50%, -100%) translateZ(10px)"
-                        : "translate(-50%, -80%)",
-                      transition: TRANSICION,
+                      transform: "translate(-50%, -80%)",
                     }}
                   >
-                    {en3d ? (
-                      <span
-                        className="relative block h-11 w-7 outline-none"
-                        style={{
-                          transform: `rotateZ(${-orbita.rotZ}deg) rotateX(${-orbita.rotX}deg)`,
-                          transformStyle: "preserve-3d",
-                          transformOrigin: "50% 100%",
-                          transition: arrastrando ? "transform 0ms" : TRANSICION,
-                        }}
-                      >
-                        <span
-                          className="absolute bottom-0 left-1/2 w-[3px] -translate-x-1/2 rounded-sm bg-[#7a4a21]"
-                          style={{ height: "15px" }}
-                        />
-                        <span
-                          className="absolute bottom-[12px] left-1/2 size-6 -translate-x-1/2 rounded-full border-2 border-white shadow-md outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                          style={{ backgroundColor: colorDeEspecie(arbol.especie) }}
-                        />
-                      </span>
-                    ) : (
                       <span className="block outline-none transition-transform hover:scale-125 focus-visible:scale-125">
                         <IconoArbol
                           especie={arbol.especie}
                           className="block h-9 w-7 drop-shadow-md"
                         />
                       </span>
-                    )}
                   </button>
                 );
               })}
@@ -398,13 +334,14 @@ export function PlanoHuerto({
           ) : null}
           </div>
       </div>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>En 3D, arrastra para girar la vista · Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz</span>
+        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz"}</span>
       </div>
 
       {leyenda.length > 0 ? (
