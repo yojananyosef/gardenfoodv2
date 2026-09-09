@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Propuesta B — Interfaz modular única · GardenFood</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@600&display=swap" rel="stylesheet" />
+<script type="module" src="https://unpkg.com/wired-elements?module"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 18px; }
+  body { font-family: 'Patrick Hand', cursive; font-size: 18px; color: #222; background-color: #f7f7f7; background-image: radial-gradient(#d7d7d7 1px, transparent 1px); background-size: 20px 20px; min-height: 100vh; }
+  .screen { display: none; padding: 20px; }
+  .screen.active { display: block; }
+  .text-xs { font-size: 14px; line-height: 1.4; }
+  .text-sm { font-size: 18px; line-height: 1.5; }
+  .text-base { font-size: 22px; line-height: 1.5; }
+  .text-md { font-size: 28px; line-height: 1.3; }
+  .text-lg { font-size: 35px; line-height: 1.2; }
+  .sketchy { border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; }
+  .btn-primary { background: #333; color: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-family: 'Patrick Hand', cursive; font-size: 18px; padding: 10px 22px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-secondary { background: white; color: #333; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-family: 'Patrick Hand', cursive; font-size: 18px; padding: 10px 22px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ghost { background: transparent; color: #333; border: 2px dashed #555; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-family: 'Patrick Hand', cursive; font-size: 16px; padding: 6px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  button, a { font-family: 'Patrick Hand', cursive; }
+  a { color: #2b5e8a; text-decoration: underline; }
+  .req { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 2px dashed #333; border-radius: 50%; font-size: 13px; font-weight: bold; background: white; flex-shrink: 0; }
+  .nota { border: 2px dashed #333; background: white; border-radius: 12px 4px 12px 4px / 4px 12px 4px 12px; padding: 8px 12px; font-size: 14px; color: #333; display: inline-flex; gap: 8px; align-items: flex-start; max-width: 340px; }
+  .badge { display: inline-block; font-size: 13px; border: 1.5px solid #555; border-radius: 999px; padding: 1px 10px; color: #444; background: #fafafa; }
+  .proto-bar { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 2px solid #333; padding: 8px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .proto-bar .tag { font-family: 'Caveat', cursive; font-size: 20px; font-weight: 600; margin-right: 6px; }
+  .proto-tab { font-size: 15px; padding: 4px 12px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; cursor: pointer; }
+  .proto-tab.active-screen { background: #555; color: white; }
+  .legend { font-size: 14px; color: #555; margin-left: auto; }
+  .legend b { color: #222; }
+
+  /* Layout modular */
+  .workbench { display: grid; grid-template-columns: 320px 1fr; gap: 14px; align-items: stretch; }
+  .topbar { display: flex; align-items: center; gap: 16px; padding: 10px 18px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; margin-bottom: 14px; flex-wrap: wrap; }
+  .logo { font-weight: bold; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+  .logo svg { width: 26px; height: 26px; }
+  .topbar nav { display: flex; gap: 14px; }
+  .topbar nav a { text-decoration: none; color: #333; }
+  .topbar nav a.on { text-decoration: underline; text-decoration-thickness: 3px; }
+  .selector-global { display: flex; align-items: center; gap: 8px; padding: 4px 10px; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; }
+  .selector-global svg { width: 18px; height: 18px; }
+
+  /* Fallback select/input nativos sketchy (wired-select rc no renderiza texto) */
+  .sketch-select { font-family: 'Patrick Hand', cursive; font-size: 18px; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; padding: 6px 10px; color: #333; cursor: pointer; }
+  .sketch-input { font-family: 'Patrick Hand', cursive; font-size: 18px; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; padding: 8px 12px; color: #333; width: 100%; }
+
+  /* Panel izquierdo */
+  .panel { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; max-height: 78vh; overflow: auto; }
+  .panel h3 { font-size: 22px; display: flex; align-items: center; gap: 8px; }
+  .panel h3 svg { width: 20px; height: 20px; }
+  .bento-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mini { border: 1.5px solid #555; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; padding: 8px 10px; }
+  .mini .n { font-size: 28px; }
+  .mini .l { font-size: 13px; color: #555; }
+  .fila-especie { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1.5px solid #555; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; cursor: grab; background: white; }
+  .fila-especie:active { cursor: grabbing; }
+  .fila-especie .ic { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #333; border-radius: 50%; }
+  .fila-especie .ic svg { width: 18px; height: 18px; }
+  .fila-especie .nm { font-size: 18px; }
+  .fila-especie .ct { font-size: 13px; color: #555; }
+  .drop-hint { border: 2px dashed #555; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; padding: 10px; font-size: 14px; color: #555; text-align: center; }
+
+  /* Lienzo central */
+  .lienzo { display: flex; flex-direction: column; min-height: 74vh; }
+  .lienzo-tabs { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 14px; border-bottom: 2px dashed #999; }
+  .lienzo-tabs button { border: 2px solid #333; background: white; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-size: 16px; padding: 6px 16px; cursor: pointer; display: inline-flex; gap: 7px; align-items: center; }
+  .lienzo-tabs button svg { width: 17px; height: 17px; }
+  .lienzo-tabs button.on { background: #333; color: white; }
+  .canvas-wrap { flex: 1; position: relative; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; overflow: hidden; background: #4a4a4a; margin: 10px 14px 14px; }
+  .canvas-wrap svg.terrain { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .canvas-tools { position: absolute; top: 12px; left: 12px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; padding: 8px; display: flex; gap: 6px; z-index: 4; }
+  .canvas-tools button { border: 1.5px solid #555; background: white; border-radius: 12px 3px 12px 3px / 3px 12px 3px 12px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .canvas-tools button.on { background: #333; color: white; }
+  .canvas-tools svg { width: 19px; height: 19px; }
+  .canvas-status { position: absolute; left: 12px; bottom: 12px; background: white; border: 1.5px solid #555; border-radius: 12px 3px 12px 3px / 3px 12px 3px 12px; padding: 4px 10px; font-size: 14px; z-index: 4; }
+  .canvas-cta { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 8px; z-index: 4; }
+  .arbol-dot { cursor: grab; }
+  .arbol-sel { filter: drop-shadow(0 0 3px #111); }
+  .detalle { position: absolute; right: 14px; top: 64px; width: 250px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; padding: 12px 14px; z-index: 5; }
+  .detalle .t { font-size: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .detalle .t svg { width: 16px; height: 16px; flex-shrink: 0; align-self: center; }
+
+  /* Rail */
+  .rail { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+
+  /* Mobile */
+  .phone { width: 390px; margin: 0 auto; background: white; border: 2px solid #333; border-radius: 34px 18px 34px 18px / 18px 34px 18px 34px; padding: 14px 12px 90px; position: relative; }
+  .phone .workbench { grid-template-columns: 1fr; }
+  .phone .canvas-wrap { min-height: 300px; }
+  .bottom-nav { position: absolute; left: 12px; right: 12px; bottom: 14px; display: flex; justify-content: space-around; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; padding: 8px 4px; }
+  .bottom-nav a { font-size: 13px; color: #333; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .bottom-nav svg { width: 20px; height: 20px; }
+  .sheet { position: absolute; left: 12px; right: 12px; bottom: 78px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; padding: 10px 12px; z-index: 6; }
+  .sheet .grip { width: 44px; height: 5px; background: #999; border-radius: 4px; margin: 0 auto 8px; }
+  @media (max-width: 960px) { .workbench { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <span class="tag">Propuesta B — «Interfaz modular única»</span>
+  <button class="proto-tab active-screen" data-go="b1">B1 · Banco de trabajo</button>
+  <button class="proto-tab" data-go="b2">B2 · Posicionar (drag)</button>
+  <button class="proto-tab" data-go="b3">B3 · Visualización 3D</button>
+  <button class="proto-tab" data-go="b4">B4 · Mobile</button>
+  <span class="legend"><span class="req">R</span>: <b>R1</b> lienzo Terreno satélite · <b>R2</b> panel único de cultivos · <b>R4</b> renombres · <b>R5</b> selector global · <b>R7</b> drag &amp; drop</span>
+</div>
+
+<!-- ============ B1 · BANCO DE TRABAJO ============ -->
+<div class="screen active" id="b1">
+  <div class="topbar">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood <span class="badge">CHILE</span></span>
+    <nav><a href="#" onclick="return false">Explorar</a><a class="on" href="#" onclick="return false">Mi huerto</a><a href="#" onclick="return false">Calendario</a><a href="#" onclick="return false">Cosechas</a></nav>
+    <div class="selector-global" title="R5">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <select class="sketch-select"><option>Todos los huertos (5)</option><option>Mi huerto · 731 m²</option><option>Huerto 2 · 1.712 m²</option><option>Huerto 4 · 3.373 m²</option><option>Huerto 5 · 2,2 ha</option></select>
+      <span class="req" title="R5">R5</span>
+    </div>
+    <span style="margin-left:auto" class="nota" style="max-width:320px"><span class="req">R5</span><span>El filtro global <b>encima de todo</b>: panel, lienzo y contadores responden al huerto elegido.</span></span>
+  </div>
+
+  <div class="workbench">
+    <!-- PANEL IZQUIERDO -->
+    <aside class="panel sketchy">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Cultivos y árboles <span class="req" title="R2">R2</span></h3>
+      <div class="bento-mini">
+        <div class="mini"><div class="n">4</div><div class="l">especies <span class="req" title="R3">R3</span></div></div>
+        <div class="mini"><div class="n">24</div><div class="l">árboles totales</div></div>
+      </div>
+      <input class="sketch-input" placeholder="buscar especie…" />
+      <div class="text-xs" style="color:#555">Arrastra una especie al lienzo para plantar ejemplares ahí.</div>
+      <div class="fila-especie" draggable="true">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></div>
+        <div><div class="nm">Durazno</div><div class="ct">16 árboles · 9 en plano · 7 sin ubicar</div></div>
+        <span class="badge">en curso</span>
+      </div>
+      <div class="fila-especie" draggable="true">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg></div>
+        <div><div class="nm">Ciruela</div><div class="ct">1 árbol · en plano</div></div>
+        <span class="badge">completo</span>
+      </div>
+      <div class="fila-especie" draggable="true">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M12 21c-4-3-7-5-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4-3 6-7 9z"/></svg></div>
+        <div><div class="nm">Uva</div><div class="ct">1 parrón · en plano</div></div>
+        <span class="badge">completo</span>
+      </div>
+      <div class="fila-especie" draggable="true">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="10" r="4"/><circle cx="12" cy="10" r="1"/><path d="M12 14v7"/></svg></div>
+        <div><div class="nm">Arándano</div><div class="ct">2 arbustos · en plano (Huerto 3)</div></div>
+        <span class="badge">completo</span>
+      </div>
+      <wired-divider></wired-divider>
+      <div class="drop-hint">⌵ suelta aquí un ejemplar para <b>sacarlo</b> del plano</div>
+      <button class="btn-secondary" style="justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Agregar especie</button>
+      <button class="btn-ghost" style="justify-content:center" onclick="go('b2')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M6 9l6-6 6 6"/><path d="M4 21h16"/></svg> Repartir sin ubicar (matriz)</button>
+    </aside>
+
+    <!-- LIENZO CENTRAL -->
+    <section class="lienzo sketchy">
+      <div class="lienzo-tabs">
+        <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Terreno (satélite) <span class="req" title="R1">R1</span></button>
+        <button onclick="go('b2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M7.5 16.5L10.5 8M13.5 8l3 8.5"/></svg> Posicionar árboles <span class="req" title="R4">R4</span></button>
+        <button onclick="go('b3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M3 21h18"/></svg> Visualización 3D <span class="req" title="R4">R4</span></button>
+        <span style="margin-left:auto" class="badge">Mi huerto · 731 m²</span>
+      </div>
+      <div class="canvas-wrap">
+        <svg class="terrain" preserveAspectRatio="xMidYMid slice" viewBox="0 0 900 620">
+          <rect width="900" height="620" fill="#4a4a4a"/>
+          <rect x="0" y="0" width="900" height="180" fill="#3d3d3d"/>
+          <path d="M0 500 Q 220 460 460 500 T 900 490 L 900 620 L 0 620 Z" fill="#565656"/>
+          <path d="M50 50 L 170 35 L 195 110 L 80 130 Z" fill="#6a6a6a"/>
+          <rect x="680" y="50" width="170" height="120" fill="#6a6a6a"/>
+          <path d="M320 240 l 80 0 l -10 60 l -60 0 z" fill="#6a6a6a"/>
+          <g stroke="#c9c9c9" stroke-width="3.5" fill="none">
+            <path d="M190 250 L 350 205 L 430 300 L 320 380 L 210 335 Z"/>
+            <path d="M450 215 L 590 195 L 680 290 L 570 365 L 470 330 Z"/>
+            <path d="M230 385 L 420 350 L 560 420 L 430 505 L 260 465 Z"/>
+          </g>
+          <g fill="#e6e6e6">
+            <circle cx="240" cy="280" r="7"/><circle cx="265" cy="295" r="7"/><circle cx="290" cy="310" r="7"/>
+            <circle cx="500" cy="250" r="7"/><circle cx="525" cy="265" r="7"/><circle cx="550" cy="280" r="7"/><circle cx="490" cy="295" r="7"/>
+            <circle cx="320" cy="420" r="7"/><circle cx="355" cy="435" r="7"/>
+          </g>
+          <g stroke="#e6e6e6" stroke-width="2"><path d="M240 287v10"/><path d="M265 302v10"/><path d="M290 317v10"/><path d="M500 257v10"/><path d="M525 272v10"/><path d="M550 287v10"/><path d="M490 302v10"/><path d="M320 427v10"/><path d="M355 442v10"/></g>
+        </svg>
+        <div class="canvas-tools">
+          <button title="Dibujar polígono" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L20 8l-4-4L4 16z"/></svg></button>
+          <button title="Editar vértices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2.5"/><circle cx="12" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M7 16L11 8M13 8l4 8"/></svg></button>
+          <button title="Marcar árbol en el satélite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></button>
+          <button title="Borrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></button>
+          <button title="Capas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
+        </div>
+        <div class="canvas-status">Esri World Imagery · zoom 18 · 5 polígonos · 13 árboles visibles</div>
+        <div class="canvas-cta">
+          <button class="btn-secondary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg> Mi ubicación</button>
+          <button class="btn-primary" onclick="go('b2')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M8.5 15.5L15.5 8.5"/></svg> Posicionar</button>
+        </div>
+        <div class="detalle">
+          <div class="t"><span>Árbol · Uva</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+          <wired-divider style="margin:6px 0"></wired-divider>
+          <div class="text-xs">huerto: Mi huerto (731 m²)</div>
+          <div class="text-xs">posición: lat -36.63263 · lng -71.84412</div>
+          <div class="text-xs">plantado: — · observaciones: parrón junto al borde</div>
+          <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap">
+            <button class="btn-ghost">Mover</button>
+            <button class="btn-ghost">Sacar del plano</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ============ B2 · POSICIONAR (drag) ============ -->
+<div class="screen" id="b2">
+  <div class="topbar">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood</span>
+    <span class="text-md">Posicionar árboles</span>
+    <span class="badge">Mi huerto</span>
+    <span style="margin-left:auto; display:flex; gap:8px;">
+      <button class="btn-secondary" onclick="go('b1')">Terreno</button>
+      <button class="btn-primary" onclick="go('b3')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg> Visualización 3D</button>
+    </span>
+  </div>
+  <div class="rail">
+    <span class="nota"><span class="req">R7</span><span><b>Arrastra el árbol gris destacado</b> (Durazno) para corregir su posición. El resto queda donde está; cada soltado se guarda.</span></span>
+    <span class="nota"><span class="req">R2</span><span>Arrastra una especie del panel sobre el lienzo y suelta: planta N ejemplares de esa especie en ese punto (los 7 duraznos sin ubicar).</span></span>
+  </div>
+  <div class="workbench">
+    <aside class="panel sketchy">
+      <h3>Resumen de la capa</h3>
+      <div class="mini" style="border-color:#333"><div class="n">5/12</div><div class="l">árboles posicionados en este huerto</div></div>
+      <wired-divider></wired-divider>
+      <div class="text-sm"><b>Seleccionado:</b> Durazno #12</div>
+      <div class="text-xs">origen: matriz automática · fila 2 · col 3</div>
+      <div class="text-xs">nueva posición: se guarda al soltar (pos_x, pos_y normalizados)</div>
+      <wired-divider></wired-divider>
+      <div class="text-sm"><b>Sin ubicar (7)</b></div>
+      <div class="text-xs">Durazno ×7 — esperando arrastre o «Repartir»</div>
+      <div class="drop-hint" style="margin-top:auto">⌵ zona de suelta: ejemplar fuera del plano</div>
+    </aside>
+    <section class="lienzo sketchy">
+      <div class="lienzo-tabs">
+        <button onclick="go('b1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Terreno</button>
+        <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M7.5 16.5L10.5 8M13.5 8l3 8.5"/></svg> Posicionar árboles</button>
+        <button onclick="go('b3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M3 21h18"/></svg> Visualización 3D</button>
+      </div>
+      <div class="canvas-wrap" style="background:#eceae2">
+        <svg viewBox="0 0 900 480" id="plano-b2" style="position:absolute; inset:0; width:100%; height:100%">
+          <defs><clipPath id="clipB2"><path d="M170 100 L 520 60 L 790 190 L 590 320 L 210 270 Z"/></clipPath></defs>
+          <g fill="#e2e0d2" stroke="#b5b3a4" stroke-width="2.5"><path d="M170 100 L 520 60 L 790 190 L 590 320 L 210 270 Z"/></g>
+          <g clip-path="url(#clipB2)" stroke="#cdcbb8" stroke-width="1">
+            <path d="M130 70 L 830 270"/><path d="M140 130 L 840 330"/><path d="M150 190 L 850 390"/>
+            <path d="M210 50 L 420 380"/><path d="M300 50 L 510 380"/><path d="M390 50 L 600 380"/><path d="M480 50 L 690 380"/><path d="M570 50 L 780 380"/>
+          </g>
+          <g id="arboles-b2">
+            <g class="arbol-dot"><circle cx="360" cy="160" r="13" fill="#8a8a8a"/><path d="M360 173 v12" stroke="#666" stroke-width="3"/></g>
+            <g class="arbol-dot"><circle cx="400" cy="185" r="13" fill="#8a8a8a"/><path d="M400 198 v12" stroke="#666" stroke-width="3"/></g>
+            <g class="arbol-dot"><circle cx="440" cy="210" r="13" fill="#8a8a8a"/><path d="M440 223 v12" stroke="#666" stroke-width="3"/></g>
+            <g class="arbol-dot arbol-sel"><circle cx="480" cy="235" r="15" fill="#5c5c5c" stroke="#222" stroke-width="3.5"/><path d="M480 250 v14" stroke="#444" stroke-width="3.5"/></g>
+            <g class="arbol-dot"><circle cx="650" cy="250" r="13" fill="#8a8a8a"/><path d="M650 263 v12" stroke="#666" stroke-width="3"/></g>
+            <g><circle cx="560" cy="150" r="13" fill="none" stroke="#777" stroke-width="2.5" stroke-dasharray="5 5"/><path d="M560 163 v10" stroke="#777" stroke-width="2.5" stroke-dasharray="5 5"/></g>
+            <g><circle cx="600" cy="130" r="13" fill="none" stroke="#777" stroke-width="2.5" stroke-dasharray="5 5"/><path d="M600 143 v10" stroke="#777" stroke-width="2.5" stroke-dasharray="5 5"/></g>
+          </g>
+        </svg>
+        <div class="canvas-status">Modo mover · 1 seleccionado · mantener para arrastrar</div>
+        <div class="canvas-cta">
+          <button class="btn-ghost">Alinear fila</button>
+          <button class="btn-ghost">Separar 4 m</button>
+          <button class="btn-primary" onclick="go('b3')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Confirmar y ver 3D</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ============ B3 · VISUALIZACIÓN 3D ============ -->
+<div class="screen" id="b3">
+  <div class="topbar">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood</span>
+    <span class="text-md">Visualización 3D</span>
+    <span class="badge">Mi huerto</span>
+    <span style="margin-left:auto; display:flex; gap:8px;">
+      <button class="btn-secondary" onclick="go('b2')">← Volver a posicionar</button>
+    </span>
+  </div>
+  <div class="rail"><span class="nota"><span class="req">R4</span><span>La vista 3D es el <b>resultado final</b>: solo lectura + órbita. Cualquier corrección vuelve a «Posicionar».</span></span></div>
+  <div class="canvas-wrap" style="min-height:540px; margin:0 0 10px; position:relative; border:2px solid #333; border-radius:255px 15px 225px 15px / 15px 225px 15px 255px; overflow:hidden; background:#dfe7ee">
+    <svg viewBox="0 0 900 540" preserveAspectRatio="xMidYMid slice" style="width:100%; height:100%">
+      <rect width="900" height="540" fill="#dfe7ee"/>
+      <path d="M120 380 L 420 240 L 780 300 L 560 440 Z" fill="#c2c2c2" opacity="0.9"/>
+      <path d="M120 380 L 420 240 L 780 300 L 560 440 Z" fill="none" stroke="#6f6f6f" stroke-width="4"/>
+      <g stroke="#b5b5b5" stroke-width="1.5" opacity="0.85">
+        <path d="M160 360 L 700 330"/><path d="M200 330 L 740 300"/><path d="M240 300 L 760 270"/>
+        <path d="M250 220 L 350 430"/><path d="M330 195 L 450 440"/><path d="M420 170 L 560 460"/><path d="M510 150 L 660 440"/>
+      </g>
+      <g>
+        <g><ellipse cx="380" cy="300" rx="34" ry="26" fill="#8a8a8a"/><path d="M380 326 v34" stroke="#5f5f5f" stroke-width="7"/></g>
+        <g><ellipse cx="455" cy="345" rx="30" ry="23" fill="#9a9a9a"/><path d="M455 368 v30" stroke="#5f5f5f" stroke-width="6"/></g>
+        <g><ellipse cx="530" cy="330" rx="28" ry="22" fill="#7d7d7d"/><path d="M530 352 v28" stroke="#5f5f5f" stroke-width="6"/></g>
+        <g><ellipse cx="620" cy="370" rx="32" ry="24" fill="#949494"/><path d="M620 394 v30" stroke="#5f5f5f" stroke-width="6"/></g>
+      </g>
+      <text x="60" y="80" font-family="Patrick Hand" font-size="24" fill="#555">Mi huerto · 4 árboles · vista inicial (órbita libre con el mouse)</text>
+      <text x="60" y="110" font-family="Patrick Hand" font-size="18" fill="#777">Sombra real según fecha/hora · especies con modelo propio (durazno, parrón, arbusto)</text>
+    </svg>
+    <div class="canvas-status" style="left:16px; bottom:16px">Visualización 3D · arrastrar para orbitar · rueda para zoom</div>
+    <div class="canvas-cta" style="right:16px; bottom:16px">
+      <button class="btn-ghost">Vista inicial</button>
+      <button class="btn-secondary" onclick="go('b2')">Corregir posiciones</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ B4 · MOBILE ============ -->
+<div class="screen" id="b4">
+  <div class="rail"><span class="nota"><span class="req">R2</span><span>En móvil el panel de cultivos se convierte en <b>sheet inferior</b> deslizable sobre el lienzo.</span></span></div>
+  <div class="phone">
+    <div class="topbar" style="padding:8px 10px; gap:8px">
+      <span class="logo" style="font-size:16px"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2" style="width:20px;height:20px"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood</span>
+      <span class="selector-global" style="font-size:14px; padding:2px 8px; margin-left:auto">Todos ▾</span>
+    </div>
+    <div class="lienzo-tabs" style="border-bottom:2px dashed #999; padding:6px 2px; gap:6px">
+      <button class="on" style="font-size:14px; padding:4px 10px">Terreno</button>
+      <button style="font-size:14px; padding:4px 10px">Posicionar</button>
+      <button style="font-size:14px; padding:4px 10px">3D</button>
+    </div>
+    <div class="canvas-wrap" style="min-height:330px; margin:8px 0; position:relative; border:2px solid #333; border-radius:255px 15px 225px 15px / 15px 225px 15px 255px; overflow:hidden; background:#4a4a4a">
+      <svg class="terrain" viewBox="0 0 390 330" preserveAspectRatio="xMidYMid slice">
+        <rect width="390" height="330" fill="#4a4a4a"/>
+        <path d="M0 280 Q 120 260 240 280 T 390 270 L 390 330 L 0 330 Z" fill="#565656"/>
+        <g stroke="#c9c9c9" stroke-width="3" fill="none"><path d="M90 110 L 220 85 L 270 180 L 150 220 Z"/></g>
+        <g fill="#e6e6e6"><circle cx="140" cy="150" r="6"/><circle cx="170" cy="165" r="6"/><circle cx="200" cy="180" r="6"/></g>
+      </svg>
+      <div class="canvas-tools" style="top:8px; left:8px">
+        <button style="width:30px;height:30px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M4 20h4L20 8l-4-4L4 16z"/></svg></button>
+        <button style="width:30px;height:30px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></button>
+        <button style="width:30px;height:30px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
+      </div>
+      <div class="canvas-status" style="font-size:12px">Mi huerto · 731 m² · zoom 18</div>
+    </div>
+    <div class="sheet">
+      <div class="grip"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <span class="text-sm"><b>Cultivos y árboles</b> · 4 especies · 24 árboles</span>
+        <span class="req">R2</span>
+      </div>
+      <div class="fila-especie" style="margin-top:8px; grid-template-columns:30px 1fr auto">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></div>
+        <div><div class="nm" style="font-size:16px">Durazno</div><div class="ct" style="font-size:12px">16 · 9 en plano · 7 sin ubicar</div></div>
+        <span class="badge">▸</span>
+      </div>
+      <div class="fila-especie" style="margin-top:6px; grid-template-columns:30px 1fr auto">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg></div>
+        <div><div class="nm" style="font-size:16px">Ciruela</div><div class="ct" style="font-size:12px">1 · en plano</div></div>
+        <span class="badge">▸</span>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg>Mi huerto</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/></svg>Zonas</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendario</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6 4 4 6-6"/><path d="M12 3a9 9 0 1 1-9 9"/></svg>Cosechas</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h9l5 5v11H5z"/><path d="M14 4v5h5"/></svg>Biblioteca</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.proto-tab').forEach(t => t.classList.toggle('active-screen', t.dataset.go === id));
+    window.scrollTo({ top: 0 });
+  }
+  document.querySelectorAll('.proto-tab').forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
+
+  function svgPoint(svg, e) {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function enableDrag(svgId) {
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+    let target = null, offset = { x: 0, y: 0 };
+    svg.querySelectorAll('.arbol-dot').forEach(g => {
+      g.addEventListener('pointerdown', e => {
+        target = g;
+        const pt = svgPoint(svg, e);
+        const c = g.querySelector('circle');
+        offset = { x: pt.x - c.cx.baseVal.value, y: pt.y - c.cy.baseVal.value };
+        e.preventDefault();
+      });
+    });
+    svg.addEventListener('pointermove', e => {
+      if (!target) return;
+      const pt = svgPoint(svg, e);
+      const c = target.querySelector('circle');
+      const nx = pt.x - offset.x, ny = pt.y - offset.y;
+      c.setAttribute('cx', nx); c.setAttribute('cy', ny);
+      const stem = target.querySelector('path');
+      stem.setAttribute('d', 'M' + nx + ' ' + (ny + c.r.baseVal.value) + ' v12');
+    });
+    svg.addEventListener('pointerup', () => { target = null; });
+  }
+  enableDrag('plano-b2');
+</script>
+</body>
+</html>

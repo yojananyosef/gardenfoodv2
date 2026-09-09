@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GardenFood — 3 propuestas de rediseño para «Mi Huerto»</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 18px; }
+  body { font-family: 'Patrick Hand', cursive; color: #222; background-color: #f7f7f7; background-image: radial-gradient(#d7d7d7 1px, transparent 1px); background-size: 20px 20px; padding: 30px 20px 60px; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .sketchy { border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; }
+  .header { padding: 26px 30px; margin-bottom: 22px; }
+  .header h1 { font-size: 44px; line-height: 1.1; }
+  .header .sub { font-size: 22px; color: #555; margin-top: 6px; }
+  .meta { font-size: 14px; color: #666; margin-top: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .card .tag { font-family: 'Caveat', cursive; font-size: 26px; font-weight: 600; }
+  .card h2 { font-size: 28px; line-height: 1.2; }
+  .card p { font-size: 17px; color: #444; line-height: 1.5; }
+  .card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .card li { font-size: 15px; color: #333; padding-left: 16px; position: relative; }
+  .card li::before { content: '·'; position: absolute; left: 2px; font-weight: bold; }
+  .pros { border-top: 2px dashed #999; padding-top: 10px; }
+  .pros b { font-size: 15px; }
+  .pros .pro { color: #2e5339; }
+  .pros .con { color: #6b3f3f; }
+  .open { display: block; text-align: center; margin-top: 6px; background: #333; color: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-size: 18px; padding: 10px; text-decoration: none; }
+  .open:hover { background: #111; }
+  .audit { margin-top: 22px; padding: 18px 22px; }
+  .audit h3 { font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .audit p { font-size: 16px; color: #444; margin-bottom: 8px; }
+  .audit a { color: #2b5e8a; }
+  .shots { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .shots img { width: 150px; border: 2px solid #333; border-radius: 10px 4px 10px 4px / 4px 10px 4px 10px; }
+  .footer { text-align: center; margin-top: 26px; color: #777; font-size: 14px; }
+  .r7-pill { display: inline-flex; width: 22px; height: 22px; border: 2px dashed #333; border-radius: 50%; font-size: 13px; font-weight: bold; align-items: center; justify-content: center; background: white; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header sketchy">
+    <h1>3 propuestas para «Mi Huerto»</h1>
+    <div class="sub">Rediseño integral de /huerto — mapa satelital integrado, cultivos fusionados, selector global, renombres y drag &amp; drop de árboles.</div>
+    <div class="meta">GardenFood v2 · 2026-09-09 · wireframes lo-fi clickeables (grayscale Balsamiq-style) · todas resuelven los 7 requerimientos, cambia la organización</div>
+  </div>
+
+  <div class="grid">
+    <div class="card sketchy">
+      <div class="tag">Propuesta A</div>
+      <h2>«Mapa arriba»</h2>
+      <p>El mapa satelital es el <b>hero</b> de Mi Huerto; la gestión unificada de cultivos vive justo debajo; el plano cierra la página.</p>
+      <ul>
+        <li>Mapa hero con «Editar terreno» + «Posicionar árboles»</li>
+        <li>Sección única «Cultivos y árboles» por especie</li>
+        <li>Selector global de huerto en el header</li>
+      </ul>
+      <div class="pros">
+        <b>Pro:</b> <span class="pro">mínimo cambio de estructura, migración natural del layout actual; el mapa gana protagonismo de inmediato.</span><br>
+        <b>Contra:</b> <span class="con">página larga: hay scroll entre mapa → gestión → plano.</span>
+      </div>
+      <a class="open" href="./propuesta-a.html">Ver propuesta A →</a>
+    </div>
+
+    <div class="card sketchy">
+      <div class="tag">Propuesta B</div>
+      <h2>«Interfaz modular única»</h2>
+      <p><b>Todo en una vista</b>: panel de cultivos a la izquierda + lienzo central con pestañas (Terreno satélite / Posicionar / Visualización 3D). Cero scroll de gestión.</p>
+      <ul>
+        <li>Workbench de 2 columnas con lienzo protagonista</li>
+        <li>Arrastrar especie → plantar en el lienzo</li>
+        <li>Detalle de árbol como popover sobre el lienzo</li>
+      </ul>
+      <div class="pros">
+        <b>Pro:</b> <span class="pro">la más poderosa para huertos con muchos árboles; todo visible sin saltos; encaja 1:1 con «modular» de tu socio.</span><br>
+        <b>Contra:</b> <span class="con">más esfuerzo de implementación (layout nuevo, estados del panel) y requiere adaptación móvil con sheet.</span>
+      </div>
+      <a class="open" href="./propuesta-b.html">Ver propuesta B →</a>
+    </div>
+
+    <div class="card sketchy">
+      <div class="tag">Propuesta C</div>
+      <h2>«Flujo guiado»</h2>
+      <p>Un <b>asistente de 4 pasos</b> (Terreno → Árboles → Posicionar → Listo) ideal para usuarios nuevos; el dashboard queda compacto y el progreso siempre visible.</p>
+      <ul>
+        <li>Barra de progreso + guardado por paso</li>
+        <li>Alta masiva simple por especie y cantidad</li>
+        <li>Cierra con «Visualización 3D» y resumen</li>
+      </ul>
+      <div class="pros">
+        <b>Pro:</b> <span class="pro">la mejor onboarding para usuarios nuevos; reduce el error de datos; el usuario jamás ve el inventario duplicado.</span><br>
+        <b>Contra:</b> <span class="con">usuarios avanzados (caso real: 24 árboles, 5 huertos) prefieren gestión rápida, no wizard.</span>
+      </div>
+      <a class="open" href="./propuesta-c.html">Ver propuesta C →</a>
+    </div>
+  </div>
+
+  <div class="audit sketchy">
+    <h3><span class="r7-pill">i</span> Auditoría del flujo actual (producción, solo lectura)</h3>
+    <p>Documentada en <a href="./AUDITORIA.md">AUDITORIA.md</a> — incluye hallazgos extra: <b>CSP bloquea tiles de Esri</b> (arcgisonline en connect-src) y <b>/api/v1/cmp/consent devuelve 400</b> tras «Rechazar todo» (probable raíz del freeze del modal en iOS/Safari).</p>
+    <p>Evidencia: <span class="meta">1 cultivo vs <b>24 filas de árboles</b> (Durazno repetido 16 veces) · 2 formularios que piden lo mismo · plano con 1 árbol de 24 · «Editar en el mapa» salta a Perfil · selector de huerto solo filtra el plano.</span></p>
+    <div class="shots">
+      <a href="./audit/huerto-full.png" target="_blank"><img src="./audit/huerto-full.png" alt="Mi Huerto actual completo" /></a>
+      <a href="./audit/perfil-map.png" target="_blank"><img src="./audit/perfil-map.png" alt="Mapa satelital actual en Perfil" /></a>
+      <a href="./audit/huerto-plano-3d.png" target="_blank"><img src="./audit/huerto-plano-3d.png" alt="Plano 3D actual" /></a>
+      <a href="./audit/huerto-mobile.png" target="_blank"><img src="./audit/huerto-mobile.png" alt="Mi Huerto móvil" /></a>
+    </div>
+  </div>
+
+  <div class="footer">GardenFood v2 · prototipos generados para revisión con el socio · sin datos reales de producción (wireframes con datos de ejemplo basados en tu cuenta)</div>
+</div>
+</body>
+</html>
