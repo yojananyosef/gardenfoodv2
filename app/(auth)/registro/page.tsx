@@ -26,6 +26,7 @@ import {
 import { ConsentModal } from "@/components/cmp/ConsentModal";
 import { createClient } from "@/lib/supabase/client";
 import { getDeviceId } from "@/lib/telemetry/device";
+import { nextSeguro } from "@/lib/auth/next";
 import { buscarComuna } from "@/lib/agronomy";
 import { COMUNAS } from "@/lib/agronomy/comunas";
 
@@ -45,6 +46,7 @@ export default function RegistroPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showConsent, setShowConsent] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [esperandoConfirmacion, setEsperandoConfirmacion] = useState(false);
 
   const grupos: GrupoComuna[] = useMemo(() => {
     const map = new Map<string, string[]>();
@@ -60,6 +62,11 @@ export default function RegistroPage() {
   }, []);
 
   const comunaMeta = comuna ? buscarComuna(comuna) : null;
+
+  function nextActual(): string {
+    const raw = new URLSearchParams(window.location.search).get("next");
+    return nextSeguro(raw);
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -80,11 +87,22 @@ export default function RegistroPage() {
         email,
         password,
         options: {
-          data: { nombre },
+          data: {
+            nombre,
+            region: match.region,
+            comuna: match.comuna,
+            zona_agroclimatica: String(match.zonaId),
+          },
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=${encodeURIComponent(nextActual())}`,
         },
       });
       if (signUpError) {
         setError(signUpError.message);
+        return;
+      }
+      if (!data.session) {
+        // Confirmación por email activada: el perfil se crea server-side en /auth/confirm.
+        setEsperandoConfirmacion(true);
         return;
       }
       if (data.user) {
@@ -151,6 +169,23 @@ export default function RegistroPage() {
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
+          {esperandoConfirmacion ? (
+            <>
+              <Alert className="rounded-xl">
+                <Mail className="size-4" aria-hidden />
+                <AlertTitle>Revisa tu correo</AlertTitle>
+                <AlertDescription>
+                  Enviamos un enlace de confirmación a <strong>{email}</strong>. Ábrelo para activar tu
+                  cuenta; si no aparece, revisa spam o promociones.
+                </AlertDescription>
+              </Alert>
+              <Button variant="outline" className="h-11 w-full rounded-full" render={<Link href="/login" />}>
+                Ya confirmé — iniciar sesión
+                <ArrowRight data-icon="inline-end" />
+              </Button>
+            </>
+          ) : (
+          <>
           {hasError ? (
             <Alert variant="destructive" className="rounded-xl">
               <AlertTitle>Revisa tus datos</AlertTitle>
@@ -293,6 +328,8 @@ export default function RegistroPage() {
               <ArrowRight data-icon="inline-end" />
             </Button>
           </div>
+          </>
+          )}
 
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1">

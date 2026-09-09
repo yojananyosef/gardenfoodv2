@@ -77,6 +77,16 @@ NEXT_PUBLIC_SITE_URL=   # https://gardenfoodv2.vercel.app
 
 Usa un email de prueba `test_user_...@testuser.com` distinto al collector de tu cuenta MP. Flow/PayPal no se usan.
 
+### Auth — confirmación de email y recuperación
+
+El registro y el reset de contraseña usan un callback PKCE server-side en `/auth/confirm` (intercambia `code` por sesión con cookies httpOnly, crea el `perfil` desde metadata si falta y redirige al `next` validado anti open-redirect). `signUp` y `resetPasswordForEmail` envían `emailRedirectTo` con el origin actual, así que el mismo código sirve en localhost y producción.
+
+**Paso bloqueante post-deploy — Supabase Dashboard → Authentication → URL Configuration:**
+
+1. **Site URL** = dominio de producción (p. ej. `https://gardenfoodv2.vercel.app`). Si queda en `http://localhost:3000`, los emails mandan al usuario a localhost (bug original del funnel).
+2. **Redirect URLs** (allowlist): `https://<prod>/auth/confirm/**` y `http://localhost:3000/auth/confirm/**`. Sin el origin en la allowlist, Supabase **ignora** el `redirect_to` del email y cae al Site URL.
+3. Si activas "Confirm email" (recomendado), el registro muestra "Revisa tu correo" y el perfil se crea al confirmar el enlace.
+
 ### Mercado Pago — flujo hosteado (sin Bricks/CSP)
 
 - `POST /api/v1/payments/subscribe {tier,interval}` crea draft `gf_subscriptions` + `POST /preapproval` con `auto_recurring` inline y devuelve `init_point` para `window.location.href`.

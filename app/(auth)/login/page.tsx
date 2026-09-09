@@ -3,10 +3,9 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Leaf, Lock, LogIn, Mail, ShieldCheck, Sprout } from "lucide-react";
+import { Leaf, Lock, LogIn, Mail, ShieldCheck, Sprout } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/client";
+import { nextSeguro } from "@/lib/auth/next";
 
 const ERRORES: Record<string, string> = {
   "Invalid login credentials": "Correo o contraseña incorrectos.",
@@ -48,8 +48,7 @@ function LoginForm() {
         setError(mensajeError(signInError.message));
         return;
       }
-      const next = searchParams.get("next");
-      router.push(next?.startsWith("/") ? next : "/huerto");
+      router.push(nextSeguro(searchParams.get("next")));
       router.refresh();
     } catch {
       setError("No pudimos iniciar sesión. Intenta de nuevo.");
@@ -117,7 +116,7 @@ function LoginForm() {
             <Field data-invalid={hasError || undefined}>
               <div className="flex items-center justify-between gap-2">
                 <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                <Link href="#" className="text-xs text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
+                <Link href="/recuperar" className="text-xs text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
                   ¿Olvidaste tu clave?
                 </Link>
               </div>

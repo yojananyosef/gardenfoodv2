@@ -13,7 +13,7 @@ Ninguna. Los 3 pendientes de `harden-payments-and-rls` quedaron cerrados (ver �
 | `fichas.ts` monolítico | 10.360 líneas; split por especie (README lo documenta) |
 | Código muerto | `readConsentCookieExpiry`, `clearLocalConsent`, `resetTracker`, `mpPlanKey`, `describeInterval`, `esRutaProtegida` (sin tests), `getComuna/getCalendario/getEspeciesPorGrupo/getGrupos`, `interface ZonaClimatica` duplicada en `zonas.ts`, `MESES` duplicado, variable muerta `huerto/data.ts`, scripts `migrate-frutas-images.mjs` y `setup-mercadopago-plans.mjs` + tabla `gf_subscription_plans` vestigiales |
 | CMP anónimo | Sin banner de consentimiento en primera visita anónima; `thirdPartySharing`/`deviceLinking` se guardan pero nunca se leen; sin flujo de revocación total |
-| Auth | OAuth (Google/Apple) stub "Próximamente"; "¿Olvidaste tu clave?" `href="#"` sin flujo; sin páginas de términos/privacidad |
+| Auth | OAuth (Google/Apple) stub "Próximamente"; sin páginas de términos/privacidad. ~~"¿Olvidaste tu clave?" `href="#"` sin flujo~~ **Cerrado 2026-09-09** (`fix-auth-confirmation-flow`): recuperación + restablecimiento + confirmación por email con callback PKCE. Pendiente operacional: configurar Site URL/Redirect URLs en Supabase Dashboard (README § Auth) |
 | Métricas admin | Agregaciones full-table en JS (`lib/admin/metrics.ts`); `catch {}` silencioso en MRR (sub-conteo silencioso); errores de DB tragados como `[]` en huerto/cosechas |
 | Headers de seguridad | `next.config.ts` sin HSTS/X-Frame-Options/`poweredByHeader:false` |
 | PWA | Cache de navegaciones sin límite; `/frutas/*.webp` no cacheadas; versión del SW manual |
