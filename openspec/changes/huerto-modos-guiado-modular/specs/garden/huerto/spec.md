@@ -87,3 +87,8 @@ The system SHALL expose the tree inventory through both view modes of /huerto: a
 
 - **WHEN** the user in guided mode opens step 2 of the asistente or the «¿qué sigue?» summary
 - **THEN** the system shows the same tree data (species, counts, pending placement) from the single inventory source
+
+#### Scenario: Inventory is reachable
+
+- **WHEN** an authenticated user navigates to the trees section of the dashboard
+- **THEN** the system renders the tree list and management controls

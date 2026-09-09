@@ -24,7 +24,8 @@ interface PasosAsistenteProps {
   sinUbicar: Arbol[];
   planoSlot: React.ReactNode;
   altaSlot: React.ReactNode;
-  plan?: string;
+  /** Slot del mapa satelital (TerrenoSection client) — R1: el mapa vive dentro de /huerto. */
+  terrenoSlot?: React.ReactNode;
 }
 
 /**
@@ -38,6 +39,7 @@ export function pasosAsistente({
   sinUbicar,
   planoSlot,
   altaSlot,
+  terrenoSlot,
 }: PasosAsistenteProps): PasoAsistente[] {
   return [
     {
@@ -57,30 +59,26 @@ export function pasosAsistente({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            {huertos.length === 0 ? (
-              <>
+            {terrenoSlot ??
+              (huertos.length === 0 ? (
                 <Button className="w-fit rounded-full" render={<Link href="/perfil?mapa=1" />}>
                   Ir al mapa satelital
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                  Al volver, tu terreno aparece listado aquí y puedes avanzar.
-                </p>
-              </>
-            ) : (
-              <ul className="flex flex-col gap-2">
-                {huertos.map((h) => (
-                  <li
-                    key={h.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm"
-                  >
-                    <span className="font-medium">{h.nombre}</span>
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {h.centro ? formatCoordenadas(h.centro) : "—"} · {formatAreaM2(h.superficieM2)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {huertos.map((h) => (
+                    <li
+                      key={h.id}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card px-4 py-2.5 text-sm"
+                    >
+                      <span className="font-medium">{h.nombre}</span>
+                      <span className="font-mono text-xs text-muted-foreground">
+                        {h.centro ? formatCoordenadas(h.centro) : "—"} · {formatAreaM2(h.superficieM2)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ))}
           </CardContent>
         </Card>
       ),

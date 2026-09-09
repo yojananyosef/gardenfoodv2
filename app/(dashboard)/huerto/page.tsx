@@ -31,6 +31,9 @@ import { ListaCultivos } from "@/components/huerto/ListaCultivos";
 import { ListaArboles } from "@/components/huerto/ListaArboles";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { ModoToggle } from "./ModoToggle";
+import { AgregarEspecieTarjetas } from "@/components/huerto/AgregarEspecieTarjetas";
+import { TerrenoSection } from "@/components/perfil/TerrenoSection";
+import { SelectorHuerto } from "./SelectorHuerto";
 import { AsistenteHuerto } from "@/components/huerto/AsistenteHuerto";
 import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
 import { pasosAsistente } from "@/components/huerto/pasosAsistente";
@@ -67,7 +70,11 @@ function hoyISO(): string {
   return `${now.getFullYear()}-${mes}-${dia}`;
 }
 
-export default async function HuertoPage() {
+export default async function HuertoPage(props: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = await props.searchParams;
+  const huertoParam = typeof sp["huerto"] === "string" ? sp["huerto"] : null;
   const supabase = await createClient();
   const {
     data: { user },
@@ -108,6 +115,13 @@ export default async function HuertoPage() {
     return Array.from(map.entries()).map(([tipo, count]) => ({ tipo, count, fill: colors[tipo] ?? "var(--primary)" }));
   })();
 
+  const huertoActivoId =
+    huertoParam && huertos.some((h) => h.id === huertoParam) ? huertoParam : null;
+  const arbolesFiltrados = huertoActivoId
+    ? arboles.filter((a) => a.huertoId === huertoActivoId)
+    : arboles;
+  const sinUbicarFiltrados = arbolesFiltrados.filter((a) => a.posX === null || a.posY === null);
+
   const modo: ModoHuerto = modoEfectivo({
     huertoModo: perfil?.huertoModo ?? null,
     tieneHuertos: huertos.length > 0,
@@ -118,18 +132,20 @@ export default async function HuertoPage() {
   const mostrarAsistente = asistentePendiente && huertoVacio && modo === "guiado";
 
   if (modo === "guiado") {
-    return <VistaGuiada v={{ mostrarAsistente, asistentePendiente, cultivos, cultivosConNombre, arboles, huertos, tareas, alertas, zonaNombre: zona?.nombre ?? null, mesActual, especiesDisponibles, limites, recom, zonaId, userId: user.id }} />;
+    return <VistaGuiada v={{ mostrarAsistente, asistentePendiente, cultivos, cultivosConNombre, arboles: arbolesFiltrados, huertos, tareas, alertas, zonaNombre: zona?.nombre ?? null, mesActual, especiesDisponibles, limites, recom, zonaId, userId: user.id, huertoActivoId }} />;
   }
 
-  const sinUbicarTotal = arboles.filter((a) => a.posX === null || a.posY === null).length;
+  const sinUbicarTotal = sinUbicarFiltrados.length;
+  const sinUbicarArboles = arboles.filter((a) => a.posX === null || a.posY === null);
   const pasosModular = pasosAsistente({
     huertos,
     arboles,
-    sinUbicar: arboles.filter((a) => a.posX === null || a.posY === null),
+    sinUbicar: sinUbicarArboles,
+    terrenoSlot: <TerrenoSection />,
     altaSlot: (
-      <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
+      <AgregarEspecieTarjetas especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos ?? "ilimitado" }} />
     ),
-    planoSlot: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} />,
+    planoSlot: <PlanoHuerto huertos={huertoActivoId ? huertos.filter((h) => h.id === huertoActivoId) : huertos} arboles={arbolesFiltrados} especies={ESPECIES} />,
   });
   const pasoInicialModular =
     huertos.length === 0 ? 0 : cultivos.length === 0 ? 1 : sinUbicarTotal > 0 ? 2 : 3;
@@ -165,7 +181,19 @@ export default async function HuertoPage() {
           </div>
 
           <div className="flex flex-col items-end gap-2">
-            <ModoToggle modo="modular" />
+            <SelectorHuerto
+              huertos={huertos.map((h) => ({ id: h.id, nombre: h.nombre, superficieM2: h.superficieM2 }))}
+              activoId={huertoActivoId}
+              className="hidden lg:inline-flex"
+            />
+            <div className="flex items-center gap-2">
+              <ModoToggle modo="modular" />
+            </div>
+            <SelectorHuerto
+              huertos={huertos.map((h) => ({ id: h.id, nombre: h.nombre, superficieM2: h.superficieM2 }))}
+              activoId={huertoActivoId}
+              className="flex sm:hidden w-full max-w-xs"
+            />
             <AsistenteFlotante
               pasos={pasosModular}
               pasoInicial={pasoInicialModular}
@@ -808,6 +836,7 @@ export default async function HuertoPage() {
 
 interface VistaGuiadaProps {
   v: {
+    huertoActivoId: string | null;
     mostrarAsistente: boolean;
     asistentePendiente: boolean;
     cultivos: Cultivo[];
@@ -841,9 +870,9 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
     arboles: v.arboles,
     sinUbicar,
     altaSlot: (
-      <AgregarCultivo
+      <AgregarEspecieTarjetas
         especies={v.especiesDisponibles}
-        uso={{ actual: v.cultivos.length, limite: v.limites.cultivos }}
+        uso={{ actual: v.cultivos.length, limite: v.limites.cultivos ?? "ilimitado" }}
       />
     ),
     planoSlot: <PlanoHuerto huertos={v.huertos} arboles={v.arboles} especies={ESPECIES} />,
@@ -870,6 +899,13 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
         </div>
         <ModoToggle modo="guiado" />
       </div>
+
+      {/* Selector global (R5) — sobre las dos vistas */}
+      <SelectorHuerto
+        huertos={v.huertos.map((h) => ({ id: h.id, nombre: h.nombre, superficieM2: h.superficieM2 }))}
+        activoId={v.huertoActivoId}
+        className="w-full sm:w-fit"
+      />
 
       <Separator />
 
