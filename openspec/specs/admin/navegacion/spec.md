@@ -7,7 +7,7 @@ Hacer visible y navegable el panel de administración desde la UI del producto (
 
 ### Requirement: Entrada visible al panel admin
 
-El sistema SHALL mostrar en TopBar un botón "Admin" y en BottomNav una entrada "Admin" únicamente cuando el usuario autenticado tenga `plan=admin` en `perfiles`. La sección admin SHALL tener un layout con navegación por pestañas (Overview · Usuarios · Finanzas · Audiencias · Patrocinios) con la pestaña activa resaltada, y el acceso SHALL seguir verificado tanto en el middleware como en cada página/layout.
+El sistema SHALL mostrar en TopBar un botón "Admin" y en BottomNav una entrada "Admin" únicamente cuando el usuario autenticado tenga `plan=admin` en `perfiles`. La sección admin SHALL tener un layout con navegación por pestañas (Overview · Insights · Media kit · Usuarios · Finanzas · Audiencias · Patrocinios) con la pestaña activa resaltada, y el acceso SHALL seguir verificado tanto en el middleware como en cada página/layout.
 
 #### Scenario: Admin navega desde cualquier página
 - **WHEN** un usuario con plan admin está en el dashboard
@@ -19,4 +19,4 @@ El sistema SHALL mostrar en TopBar un botón "Admin" y en BottomNav una entrada 
 
 #### Scenario: Navegación por pestañas
 - **WHEN** un admin está en `/admin/finanzas`
-- **THEN** el layout admin resalta la pestaña "Finanzas" y ofrece las demás secciones con un clic
+- **THEN** el layout admin resalta la pestaña "Finanzas" y ofrece las demás secciones, incluidas "Insights" y "Media kit", con un clic
