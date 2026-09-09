@@ -24,14 +24,6 @@ export interface LocalConsent {
   expiresAt: string;
 }
 
-function readCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(
-    new RegExp(`(?:^|;\\s*)${name}=([^;]*)`),
-  );
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
 function writeCookie(name: string, value: string, ttlMs: number): void {
   if (typeof document === "undefined") return;
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
@@ -143,8 +135,4 @@ export function buildLocalConsent(input: {
     grantedAt: grantedAt.toISOString(),
     expiresAt: expiresAt.toISOString(),
   };
-}
-
-export function readConsentCookieExpiry(): string | null {
-  return readCookie(CONSENT_COOKIE_NAME);
 }

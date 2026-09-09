@@ -10,15 +10,12 @@ import {
   getPlan,
   planAmount,
 } from "@/lib/payments/plans";
+import { TERMINOS_VERSION } from "@/lib/legal/terminos";
 
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://gardenfoodv2.vercel.app";
-
-// Versión de los Términos y Condiciones vigentes: incrementar al actualizar
-// el documento para dejar prueba de qué versión aceptó cada suscripción.
-const TERMINOS_VERSION = "2026-09";
 
 function parse(input: {
   tier?: unknown;

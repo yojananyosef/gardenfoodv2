@@ -76,7 +76,10 @@ export async function getCultivos(userId: string): Promise<Cultivo[]> {
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
-  if (error) return [];
+  if (error) {
+    console.error("[huerto/data] getCultivos: {}", error.message);
+    return [];
+  }
   return (data as CultivoRow[]).map(mapCultivo);
 }
 
@@ -90,7 +93,10 @@ export async function getArboles(userId: string): Promise<Arbol[]> {
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
-  if (error) return [];
+  if (error) {
+    console.error("[huerto/data] getArboles: {}", error.message);
+    return [];
+  }
   return (data as ArbolRow[]).map(mapArbol);
 }
 
@@ -106,7 +112,10 @@ export async function getTareasDelDia(
     .eq("fecha", fecha)
     .order("created_at", { ascending: true });
 
-  if (error) return [];
+  if (error) {
+    console.error("[huerto/data] getTareasDelDia: {}", error.message);
+    return [];
+  }
   return (data as TareaRow[]).map(mapTarea);
 }
 
@@ -116,9 +125,7 @@ export async function getTareasDelMes(
   anio: number,
 ): Promise<Tarea[]> {
   const inicio = `${anio}-${mes}-01`;
-  const siguiente = new Date(anio, Number(mes), 1);
   const fin = new Date(anio, Number(mes) + 1, 1).toISOString().slice(0, 10);
-  void siguiente;
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -129,7 +136,10 @@ export async function getTareasDelMes(
     .lt("fecha", fin)
     .order("fecha", { ascending: true });
 
-  if (error) return [];
+  if (error) {
+    console.error("[huerto/data] getTareasDelMes: {}", error.message);
+    return [];
+  }
   return (data as TareaRow[]).map(mapTarea);
 }
 
@@ -141,7 +151,10 @@ export async function getHuertos(userId: string): Promise<HuertoResumen[]> {
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
-  if (error) return [];
+  if (error) {
+    console.error("[huerto/data] getHuertos: {}", error.message);
+    return [];
+  }
   return (data as Array<Record<string, unknown>>).map((row) => {
     const feature = parseTerrenoFeature(row.terreno_geojson);
     return {

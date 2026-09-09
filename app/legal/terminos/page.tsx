@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TERMINOS_VERSION } from "@/lib/legal/terminos";
 
 export const metadata: Metadata = {
   title: "Términos y Condiciones — GardenFood",
@@ -104,6 +105,10 @@ export default function TerminosPage() {
         anticipación razonable si afectan planes pagos. Estos términos se rigen por las leyes de
         Chile. Este servicio se ofrece &quot;tal cual&quot;; la responsabilidad del responsable se
         limita al máximo permitido por la ley chilena.
+      </P>
+
+      <P>
+        Versión {TERMINOS_VERSION} · GardenFood · pichilemugardenfood@gmail.com
       </P>
     </article>
   );

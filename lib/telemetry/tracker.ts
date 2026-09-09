@@ -126,15 +126,6 @@ async function sendKeepalive(body: string): Promise<void> {
   }
 }
 
-export function resetTracker(): void {
-  if (timer !== null) {
-    clearInterval(timer);
-    timer = null;
-  }
-  buffer = [];
-  sessionId = null;
-  currentGeo = null;
-}
 
 if (typeof window !== "undefined") {
   window.addEventListener("pagehide", flush);

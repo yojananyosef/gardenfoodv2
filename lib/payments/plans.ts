@@ -142,6 +142,3 @@ export function planAmount(tier: PlanTier, interval: BillingInterval): number {
   return interval === "yearly" ? plan.yearly : plan.monthly;
 }
 
-export function describeInterval(interval: BillingInterval): string {
-  return interval === "yearly" ? "anual (2 meses gratis)" : "mensual";
-}

@@ -29,6 +29,9 @@ export async function getRegistros(userId: string): Promise<RegistroCosecha[]> {
     .eq("user_id", userId)
     .order("fecha", { ascending: false });
 
-  if (error) return [];
+  if (error) {
+    console.error("[cosechas/data] getRegistros: {}", error.message);
+    return [];
+  }
   return (data as RegistroRow[]).map(mapRegistro);
 }

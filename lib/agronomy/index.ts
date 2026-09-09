@@ -60,11 +60,6 @@ export function getZonaDeComuna(comuna?: string | null): ZonaClimatica | null {
   return ZONAS[zonaId];
 }
 
-export function getComuna(comuna?: string | null): ComunaEntry | null {
-  if (!comuna) return null;
-  return COMUNAS.find((c) => c.comuna === comuna) ?? null;
-}
-
 export function getEspeciePorSlug(slug: string): Especie | null {
   return ESPECIES.find((e) => e.slug === slug) ?? null;
 }
@@ -187,14 +182,4 @@ export function getGrupoDistancia(
   const ficha = FICHAS[dbKey];
   if (!ficha?.gr) return null;
   return getDistanciaDeGrupo(ficha.gr);
-}
-
-export function getEspeciesPorGrupo(
-  grupo: string,
-): Especie[] {
-  return ESPECIES.filter((e) => e.grupo === grupo);
-}
-
-export function getGrupos(): string[] {
-  return [...new Set(ESPECIES.map((e) => e.grupo).filter(Boolean))];
 }
