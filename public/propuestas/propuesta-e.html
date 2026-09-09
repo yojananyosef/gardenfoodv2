@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Propuesta E — Huerto guiado ↔ modular + Especies aparte · GardenFood</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@600&display=swap" rel="stylesheet" />
+<script type="module" src="https://unpkg.com/wired-elements?module"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 18px; }
+  body { font-family: 'Patrick Hand', cursive; font-size: 18px; color: #222; background-color: #f7f7f7; background-image: radial-gradient(#d7d7d7 1px, transparent 1px); background-size: 20px 20px; min-height: 100vh; }
+  .screen { display: none; padding: 20px; }
+  .screen.active { display: block; }
+  .text-xs { font-size: 14px; line-height: 1.4; }
+  .text-sm { font-size: 18px; line-height: 1.5; }
+  .text-base { font-size: 22px; line-height: 1.5; }
+  .text-md { font-size: 28px; line-height: 1.3; }
+  .text-lg { font-size: 35px; line-height: 1.2; }
+  .sketchy { border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; }
+  .btn-primary { background: #333; color: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-family: 'Patrick Hand', cursive; font-size: 18px; padding: 10px 22px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-secondary { background: white; color: #333; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-family: 'Patrick Hand', cursive; font-size: 18px; padding: 10px 22px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ghost { background: transparent; color: #333; border: 2px dashed #555; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-family: 'Patrick Hand', cursive; font-size: 16px; padding: 6px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  button, a { font-family: 'Patrick Hand', cursive; }
+  a { color: #2b5e8a; text-decoration: underline; }
+  .req { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 2px dashed #333; border-radius: 50%; font-size: 13px; font-weight: bold; background: white; flex-shrink: 0; }
+  .nota { border: 2px dashed #333; background: white; border-radius: 12px 4px 12px 4px / 4px 12px 4px 12px; padding: 8px 12px; font-size: 14px; color: #333; display: inline-flex; gap: 8px; align-items: flex-start; max-width: 380px; }
+  .badge { display: inline-block; font-size: 13px; border: 1.5px solid #555; border-radius: 999px; padding: 1px 10px; color: #444; background: #fafafa; }
+  .proto-bar { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 2px solid #333; padding: 8px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .proto-bar .tag { font-family: 'Caveat', cursive; font-size: 20px; font-weight: 600; margin-right: 6px; }
+  .proto-tab { font-size: 15px; padding: 4px 12px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; cursor: pointer; }
+  .proto-tab.active-screen { background: #555; color: white; }
+  .legend { font-size: 14px; color: #555; margin-left: auto; }
+  .legend b { color: #222; }
+  .sketch-select { font-family: 'Patrick Hand', cursive; font-size: 18px; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; padding: 6px 10px; color: #333; cursor: pointer; }
+  .topbar { display: flex; align-items: center; gap: 14px; padding: 10px 18px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; margin-bottom: 14px; flex-wrap: wrap; }
+  .logo { font-weight: bold; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+  .logo svg { width: 26px; height: 26px; }
+  .selector-global { display: flex; align-items: center; gap: 8px; padding: 4px 10px; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; }
+  .selector-global svg { width: 18px; height: 18px; }
+
+  /* Toggle de modo (protagonista de la E) */
+  .modo-toggle { display: inline-flex; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; background: white; overflow: hidden; }
+  .modo-toggle button { font-family: 'Patrick Hand', cursive; font-size: 17px; border: none; background: white; color: #333; padding: 7px 18px; cursor: pointer; display: inline-flex; gap: 7px; align-items: center; }
+  .modo-toggle button + button { border-left: 2px solid #333; }
+  .modo-toggle button svg { width: 17px; height: 17px; }
+  .modo-toggle button.on { background: #333; color: white; }
+
+  .stepper-top { display: flex; gap: 0; align-items: center; margin: 14px 0 18px; flex-wrap: wrap; }
+  .paso { display: flex; align-items: center; gap: 8px; }
+  .paso .circ { width: 34px; height: 34px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white; font-size: 16px; }
+  .paso.done .circ { background: #333; color: white; }
+  .paso.now .circ { background: #5c5c5c; color: white; transform: scale(1.1); }
+  .paso .lbl { font-size: 16px; margin-right: 6px; }
+  .paso .lbl small { display: block; font-size: 12px; color: #666; }
+  .linea { width: 46px; height: 3px; background: repeating-linear-gradient(90deg, #555 0 8px, transparent 8px 14px); margin: 0 8px; }
+  .paso-card { max-width: 1020px; margin: 0 auto; padding: 20px 22px; }
+  .paso-head { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .paso-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 10px; flex-wrap: wrap; }
+
+  .workbench { display: grid; grid-template-columns: 320px 1fr; gap: 14px; align-items: stretch; }
+  .panel { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; max-height: 78vh; overflow: auto; }
+  .panel h3 { font-size: 22px; display: flex; align-items: center; gap: 8px; }
+  .panel h3 svg { width: 20px; height: 20px; }
+  .bento-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mini { border: 1.5px solid #555; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; padding: 8px 10px; }
+  .mini .n { font-size: 28px; }
+  .mini .l { font-size: 13px; color: #555; }
+  .fila-especie { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1.5px solid #555; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; cursor: grab; background: white; }
+  .fila-especie .ic { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #333; border-radius: 50%; }
+  .fila-especie .ic svg { width: 18px; height: 18px; }
+  .fila-especie .nm { font-size: 18px; }
+  .fila-especie .ct { font-size: 13px; color: #555; }
+  .lienzo { display: flex; flex-direction: column; min-height: 74vh; }
+  .lienzo-tabs { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 14px; border-bottom: 2px dashed #999; }
+  .lienzo-tabs button { border: 2px solid #333; background: white; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; font-size: 16px; padding: 6px 16px; cursor: pointer; display: inline-flex; gap: 7px; align-items: center; }
+  .lienzo-tabs button svg { width: 17px; height: 17px; }
+  .lienzo-tabs button.on { background: #333; color: white; }
+  .canvas-wrap { flex: 1; position: relative; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; overflow: hidden; background: #4a4a4a; margin: 10px 14px 14px; }
+  .canvas-wrap svg.terrain { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .canvas-tools { position: absolute; top: 12px; left: 12px; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; padding: 8px; display: flex; gap: 6px; z-index: 4; }
+  .canvas-tools button { border: 1.5px solid #555; background: white; border-radius: 12px 3px 12px 3px / 3px 12px 3px 12px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .canvas-tools svg { width: 19px; height: 19px; }
+  .canvas-status { position: absolute; left: 12px; bottom: 12px; background: white; border: 1.5px solid #555; border-radius: 12px 3px 12px 3px / 3px 12px 3px 12px; padding: 4px 10px; font-size: 14px; z-index: 4; }
+  .arbol-dot { cursor: grab; }
+  .arbol-sel { filter: drop-shadow(0 0 3px #111); }
+
+  .modo-diff { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 1020px; margin: 0 auto; }
+  .tarea { display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid #555; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; padding: 10px 12px; background: white; }
+  .tarea svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+  .tarea .t { font-size: 19px; }
+  .tarea .d { font-size: 14px; color: #555; }
+
+  /* Puente E3: dos fichas lado a lado */
+  .puente { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; max-width: 1100px; margin: 0 auto; align-items: start; }
+  .ficha { padding: 16px 18px; }
+  .ficha h4 { font-size: 24px; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .ficha h4 svg { width: 22px; height: 22px; }
+  .fila-dato { display: flex; justify-content: space-between; gap: 10px; font-size: 16px; padding: 5px 0; border-bottom: 1px dashed #aaa; }
+  .fila-dato span:last-child { color: #555; text-align: right; }
+  .cal-meses { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 10px; }
+  .mes { border: 1.5px solid #555; border-radius: 10px 3px 10px 3px / 3px 10px 3px 10px; padding: 4px 2px 6px; text-align: center; }
+  .mes .mm { font-size: 12px; color: #555; }
+  .mes .dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #333; margin: 3px auto 0; }
+  .mes.hoy { background: #333; color: white; }
+  .mes.hoy .mm { color: white; }
+  .mes.hoy .dot { background: white; border-color: white; }
+  .dosis { border: 2px solid #333; border-radius: 14px 4px 14px 4px / 4px 14px 4px 14px; padding: 12px 14px; background: white; margin-top: 10px; }
+  .dosis .big { font-size: 30px; }
+
+  /* Biblioteca E4 */
+  .esp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; max-width: 1080px; }
+  .esp-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .esp-card .top { display: flex; gap: 10px; align-items: center; }
+  .esp-card .ic { width: 44px; height: 44px; border: 2px solid #333; border-radius: 50% 45% 55% 50% / 50% 55% 45% 50%; display: flex; align-items: center; justify-content: center; }
+  .esp-card .ic svg { width: 26px; height: 26px; }
+  .esp-card .nm { font-size: 22px; }
+  .esp-card .meta { font-size: 14px; color: #555; }
+  .esp-card .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .rail { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .phone { width: 390px; margin: 0 auto; background: white; border: 2px solid #333; border-radius: 34px 18px 34px 18px / 18px 34px 18px 34px; padding: 14px 12px 90px; position: relative; }
+  .bottom-nav { position: absolute; left: 12px; right: 12px; bottom: 14px; display: flex; justify-content: space-around; background: white; border: 2px solid #333; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; padding: 8px 4px; }
+  .bottom-nav a { font-size: 13px; color: #333; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .bottom-nav svg { width: 20px; height: 20px; }
+  @media (max-width: 960px) { .workbench, .modo-diff, .puente { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <span class="tag">Propuesta E — «Guiado por defecto + modular en un toggle»</span>
+  <button class="proto-tab active-screen" data-go="e1">E1 · Modo guiado (día 1 y todos los días)</button>
+  <button class="proto-tab" data-go="e2">E2 · Toggle → Modo modular</button>
+  <button class="proto-tab" data-go="e3">E3 · Puente: árbol → ficha de especie</button>
+  <button class="proto-tab" data-go="e4">E4 · Especies: módulo aparte</button>
+  <button class="proto-tab" data-go="e5">E5 · Mobile</button>
+  <span class="legend"><span class="req">R</span>: <b>R1</b> mapa · <b>R2</b> alta única · <b>R3</b> especies · <b>R4</b> renombres · <b>R5</b> selector · <b>R7</b> drag</span>
+</div>
+
+<!-- ============ E1 · MODO GUIADO (POR DEFECTO) ============ -->
+<div class="screen active" id="e1">
+  <div class="topbar">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood <span class="badge">CHILE</span></span>
+    <span class="badge">Mi huerto</span>
+    <div class="selector-global" style="margin-left:auto" title="R5">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <select class="sketch-select"><option>Mi huerto · 731 m²</option><option>Todos los huertos</option><option>Huerto 2 · 1.712 m²</option><option>Huerto 5 · 2,2 ha</option></select>
+      <span class="req" title="R5">R5</span>
+    </div>
+    <div class="modo-toggle" title="El modo se recuerda entre sesiones">
+      <button class="on" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Guiado</button>
+      <button onclick="go('e2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Modular</button>
+    </div>
+  </div>
+
+  <div class="rail">
+    <span class="nota"><b>Primeros días:</b> el modo guiado arranca en el asistente de 4 pasos (igual a la C). Se termina una sola vez y guarda.</span>
+    <span class="nota"><b>Después:</b> «Guiado» = esta pantalla de WhatsApp-style «¿qué sigue?». Nada de repetir el asistente cada visita: aquí termina la parte repetitiva.</span>
+  </div>
+
+  <div class="paso-card sketchy">
+    <div class="paso-head">
+      <span class="text-lg">Hola Johan — arrancamos hacia la cosecha</span>
+      <span class="badge">Mi huerto · 731 m² · Ñuble interior</span>
+      <span class="badge">sept: clima ideal para raleo</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; margin:12px 0">
+      <div class="tarea"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><div><div class="t">Tu terreno está dibujado y tus 20 árboles registrados</div><div class="d">Durazno ×16 · Ciruela ×1 · Uva ×1 · Arándano ×2 <span class="req" title="R3">R3</span></div></div></div>
+      <div class="tarea"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M8.5 15.5L15.5 8.5"/></svg><div><div class="t">Te quedan 15 duraznos por posicionar en el plano</div><div class="d">Hacemos el reparto guiado ahora, o quedan listados y los puedes arrastrar cualquier día.</div></div>
+        <div style="display:flex; gap:8px; margin-top:6px"><button class="btn-primary">Posicionar 15 pendientes</button><button class="btn-ghost">Más tarde</button></div></div>
+      <div class="tarea"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div><div class="t">Esta semana en tu zona: 2 riegos · 1 revisión de plaga</div><div class="d">Toca una tarea para anotarla como hecha o reagendar. Todo lo demás vive en Calendario.</div></div></div>
+      <div class="tarea"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg><div><div class="t">¿Cómo va tu ciruela?</div><div class="d">Su ficha de especie dice: a mediados de septiembre, control de carpocapsa. <a href="#" onclick="go('e3'); return false">Ver ficha completa →</a></div></div></div>
+    </div>
+    <div class="paso-foot">
+      <span class="text-xs" style="color:#555">¿La lista nos sobrecargó? <b>Cambia a Modular</b> con el toggle de arriba: todo un banco de trabajo fijo, sin eslabones.</span>
+      <button class="btn-secondary" onclick="go('e2')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Cambiar a Modular</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ E2 · MODO MODULAR (B CON TOGGLE VUELTO) ============ -->
+<div class="screen" id="e2">
+  <div class="topbar">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood <span class="badge">CHILE</span></span>
+    <div class="selector-global" title="R5">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <select class="sketch-select"><option>Todos los huertos (5)</option><option>Mi huerto · 731 m²</option><option>Huerto 2 · 1.712 m²</option><option>Huerto 5 · 2,2 ha</option></select>
+      <span class="req" title="R5">R5</span>
+    </div>
+    <div class="modo-toggle" title="Cambio en el instante — no hay pantalla de por medio">
+      <button onclick="go('e1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Guiado</button>
+      <button class="on" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Modular</button>
+    </div>
+    <button class="btn-ghost" style="margin-left:auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Abrir asistente otra vez</button>
+  </div>
+  <div class="rail">
+    <span class="nota">Al cambiar de modo <b>no se recarga nada</b>: mismo huerto elegido (R5), mismos datos, cambia la forma de mirarlos. La preferencia queda guardada para tu próxima visita.</span>
+    <span class="nota">«Abrir asistente otra vez» = los 4 pasos de C en una tapa flotante, con lo pendiente marcado. <b>Es la única puerta de vuelta al flujo guiado</b>, accesible siempre.</span>
+  </div>
+
+  <div class="workbench">
+    <aside class="panel sketchy">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Cultivos y árboles <span class="req" title="R2">R2</span></h3>
+      <div class="bento-mini">
+        <div class="mini"><div class="n">4</div><div class="l">especies <span class="req" title="R3">R3</span></div></div>
+        <div class="mini"><div class="n">24</div><div class="l">árboles totales</div></div>
+      </div>
+      <div class="fila-especie">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></div>
+        <div><div class="nm">Durazno</div><div class="ct">16 árboles · 9 en plano · 7 sin ubicar</div></div>
+        <span class="badge">en curso</span>
+      </div>
+      <div class="fila-especie">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg></div>
+        <div><div class="nm">Ciruela</div><div class="ct">1 árbol · en plano</div></div>
+        <span class="badge">completo</span>
+      </div>
+      <wired-divider></wired-divider>
+      <button class="btn-secondary" style="justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Agregar especie</button>
+    </aside>
+    <section class="lienzo sketchy">
+      <div class="lienzo-tabs">
+        <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Terreno (satélite) <span class="req" title="R1">R1</span></button>
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="6" r="2"/><path d="M7.5 16.5L10.5 8M13.5 8l3 8.5"/></svg> Posicionar árboles <span class="req" title="R4">R4</span></button>
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M3 21h18"/></svg> Visualización 3D <span class="req" title="R4">R4</span></button>
+      </div>
+      <div class="canvas-wrap">
+        <svg class="terrain" preserveAspectRatio="xMidYMid slice" viewBox="0 0 900 620">
+          <rect width="900" height="620" fill="#4a4a4a"/>
+          <rect x="0" y="0" width="900" height="180" fill="#3d3d3d"/>
+          <path d="M0 500 Q 220 460 460 500 T 900 490 L 900 620 L 0 620 Z" fill="#565656"/>
+          <path d="M50 50 L 170 35 L 195 110 L 80 130 Z" fill="#6a6a6a"/>
+          <rect x="680" y="50" width="170" height="120" fill="#6a6a6a"/>
+          <g stroke="#c9c9c9" stroke-width="3.5" fill="none"><path d="M190 250 L 350 205 L 430 300 L 320 380 L 210 335 Z"/></g>
+          <g fill="#e6e6e6">
+            <circle cx="240" cy="280" r="7"/><circle cx="265" cy="295" r="7"/><circle cx="290" cy="310" r="7"/>
+            <circle cx="500" cy="250" r="7"/><circle cx="525" cy="265" r="7"/><circle cx="550" cy="280" r="7"/>
+          </g>
+        </svg>
+        <div class="canvas-tools">
+          <button class="on" title="Dibujar polígono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L20 8l-4-4L4 16z"/></svg></button>
+          <button title="Editar vértices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="18" r="2.5"/><circle cx="12" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M7 16L11 8M13 8l4 8"/></svg></button>
+          <button title="Capas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
+        </div>
+        <div class="canvas-status">Esri World Imagery · zoom 18 · Mi huerto · 13 árboles visibles</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ============ E3 · PUENTE: ÁRBOL → FICHA DE ESPECIE ============ -->
+<div class="screen" id="e3">
+  <div class="rail">
+    <span class="nota"><b>Regla de separación:</b> el <b>huerto</b> guarda dónde está cada árbol (posición, edad, observaciones). Los <b>cuidados de la especie</b> (abono, calendario anual, dosis) viven en SU ficha — se comparten entre todos los duraznos del mundo, no se repiten árbol por árbol.</span>
+  </div>
+  <div class="puente">
+    <div class="ficha sketchy">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> Durazno #12 · Mi huerto</h4>
+      <div class="fila-dato"><span>huerto</span><span>Mi huerto (731 m²)</span></div>
+      <div class="fila-dato"><span>posición</span><span>lat -36.63263 · lng -71.84412</span></div>
+      <div class="fila-dato"><span>plantado</span><span>desconocido · editable</span></div>
+      <div class="fila-dato"><span>edad estimada</span><span>~4 años (por grosor de tronco)</span></div>
+      <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap">
+        <button class="btn-ghost">Mover</button>
+        <button class="btn-ghost">Sacar del plano</button>
+      </div>
+      <div class="dosis" style="margin-top:14px">
+        <div class="text-sm" style="display:flex; gap:8px; align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M9 18c-1 2-3 3-3 5"/></svg> Cuidados</div>
+        <p class="text-xs" style="color:#555; margin:6px 0">Los cuidados son de la ESPECIE, no de este árbol: aquí se resumen y de aquí saltas.</p>
+        <button class="btn-primary" style="font-size:16px" onclick="switchEspecie(true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg> Ver ficha de Durazno</button>
+      </div>
+      <span class="badge" style="margin-top:10px">sale de: detalle del árbol (plano o 3D) y del modo guiado</span>
+    </div>
+    <div class="ficha sketchy" id="ficha-especie-e3">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg> Durazneros · ficha de especie</h4>
+      <span class="text-xs" style="color:#555">abono de crecimiento → abono de fruta → riego constante · para Ñuble</span>
+      <div class="fila-dato" style="margin-top:8px"><span>ahora (septiembre)</span><span>Etapa 4 · Abono de fruta, dosis 2 de 3</span></div>
+      <div class="dosis">
+        <div class="text-sm">Qué se echa HOY (por árbol)</div>
+        <div class="big">⅔ taza de abono de fruta</div>
+        <div class="text-xs" style="color:#555">medidas caseras: 1 taza = 2 puñados grandes · reparte debajo de las hojas, no pegado al tronco · riega al día siguiente</div>
+        <button class="btn-secondary" style="font-size:15px; margin-top:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Lo eché a mis 16 duraznos</button>
+      </div>
+      <div class="cal-meses">
+        <div class="mes"><div class="mm">ene</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">feb</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">mar</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">abr</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">may</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">jun</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">jul</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">ago</div><div class="dot"></div></div>
+        <div class="mes hoy"><div class="mm">sep</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">oct</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">nov</div><div class="dot"></div></div>
+        <div class="mes"><div class="mm">dic</div><div class="dot"></div></div>
+      </div>
+      <span class="text-xs" style="color:#555; display:block; margin-top:8px">calendario anual de el duraznero · puntos = momento con algo que hacer. «Lo eché» marca progreso para tus 16 árboles y agenda la próxima en tu Calendario.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ E4 · ESPECIES: MÓDULO APARTE ============ -->
+<div class="screen" id="e4">
+  <div class="rail">
+    <span class="nota"><b>Dónde vive lo del socio</b> (su HTML «Cómo abonar tus árboles»): en <b>Explorar / Especies</b> con su estilo final color-carboncillo aparte (no este de pruebas). Desde aquí se entra al asistente «¿Qué árbol?» que crea árboles en el huerto del usuario — un solo puente, sin mezclar lógica.</span>
+  </div>
+  <div class="topbar" style="max-width:1080px; margin:0 auto 14px">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood</span>
+    <span class="text-md">Especies</span>
+    <input class="sketch-select" placeholder="buscar especie…" style="min-width:220px" />
+    <span class="badge">25 disponibles para Ñuble</span>
+  </div>
+  <div class="esp-grid">
+    <div class="esp-card sketchy">
+      <div class="top"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg></div><div><div class="nm">Durazno</div><div class="meta">zonas · 3 pasos de abono · ficha completa</div></div></div>
+      <div class="chips"><span class="badge">16 en tu huerto</span><span class="badge">septiembre: abono de fruta</span></div>
+      <div style="display:flex; gap:6px"><button class="btn-secondary" style="font-size:15px" onclick="switchEspecie(false)">Ficha</button><button class="btn-ghost">¿Qué edad tiene el tuyo?</button></div>
+    </div>
+    <div class="esp-card sketchy">
+      <div class="top"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg></div><div><div class="nm">Ciruela</div><div class="meta">zonas · 3 pasos · riego y poda</div></div></div>
+      <div class="chips"><span class="badge">1 en tu huerto</span><span class="badge">septiembre: control carpocapsa</span></div>
+      <div style="display:flex; gap:6px"><button class="btn-secondary" style="font-size:15px">Ficha</button><button class="btn-ghost">¿Cuándo podarla?</button></div>
+    </div>
+    <div class="esp-card sketchy" style="border-style:dashed">
+      <div class="top"><div class="ic" style="border-style:dashed"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" style="width:26px;height:26px"><path d="M12 5v14M5 12h14"/></svg></div><div><div class="nm">¿Qué árbol tienes en casa?</div><div class="meta">asistente del socio: tarjetas con la fruta en la mano</div></div></div>
+      <button class="btn-primary" style="font-size:15px">Crear mi huerto con tarjetas</button>
+      <span class="text-xs" style="color:#555">crea el alta del huerto (R2) y trae la ficha de cuidados de paso</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ E5 · MOBILE ============ -->
+<div class="screen" id="e5">
+  <div class="rail"><span class="nota">En móvil el toggle vive en la cabecera (compacto: «Guiado | Modular») y no se come la pantalla útil.</span></div>
+  <div class="phone">
+    <div style="display:flex; align-items:center; gap:8px; padding:2px 2px 10px">
+      <span class="logo" style="font-size:15px"><svg viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2" style="width:19px;height:19px"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg> GardenFood</span>
+      <div class="modo-toggle" style="margin-left:auto">
+        <button class="on" style="font-size:14px; padding:4px 10px">Guiado</button>
+        <button style="font-size:14px; padding:4px 10px">Modular</button>
+      </div>
+    </div>
+    <div class="sketchy" style="padding:12px; margin-bottom:10px">
+      <div class="text-sm" style="font-weight:bold; margin-bottom:4px">¿Qué sigue?</div>
+      <div class="tarea" style="margin:6px 0"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M8.5 15.5L15.5 8.5"/></svg><div><div class="d" style="font-size:15px; color:#222"><b>15 duraznos sin posicionar</b> — arrástralos cuando tengas el celular en mano en el huerto.</div><button class="btn-primary" style="font-size:14px; padding:6px 14px; margin-top:4px">Posicionar ahora</button></div></div>
+      <div class="tarea"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg><div class="d">Hoy: regar frutilla (10:00–12:00) · Mañana: revisar pulgón en tomates</div></div>
+    </div>
+    <div class="esp-card sketchy" style="margin-bottom:10px">
+      <div class="top"><div class="ic" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" style="width:20px;height:20px"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M12 17c-2 0-4-1-4-3"/></svg></div><div><div class="nm" style="font-size:18px">Tu duraznero</div><div class="meta">⅔ taza de abono de fruta esta semana</div></div></div>
+      <div style="display:flex; gap:6px"><button class="btn-secondary" style="font-size:14px; flex:1; justify-content:center">Ficha completa</button><button class="btn-primary" style="font-size:14px">Lo eché</button></div>
+    </div>
+    <div class="bottom-nav">
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg>Mi huerto</a>
+      <a href="#" onclick="go('e4'); return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 9h14" /><circle cx="12" cy="12" r="9"/></svg>Especies</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendario</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h9l5 5v11H5z"/><path d="M14 4v5h5"/></svg>Biblioteca</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.proto-tab').forEach(t => t.classList.toggle('active-screen', t.dataset.go === id));
+    window.scrollTo({ top: 0 });
+    switchEspecie(false);
+  }
+  document.querySelectorAll('.proto-tab').forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
+  function switchEspecie(arbol) {
+    const f = document.getElementById('ficha-especie-e3');
+    if (!f) return;
+    if (arbol) {
+      f.style.border = '3px solid #333';
+      f.style.boxShadow = '0 0 0 6px rgba(51,51,51,.15)';
+      f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { f.style.boxShadow = 'none'; }, 1600);
+    }
+    return false;
+  }
+</script>
+</body>
+</html>

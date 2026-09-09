@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>GardenFood — 5 propuestas de rediseño para «Mi Huerto»</title>
+<title>GardenFood — 6 propuestas de rediseño para «Mi Huerto»</title>
 <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@600&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,14 +43,32 @@
 <body>
 <div class="wrap">
   <div class="header sketchy">
-    <h1>5 propuestas para «Mi Huerto»</h1>
-    <div class="sub">Rediseño integral de /huerto — mapa satelital integrado, cultivos fusionados, selector global, renombres y drag &amp; drop de árboles. <b>La D es la fusionada con la calculadora de abonar del socio; la A+D es la A con su patrón de tarjetas.</b></div>
-    <div class="meta">GardenFood v2 · 2026-09-09 · wireframes clickeables · A/B/C/A+D en grayscale Balsamiq-style · D con el lenguaje visual del socio (Nunito, tarjetas, pasos)</div>
+    <h1>6 propuestas para «Mi Huerto»</h1>
+    <div class="sub">Rediseño integral de /huerto — mapa satelital integrado, cultivos fusionados, selector global, renombres y drag &amp; drop de árboles. <b>La E es la híbrida elegida: C guiado por defecto + toggle a modo B, con Especies como módulo aparte.</b> La D sigue siendo la fusión con la calculadora del socio; la A+D es la A con su patrón de tarjetas.</div>
+    <div class="meta">GardenFood v2 · 2026-09-09 · wireframes clickeables · grayscale Balsamiq-style (D con el lenguaje visual del socio)</div>
   </div>
 
   <div class="grid">
     <div class="card sketchy" style="border-width:3px; outline:2px dashed #333; outline-offset:4px">
-      <div class="tag">Propuesta D ★ recomendada</div>
+      <div class="tag">Propuesta E ★ síntesis de B + C</div>
+      <h2>«Guiado por defecto, modular cuando quieras»</h2>
+      <p><b>C como modo inicial</b> (onboarding + pantalla «¿qué sigue?» para todos los días) y un <b>toggle permanente a la B modular</b> para los usuarios que ya saben dónde está todo. La preferencia se recuerda entre sesiones. La parte educativa del socio (calcular abono, fichas por especie) vive en <b>Especies: un módulo aparte</b> — el huerto solo guarda dónde está cada árbol y la ficha de especie es la única conexión.</p>
+      <ul>
+        <li>E1 modo guiado: «¿qué sigue hoy?» — el asistente se hace 1 vez</li>
+        <li>E2 toggle instantáneo al banco de trabajo de B (sin recargar)</li>
+        <li>E3 puente único: árbol → su ficha de especie (calendario + dosis caseras)</li>
+        <li>E4 módulo Especies con lo del socio + asistente «¿Qué árbol tienes?»</li>
+        <li>E5 móvil con toggle compacto en la cabecera</li>
+      </ul>
+      <div class="pros">
+        <b>Pro:</b> <span class="pro">toma lo que más le gustó al socio (C y B); nadie queda atrapado en el wizard repetitivo; separa claramente huerto (posición) de especies (cuidados); la A+D y la C comparten las tarjetas de alta.</span><br>
+        <b>Contra:</b> <span class="con">hay que implementar dos estados de /huerto (guiado ↔ modular) — comparten datos, difieren en layout; mayor esfuerzo que una sola propuesta.</span>
+      </div>
+      <a class="open" href="./propuesta-e.html">Ver propuesta E →</a>
+    </div>
+
+    <div class="card sketchy">
+      <div class="tag">Propuesta D</div>
       <h2>«Modo app todo en uno»</h2>
       <p>Fusión directa con <b>gardenfood-nutricion-simple</b>: el mismo patrón de wizard (una pregunta por pantalla, tarjetas ilustradas con la fruta, buscador) aplicado a <b>tu huerto</b> — y la vista diaria como lista de tarjetas de especies + <b>ficha viva</b> (calendario de momentos + dosis en cucharadas caseras).</p>
       <ul>
