@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 
 const PESTANAS = [
   { href: "/admin", label: "Overview", exacta: true },
+  { href: "/admin/insights", label: "Insights", exacta: false },
+  { href: "/admin/media-kit", label: "Media kit", exacta: false },
   { href: "/admin/usuarios", label: "Usuarios", exacta: false },
   { href: "/admin/finanzas", label: "Finanzas", exacta: false },
   { href: "/admin/audiencias", label: "Audiencias", exacta: false },
