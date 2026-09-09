@@ -37,7 +37,7 @@
 
 ## 6. Puente y renombres R1/R4
 
-- [ ] 6.1 Enlace «Ver ficha de <especie>» en el detalle del árbol (popover del lienzo y ficha) sin duplicar cuidados en el árbol; verificar navegación y retorno
+- [x] 6.1 Enlace «Ver ficha de <especie>» en el detalle del árbol (popover del lienzo y ficha) sin duplicar cuidados en el árbol; verificar navegación y retorno
 - [ ] 6.2 Integrar el mapa satelital en /huerto (R1) en ambos modos (lienzo central modular; paso 1 del asistente) reutilizando el mapa de /perfil vía componente compartido — validar que la CSP exima de Esri (bug de auditoría)
 - [x] 6.3 Renombrar a «Posicionar árboles» y «Visualización 3D» (R4) en los modos y en las referencias del código existente; verificar grep 0 hits de los renombres
     

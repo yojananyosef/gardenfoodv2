@@ -60,6 +60,13 @@ export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
               </span>
             </div>
             <div className="flex items-center gap-2">
+              {/* Puente árbol → ficha de especie (Propuesta E) */}
+              <a
+                href={`/especie/especies/${a.especie}`}
+                className="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+              >
+                Ver ficha de la especie
+              </a>
               {a.huertoId ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1.5 text-[11px] text-muted-foreground">
                   <MapPin className="size-3" /> En plano
