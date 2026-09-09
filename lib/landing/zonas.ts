@@ -84,20 +84,7 @@ export const REGIONES: Region[] = ORDEN_REGIONES.map((nombre) => ({
     .map((c) => ({ nombre: c.comuna, zona: ZONA_POR_COMUNA.get(c.comuna) ?? "Valle Central" })),
 }));
 
-export const MESES = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
-] as const;
+export { MESES } from "@/lib/fechas";
 
 export const ZONAS: Record<string, Tarea[][]> = {
   "Norte Grande": [

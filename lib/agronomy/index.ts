@@ -6,6 +6,7 @@ import { FENOLOGIA, MACROZONA_MAP, type FenologiaEntrada } from "./fenologia";
 import { FICHAS, type CalMes, type FichaEspecie } from "./fichas";
 import { VIABILIDAD, type Viabilidad } from "./viabilidad";
 import { COMUNAS_ZONA, ZONAS, type ZonaClimatica } from "./zonas";
+import type { Mes } from "@/lib/fechas";
 
 export type {
   CalMes,
@@ -18,22 +19,8 @@ export type {
 };
 export { COMUNAS, COMUNAS_ZONA, CONSEJOS, ESPECIES, FENOLOGIA, FICHAS, GRUPO_DISTANCIA, MACROZONA_MAP, VIABILIDAD, ZONAS, buscarComuna };
 
-export const MESES = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
-] as const;
-
-export type Mes = (typeof MESES)[number];
+export { MESES } from "@/lib/fechas";
+export type { Mes } from "@/lib/fechas";
 
 export type EspeciePorZona = Especie & {
   viabilidad: Viabilidad;
