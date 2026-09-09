@@ -102,12 +102,27 @@ The system SHALL provide a preferences panel where users can review and change e
 
 ### Requirement: Consent gates telemetry and advertising
 
-The system SHALL NOT collect telemetry data or serve personalized advertising for users without valid consent for the corresponding purpose.
+El sistema SHALL servir publicidad personalizada únicamente para titulares con consentimiento válido del propósito correspondiente. La telemetría de producto de primer partido SHALL regir por interés legítimo: se registra salvo que exista una elección de privacidad válida del titular con la oposición activada. El registro CMP SHALL seguir almacenando la elección (consentimientos y oposición) en cada guardado.
+
+#### Scenario: Titular sin consentimiento de publicidad
+- **WHEN** un usuario no tiene registro de consentimiento válido para publicidad personalizada
+- **THEN** no se le sirve inventario personalizado por audiencia (solo contextual/genérico)
 
 #### Scenario: Non-consented user
+- **WHEN** un usuario sin consentimiento de publicidad (registro ausente o expirado)
+- **THEN** no se le sirve inventario personalizado por audiencia (solo contextual/genérico) y — si además opuso el interés legítimo — no se registra telemetría de producto
 
-- **WHEN** a user has no valid consent record or expired consent
-- **THEN** the system captures no telemetry events for that user and serves no personalized ads
+#### Scenario: Telemetría bajo interés legítimo sin oposición
+- **WHEN** un visitante navega sin elección válida, o con elección válida sin oposición al interés legítimo
+- **THEN** la telemetría de producto se registra (eventos con deviceId y, si hay sesión, `user_id` propio)
+
+#### Scenario: Telemetría con oposición activa
+- **WHEN** existe elección válida con `legitimateInterestOpposed: true`
+- **THEN** no se registran eventos de telemetría de producto
+
+#### Scenario: Rechazo total en onboarding sigue siendo posible
+- **WHEN** el usuario elige "Rechazar todo" en el CMP
+- **THEN** se guarda una elección con todos los consentimientos OFF y oposición registrada explícita, sin telemetría de producto ni publicidad personalizada
 
 ### Requirement: Onboarding consent allows rejecting all purposes
 The onboarding consent modal SHALL be dismissible and SHALL provide a "Rechazar todo" option that records every purpose as denied and lets the user enter the app without granting any consent.
