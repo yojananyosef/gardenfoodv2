@@ -70,11 +70,13 @@ export default function PrivacidadPage() {
 
       <H2>Sobre la publicidad y el modelo de datos</H2>
       <P>
-        No vendemos tus datos personales. La publicidad se entrega de dos maneras: contextual (según
-        la página que ves, sin datos de comportamiento) o personalizada por segmentos (solo si
-        otorgaste el consentimiento correspondiente). Las estadísticas que eventualmente se
-        comparten con marcas son agregadas y anonimizadas: nunca incluyen datos identificables de
-        individuos y solo se reportan grupos de tamaño mínimo (50 usuarios).
+        No vendemos ni entregamos tus datos personales. El modelo es clean-room: una marca compra
+        la entrega de publicidad contra un segmento (por ejemplo, «personas interesadas en fertilizantes orgánicos») y recibe solo reportes de entrega agregados — impresiones, clics
+        y CTR de grupos de mínimo 50 usuarios, sin ningún dato identificable. Los datos personales
+        nunca salen de GardenFood. Tus datos solo se computan en esos segmentos si tienes vigente
+        el consentimiento «Compartir con socios comerciales» (revocable en cualquier momento desde
+        tu perfil); la publicidad contextual se sirve sin datos de comportamiento y la
+        personalizada únicamente con tu consentimiento.
       </P>
 
       <H2>Encargados y transferencias internacionales</H2>

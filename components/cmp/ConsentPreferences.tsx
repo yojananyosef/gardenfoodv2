@@ -34,7 +34,8 @@ const PURPOSES: Array<{
   {
     key: "thirdPartySharing",
     title: "Compartir con socios comerciales",
-    description: "Compartir datos agregados con marcas y viveros aliados.",
+    description:
+      "Participar en estadísticas agregadas de segmentos y en la entrega de publicidad de marcas contra esos segmentos. No vendemos ni entregamos tus datos: la marca nunca recibe datos personales.",
   },
   {
     key: "deviceLinking",

@@ -10,10 +10,12 @@ interface Props {
 }
 
 const ENCABEZADO = "Estadísticas agregadas — no incluye datos personales";
+const BASE_CONSENTIMIENTO = "Incluye solo titulares que aceptaron compartir con socios comerciales (consentimiento vigente)";
 
 function aCsv(data: MediaKitData): string {
   const lineas: string[] = [
     `# ${ENCABEZADO}`,
+    `# ${BASE_CONSENTIMIENTO}`,
     `# generado: ${new Date().toISOString()}`,
     `# k-anonymity: minimo ${data.kMinimo} usuarios por segmento`,
     "# fuente: telemetria con consentimiento de GardenFood",
@@ -72,6 +74,7 @@ export function MediaKitExport({ data, disabled }: Props) {
                 generado: new Date().toISOString(),
                 kAnonymity: { minimo: data.kMinimo, segmentosBajoUmbral: data.bajoUmbral },
                 nota: ENCABEZADO,
+                baseConsentimiento: BASE_CONSENTIMIENTO,
                 segmentos: {
                   comerciales: data.porSegmento,
                   poderAdquisitivo: data.porTier,

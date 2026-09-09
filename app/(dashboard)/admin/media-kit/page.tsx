@@ -56,7 +56,8 @@ export default async function AdminMediaKitPage() {
         <h2 className="font-heading text-2xl font-semibold">Media kit</h2>
         <p className="text-sm text-muted-foreground">
           Segmentos comercializables con k-anonymity ≥{kit.kMinimo}: solo conteos agregados,
-          nunca datos individuales.
+          nunca datos individuales. Los conteos incluyen únicamente titulares con la
+          elección «Compartir con socios comerciales» vigente.
         </p>
       </div>
 
