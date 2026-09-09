@@ -20,6 +20,7 @@ const RUTAS_PUBLICAS = [
   "/sw.js",
   "/og.png",
   "/icons",
+  "/propuestas",
 ];
 
 export function esRutaProtegida(pathname: string): boolean {
@@ -120,6 +121,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // /propuestas excluido del proxy: wireframes estáticos sin sesión ni CSP-nonce
+    "/((?!_next/static|_next/image|favicon.ico|propuestas(?:/|$)|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
