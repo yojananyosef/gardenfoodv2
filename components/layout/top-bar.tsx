@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calculator, Compass, LogIn, Sprout, User } from "lucide-react";
+import { Calculator, Compass, LogIn, ShieldCheck, Sprout, User } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ function GuestNav() {
   );
 }
 
-function UserNav() {
+function UserNav({ esAdmin }: { esAdmin?: boolean }) {
   return (
     <nav className="flex items-center gap-1 sm:gap-3">
       <div className="hidden items-center gap-1 text-sm md:flex">
@@ -53,6 +53,12 @@ function UserNav() {
           </Button>
         ))}
       </div>
+      {esAdmin ? (
+        <Button variant="ghost" size="sm" className="h-8 rounded-full text-primary" render={<Link href="/admin" />}>
+          <ShieldCheck data-icon="inline-start" />
+          Admin
+        </Button>
+      ) : null}
       <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/perfil" />}>
         <User data-icon="inline-start" />
         <span className="hidden lg:inline">Perfil</span>
@@ -62,7 +68,7 @@ function UserNav() {
   );
 }
 
-export async function TopBar() {
+export async function TopBar({ esAdmin }: { esAdmin?: boolean }) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -80,7 +86,7 @@ export async function TopBar() {
             CHILE
           </Badge>
         </Link>
-        {user ? <UserNav /> : <GuestNav />}
+        {user ? <UserNav esAdmin={esAdmin} /> : <GuestNav />}
       </div>
     </header>
   );

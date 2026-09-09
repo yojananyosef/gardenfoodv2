@@ -1,14 +1,20 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/auth/admin";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getTotalUsuarios, getGratuitoCount, getFunnel, getMRR, getEventos24h, getTopComunas, getActive30d } from "@/lib/admin/metrics";
+import { getOverview } from "@/lib/admin/metrics";
 
 export const dynamic = "force-dynamic";
 
 function formatCLP(n: number) {
   return `$${n.toLocaleString("es-CL")}`;
+}
+
+function formatFecha(iso: string | null): string {
+  if (!iso) return "Sin sincronizaciones";
+  const fecha = new Date(iso);
+  if (Number.isNaN(fecha.getTime())) return "Sin sincronizaciones";
+  return fecha.toLocaleString("es-CL", { dateStyle: "medium", timeStyle: "short" });
 }
 
 export default async function AdminOverviewPage() {
@@ -25,21 +31,14 @@ export default async function AdminOverviewPage() {
     );
   }
 
-  const [total, gratuito, funnel, mrr, eventos24h, topComunas, active30d] = await Promise.all([
-    getTotalUsuarios(),
-    getGratuitoCount(),
-    getFunnel(),
-    getMRR(),
-    getEventos24h(),
-    getTopComunas(5),
-    getActive30d(),
-  ]);
+  const { total, gratuitos, funnel, mrr, activos30d, eventos24h, topComunas, ultimaSincronizacion } =
+    await getOverview();
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Admin · Overview</h1>
-        <p className="text-sm text-muted-foreground">KPIs y salud del producto. Sin SQL.</p>
+        <h2 className="font-heading text-2xl font-semibold">Overview</h2>
+        <p className="text-sm text-muted-foreground">KPIs y salud del producto, agregados en SQL.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -48,7 +47,7 @@ export default async function AdminOverviewPage() {
             <CardDescription>Total usuarios</CardDescription>
             <CardTitle className="text-3xl">{total}</CardTitle>
           </CardHeader>
-          <CardContent className="text-xs text-muted-foreground">Activos 30d: {active30d}</CardContent>
+          <CardContent className="text-xs text-muted-foreground">Activos 30d: {activos30d}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
@@ -65,9 +64,9 @@ export default async function AdminOverviewPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Gratuitos</CardDescription>
-            <CardTitle className="text-3xl">{gratuito}</CardTitle>
+            <CardTitle className="text-3xl">{gratuitos}</CardTitle>
           </CardHeader>
-          <CardContent className="text-xs text-muted-foreground">{total ? Math.round((gratuito / total) * 100) : 0}% del total</CardContent>
+          <CardContent className="text-xs text-muted-foreground">{total ? Math.round((gratuitos / total) * 100) : 0}% del total</CardContent>
         </Card>
       </div>
 
@@ -89,31 +88,30 @@ export default async function AdminOverviewPage() {
         <Card>
           <CardHeader>
             <CardTitle>Salud</CardTitle>
-            <CardDescription>Eventos y webhook</CardDescription>
+            <CardDescription>Ingesta y sincronización con Mercado Pago</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Eventos 24h</span><span>{eventos24h}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Webhook MP</span><span>100% (27 notifs)</span></div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Eventos 24h</span>
+              <span>{eventos24h > 0 ? eventos24h : <span className="text-muted-foreground">sin datos en 24h</span>}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Última sincronización</span>
+              <span>{formatFecha(ultimaSincronizacion)}</span>
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>Top comunas</CardTitle>
-            <CardDescription>Por usuarios registrados</CardDescription>
+            <CardDescription>Por cultivos registrados (join perfiles)</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-1 text-sm">
-            {topComunas.length === 0 ? <span className="text-muted-foreground">Sin datos</span> : topComunas.map((c) => (
+            {topComunas.length === 0 ? <span className="text-muted-foreground">Sin cultivos aún</span> : topComunas.map((c) => (
               <div key={c.comuna} className="flex justify-between"><span>{c.comuna}</span><span>{c.count}</span></div>
             ))}
           </CardContent>
         </Card>
-      </div>
-
-      <div className="flex flex-wrap gap-2 text-sm">
-        <Link href="/admin/usuarios" className="rounded-lg border bg-card px-4 py-2 hover:bg-muted">Ver usuarios</Link>
-        <Link href="/admin/finanzas" className="rounded-lg border bg-card px-4 py-2 hover:bg-muted">Ver finanzas</Link>
-        <Link href="/admin/audiencias" className="rounded-lg border bg-card px-4 py-2 hover:bg-muted">Audiencias</Link>
-        <Link href="/admin/sponsorships" className="rounded-lg border bg-card px-4 py-2 hover:bg-muted">Patrocinios</Link>
       </div>
     </div>
   );
