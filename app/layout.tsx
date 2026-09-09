@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { ConsentBanner } from "@/components/cmp/ConsentBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -84,7 +86,10 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // CSP: el nonce viene del middleware (proxy.ts). Leer headers() fuerza render
+  // dinámico — trade-off documentado en el design del change add-lpdp-compliance.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html
       lang="es"
@@ -93,9 +98,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        <ConsentBanner />
         <ServiceWorkerRegister />
       </body>
     </html>

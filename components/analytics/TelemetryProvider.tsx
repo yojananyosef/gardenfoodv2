@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { GeoContext } from "@/types";
 import { trackEvent, setTrackedGeo } from "@/lib/telemetry/tracker";
 import { getGeoContext } from "@/lib/telemetry/geo";
-import { hasValidLocalConsent } from "@/lib/consent/token";
+import { telemetriaPermitida } from "@/lib/consent/token";
 import { createClient } from "@/lib/supabase/client";
 
 export function TelemetryProvider({ children }: { children: React.ReactNode }) {
@@ -39,7 +39,7 @@ export function TelemetryProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!hasValidLocalConsent()) return;
+    if (!telemetriaPermitida()) return;
     trackEvent({
       category: "PRODUCT_USAGE",
       name: "PAGE_VIEW",

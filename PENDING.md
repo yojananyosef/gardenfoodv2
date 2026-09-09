@@ -1,10 +1,12 @@
 # AVISO — Pendientes de operación y deuda conocida
 
-Última actualización: 2026-09-03 (migraciones 0018 + 0019 aplicadas a producción; pendientes operacionales #1–#3 verificados).
+Última actualización: 2026-09-09 (Fase 1 LPDP aplicada: legales, CMP completo, ARSOP, headers/CSP, docs de cumplimiento).
 
 ## 🔴 Acción requerida (operación, no código)
 
-Ninguna. Los 3 pendientes de `harden-payments-and-rls` quedaron cerrados (ver 🟢).
+1. **Supabase Dashboard → Auth → URL Configuration** (bloqueante del funnel de registro): Site URL = dominio de producción + Redirect URLs `https://<prod>/auth/confirm/**` y `http://localhost:3000/auth/confirm/**`. Ver README § Auth.
+2. **Validación jurídica** de las plantillas de `/legal/{terminos,privacidad,cookies}` antes de cobrar suscripciones: completar placeholders [RAZÓN SOCIAL]/[RUT]/[EMAIL] y validar los textos (docs/legal/). No soy asesor legal.
+3. **DPA de geolocalización IP**: identificar el proveedor de `IPGEO_URL` y firmar DPA, o desactivar la geo por IP (ver docs/legal/dpas-checklist.md).
 
 ## 🟡 Deuda conocida (de la auditoría, sin change abierto)
 
@@ -12,10 +14,11 @@ Ninguna. Los 3 pendientes de `harden-payments-and-rls` quedaron cerrados (ver �
 |---|---|
 | `fichas.ts` monolítico | 10.360 líneas; split por especie (README lo documenta) |
 | Código muerto | `readConsentCookieExpiry`, `clearLocalConsent`, `resetTracker`, `mpPlanKey`, `describeInterval`, `esRutaProtegida` (sin tests), `getComuna/getCalendario/getEspeciesPorGrupo/getGrupos`, `interface ZonaClimatica` duplicada en `zonas.ts`, `MESES` duplicado, variable muerta `huerto/data.ts`, scripts `migrate-frutas-images.mjs` y `setup-mercadopago-plans.mjs` + tabla `gf_subscription_plans` vestigiales |
-| CMP anónimo | Sin banner de consentimiento en primera visita anónima; `thirdPartySharing`/`deviceLinking` se guardan pero nunca se leen; sin flujo de revocación total |
+| CMP anónimo | ~~Sin banner de consentimiento en primera visita anónima;~~ **Cerrado 2026-09-09** (`add-lpdp-compliance`): banner en layout raíz, revocación total en perfil, telemetría bajo interés legítimo con oposición, flags `personalizedAds` ya gated server-side. `thirdPartySharing`/`deviceLinking` quedan como gates documentados de la exportación B2B (Fase ad-tech) |
 | Auth | OAuth (Google/Apple) stub "Próximamente"; sin páginas de términos/privacidad. ~~"¿Olvidaste tu clave?" `href="#"` sin flujo~~ **Cerrado 2026-09-09** (`fix-auth-confirmation-flow`): recuperación + restablecimiento + confirmación por email con callback PKCE. Pendiente operacional: configurar Site URL/Redirect URLs en Supabase Dashboard (README § Auth) |
 | Métricas admin | Agregaciones full-table en JS (`lib/admin/metrics.ts`); `catch {}` silencioso en MRR (sub-conteo silencioso); errores de DB tragados como `[]` en huerto/cosechas |
-| Headers de seguridad | `next.config.ts` sin HSTS/X-Frame-Options/`poweredByHeader:false` |
+| Headers de seguridad | ~~`next.config.ts` sin HSTS/X-Frame-Options/`poweredByHeader:false`~~ **Cerrado 2026-09-09** (`add-lpdp-compliance`): HSTS/XFO/nosniff/Referrer/Permissions + CSP nonce en proxy.ts. Trade-off: layout raíz dinámico (sin estático de landing) por el nonce del JSON-LD |
+| Retención telemetría | Nueva deuda LPDP: implementar purge de `gf_analytics_events` a 24 meses (pg_cron o job) — declarado en la Política de Privacidad y RAT |
 | PWA | Cache de navegaciones sin límite; `/frutas/*.webp` no cacheadas; versión del SW manual |
 | Tests | Sin cobertura de route handlers ni de `lib/supabase`; sin script `test:coverage` pese a tener `@vitest/coverage-v8` |
 | Advisors Supabase (pre-existentes) | `is_admin()` SECURITY DEFINER ejecutable vía RPC por anon/authenticated (⚠️ no revocar EXECUTE: las políticas RLS dependen de él); `set_updated_at` con search_path mutable; `pg_net` en schema `public` (default Supabase); `gf_cron_config` con RLS sin políticas (intencional: solo service role); Leaked Password Protection deshabilitado en Auth |

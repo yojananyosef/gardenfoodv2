@@ -10,6 +10,7 @@ const RUTAS_PUBLICAS = [
   "/login",
   "/api",
   "/auth",
+  "/legal",
   "/recuperar",
   "/restablecer",
   "/sitemap.xml",
@@ -25,8 +26,41 @@ export function esRutaProtegida(pathname: string): boolean {
   return !RUTAS_PUBLICAS.some((ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`));
 }
 
+function buildCsp(nonce: string): string {
+  const dev = process.env.NODE_ENV !== "production";
+  const scriptSrc = dev
+    ? `'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval'`
+    : `'self' 'nonce-${nonce}' 'strict-dynamic'`;
+  const csp = [
+    "default-src 'self'",
+    `script-src ${scriptSrc}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' blob: data: https:",
+    "font-src 'self' data:",
+    `connect-src 'self' ${dev ? "ws:" : ""} https://*.supabase.co wss://*.supabase.co`,
+    "frame-ancestors 'none'",
+    "form-action 'self' https://www.mercadopago.com https://*.mercadopago.com",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ];
+  if (dev) {
+    csp[5] = "connect-src 'self' ws: wss: https://*.supabase.co wss://*.supabase.co";
+  }
+  return csp.join("; ");
+}
+
 export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  // CSP con nonce por request (patrón Next): el layout lee el nonce del request
+  // para los scripts inline propios; Next lo aplica automáticamente al resto.
+  const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
+  const cspValue = buildCsp(nonce);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", cspValue);
+
+  let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
+  supabaseResponse.headers.set("Content-Security-Policy", cspValue);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,7 +72,8 @@ export async function proxy(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
+          supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
+          supabaseResponse.headers.set("Content-Security-Policy", cspValue);
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );

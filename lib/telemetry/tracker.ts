@@ -1,6 +1,6 @@
 import type { DeviceMetadata, GeoContext, TelemetryEvent } from "@/types";
 import { getDeviceId, getDeviceMetadata } from "@/lib/telemetry/device";
-import { hasValidLocalConsent } from "@/lib/consent/token";
+import { telemetriaPermitida } from "@/lib/consent/token";
 import { withGeo } from "@/lib/telemetry/geo";
 
 const ENDPOINT = "/api/v1/telemetry";
@@ -50,7 +50,8 @@ export type TrackEventInput = Omit<
 >;
 
 export function trackEvent(input: TrackEventInput): void {
-  if (!hasValidLocalConsent()) return;
+  // Interés legítimo (LPDP art. 13): corre salvo oposición explícita del titular.
+  if (!telemetriaPermitida()) return;
   const deviceMetadata: DeviceMetadata = getDeviceMetadata();
   const event: TelemetryEvent = withGeo(
     {

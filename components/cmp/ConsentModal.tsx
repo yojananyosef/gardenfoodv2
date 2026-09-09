@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { ConsentPreferences, type ConsentDraft } from "@/components/cmp/ConsentPreferences";
 import { buildLocalConsent, setLocalConsent } from "@/lib/consent/token";
 
-const MOTIVATIONAL_COPY = {
-  title: "¡Únete al huerto GardenFood!",
-  body: "Permítenos crear una experiencia a tu medida donde sepamos exactamente cuándo podar, regar y qué fertilizante necesita tu tierra.",
-  primary: "Consentir y Comenzar",
+const CMP_COPY = {
+  title: "Tu privacidad, a tu medida",
+  body: "Analizamos el uso de la app de forma agregada para mejorarla (interés legítimo; puedes oponerte abajo). Las funciones de publicidad personalizada, geolocalización precisa y compartición con socios comerciales solo se activan con tu consentimiento. Ninguna opción queda preseleccionada.",
+  primary: "Aceptar todo",
   secondary: "Gestionar opciones",
   reject: "Rechazar todo",
 };
@@ -145,7 +145,7 @@ export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModal
     <Dialog open={open} onOpenChange={handleOpenChange} modal>
       {manage ? (
         <ConsentPreferences
-          title={MOTIVATIONAL_COPY.title}
+          title={CMP_COPY.title}
           deviceId={deviceId}
           onBack={() => setManage(false)}
           onConfirm={saveDraft}
@@ -157,31 +157,31 @@ export function ConsentModal({ open, deviceId, userId, onConsent }: ConsentModal
           role="alertdialog"
         >
           <DialogTitle className="text-lg font-semibold">
-            {MOTIVATIONAL_COPY.title}
+            {CMP_COPY.title}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            {MOTIVATIONAL_COPY.body}
+            {CMP_COPY.body}
           </DialogDescription>
           <div className="flex flex-col gap-3 pt-2">
             <Button
               className="min-h-12 w-full text-base"
               onClick={grantAll}
             >
-              {MOTIVATIONAL_COPY.primary}
+              {CMP_COPY.primary}
             </Button>
             <Button
               variant="ghost"
               className="h-auto min-h-11 w-full justify-center px-2 text-sm font-normal text-muted-foreground underline-offset-4 hover:underline"
               onClick={() => setManage(true)}
             >
-              {MOTIVATIONAL_COPY.secondary}
+              {CMP_COPY.secondary}
             </Button>
             <Button
               variant="ghost"
               className="h-auto min-h-11 w-full justify-center px-2 text-sm font-normal text-muted-foreground hover:underline"
               onClick={() => void rejectAll()}
             >
-              {MOTIVATIONAL_COPY.reject}
+              {CMP_COPY.reject}
             </Button>
           </div>
         </DialogContent>

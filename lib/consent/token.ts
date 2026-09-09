@@ -1,7 +1,11 @@
 import type { ConsentPurpose } from "@/types";
 
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2;
 export const CONSENT_TTL_MS = 390 * 24 * 60 * 60 * 1000;
+
+// Versiones que aceptamos como elecciones explícitas válidas del titular:
+// v1 (pre-LPDP) comparte semántica de oposición, v2 es la actual.
+const VERSIONES_ACEPTADAS = new Set([1, CONSENT_VERSION]);
 
 export const LOCAL_CONSENT_KEY = "gf_consent";
 export const CONSENT_COOKIE_NAME = "gf_consent";
@@ -47,10 +51,36 @@ export function getLocalConsent(): LocalConsent | null {
 
 export function isConsentValid(consent: LocalConsent, now = Date.now()): boolean {
   return (
-    consent.version === CONSENT_VERSION &&
+    VERSIONES_ACEPTADAS.has(consent.version) &&
     Number.isFinite(Date.parse(consent.expiresAt)) &&
     Date.parse(consent.expiresAt) > now
   );
+}
+
+/**
+ * Bases de licitud LPDP: la telemetría de producto corre por interés legítimo
+ * y solo se detiene si existe una elección válida del titular con la oposición
+ * activada. Los consentimientos granulares (ads/geo/terceros/vinculación)
+ * se consultan aparte con getConsentPurpose().
+ */
+export function telemetriaPermitidaCon(
+  consent: LocalConsent | null,
+  now = Date.now(),
+): boolean {
+  if (!consent || !isConsentValid(consent, now)) return true;
+  return !consent.legitimateInterestOpposed;
+}
+
+export function telemetriaPermitida(now = Date.now()): boolean {
+  return telemetriaPermitidaCon(getLocalConsent(), now);
+}
+
+/** El banner CMP aparece solo sin elección local válida (primera visita o tras revocar). */
+export function debeMostrarBanner(
+  consent: LocalConsent | null,
+  now = Date.now(),
+): boolean {
+  return !consent || !isConsentValid(consent, now);
 }
 
 export function hasValidLocalConsent(now = Date.now()): boolean {

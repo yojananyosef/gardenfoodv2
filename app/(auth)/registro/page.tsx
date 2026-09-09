@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Leaf, Mail, Lock, User, MapPinned, Sprout, ShieldCheck, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -306,15 +307,26 @@ export default function RegistroPage() {
 
             <FieldDescription className="text-center text-xs leading-relaxed">
               Al crear tu cuenta aceptas los{" "}
-              <Link href="#" className="font-medium text-primary underline-offset-4 hover:underline">
+              <Link href="/legal/terminos" className="font-medium text-primary underline-offset-4 hover:underline">
                 términos
               </Link>{" "}
               y la{" "}
-              <Link href="#" className="font-medium text-primary underline-offset-4 hover:underline">
+              <Link href="/legal/privacidad" className="font-medium text-primary underline-offset-4 hover:underline">
                 privacidad
               </Link>
               . Usamos tu comuna solo para personalizar tu calendario.
             </FieldDescription>
+
+            <div className="flex items-start gap-2.5">
+              <Checkbox id="edad-confirmada" required className="mt-0.5" />
+              <label
+                htmlFor="edad-confirmada"
+                className="cursor-pointer text-xs leading-relaxed text-muted-foreground"
+              >
+                Declaro tener al menos <strong>14 años</strong>. Si tengo entre 14 y 16, cuento con
+                la autorización de mis representantes legales.
+              </label>
+            </div>
           </form>
 
           <div className="flex flex-col gap-3">
