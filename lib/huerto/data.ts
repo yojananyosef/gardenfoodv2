@@ -171,11 +171,13 @@ export async function getPerfil(userId: string): Promise<{
   comuna: string | null;
   zonaAgroclimatica: string | null;
   plan: string;
+  huertoModo: string | null;
+  asistenteCompletadoAt: string | null;
 } | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("perfiles")
-    .select("comuna, zona_agroclimatica, plan")
+    .select("comuna, zona_agroclimatica, plan, huerto_modo, asistente_completado_at")
     .eq("id", userId)
     .maybeSingle();
 
@@ -184,5 +186,7 @@ export async function getPerfil(userId: string): Promise<{
     comuna: data.comuna ?? null,
     zonaAgroclimatica: data.zona_agroclimatica ?? null,
     plan: data.plan ?? "gratuito",
+    huertoModo: (data.huerto_modo as string | null) ?? null,
+    asistenteCompletadoAt: data.asistente_completado_at ?? null,
   };
 }

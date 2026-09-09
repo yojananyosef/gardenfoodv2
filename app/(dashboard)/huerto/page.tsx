@@ -19,6 +19,7 @@ import {
   LayoutGrid,
   ListTodo,
   Thermometer,
+  Wand2,
 } from "lucide-react";
 
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
@@ -29,6 +30,12 @@ import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { ListaCultivos } from "@/components/huerto/ListaCultivos";
 import { ListaArboles } from "@/components/huerto/ListaArboles";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
+import { ModoToggle } from "./ModoToggle";
+import { AsistenteHuerto } from "@/components/huerto/AsistenteHuerto";
+import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
+import { pasosAsistente } from "@/components/huerto/pasosAsistente";
+import { marcarAsistenteCompletado } from "@/lib/huerto/actions";
+import { modoEfectivo, type ModoHuerto } from "@/lib/huerto/modo";
 import { prepararCultivos } from "@/lib/huerto/nombres";
 import { TareasDelDia } from "@/components/huerto/TareasDelDia";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,6 +57,8 @@ import {
 import { limitesDe, type PlanAcceso } from "@/lib/payments/plans";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
+import type { Arbol, Cultivo, HuertoResumen, Tarea } from "@/types";
+import type { CultivoLite } from "@/lib/huerto/nombres";
 
 function hoyISO(): string {
   const now = new Date();
@@ -99,6 +108,32 @@ export default async function HuertoPage() {
     return Array.from(map.entries()).map(([tipo, count]) => ({ tipo, count, fill: colors[tipo] ?? "var(--primary)" }));
   })();
 
+  const modo: ModoHuerto = modoEfectivo({
+    huertoModo: perfil?.huertoModo ?? null,
+    tieneHuertos: huertos.length > 0,
+    tieneCultivosOArboles: cultivos.length > 0 || arboles.length > 0,
+  }) ?? "modular";
+  const asistentePendiente = !perfil?.asistenteCompletadoAt;
+  const huertoVacio = cultivos.length === 0 && arboles.length === 0 && huertos.length === 0;
+  const mostrarAsistente = asistentePendiente && huertoVacio && modo === "guiado";
+
+  if (modo === "guiado") {
+    return <VistaGuiada v={{ mostrarAsistente, asistentePendiente, cultivos, cultivosConNombre, arboles, huertos, tareas, alertas, zonaNombre: zona?.nombre ?? null, mesActual, especiesDisponibles, limites, recom, zonaId, userId: user.id }} />;
+  }
+
+  const sinUbicarTotal = arboles.filter((a) => a.posX === null || a.posY === null).length;
+  const pasosModular = pasosAsistente({
+    huertos,
+    arboles,
+    sinUbicar: arboles.filter((a) => a.posX === null || a.posY === null),
+    altaSlot: (
+      <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
+    ),
+    planoSlot: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} />,
+  });
+  const pasoInicialModular =
+    huertos.length === 0 ? 0 : cultivos.length === 0 ? 1 : sinUbicarTotal > 0 ? 2 : 3;
+
   return (
     <div className="flex flex-col gap-5">
       {/* Header + stats — always visible, bento */}
@@ -127,6 +162,16 @@ export default async function HuertoPage() {
                 ? `Tu zona: ${zona.nombre} — ${MESES[mesActual]}. Calendario fenológico y alertas para ${perfil?.comuna ?? "tu comuna"}.`
                 : "Actualiza tu comuna en tu perfil para recomendaciones a la medida."}
             </p>
+          </div>
+
+          <div className="flex flex-col items-end gap-2">
+            <ModoToggle modo="modular" />
+            <AsistenteFlotante
+              pasos={pasosModular}
+              pasoInicial={pasoInicialModular}
+              marcarCompletado={asistentePendiente}
+              onCompletar={marcarAsistenteCompletado}
+            />
           </div>
 
           <Card className="hidden shrink-0 rounded-2xl border-foreground/10 bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-3">
@@ -755,6 +800,173 @@ export default async function HuertoPage() {
           </AlertDescription>
         </Alert>
       ) : null}
+    </div>
+  );
+}
+
+/* ---------- Modo guiado (Propuesta E): asistente único + «¿qué sigue?» ---------- */
+
+interface VistaGuiadaProps {
+  v: {
+    mostrarAsistente: boolean;
+    asistentePendiente: boolean;
+    cultivos: Cultivo[];
+    cultivosConNombre: CultivoLite[];
+    arboles: Arbol[];
+    huertos: HuertoResumen[];
+    tareas: Tarea[];
+    alertas: Awaited<ReturnType<typeof climateAlertsProvider.getAlertas>>;
+    zonaNombre: string | null;
+    mesActual: number;
+    especiesDisponibles: typeof ESPECIES;
+    limites: ReturnType<typeof limitesDe>;
+    // datos de recomendadas para enlaces en el asistente
+    recom: ReturnType<typeof getEspeciesPorZona>;
+    zonaId: number;
+    userId: string;
+  };
+}
+
+function VistaGuiada({ v }: VistaGuiadaProps) {
+  const sinUbicar = v.arboles.filter((a) => a.posX === null || a.posY === null);
+  const cultivosConNombre = v.cultivosConNombre;
+  const dias = new Date().toLocaleDateString("es-CL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
+  const pasos = pasosAsistente({
+    huertos: v.huertos,
+    arboles: v.arboles,
+    sinUbicar,
+    altaSlot: (
+      <AgregarCultivo
+        especies={v.especiesDisponibles}
+        uso={{ actual: v.cultivos.length, limite: v.limites.cultivos }}
+      />
+    ),
+    planoSlot: <PlanoHuerto huertos={v.huertos} arboles={v.arboles} especies={ESPECIES} />,
+  });
+
+  const pasoInicial =
+    v.huertos.length === 0 ? 0 : v.cultivos.length === 0 ? 1 : sinUbicar.length > 0 ? 2 : 3;
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* Cabecera con toggle */}
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-1.5">
+          <Badge variant="secondary" className="w-fit gap-1.5 rounded-full px-2.5 py-1">
+            <Compass className="size-3" /> Modo guiado
+          </Badge>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-[1.9rem]">
+            {v.mostrarAsistente ? "Armamos tu huerto, paso a paso" : "¿Qué sigue hoy?"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {v.zonaNombre ? `${v.zonaNombre} · ${MESES[v.mesActual]}` : "Configura tu comuna en el perfil"} ·{" "}
+            <span className="capitalize">{dias}</span>
+          </p>
+        </div>
+        <ModoToggle modo="guiado" />
+      </div>
+
+      <Separator />
+
+      {v.mostrarAsistente ? (
+        <AsistenteHuerto pasos={pasos} pasoInicial={pasoInicial} alCompletar={marcarAsistenteCompletado} />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {/* Pendiente: árboles sin posicionar */}
+          {sinUbicar.length > 0 ? (
+            <Card className="rounded-2xl">
+              <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium">
+                    Te quedan {sinUbicar.length} ejemplares por posicionar en el plano
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    Reparto guiado en matriz (1 toque) o ajuste a mano. Quedan listados si los dejas para después.
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button className="rounded-full" render={<Link href="/huerto?plano=1" />}>
+                    Posicionar {sinUbicar.length} pendientes
+                  </Button>
+                  <ModoToggle modo="guiado" compacto />
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Tareas de hoy */}
+          <Card className="rounded-2xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <CalendarDays className="size-4 text-sky-600" /> Esta semana en tu zona
+              </CardTitle>
+              <CardDescription className="text-xs">
+                {v.tareas.length} tarea{v.tareas.length === 1 ? "" : "s"} para hoy · marca cada una como hecha
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TareasDelDia tareas={v.tareas} />
+            </CardContent>
+          </Card>
+
+          {/* Resumen por especie → ficha de especie */}
+          {cultivosConNombre.length > 0 ? (
+            <Card className="rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Tu huerto · resumen</CardTitle>
+                <CardDescription className="text-xs">
+                  {cultivosConNombre.length} especies · {v.arboles.length} árboles
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-2">
+                {cultivosConNombre.map((c) => {
+                  const afectados = v.arboles.filter((a) => a.especie === c.especie).length;
+                  return (
+                    <Link
+                      key={c.id}
+                      href={`/especie/especies/${c.especie}`}
+                      className="flex items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40"
+                    >
+                      <span className="flex flex-col">
+                        <span className="text-sm font-medium">¿Cómo va tu {c.nombre?.toLowerCase() ?? c.especie}?</span>
+                        <span className="text-xs text-muted-foreground">
+                          {afectados} {afectados === 1 ? "ejemplar" : "ejemplares"} en tu huerto
+                        </span>
+                      </span>
+                      <Badge variant="outline" className="rounded-full">Ver ficha →</Badge>
+                    </Link>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="rounded-2xl border-dashed">
+              <CardContent className="flex items-center gap-3 p-4">
+                <CheckCircle2 className="size-5 text-primary" />
+                <p className="text-sm text-muted-foreground">
+                  Todo al día: sin pendientes de posicionamiento ni tareas para hoy.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Única puerta de vuelta al asistente */}
+          <Card className="rounded-2xl bg-muted/30">
+            <CardContent className="flex flex-wrap items-center justify-between gap-2 p-4">
+              <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Wand2 className="size-4" />
+                ¿Repites el asistente (por ejemplo para agregar otro huerto)? Cambia al modo modular y usa «Abrir asistente», o dime cuando esté pendiente de terreno.
+              </p>
+              {v.asistentePendiente && <ModoToggle modo="guiado" compacto />}
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

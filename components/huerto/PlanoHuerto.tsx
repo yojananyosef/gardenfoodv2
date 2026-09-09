@@ -248,7 +248,7 @@ export function PlanoHuerto({
               onClick={() => setModo("2d")}
               aria-pressed={modo === "2d"}
             >
-              2D
+              Posicionar árboles
             </Button>
             <Button
               type="button"
@@ -258,7 +258,7 @@ export function PlanoHuerto({
               onClick={() => setModo("3d")}
               aria-pressed={modo === "3d"}
             >
-              3D
+              Visualización 3D
             </Button>
           </div>
           <Button

@@ -330,3 +330,130 @@ export async function eliminarArbol(id: string) {
   revalidatePath("/huerto");
   return { ok: true as const };
 }
+/* ---------- Modos de la vista /huerto (Propuesta E) ---------- */
+
+const HUERTO_MODO = z.object({
+  modo: z.enum(["guiado", "modular"]),
+});
+
+/** Guarda la preferencia de modo del usuario en su perfil. */
+export async function setHuertoModo(input: z.input<typeof HUERTO_MODO>) {
+  const parsed = HUERTO_MODO.parse(input);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const { error } = await supabase
+    .from("perfiles")
+    .update({ huerto_modo: parsed.modo })
+    .eq("id", user.id);
+
+  if (error) return { error: "No se pudo guardar tu preferencia." };
+
+  revalidatePath("/huerto");
+  return { ok: true as const, modo: parsed.modo };
+}
+
+/** Marca que el asistente guiado ya corrió (no vuelve a dispararse solo). */
+export async function marcarAsistenteCompletado() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const { error } = await supabase
+    .from("perfiles")
+    .update({ asistente_completado_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  if (error) return { error: "No se pudo guardar el estado del asistente." };
+
+  revalidatePath("/huerto");
+  return { ok: true as const };
+}
+
+/* ---------- Cuidados por especie: «Lo eché» (Propuesta E / módulo Especies) ---------- */
+
+const REGISTRAR_APLICACION = z.object({
+  especie: z.string().min(1).max(80),
+  arbolId: z.string().uuid().nullable().optional(),
+  huertoId: z.string().uuid().nullable().optional(),
+  momento: z.string().min(1).max(80),
+  producto: z.string().min(1).max(120),
+  gramos: z.number().min(0).max(100000).nullable().optional(),
+  /** Primer mes (¿Día 1?) del período siguiente para re-agendar. Ej: "Sep, Oct" */
+  mesesProximoMomento: z.string().max(80).nullable().optional(),
+});
+
+const MESES_AB = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+function proximaFechaDeMeses(meses: string, hoy = new Date()): string | null {
+  const tokens = meses.split(/[, ]+/).filter(Boolean).map((t) => t.slice(0, 3));
+  for (const token of tokens) {
+    const idx = MESES_AB.findIndex((m) => m.toLowerCase() === token.toLowerCase());
+    if (idx < 0) continue;
+    const anio = idx >= hoy.getMonth() ? hoy.getFullYear() : hoy.getFullYear() + 1;
+    return `${anio}-${String(idx + 1).padStart(2, "0")}-01`;
+  }
+  return null;
+}
+
+/**
+ * Registra «Lo eché» (gf_aplicaciones) y agenda el cuidado siguiente
+ * en el Calendario del usuario (gf_tareas, tipo nutricion).
+ */
+export async function registrarAplicacion(input: z.input<typeof REGISTRAR_APLICACION>) {
+  const parsed = REGISTRAR_APLICACION.parse(input);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado." };
+
+  const arbolId = parsed.arbolId ?? null;
+  let huertoId = parsed.huertoId ?? null;
+
+  // Aplicación grupal: si no viene árbol, se registra sin arbol_id (por especie) el resto igual.
+  if (arbolId) {
+    const { data: fila } = await supabase
+      .from("gf_arboles")
+      .select("huerto_id")
+      .eq("id", arbolId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!fila) return { error: "Árbol no encontrado." };
+    huertoId = fila.huerto_id;
+  }
+
+  const { error: errorAp } = await supabase.from("gf_aplicaciones").insert({
+    user_id: user.id,
+    arbol_id: arbolId,
+    especie: parsed.especie,
+    territorio_huerto_id: huertoId,
+    momento: parsed.momento,
+    producto: parsed.producto,
+    gramos: parsed.gramos ?? null,
+  });
+  if (errorAp) return { error: "No se pudo registrar la aplicación." };
+
+  if (parsed.mesesProximoMomento) {
+    const fecha = proximaFechaDeMeses(parsed.mesesProximoMomento);
+    if (fecha) {
+      await supabase.from("gf_tareas").insert({
+        user_id: user.id,
+        fecha,
+        especie: parsed.especie,
+        tipo: "nutricion",
+        texto: `${parsed.momento} · ${parsed.producto} (${parsed.especie})`,
+      });
+    }
+  }
+
+  revalidatePath("/huerto");
+  revalidatePath("/calendario");
+  revalidatePath("/especie/especies");
+  return { ok: true as const };
+}
