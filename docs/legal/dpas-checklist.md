@@ -22,8 +22,9 @@ Ley 21.719 exige contratos de tratamiento con todo proveedor que acceda a datos 
 
 ## 4. Servicio de geolocalización por IP (IPGEO_URL)
 
-- [ ] **Pendiente crítico**: identificar el proveedor actual (var de `.env`) y firmar DPA o desactivar la resolución de geo por IP si no hay contrato. Alternativa sin proveedor: derivar región aproximada del propio request solo para agregados, o pedir comuna declarada al usuario.
-- Datos tratados: IP del visitante (por evento de telemetría).
+- [x] **Resuelto 2026-09-09**: `IPGEO_URL` está vacío — no se usa ningún proveedor de terceros de geo por IP. La ubicación de los eventos viene de la comuna declarada por el usuario (ejecución de contrato) y del GPS del navegador solo con consentimiento `preciseGeo`. Sin terceros → sin DPA requerido.
+- [ ] Si se configura `IPGEO_URL` en el futuro: identificar proveedor, firmar DPA (o elegir uno con DPA estándar tipo ipapi/ipwho) y actualizar el RAT + Política de Privacidad.
+- Código listo para la función: `lib/telemetry/ipgeo.ts` (inactivo sin la var).
 
 ## 5. Google Fonts (via next/font)
 

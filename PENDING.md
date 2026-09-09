@@ -4,9 +4,9 @@
 
 ## 🔴 Acción requerida (operación, no código)
 
-1. **Supabase Dashboard → Auth → URL Configuration** (bloqueante del funnel de registro): Site URL = dominio de producción + Redirect URLs `https://<prod>/auth/confirm/**` y `http://localhost:3000/auth/confirm/**`. Ver README § Auth.
-2. **Validación jurídica** de las plantillas de `/legal/{terminos,privacidad,cookies}` antes de cobrar suscripciones: completar placeholders [RAZÓN SOCIAL]/[RUT]/[EMAIL] y validar los textos (docs/legal/). No soy asesor legal.
-3. **DPA de geolocalización IP**: identificar el proveedor de `IPGEO_URL` y firmar DPA, o desactivar la geo por IP (ver docs/legal/dpas-checklist.md).
+1. ~~Supabase Dashboard → Auth → URL Configuration~~ **Cerrado 2026-09-09** (configurado por el usuario).
+2. **Validación jurídica** de las plantillas de `/legal/{terminos,privacidad,cookies}` antes de cobrar suscripciones. Responsable: **Hugo Montenegro** (GardenFood), emprendedor individual, contacto pichilemugardenfood@gmail.com; Johan Gutierrez solo desarrollo. Falta completar el RUT al formalizar. No soy asesor legal.
+3. ~~DPA de geolocalización IP~~ **Resuelto sin acción 2026-09-09**: `IPGEO_URL` está vacío — no hay proveedor de terceros de geo por IP; la ubicación viene de la comuna declarada y del GPS solo con consentimiento `preciseGeo`. Si algún día se configura `IPGEO_URL`, ahí sí se necesita DPA con ese proveedor (ver dpas-checklist.md §4).
 
 ## 🟡 Deuda conocida (de la auditoría, sin change abierto)
 

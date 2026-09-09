@@ -1,5 +1,5 @@
 import type { DeviceMetadata, GeoContext, TelemetryEvent } from "@/types";
-import { getDeviceId, getDeviceMetadata } from "@/lib/telemetry/device";
+import { getDeviceMetadata, resolverDeviceIdLocal } from "@/lib/telemetry/device";
 import { telemetriaPermitida } from "@/lib/consent/token";
 import { withGeo } from "@/lib/telemetry/geo";
 
@@ -53,10 +53,14 @@ export function trackEvent(input: TrackEventInput): void {
   // Interés legítimo (LPDP art. 13): corre salvo oposición explícita del titular.
   if (!telemetriaPermitida()) return;
   const deviceMetadata: DeviceMetadata = getDeviceMetadata();
+  // Escalera de identidad: sin id durable el cliente OMITE el deviceId y el
+  // servidor lo resuelve (cookie first-party → nuevo). Evita ids desechables
+  // contaminando las audiencias por dispositivo.
+  const { deviceId } = resolverDeviceIdLocal();
   const event: TelemetryEvent = withGeo(
     {
       sessionId: getSessionId(),
-      deviceId: getDeviceId(),
+      deviceId: deviceId ?? undefined,
       category: input.category,
       name: input.name,
       especieId: input.especieId ?? null,

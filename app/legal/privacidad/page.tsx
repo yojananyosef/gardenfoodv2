@@ -33,14 +33,16 @@ export default function PrivacidadPage() {
       </p>
 
       <div className="mb-6 rounded-xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/40 dark:text-amber-200">
-        [PLACEHOLDER — completar antes de monetizar: RAZÓN SOCIAL, RUT y EMAIL DE CONTACTO del
-        responsable. Este texto es una plantilla técnica y debe ser validado por un abogado.]
+        Responsable: Hugo Montenegro (GardenFood), emprendedor individual · RUT por completar al
+        formalizar. Contacto: pichilemugardenfood@gmail.com. Desarrollo: Johan Gutierrez. Texto
+        plantilla pendiente de validación por abogado antes de monetizar.
       </div>
 
       <H2>1. Responsable del tratamiento</H2>
       <P>
-        El responsable del tratamiento de tus datos es [RAZÓN SOCIAL], RUT [RUT], con contacto en
-        [EMAIL]. Toda consulta o ejercicio de derechos se atiende por ese correo y desde la sección
+        El responsable del tratamiento de tus datos es Hugo Montenegro (GardenFood), emprendedor
+        individual, RUT [completar al formalizar], con contacto en pichilemugardenfood@gmail.com.
+        Toda consulta o ejercicio de derechos se atiende por ese correo y desde la sección
         &quot;Tus derechos&quot; de tu perfil.
       </P>
 
@@ -104,7 +106,7 @@ export default function PrivacidadPage() {
         items={[
           "Portabilidad y supresión: sección “Tus derechos sobre tus datos” en tu perfil.",
           "Oposición y consentimientos: Ajustes de privacidad en tu perfil, o el banner de la primera visita.",
-          "Cualquier otro derecho o reclamo: escríbenos a [EMAIL]. Si no quedas conforme, puedes reclamar ante la Agencia de Protección de Datos Personales.",
+          "Cualquier otro derecho o reclamo: escríbenos a pichilemugardenfood@gmail.com. Si no quedas conforme, puedes reclamar ante la Agencia de Protección de Datos Personales.",
         ]}
       />
 

@@ -33,15 +33,17 @@ export default function TerminosPage() {
       </p>
 
       <div className="mb-6 rounded-xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/40 dark:text-amber-200">
-        [PLACEHOLDER — completar antes de monetizar: RAZÓN SOCIAL, RUT y EMAIL DE CONTACTO.
-        Plantilla técnica pendiente de validación por abogado.]
+        Responsable: Hugo Montenegro (GardenFood), emprendedor individual · RUT por completar al
+        formalizar. Contacto: pichilemugardenfood@gmail.com. Desarrollo: Johan Gutierrez. Texto
+        plantilla pendiente de validación por abogado antes de monetizar.
       </div>
 
       <H2>1. El servicio</H2>
       <P>
         GardenFood es una plataforma de agronomía doméstica para Chile: calendario y fichas de
         manejo (poda, riego, fertilización, sanidad) por especie y comuna, planificador de huerto
-        y calculadoras. El responsable es [RAZÓN SOCIAL], RUT [RUT], contacto [EMAIL].
+        y calculadoras. El responsable es Hugo Montenegro (GardenFood), emprendedor individual,
+        RUT [completar al formalizar], contacto pichilemugardenfood@gmail.com.
       </P>
 
       <H2>2. Cuenta y edad</H2>
@@ -70,7 +72,7 @@ export default function TerminosPage() {
         Durante el período de prueba no se generan cobros, por lo que no hay monto que devolver. Si
         contrataste un plan y te arrepientes dentro de los 10 días siguientes a la contratación
         sin haber usado el servicio de pago, puedes ejercer el derecho de retracto escribiendo a
-        [EMAIL]; devolveremos las sumas abonadas que correspondan a servicios no prestados.
+        pichilemugardenfood@gmail.com; devolveremos las sumas abonadas que correspondan a servicios no prestados.
       </P>
 
       <H2>5. Contenido agronómico</H2>
@@ -91,7 +93,7 @@ export default function TerminosPage() {
 
       <H2>7. Propiedad intelectual</H2>
       <P>
-        El catálogo, fichas, software y marcas pertenecen a [RAZÓN SOCIAL] o a sus licenciantes. Tu
+        El catálogo, fichas, software y marcas pertenecen a Hugo Montenegro (GardenFood) o a sus licenciantes. Tu
         huerto y tus datos son tuyos; puedes exportarlos cuando quieras (sección &quot;Tus
         derechos&quot; de tu perfil).
       </P>

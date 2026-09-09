@@ -11,7 +11,7 @@ export const consentPurposesSchema = z.object({
 export const consentUpdateSchema = consentPurposesSchema
   .extend({
     deviceId: z.string().min(1).max(200),
-    consentString: z.string().max(2048).optional(),
+    consentString: z.string().max(2048).nullish(),
   })
   .strict();
 

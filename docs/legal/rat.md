@@ -1,6 +1,6 @@
 # Registro de Actividades de Tratamiento (RAT)
 
-Proyecto: GardenFood v2 · Responsable: [RAZÓN SOCIAL] · RUT: [RUT] · Actualizado: 2026-09-09
+Proyecto: GardenFood v2 · Responsable: Hugo Montenegro (GardenFood) · RUT: por completar al formalizar · Desarrollo: Johan Gutierrez · Actualizado: 2026-09-09
 
 Inventario de tratamientos según la Ley 21.719. Se actualiza en cada change que agregue o modifique tratamientos.
 

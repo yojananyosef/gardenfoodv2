@@ -42,7 +42,7 @@ export interface GeoContext {
 
 export interface TelemetryEvent {
   sessionId: string;
-  deviceId: string;
+  deviceId?: string;
   category: TelemetryEventCategory;
   name: string;
   especieId?: string | null;

@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { telemetryBatchSchema } from "@/lib/telemetry/schemas";
 import { resolveIpGeo } from "@/lib/telemetry/ipgeo";
 import { createClient } from "@/lib/supabase/server";
+import {
+  extraerCookieDeviceId,
+  resolverDeviceIdServidor,
+} from "@/lib/telemetry/resolucion";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +30,22 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Escalera de identidad server-side: deviceId del evento → cookie gf_did →
+  // generar nuevo (y devolverlo como Set-Cookie first-party para continuidad).
+  // Solo interviene si algún evento del batch carece de deviceId.
+  const faltaDeviceId = parsed.data.events.some((event) => !event.deviceId);
+  const cookieDid = faltaDeviceId ? extraerCookieDeviceId(request.headers.get("cookie")) : null;
+  const protocolo =
+    request.headers.get("x-forwarded-proto") ?? new URL(request.url).protocol.replace(":", "");
+  const nuevoId = `did_${crypto.randomUUID()}`;
+  const resolucion = faltaDeviceId
+    ? resolverDeviceIdServidor({
+        cookieDid,
+        nuevoId,
+        secure: protocolo === "https",
+      })
+    : { deviceId: "", setCookie: null };
+
   const ipAddress =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
   const ipGeo =
@@ -37,7 +57,7 @@ export async function POST(request: Request) {
   const rows = parsed.data.events.map((event) => ({
     user_id: user?.id ?? null,
     session_id: event.sessionId,
-    device_id: event.deviceId,
+    device_id: event.deviceId ?? resolucion.deviceId,
     event_category: event.category,
     event_name: event.name,
     comuna: event.geo?.comuna ?? ipGeo?.comuna ?? null,
@@ -62,7 +82,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, ingested: rows.length });
+  const response = NextResponse.json({ ok: true, ingested: rows.length });
+  if (resolucion.setCookie) {
+    response.headers.set("Set-Cookie", resolucion.setCookie);
+  }
+  return response;
 }
 
 export async function GET(request: Request) {

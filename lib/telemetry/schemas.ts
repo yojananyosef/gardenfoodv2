@@ -24,7 +24,9 @@ const deviceMetadataSchema = z
 export const telemetryEventSchema = z
   .object({
     sessionId: z.string().min(1).max(200),
-    deviceId: z.string().min(1).max(200),
+    // Opcional: clientes sin identidad durable la omiten; el servidor resuelve
+    // por escalera (cookie first-party → nuevo identificador).
+    deviceId: z.string().min(1).max(200).optional(),
     category: z.enum([
       "PRODUCT_USAGE",
       "AD_INTERACTION",

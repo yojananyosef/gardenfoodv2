@@ -1,6 +1,9 @@
 import type { DeviceMetadata } from "@/types";
+import { getConsentPurpose } from "@/lib/consent/token";
+import { huellaDispositivo } from "@/lib/telemetry/huella";
 
 const DEVICE_ID_KEY = "gf_device_id";
+const EFIMERO_KEY = "gf_device_efimero";
 
 function uuid(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -9,13 +12,73 @@ function uuid(): string {
   return `dev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+export type FuenteDeviceId = "almacenamiento" | "huella" | "efimero";
+
+export interface DeviceIdResuelto {
+  deviceId: string | null;
+  fuente: FuenteDeviceId | null;
+}
+
+let efimeroMemoria: string | null = null;
+
+function idEfimero(): string {
+  if (efimeroMemoria) return efimeroMemoria;
+  const creado = uuid();
+  efimeroMemoria = creado;
+  try {
+    window.sessionStorage.setItem(EFIMERO_KEY, creado);
+  } catch {
+    // storage bloqueado: vive solo en memoria durante la sesión
+  }
+  return creado;
+}
+
+/**
+ * Escalera de identidad del cliente (LPDP): almacenamiento local → huella
+ * determinista solo con `deviceLinking` consentido → null (efímero: el cliente
+ * omite el id y el servidor lo resuelve con cookie propia).
+ */
+export function resolverDeviceIdLocal(): DeviceIdResuelto {
+  if (typeof window === "undefined") return { deviceId: null, fuente: null };
+  try {
+    const existing = window.localStorage.getItem(DEVICE_ID_KEY);
+    if (existing) return { deviceId: existing, fuente: "almacenamiento" };
+    const creado = uuid();
+    window.localStorage.setItem(DEVICE_ID_KEY, creado);
+    return { deviceId: creado, fuente: "almacenamiento" };
+  } catch {
+    // localStorage bloqueado (modo privado/Brave): escalar
+  }
+  if (getConsentPurpose("deviceLinking")) {
+    const partes = partesHuellaDesdeNavegador();
+    return { deviceId: huellaDispositivo(partes), fuente: "huella" };
+  }
+  return { deviceId: null, fuente: null };
+}
+
+/**
+ * Compatibilidad para quien exige un string (CMP, ads): resuelve la escalera y
+ * cae a un id efímero de sesión si no hay identidad durable.
+ */
 export function getDeviceId(): string {
-  if (typeof window === "undefined") return "server";
-  const existing = window.localStorage.getItem(DEVICE_ID_KEY);
-  if (existing) return existing;
-  const created = uuid();
-  window.localStorage.setItem(DEVICE_ID_KEY, created);
-  return created;
+  const resuelto = resolverDeviceIdLocal();
+  if (resuelto.deviceId) return resuelto.deviceId;
+  return idEfimero();
+}
+
+function partesHuellaDesdeNavegador() {
+  const nav = navigator as Navigator & {
+    userAgentData?: { platform?: string };
+  };
+  return {
+    userAgent: nav.userAgent ?? "",
+    pantalla:
+      typeof window !== "undefined"
+        ? `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`
+        : "",
+    idioma: nav.language ?? "",
+    zonaHoraria: Intl.DateTimeFormat().resolvedOptions().timeZone ?? "",
+  };
 }
 
 export function getDeviceMetadata(): DeviceMetadata {
