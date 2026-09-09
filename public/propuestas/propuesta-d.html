@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propuesta D — Modo App · GardenFood</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ═══ Lenguaje visual del socio (gardenfood-nutricion-simple) aplicado al huerto ═══ */
+:root{
+  --verde:#2E7D32; --verde-osc:#1B5E20; --lima:#8BC34A; --naranja:#F57C00;
+  --morado:#7B3F7A; --rojo:#D0402A;
+  --fondo:#F1F7EC; --papel:#FFFFFF; --tinta:#1F2A1C; --gris:#5E6B59; --linea:#D9E4D1;
+  --r:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:18px}
+body{font-family:'Nunito',system-ui,sans-serif;font-size:18px;line-height:1.5;color:var(--tinta);background:var(--fondo)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}
+a{color:var(--verde-osc);text-decoration:underline}
+.screen{display:none;padding:14px}
+.screen.on{display:block;animation:ap .2s ease}
+@keyframes ap{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wrap{max-width:960px;margin:0 auto;padding-bottom:60px}
+
+/* barra de prototipo */
+.proto{position:sticky;top:0;z-index:50;background:var(--papel);border-bottom:3px solid var(--verde);padding:8px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.proto .tag{font-weight:900;color:var(--verde-osc);margin-right:4px}
+.ptab{font-size:14px;font-weight:700;padding:5px 12px;border:2px solid var(--linea);border-radius:999px;background:var(--papel)}
+.ptab.act{background:var(--verde);border-color:var(--verde);color:#fff}
+.legend{font-size:12px;color:var(--gris);margin-left:auto}
+.req{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border:2px dashed var(--verde);border-radius:999px;font-size:11px;font-weight:900;color:var(--verde-osc);background:#fff}
+.nota{border:2px dashed var(--verde);background:#fff;border-radius:16px;padding:8px 12px;font-size:13px;color:var(--tinta);display:inline-flex;gap:8px;align-items:flex-start;max-width:340px}
+
+/* cabecera app */
+.gf-top{background:var(--verde);color:#fff;border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.gf-top h1{font-size:clamp(20px,4vw,28px);font-weight:900;line-height:1.15}
+.gf-top small{display:block;font-size:15px;opacity:.9;font-weight:600}
+.selz{margin-left:auto;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 14px;color:#fff;font-weight:700;font-size:15px}
+.selz svg{width:17px;height:17px}
+.selz select{font:inherit;font-weight:700;background:transparent;border:0;color:#fff;outline:none}
+.selz select option{color:var(--tinta)}
+
+/* bento mini */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.b{background:var(--papel);border:3px solid var(--linea);border-radius:var(--r);padding:12px 16px}
+.b .l{font-size:13px;font-weight:800;color:var(--gris);text-transform:uppercase;letter-spacing:.5px}
+.b .n{font-size:30px;font-weight:900;line-height:1.05}
+.b .n small{font-size:15px;font-weight:700;color:var(--gris)}
+.b .s{font-size:13px;font-weight:600;color:var(--gris)}
+.b.pri{border-color:var(--verde)}
+
+/* carrusel de tarjetas de especie */
+.carrusel{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin}
+.esp{flex:0 0 132px;background:var(--papel);border:3px solid var(--linea);border-radius:var(--r);padding:12px 8px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:150px;justify-content:center;transition:.14s}
+.esp:hover{border-color:var(--verde);transform:translateY(-3px)}
+.esp.sel{border-color:var(--verde);background:#EAF4E7;box-shadow:0 0 0 4px rgba(46,125,50,.14)}
+.esp b{font-size:15px;font-weight:800;line-height:1.15}
+.esp small{font-size:12.5px;font-weight:700;color:var(--gris)}
+.esp .ct{font-size:13px;font-weight:800;color:var(--verde-osc);background:#EAF4E7;border-radius:999px;padding:2px 10px}
+.mas{flex:0 0 120px;border:3px dashed var(--linea);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--gris);font-weight:800;font-size:14px;min-height:150px}
+.mas:hover{border-color:var(--verde);color:var(--verde-osc)}
+
+/* ficha viva */
+.ficha{background:var(--papel);border:3px solid var(--verde);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.ficha .cab{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ficha .cab b{font-size:22px;font-weight:900;display:block}
+.ficha .cab small{font-size:14px;color:var(--gris);font-weight:700}
+.titular{background:var(--verde);color:#fff;border-radius:var(--r);padding:20px;text-align:center;margin:12px 0}
+.titular .n{font-size:clamp(48px,10vw,72px);font-weight:900;line-height:.9;display:block}
+.titular p{font-size:clamp(16px,3vw,20px);font-weight:800;margin-top:6px}
+.titular small{display:block;font-size:14px;opacity:.9;font-weight:600;margin-top:6px}
+.cal{background:var(--papel);border:3px solid var(--linea);border-radius:var(--r);padding:16px 10px;margin-bottom:14px}
+.cal h2{font-size:19px;text-align:center;margin-bottom:14px}
+.meses{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.m{text-align:center}
+.m .c{width:100%;aspect-ratio:1;max-width:64px;margin:0 auto;border-radius:50%;background:#EDF1E8;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid transparent}
+.m .c b{font-size:22px;font-weight:900;color:#fff;line-height:1}
+.m .c span{font-size:10.5px;color:#fff;font-weight:800;opacity:.9}
+.m[data-p="0"] .c{background:var(--lima)}
+.m[data-p="1"] .c{background:var(--verde)}
+.m[data-p="2"] .c{background:var(--morado)}
+.m .l{font-size:13px;font-weight:700;margin-top:5px;color:var(--gris)}
+.m[data-p] .l{color:var(--tinta)}
+.pie{display:flex;gap:8px 16px;justify-content:center;margin-top:14px;font-size:13.5px;font-weight:700;color:var(--gris);flex-wrap:wrap}
+.pie i{width:14px;height:14px;border-radius:5px;display:inline-block}
+.mom{background:var(--papel);border:3px solid var(--linea);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.mom .h{padding:12px 16px;display:flex;align-items:center;gap:12px;color:#fff}
+.mom[data-p="0"] .h{background:var(--lima)}
+.mom[data-p="1"] .h{background:var(--verde)}
+.mom[data-p="2"] .h{background:var(--morado)}
+.mom .num{width:40px;height:40px;flex:none;border-radius:50%;background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900}
+.mom .h b{font-size:18px;font-weight:900;display:block}
+.mom .h small{font-size:14px;font-weight:700;opacity:.95}
+.prod{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:2px solid var(--linea);flex-wrap:wrap}
+.prod:last-child{border-bottom:0}
+.prod .t{flex:1 1 180px}
+.prod .t b{font-size:17px;font-weight:800;display:block}
+.prod .t small{font-size:13.5px;color:var(--gris);font-weight:700}
+.cuch{display:flex;align-items:center;gap:8px;flex:none;background:#F4F8F1;border-radius:14px;padding:8px 12px}
+.cuch .n{font-size:24px;font-weight:900;color:var(--verde-osc);line-height:1}
+.cuch .t{font-size:12.5px;font-weight:800;color:var(--gris);line-height:1.2;max-width:96px}
+.aviso{display:flex;gap:12px;align-items:flex-start;border-radius:var(--r);padding:12px 16px;margin-bottom:10px;font-size:15px;border:3px solid}
+.aviso b{font-weight:900}
+.aviso.ojo{background:#FFF4E0;border-color:#F3D69C;color:#6E4A07}
+.aviso.no{background:#FBE9E5;border-color:#F0BDB2;color:#7A2314}
+.aviso .i{flex:none;width:30px;height:30px;color:var(--naranja)}
+
+/* wizard */
+.preg{font-size:clamp(22px,4.5vw,30px);text-align:center;margin:8px 0 4px;font-weight:900}
+.sub{text-align:center;color:var(--gris);font-size:16px;font-weight:600;margin-bottom:18px}
+.pasos{display:flex;justify-content:center;gap:8px;padding:10px 0 2px}
+.pasos i{width:12px;height:12px;border-radius:50%;background:var(--linea);display:block;transition:.2s}
+.pasos i.on{background:var(--verde);transform:scale(1.35)}
+.pasos i.hecho{background:var(--lima)}
+.busca{position:relative;margin:0 auto 20px;max-width:420px}
+.busca input{width:100%;padding:14px 16px 14px 46px;border-radius:999px;border:3px solid var(--linea);background:var(--papel);font:inherit;font-size:17px}
+.busca input:focus{border-color:var(--verde);outline:none}
+.busca svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:19px;height:19px;stroke:var(--gris);fill:none;stroke-width:2.5}
+.gr h3{font-size:15px;color:var(--gris);margin:0 0 8px;font-weight:800}
+.grid{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));margin-bottom:18px}
+.grid.g2{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.grid.g3{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.op{background:var(--papel);border:3px solid var(--linea);border-radius:var(--r);padding:14px 8px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px;min-height:128px;justify-content:center;transition:.14s}
+.op:hover{border-color:var(--verde);transform:translateY(-3px)}
+.op[aria-pressed="true"]{border-color:var(--verde);background:#EAF4E7;box-shadow:0 0 0 4px rgba(46,125,50,.14)}
+.op b{font-size:15.5px;font-weight:800;line-height:1.15}
+.op small{font-size:13px;color:var(--gris);font-weight:700}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.b{padding:13px 26px;border-radius:999px;font-size:17px;font-weight:800;border:3px solid var(--linea);background:var(--papel);min-height:52px;display:inline-flex;align-items:center;gap:9px}
+.b:hover{border-color:var(--verde);color:var(--verde-osc)}
+.b-p{background:var(--verde);border-color:var(--verde);color:#fff}
+.b-p:hover{background:var(--verde-osc);border-color:var(--verde-osc);color:#fff}
+.b-g{background:var(--naranja);border-color:var(--naranja);color:#fff}
+.b-g:hover{background:#D96D00;border-color:#D96D00;color:#fff}
+.b svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round}
+
+/* plano / terreno */
+.terreno{display:flex;gap:14px;align-items:center;background:var(--papel);border:3px solid var(--linea);border-radius:var(--r);padding:14px;margin-bottom:14px;flex-wrap:wrap}
+.minimapa{width:210px;height:120px;flex:none;border:3px solid var(--linea);border-radius:16px;background:#5b5b57;position:relative;overflow:hidden}
+.minimapa svg{position:absolute;inset:0;width:100%;height:100%}
+.plano{border:3px solid var(--linea);border-radius:var(--r);overflow:hidden;background:#ecead f;background:#eceadf;margin-bottom:10px}
+.plano svg{display:block;width:100%;height:auto}
+.arbol{cursor:grab}
+.plano-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:var(--gris);flex-wrap:wrap;margin-bottom:14px}
+
+/* phone */
+.phone{width:390px;margin:0 auto;background:var(--fondo);border:3px solid var(--tinta);border-radius:34px 18px 34px 18px/18px 34px 18px 34px;padding:12px 10px 86px;position:relative}
+.bnav{position:absolute;left:10px;right:10px;bottom:12px;display:flex;justify-content:space-around;background:var(--papel);border:3px solid var(--linea);border-radius:999px;padding:8px 4px}
+.bnav a{font-size:12px;color:var(--gris);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800}
+.bnav a.on{color:var(--verde-osc)}
+.bnav svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.4}
+@media (max-width:820px){.bento{grid-template-columns:1fr 1fr 1fr}.meses{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="proto">
+  <span class="tag">Propuesta D — «Modo app todo en uno»</span>
+  <button class="ptab act" data-go="d1">D1 · Inicio</button>
+  <button class="ptab" data-go="d2">D2 · ¿Qué árbol tienes?</button>
+  <button class="ptab" data-go="d3">D3 · Edad + riego</button>
+  <button class="ptab" data-go="d4">D4 · Ficha viva</button>
+  <button class="ptab" data-go="d5">D5 · Terreno y posiciones</button>
+  <button class="ptab" data-go="d6">D6 · Mobile</button>
+  <span class="legend"><span class="req">R</span>: <b>R2</b> alta por tarjetas · <b>R3</b> especies · <b>R5</b> selector · <b>R7</b> drag · estilo del socio (Nunito, tarjetas, pasos)</span>
+</div>
+
+<!-- ══════════ D1 · INICIO / VISTA DIARIA ══════════ -->
+<div class="screen on" id="d1">
+<div class="wrap">
+  <div class="gf-top">
+    <div><h1>Hola, johan — al día</h1><small>Ñuble · Coelemu · miércoles 9 de septiembre</small></div>
+    <div class="selz" title="R5">
+      <svg viewBox="0 0 24 24"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8-8 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <select><option>Mi huerto</option><option>Todos los huertos</option><option>Huerto 2</option><option>Huerto 5</option></select>
+      <span class="req">R5</span>
+    </div>
+  </div>
+
+  <div class="bento">
+    <div class="b pri"><div class="l">Tu huerto</div><div class="n">4 <small>especies</small></div><div class="s">24 árboles · 13 en plano</div></div>
+    <div class="b"><div class="l">Tareas hoy</div><div class="n">0</div><div class="s">miércoles · nada urgente</div></div>
+    <div class="b"><div class="l">Alertas</div><div class="n">0</div><div class="s">sin heladas esta semana</div></div>
+  </div>
+
+  <!-- carrusel de especies: corazón del modo app -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 8px">
+    <h2 style="font-size:22px;font-weight:900">Tus especies</h2>
+    <span class="nota"><span class="req">R2</span><span>Toca una especie y se abre su <b>ficha viva</b> (calendario, momentos, dosis caseras). Se acabaron los dos formularios y el muro de 24 filas: aquí la lista son tarjetas.</span></span>
+  </div>
+  <div class="carrusel">
+    <button class="esp sel" onclick="go('d4')">
+      <svg viewBox="0 0 100 100" width="58" height="58"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M52 16 q 11 -9 22 -2 q -10 10 -22 2z" fill="#5C9E3F"/><circle cx="50" cy="58" r="30" fill="#F6A45C"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#E0602F" opacity=".35"/></svg>
+      <b>Duraznero</b><span class="ct">×16</span><small>9 en plano · 7 sin ubicar</small>
+    </button>
+    <button class="esp" onclick="go('d4')">
+      <svg viewBox="0 0 100 100" width="58" height="58"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#EBD335"/><g stroke="#B9A20E" stroke-width="3" opacity=".55"><path d="M50 30 v56 M24 58 h52 M31 39 l38 38 M69 39 l-38 38"/></g></svg>
+      <b>Limonero</b><small>sin plantar aún</small>
+    </button>
+    <button class="esp">
+      <svg viewBox="0 0 100 100" width="58" height="58"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#8E5AA8"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#5C3070" opacity=".35"/></svg>
+      <b>Ciruelo</b><span class="ct">×1</span><small>en plano</small>
+    </button>
+    <button class="esp">
+      <svg viewBox="0 0 100 100" width="58" height="58"><g fill="#7B4EA8"><circle cx="50" cy="34" r="11"/><circle cx="36" cy="52" r="11"/><circle cx="64" cy="52" r="11"/><circle cx="50" cy="56" r="11"/><circle cx="43" cy="74" r="11"/><circle cx="59" cy="74" r="11"/></g></svg>
+      <b>Vid de mesa</b><span class="ct">×1</span><small>en plano</small>
+    </button>
+    <button class="esp">
+      <svg viewBox="0 0 100 100" width="58" height="58"><g fill="#4A6FB5"><circle cx="36" cy="52" r="17"/><circle cx="66" cy="48" r="15"/><circle cx="50" cy="76" r="18"/></g></svg>
+      <b>Arándano</b><span class="ct">×2</span><small>en plano (Huerto 3)</small>
+    </button>
+    <button class="mas" onclick="go('d2')">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+      Agregar árbol
+    </button>
+  </div>
+
+  <!-- terreno integrado -->
+  <div class="terreno">
+    <div class="minimapa">
+      <svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 210 120">
+        <rect width="210" height="120" fill="#5b5b57"/>
+        <path d="M0 96 Q 70 88 140 96 T 210 92 L 210 120 L 0 120 Z" fill="#66666a"/>
+        <g stroke="#c9c9c9" stroke-width="2.5" fill="none"><path d="M46 34 L 116 26 L 148 66 L 84 90 Z"/></g>
+        <g fill="#e6e6e6"><circle cx="70" cy="52" r="5"/><circle cx="82" cy="60" r="5"/><circle cx="96" cy="68" r="5"/></g>
+      </svg>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <b style="font-size:17px;font-weight:900">Tu terreno</b>
+      <div style="font-size:13.5px;font-weight:700;color:var(--gris)">Mi huerto · 731 m² · 5 huertos · 2,9 ha</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="b" style="padding:9px 16px;font-size:14px;min-height:44px">Editar terreno</button>
+        <button class="b b-p" style="padding:9px 16px;font-size:14px;min-height:44px" onclick="go('d5')">Posicionar árboles</button>
+      </div>
+    </div>
+    <span class="nota" style="max-width:280px"><span class="req">R1</span><span>El mapa vive dentro de la app (misma librería Leaflet+Geoman). Un toque para editar, sin ir a Perfil.</span></span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ D2 · WIZARD: ESPECIE ══════════ -->
+<div class="screen" id="d2">
+<div class="wrap">
+  <div class="pasos"><i class="on"></i><i></i><i></i><i></i></div>
+  <h2 class="preg">¿Qué árbol tienes?</h2>
+  <p class="sub">Toca la fruta que plantaste — igual que la calculadora de abonar</p>
+  <div class="busca">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+    <input type="search" placeholder="Buscar…" aria-label="Buscar árbol">
+  </div>
+
+  <div class="gr"><h3>Carozos</h3>
+    <div class="grid">
+      <button class="op" aria-pressed="true" onclick="go('d3')"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M52 16 q 11 -9 22 -2 q -10 10 -22 2z" fill="#5C9E3F"/><circle cx="50" cy="58" r="30" fill="#F6A45C"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#E0602F" opacity=".35"/></svg><b>Duraznero</b><small>ya está en tu huerto ×16</small></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#EE7B5A"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#C8402A" opacity=".35"/></svg><b>Nectarino</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#F3B44E"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#D98A21" opacity=".35"/></svg><b>Damasco</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#8E5AA8"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#5C3070" opacity=".35"/></svg><b>Ciruelo</b><small>ya está ×1</small></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M40 62 C42 40 50 26 56 16 M62 62 C62 42 60 28 58 16" stroke="#7A5230" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M58 16 q 11 -9 22 -2 q -10 10 -22 2z" fill="#5C9E3F"/><circle cx="38" cy="70" r="17" fill="#D6304A"/><circle cx="65" cy="70" r="17" fill="#8E1024"/></svg><b>Cerezo</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#F08A2A"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#C05C06" opacity=".35"/></svg><b>Caqui</b></button>
+    </div>
+  </div>
+  <div class="gr"><h3>Cítricos</h3>
+    <div class="grid">
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><circle cx="50" cy="58" r="31" fill="#EBD335"/><g stroke="#B9A20E" stroke-width="3" opacity=".55"><path d="M50 30 v56 M24 58 h52 M31 39 l38 38 M69 39 l-38 38"/></g></svg><b>Limonero</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><circle cx="50" cy="58" r="31" fill="#F08A1C"/><g stroke="#C06003" stroke-width="3" opacity=".55"><path d="M50 30 v56 M24 58 h52 M31 39 l38 38 M69 39 l-38 38"/></g></svg><b>Naranjo</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><circle cx="50" cy="58" r="31" fill="#F5A03A"/><g stroke="#CE7407" stroke-width="3" opacity=".55"><path d="M50 30 v56 M24 58 h52 M31 39 l38 38 M69 39 l-38 38"/></g></svg><b>Mandarino</b></button>
+    </div>
+  </div>
+  <div class="gr"><h3>Pomáceas y peras</h3>
+    <div class="grid">
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 30 C74 24 88 44 84 62 C80 82 62 90 50 84 C38 90 20 82 16 62 C12 44 26 24 50 30z" fill="#D63A34"/><path d="M50 30 C38 90 38 90 50 84 C38 90 20 82 16 62 C12 44 26 24 50 30z" fill="#9A1F1C" opacity=".3"/></svg><b>Manzano</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 26 C60 26 62 38 58 46 C74 54 80 72 68 84 C58 94 42 94 32 84 C20 72 26 54 42 46 C38 38 40 26 50 26z" fill="#C7CE55"/></svg><b>Peral</b></button>
+    </div>
+  </div>
+  <div class="gr"><h3>Bayas y otros</h3>
+    <div class="grid">
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><g fill="#4A6FB5"><circle cx="36" cy="52" r="17"/><circle cx="66" cy="48" r="15"/><circle cx="50" cy="76" r="18"/></g></svg><b>Arándano</b><small>ya está ×2</small></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><g fill="#7B4EA8"><circle cx="50" cy="34" r="11"/><circle cx="36" cy="52" r="11"/><circle cx="64" cy="52" r="11"/><circle cx="50" cy="56" r="11"/><circle cx="43" cy="74" r="11"/><circle cx="59" cy="74" r="11"/></g></svg><b>Vid de mesa</b><small>ya está ×1</small></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><ellipse cx="42" cy="66" rx="15" ry="19" fill="#7C8B3A"/><ellipse cx="64" cy="60" rx="13" ry="17" fill="#4E5A1C"/><path d="M66 40 q 11 -9 22 -2 q -10 10 -22 2z" fill="#5C9E3F"/></svg><b>Olivo</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><ellipse cx="50" cy="56" rx="30" ry="33" fill="#B08256"/><path d="M50 24 v64" stroke="#75512D" stroke-width="5"/><path d="M34 38 q16 18 0 36 M66 38 q-16 18 0 36" stroke="#75512D" stroke-width="4" fill="none" opacity=".7"/></svg><b>Nogal</b></button>
+      <button class="op"><svg viewBox="0 0 100 100" width="56" height="56"><path d="M50 28 C70 34 82 52 76 70 C70 86 56 90 50 90 C44 90 30 86 24 70 C18 52 30 34 50 28z" fill="#7A5288"/><circle cx="50" cy="64" r="13" fill="#43284F" opacity=".6"/></svg><b>Higuera</b></button>
+      <button class="op" style="border-style:dashed;justify-content:center;color:var(--gris)"><b>+16 más</b><small>buscar por nombre</small></button>
+    </div>
+  </div>
+  <div class="btns"><button class="b" onclick="go('d1')">← Volver al huerto</button></div>
+</div>
+</div>
+
+<!-- ══════════ D3 · WIZARD: EDAD + RIEGO ══════════ -->
+<div class="screen" id="d3">
+<div class="wrap">
+  <div class="pasos"><i class="hecho"></i><i class="on"></i><i></i><i></i></div>
+  <h2 class="preg">¿Qué tan grande está tu duraznero?</h2>
+  <p class="sub">Toca el dibujo que más se parece — y cuántos tienes</p>
+  <div class="grid g3">
+    <button class="op"><svg viewBox="0 0 100 100" width="66" height="66"><path d="M12 90 h76" stroke="#B08256" stroke-width="6" stroke-linecap="round"/><path d="M50 88 v-30" stroke="#7A5230" stroke-width="6" stroke-linecap="round"/><circle cx="50" cy="56" r="16" fill="#5C9E3F"/><circle cx="41" cy="62" r="10" fill="#6FB44C"/><circle cx="59" cy="61" r="9" fill="#4E8C35"/></svg><b>Chico</b><small>recién plantado, 1-2 años</small></button>
+    <button class="op" aria-pressed="true"><svg viewBox="0 0 100 100" width="66" height="66"><path d="M12 90 h76" stroke="#B08256" stroke-width="6" stroke-linecap="round"/><path d="M50 88 v-42" stroke="#7A5230" stroke-width="7" stroke-linecap="round"/><circle cx="50" cy="46" r="24" fill="#5C9E3F"/><circle cx="37" cy="54" r="15" fill="#6FB44C"/><circle cx="63" cy="53" r="14" fill="#4E8C35"/><circle cx="40" cy="42" r="4" fill="#E0602F"/><circle cx="61" cy="48" r="4" fill="#E0602F"/></svg><b>Mediano</b><small>ya creció, 3-4 años</small></button>
+    <button class="op"><svg viewBox="0 0 100 100" width="66" height="66"><path d="M12 90 h76" stroke="#B08256" stroke-width="6" stroke-linecap="round"/><path d="M50 88 v-54" stroke="#7A5230" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="40" r="31" fill="#5C9E3F"/><circle cx="33" cy="51" r="19" fill="#6FB44C"/><circle cx="67" cy="49" r="18" fill="#4E8C35"/><circle cx="38" cy="34" r="4" fill="#E0602F"/><circle cx="64" cy="41" r="4" fill="#E0602F"/><circle cx="50" cy="59" r="4" fill="#E0602F"/></svg><b>Grande</b><small>da fruta, 5 años o más</small></button>
+  </div>
+  <h2 class="preg" style="font-size:22px">¿Cuántos durazneros son?</h2>
+  <p class="sub" style="margin-bottom:10px">Si no recuerdas, déjalo en 1 y lo corriges después</p>
+  <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:18px">
+    <button class="b" style="min-width:52px;justify-content:center">−</button>
+    <span style="font-size:34px;font-weight:900">1</span>
+    <button class="b" style="min-width:52px;justify-content:center">+</button>
+    <span style="font-size:14px;color:var(--gris);font-weight:700">en tu huerto ya hay 16 — se suman 1 → 17</span>
+  </div>
+  <h2 class="preg" style="font-size:22px">¿Cómo le das agua?</h2>
+  <p class="sub" style="margin-bottom:12px">Cambia las dosis, no el calendario</p>
+  <div class="grid g2">
+    <button class="op" aria-pressed="true"><svg viewBox="0 0 100 100" width="62" height="62"><path d="M18 78 q0 -34 26 -34 q22 0 22 -16" stroke="#4A6FB5" stroke-width="9" fill="none" stroke-linecap="round"/><rect x="60" y="16" width="26" height="14" rx="5" fill="#7A8894"/><g fill="#4A6FB5"><circle cx="82" cy="42" r="4"/><circle cx="90" cy="52" r="4"/><circle cx="76" cy="54" r="4"/></g><path d="M8 86 h84" stroke="#B08256" stroke-width="7" stroke-linecap="round"/></svg><b>Con manguera o balde</b><small>le echo agua al pie del árbol</small></button>
+    <button class="op"><svg viewBox="0 0 100 100" width="62" height="62"><path d="M10 30 h80" stroke="#3F4E57" stroke-width="9" stroke-linecap="round"/><g fill="#4A6FB5"><path d="M30 42 q6 9 6 13 a6 6 0 0 1 -12 0 q0 -4 6 -13z"/><path d="M50 42 q6 9 6 13 a6 6 0 0 1 -12 0 q0 -4 6 -13z"/><path d="M70 42 q6 9 6 13 a6 6 0 0 1 -12 0 q0 -4 6 -13z"/></g><path d="M8 86 h84" stroke="#B08256" stroke-width="7" stroke-linecap="round"/></svg><b>Con riego por goteo</b><small>mangueras con goteros</small></button>
+  </div>
+  <div class="btns">
+    <button class="b" onclick="go('d2')">← Cambiar árbol</button>
+    <button class="b b-p" onclick="go('d4')">Ver mi ficha →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ D4 · FICHA VIVA ══════════ -->
+<div class="screen" id="d4">
+<div class="wrap">
+  <div class="pasos"><i class="hecho"></i><i class="hecho"></i><i class="on"></i><i></i></div>
+  <div class="ficha">
+    <div class="cab">
+      <svg viewBox="0 0 100 100" width="62" height="62"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M52 16 q 11 -9 22 -2 q -10 10 -22 2z" fill="#5C9E3F"/><circle cx="50" cy="58" r="30" fill="#F6A45C"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#E0602F" opacity=".35"/></svg>
+      <span><b>Duraznero</b><small>Ñuble · grande · riego con manguera · 17 árboles en tu huerto</small></span>
+      <span class="nota" style="margin-left:auto;max-width:300px"><span class="req">R2</span><span>La ficha viva <b>es el inventario</b>: una especie = una tarjeta con calendario y dosis. Nada de ingresarlo dos veces.</span></span>
+    </div>
+
+    <div class="titular"><span class="n">7</span><p>veces al año le toca atención</p><small>Una vez al mes, solo en los meses de color · riego con manguera</small></div>
+
+    <div class="cal"><h2>Los meses en que le toca</h2>
+      <div class="meses">
+        <div class="m"><div class="c"><b>1</b><span>vez</span></div><div class="l">Ene</div></div>
+        <div class="m"><div class="c"></div><div class="l">Feb</div></div>
+        <div class="m" data-p="2"><div class="c"><b>1</b><span>vez</span></div><div class="l">Mar</div></div>
+        <div class="m" data-p="2"><div class="c"><b>1</b><span>vez</span></div><div class="l">Abr</div></div>
+        <div class="m"><div class="c"></div><div class="l">May</div></div>
+        <div class="m"><div class="c"></div><div class="l">Jun</div></div>
+        <div class="m"><div class="c"></div><div class="l">Jul</div></div>
+        <div class="m"><div class="c"></div><div class="l">Ago</div></div>
+        <div class="m" data-p="0"><div class="c"><b>1</b><span>vez</span></div><div class="l">Sep</div></div>
+        <div class="m" data-p="0"><div class="c"><b>1</b><span>vez</span></div><div class="l">Oct</div></div>
+        <div class="m" data-p="1"><div class="c"><b>1</b><span>vez</span></div><div class="l">Nov</div></div>
+        <div class="m" data-p="1"><div class="c"><b>1</b><span>vez</span></div><div class="l">Dic</div></div>
+      </div>
+      <div class="pie">
+        <span><i style="background:var(--lima)"></i>Cuando despierta</span>
+        <span><i style="background:var(--verde)"></i>Cuando engorda la fruta</span>
+        <span><i style="background:var(--morado)"></i>Después de cosechar</span>
+        <span><i style="background:#EDF1E8;border:2px solid var(--linea)"></i>Descansa</span>
+      </div>
+    </div>
+
+    <h2 style="font-size:20px;text-align:center;font-weight:900">Qué echarle en cada momento</h2>
+    <p class="sub" style="margin-bottom:12px">Las medidas son de cada vez, en cucharadas de casa — nada de SulPoMag industrial</p>
+
+    <div class="mom" data-p="0"><div class="h"><span class="num">1</span><span><b>Cuando despierta</b><small>Sep · Oct</small></span></div>
+      <div class="h" style="padding:0"></div>
+      <div style="padding:6px 16px 14px">
+        <div class="prod"><svg viewBox="0 0 60 70" width="44" height="52"><path d="M12 18 h36 q6 0 6 8 v34 q0 6 -6 6 h-36 q-6 0 -6 -6 v-34 q0 -8 6 -8z" fill="#DDE5D6"/><path d="M12 18 q6 -10 18 -10 q12 0 18 10z" fill="#C6D2BC"/><rect x="10" y="34" width="40" height="15" rx="4" fill="#8BC34A"/></svg>
+          <div class="t"><b>Compost maduro</b><small>3 tazas de té cada vez · al pie, nunca en el tronco</small></div>
+          <div class="cuch"><span class="n">3</span><span class="t">tazas de té</span></div></div>
+        <div class="prod"><svg viewBox="0 0 60 70" width="44" height="52"><path d="M12 18 h36 q6 0 6 8 v34 q0 6 -6 6 h-36 q-6 0 -6 -6 v-34 q0 -8 6 -8z" fill="#DDE5D6"/><path d="M12 18 q6 -10 18 -10 q12 0 18 10z" fill="#C6D2BC"/><rect x="10" y="34" width="40" height="15" rx="4" fill="#8BC34A"/></svg>
+          <div class="t"><b>Harina de huesos</b><small>2 cucharadas soperas cada vez · fósforo para la fruta</small></div>
+          <div class="cuch"><span class="n">2</span><span class="t">cucharadas soperas</span></div></div>
+      </div>
+    </div>
+
+    <div class="aviso ojo"><span class="i"><svg viewBox="0 0 40 40" width="30" height="30"><circle cx="20" cy="20" r="18" fill="currentColor"/><path d="M20 10 v13" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/><circle cx="20" cy="30" r="2.8" fill="#fff"/></svg></span>
+      <div><b>Tu zona es justa para el duraznero.</b> En primavera echa menos de la cuenta: lo hace brotar antes y la flor se quema con la helada.</div></div>
+
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+      <button class="b" onclick="go('d5')"><svg viewBox="0 0 24 24"><path d="M12 3v12M6 9l6-6 6 6"/><path d="M4 21h16"/></svg> Repartir en el plano</button>
+      <button class="b" onclick="go('d1')"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/></svg> Ver en 3D</button>
+      <button class="b b-g" onclick="go('d2')">Agregar otra especie</button>
+    </div>
+    <p style="text-align:center;font-size:12.5px;color:var(--gris);font-weight:600;margin-top:14px">Ficha generada con calendario de tu zona (Boletín INIA 426) y dosis reescaladas a medidas de cocina · se puede imprimir</p>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ D5 · TERRENO Y POSICIONES ══════════ -->
+<div class="screen" id="d5">
+<div class="wrap">
+  <div class="gf-top" style="padding:14px 18px">
+    <div><h1 style="font-size:22px">Posicionar árboles</h1><small>Mi huerto · 731 m²</small></div>
+    <button class="b b-p" style="margin-left:auto" onclick="go('d1')">Volver</button>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+    <span class="nota"><span class="req">R7</span><span><b>Arrastra el árbol oscuro</b> para separarlo o alinearlo. Los sin ubicar aparecen punteados hasta arrastrarlos dentro.</span></span>
+    <span class="nota"><span class="req">R7</span><span>El reparto automático por matriz sigue disponible: 1 toque reparte los 7 pendientes.</span></span>
+  </div>
+  <div class="plano">
+    <svg viewBox="0 0 900 380" id="plano-d5">
+      <defs><clipPath id="clipD5"><path d="M170 90 L 520 55 L 780 180 L 580 310 L 210 260 Z"/></clipPath></defs>
+      <g fill="#e6e4d5" stroke="#b7b5a3" stroke-width="2.5"><path d="M170 90 L 520 55 L 780 180 L 580 310 L 210 260 Z"/></g>
+      <g clip-path="url(#clipD5)" stroke="#d3d1bd" stroke-width="1">
+        <path d="M130 60 L 830 260"/><path d="M140 120 L 840 320"/><path d="M150 180 L 850 380"/>
+        <path d="M210 40 L 420 370"/><path d="M300 40 L 510 370"/><path d="M390 40 L 600 370"/><path d="M480 40 L 690 370"/><path d="M570 40 L 780 370"/>
+      </g>
+      <g>
+        <g class="arbol"><circle cx="360" cy="150" r="12" fill="#9a9a9a"/><path d="M360 162 v11" stroke="#6b6b6b" stroke-width="3"/></g>
+        <g class="arbol"><circle cx="400" cy="175" r="12" fill="#9a9a9a"/><path d="M400 187 v11" stroke="#6b6b6b" stroke-width="3"/></g>
+        <g class="arbol"><circle cx="440" cy="200" r="12" fill="#9a9a9a"/><path d="M440 212 v11" stroke="#6b6b6b" stroke-width="3"/></g>
+        <g class="arbol" style="filter:drop-shadow(0 0 4px #2E7D32)"><circle cx="480" cy="225" r="14" fill="#2E7D32" stroke="#1B5E20" stroke-width="3.5"/><path d="M480 239 v13" stroke="#1B5E20" stroke-width="3.5"/></g>
+        <g class="arbol"><circle cx="650" cy="245" r="12" fill="#9a9a9a"/><path d="M650 257 v11" stroke="#6b6b6b" stroke-width="3"/></g>
+        <g><circle cx="560" cy="140" r="12" fill="none" stroke="#888" stroke-width="2.5" stroke-dasharray="5 5"/><path d="M560 152 v10" stroke="#888" stroke-width="2.5" stroke-dasharray="5 5"/></g>
+        <g><circle cx="600" cy="120" r="12" fill="none" stroke="#888" stroke-width="2.5" stroke-dasharray="5 5"/><path d="M600 132 v10" stroke="#888" stroke-width="2.5" stroke-dasharray="5 5"/></g>
+      </g>
+    </svg>
+  </div>
+  <div class="plano-foot">
+    <span>5 en plano · 7 sin ubicar · arrastra el árbol verde para ajustar</span>
+    <span style="display:flex;gap:8px">
+      <button class="b" style="padding:9px 16px;font-size:14px;min-height:44px">Reparto automático</button>
+      <button class="b b-p" style="padding:9px 16px;font-size:14px;min-height:44px" onclick="go('d4')">Guardar</button>
+    </span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ D6 · MOBILE ══════════ -->
+<div class="screen" id="d6">
+<div class="wrap">
+  <div class="phone">
+    <div class="gf-top" style="padding:14px 16px;border-radius:20px 20px 14px 14px">
+      <div><h1 style="font-size:19px">Hola, johan — al día</h1><small>Ñuble · septiembre</small></div>
+      <div class="selz" style="font-size:13px;padding:4px 10px">Mi huerto ▾ <span class="req">R5</span></div>
+    </div>
+    <div class="bento" style="grid-template-columns:1fr 1fr;gap:8px;padding:0 4px">
+      <div class="b pri" style="padding:10px 12px"><div class="l" style="font-size:12px">Tu huerto</div><div class="n" style="font-size:24px">4 <small>especies</small></div><div class="s" style="font-size:12px">24 árboles</div></div>
+      <div class="b" style="padding:10px 12px"><div class="l" style="font-size:12px">Tareas hoy</div><div class="n" style="font-size:24px">0</div><div class="s" style="font-size:12px">nada urgente</div></div>
+    </div>
+    <div style="padding:8px 6px 4px;display:flex;align-items:center;gap:8px">
+      <h2 style="font-size:18px;font-weight:900">Tus especies</h2><span class="req">R2</span>
+    </div>
+    <div class="carrusel" style="padding:0 4px 10px">
+      <button class="esp" style="flex:0 0 118px;min-height:132px" onclick="go('d4')"><svg viewBox="0 0 100 100" width="46" height="46"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M52 16 q 11 -9 22 -2 q -10 10 -22 2z" fill="#5C9E3F"/><circle cx="50" cy="58" r="30" fill="#F6A45C"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#E0602F" opacity=".35"/></svg><b style="font-size:13.5px">Duraznero</b><span class="ct" style="font-size:12px">×16</span></button>
+      <button class="esp" style="flex:0 0 118px;min-height:132px"><svg viewBox="0 0 100 100" width="46" height="46"><path d="M50 22 v-9" stroke="#7A5230" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="58" r="30" fill="#8E5AA8"/><path d="M50 28 a30 30 0 0 0 0 60" fill="#5C3070" opacity=".35"/></svg><b style="font-size:13.5px">Ciruelo</b><span class="ct" style="font-size:12px">×1</span></button>
+      <button class="esp" style="flex:0 0 118px;min-height:132px;border-style:dashed" onclick="go('d2')"><b style="font-size:13.5px;color:var(--verde-osc)">+ Agregar</b></button>
+    </div>
+    <div class="terreno" style="padding:10px;gap:10px">
+      <div class="minimapa" style="width:150px;height:84px">
+        <svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 150 80">
+          <rect width="150" height="80" fill="#5b5b57"/>
+          <g stroke="#c9c9c9" stroke-width="2.5" fill="none"><path d="M32 22 L 82 22 L 104 46 L 56 60 Z"/></g>
+          <g fill="#e6e6e6"><circle cx="54" cy="38" r="4"/><circle cx="66" cy="44" r="4"/></g>
+        </svg>
+      </div>
+      <div>
+        <b style="font-size:14px">Mi huerto · 731 m²</b>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          <button class="b" style="padding:6px 12px;font-size:12px;min-height:36px">Editar terreno</button>
+          <button class="b" style="padding:6px 12px;font-size:12px;min-height:36px">Posicionar</button>
+        </div>
+      </div>
+    </div>
+    <div class="bnav">
+      <a class="on" href="#" onclick="return false"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg>Huerto</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendario</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-6"/><circle cx="12" cy="12" r="9"/></svg>Cosechas</a>
+      <a href="#" onclick="return false"><svg viewBox="0 0 24 24"><path d="M5 4h9l5 5v11H5z"/><path d="M14 4v5h5"/></svg>Biblioteca</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('act',t.dataset.go===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.ptab').forEach(t=>t.addEventListener('click',()=>go(t.dataset.go)));
+
+function svgPoint(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
+(function(){
+  const svg=document.getElementById('plano-d5');if(!svg)return;
+  let target=null,off={x:0,y:0};
+  svg.querySelectorAll('.arbol').forEach(g=>{
+    g.addEventListener('pointerdown',e=>{
+      target=g;const pt=svgPoint(svg,e);const c=g.querySelector('circle');
+      off={x:pt.x-c.cx.baseVal.value,y:pt.y-c.cy.baseVal.value};e.preventDefault();
+    });
+  });
+  svg.addEventListener('pointermove',e=>{
+    if(!target)return;const pt=svgPoint(svg,e);const c=target.querySelector('circle');
+    const nx=pt.x-off.x,ny=pt.y-off.y;
+    c.setAttribute('cx',nx);c.setAttribute('cy',ny);
+    target.querySelector('path').setAttribute('d','M'+nx+' '+(ny+c.r.baseVal.value)+' v11');
+  });
+  svg.addEventListener('pointerup',()=>{target=null;});
+})();
+</script>
+</body>
+</html>

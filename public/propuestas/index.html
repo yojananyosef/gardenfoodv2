@@ -43,26 +43,60 @@
 <body>
 <div class="wrap">
   <div class="header sketchy">
-    <h1>3 propuestas para «Mi Huerto»</h1>
-    <div class="sub">Rediseño integral de /huerto — mapa satelital integrado, cultivos fusionados, selector global, renombres y drag &amp; drop de árboles.</div>
-    <div class="meta">GardenFood v2 · 2026-09-09 · wireframes lo-fi clickeables (grayscale Balsamiq-style) · todas resuelven los 7 requerimientos, cambia la organización</div>
+    <h1>5 propuestas para «Mi Huerto»</h1>
+    <div class="sub">Rediseño integral de /huerto — mapa satelital integrado, cultivos fusionados, selector global, renombres y drag &amp; drop de árboles. <b>La D es la fusionada con la calculadora de abonar del socio; la A+D es la A con su patrón de tarjetas.</b></div>
+    <div class="meta">GardenFood v2 · 2026-09-09 · wireframes clickeables · A/B/C/A+D en grayscale Balsamiq-style · D con el lenguaje visual del socio (Nunito, tarjetas, pasos)</div>
   </div>
 
   <div class="grid">
+    <div class="card sketchy" style="border-width:3px; outline:2px dashed #333; outline-offset:4px">
+      <div class="tag">Propuesta D ★ recomendada</div>
+      <h2>«Modo app todo en uno»</h2>
+      <p>Fusión directa con <b>gardenfood-nutricion-simple</b>: el mismo patrón de wizard (una pregunta por pantalla, tarjetas ilustradas con la fruta, buscador) aplicado a <b>tu huerto</b> — y la vista diaria como lista de tarjetas de especies + <b>ficha viva</b> (calendario de momentos + dosis en cucharadas caseras).</p>
+      <ul>
+        <li>D1 vista diaria: carrusel de especies + terreno integrado</li>
+        <li>D2 «¿Qué árbol tienes?» — tarjetas + buscador del socio</li>
+        <li>D3 edad ilustrada + cuántos + riego</li>
+        <li>D4 ficha viva: calendario 12 meses, momentos, cucharadas</li>
+        <li>D5 posicionar con drag &amp; drop · D6 móvil</li>
+      </ul>
+      <div class="pros">
+        <b>Pro:</b> <span class="pro">es exactamente el patrón que le gustó al socio, llevado al huerto; resuelve R2 (alta única) con su UX; datos INIA reescalados a medidas caseras.</span><br>
+        <b>Contra:</b> <span class="con">es el mayor cambio de identidad visual (Nunito + tarjetas vs. Fraunces + bento actual); el modo avanzado (B) seguiría siendo útil para 24+ árboles.</span>
+      </div>
+      <a class="open" href="./propuesta-d.html">Ver propuesta D →</a>
+    </div>
+
     <div class="card sketchy">
       <div class="tag">Propuesta A</div>
       <h2>«Mapa arriba»</h2>
       <p>El mapa satelital es el <b>hero</b> de Mi Huerto; la gestión unificada de cultivos vive justo debajo; el plano cierra la página.</p>
       <ul>
         <li>Mapa hero con «Editar terreno» + «Posicionar árboles»</li>
-        <li>Sección única «Cultivos y árboles» por especie</li>
+        <li>Alta por select + sección única «Cultivos y árboles»</li>
         <li>Selector global de huerto en el header</li>
       </ul>
       <div class="pros">
-        <b>Pro:</b> <span class="pro">mínimo cambio de estructura, migración natural del layout actual; el mapa gana protagonismo de inmediato.</span><br>
-        <b>Contra:</b> <span class="con">página larga: hay scroll entre mapa → gestión → plano.</span>
+        <b>Pro:</b> <span class="pro">mínimo cambio de estructura, migración natural del layout actual; el mapa gana protagonismo de inmediato; mantiene la identidad Fraunces/bento.</span><br>
+        <b>Contra:</b> <span class="con">página larga: hay scroll entre mapa → gestión → plano; el alta por select es más fría que las tarjetas del socio.</span>
       </div>
       <a class="open" href="./propuesta-a.html">Ver propuesta A →</a>
+    </div>
+
+    <div class="card sketchy">
+      <div class="tag">Propuesta A+D</div>
+      <h2>«Mapa arriba + tarjetas»</h2>
+      <p>Igual que la A (estructura, mapa hero, secciones) pero con el <b>patrón de tarjetas de fruta del socio</b> para el alta de especies — el mejor puente entre el rediseño y lo que él ya visualizó.</p>
+      <ul>
+        <li>Todo el layout de la A, intacto</li>
+        <li>Alta por tarjetas ilustradas + «Buscar / más»</li>
+        <li>R2 con la UX que le gustó al socio, en grayscale</li>
+      </ul>
+      <div class="pros">
+        <b>Pro:</b> <span class="pro">migra el layout actual sin perder el toque "calculadora del socio"; opción intermedia entre A y D.</span><br>
+        <b>Contra:</b> <span class="con">mezcla dos lenguajes (bento Fraunces + tarjetas de fruta): la coherencia visual queda mejor resuelta en la D.</span>
+      </div>
+      <a class="open" href="./propuesta-ad.html">Ver propuesta A+D →</a>
     </div>
 
     <div class="card sketchy">
@@ -84,7 +118,7 @@
     <div class="card sketchy">
       <div class="tag">Propuesta C</div>
       <h2>«Flujo guiado»</h2>
-      <p>Un <b>asistente de 4 pasos</b> (Terreno → Árboles → Posicionar → Listo) ideal para usuarios nuevos; el dashboard queda compacto y el progreso siempre visible.</p>
+      <p>Un <b>asistente de 4 pasos</b> (Terreno → Árboles → Posicionar → Listo) ideal para usuarios nuevos; el dashboard queda compacto y el progreso siempre visible. <b>Es la base de la D</b> — comparte el patrón wizard, pero en grayscale y con el layout bento actual.</p>
       <ul>
         <li>Barra de progreso + guardado por paso</li>
         <li>Alta masiva simple por especie y cantidad</li>
