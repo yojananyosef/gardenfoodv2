@@ -17,6 +17,7 @@ export default function PricingPage() {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [terminosAceptados, setTerminosAceptados] = useState(false);
   const router = useRouter();
 
   async function subscribe(tier: string) {
@@ -26,7 +27,7 @@ export default function PricingPage() {
       const res = await fetch("/api/v1/payments/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, interval }),
+        body: JSON.stringify({ tier, interval, aceptoTerminos: terminosAceptados }),
       });
       const data = await res.json();
       if (res.status === 401) {
@@ -70,6 +71,35 @@ export default function PricingPage() {
             Anual (2 meses gratis)
           </button>
         </div>
+      </div>
+
+      {/* Aviso Ley del Consumidor: retracto, débito automático, cancelación */}
+      <div className="mx-auto mb-8 max-w-3xl rounded-xl border bg-muted/40 p-5">
+        <h2 className="mb-2 text-sm font-semibold">Condiciones de la contratación electrónica</h2>
+        <p className="text-sm text-muted-foreground">
+          Al suscribirte contratas un servicio digital con <strong>débito automático
+          recurrente</strong> vía Mercado Pago, con el monto e intervalo del plan elegido. Tienes{" "}
+          <strong>derecho de retracto dentro de los 10 días corridos</strong> siguientes a la
+          contratación (art. 3 bis, Ley 19.496): escríbenos a{" "}
+          <a className="underline" href="mailto:pichilemugardenfood@gmail.com">pichilemugardenfood@gmail.com</a>{" "}
+          para ejercerlo. Además puedes <strong>cancelar la suscripción cuando quieras</strong>{" "}
+          desde tu perfil. Revisa los{" "}
+          <Link className="underline" href="/legal/terminos">Términos y Condiciones</Link> y la{" "}
+          <Link className="underline" href="/legal/privacidad">Política de privacidad</Link>.
+        </p>
+        <label className="mt-3 flex items-start gap-3 text-sm">
+          <input
+            type="checkbox"
+            checked={terminosAceptados}
+            onChange={(e) => setTerminosAceptados(e.target.checked)}
+            className="mt-0.5 size-4 shrink-0"
+          />
+          <span>
+            He leído y acepto los{" "}
+            <Link className="underline" href="/legal/terminos">Términos y Condiciones</Link> y la{" "}
+            <Link className="underline" href="/legal/privacidad">Política de privacidad</Link>.
+          </span>
+        </label>
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
@@ -153,7 +183,8 @@ export default function PricingPage() {
               <CardFooter className="flex-col gap-3">
                 <Button
                   className="w-full"
-                  disabled={submitting}
+                  disabled={submitting || !terminosAceptados}
+                  title={terminosAceptados ? undefined : "Acepta los Términos y Condiciones para continuar"}
                   onClick={() => {
                     setSelectedTier(plan.tier);
                     subscribe(plan.tier);

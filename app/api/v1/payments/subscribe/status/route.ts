@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mercadoPagoProvider } from "@/lib/payments/mercadopago";
 import { mapPreapprovalStatus } from "@/lib/payments/preapproval";
+import { planAmount } from "@/lib/payments/plans";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function POST() {
 
   const { data: draft, error: draftError } = await admin
     .from("gf_subscriptions")
-    .select("id, plan, provider_subscription_id")
+    .select("id, plan, interval, provider_subscription_id")
     .eq("user_id", user.id)
     .not("provider_subscription_id", "is", null)
     .order("created_at", { ascending: false })
@@ -80,5 +81,8 @@ export async function POST() {
     status: sub,
     grantsAccess,
     subscriptionId: draft.provider_subscription_id,
+    plan: draft.plan,
+    interval: draft.interval,
+    monto: planAmount(draft.plan, draft.interval),
   });
 }

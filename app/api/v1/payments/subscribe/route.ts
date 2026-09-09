@@ -16,6 +16,10 @@ export const dynamic = "force-dynamic";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://gardenfoodv2.vercel.app";
 
+// Versión de los Términos y Condiciones vigentes: incrementar al actualizar
+// el documento para dejar prueba de qué versión aceptó cada suscripción.
+const TERMINOS_VERSION = "2026-09";
+
 function parse(input: {
   tier?: unknown;
   interval?: unknown;
@@ -44,11 +48,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing user email" }, { status: 400 });
   }
 
-  let body: { tier?: string; interval?: string };
+  let body: { tier?: string; interval?: string; aceptoTerminos?: unknown };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  // Ley del Consumidor (art. 3 bis Ley 19.496): sin aceptación explícita de los
+  // términos no se inicia la contratación; se registra la prueba en el draft.
+  if (body.aceptoTerminos !== true) {
+    return NextResponse.json(
+      { error: "Debes aceptar los Términos y Condiciones y la Política de privacidad" },
+      { status: 400 },
+    );
   }
 
   const parsed = parse(body);
@@ -71,7 +84,14 @@ export async function POST(request: Request) {
   // Draft subscription row; its id is the Mercado Pago external_reference.
   const { data: draft, error: insertError } = await admin
     .from("gf_subscriptions")
-    .insert({ user_id: user.id, plan: tier, interval, status: "pending" })
+    .insert({
+      user_id: user.id,
+      plan: tier,
+      interval,
+      status: "pending",
+      terminos_aceptados_at: new Date().toISOString(),
+      terminos_aceptados_version: TERMINOS_VERSION,
+    })
     .select("id")
     .single();
   if (insertError || !draft) {
