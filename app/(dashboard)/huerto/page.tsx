@@ -506,7 +506,7 @@ export default async function HuertoPage(props: {
                           </EmptyHeader>
                         </Empty>
                       ) : (
-                        <ListaArbolesAgrupada arboles={arboles} onEliminar={(id) => void eliminarArbol(id)} />
+                        <ListaArbolesAgrupada arboles={arboles} onEliminar={eliminarArbol} />
                       )}
                     </div>
                   </div>
