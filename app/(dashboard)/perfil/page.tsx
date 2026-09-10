@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -107,14 +107,17 @@ export default function PerfilPage() {
         </CardContent>
       </Card>
       <Dialog open={open} onOpenChange={setOpen}>
-        <ConsentPreferences
-          title="Ajustes de privacidad"
-          deviceId={getDeviceId()}
-          onConfirm={() => setOpen(false)}
-        />
+        <DialogContent className="max-h-[85vh] overflow-y-auto rounded-2xl">
+          <ConsentPreferences
+            title="Ajustes de privacidad"
+            deviceId={getDeviceId()}
+            onConfirm={() => setOpen(false)}
+          />
+        </DialogContent>
       </Dialog>
       <Dialog open={borrarOpen} onOpenChange={setBorrarOpen}>
-        <Card className="w-[min(92vw,420px)] rounded-2xl p-6">
+        <DialogContent className="w-[min(92vw,420px)] rounded-2xl">
+        <Card className="rounded-2xl p-6">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Eliminar mi cuenta</CardTitle>
             <CardDescription>
@@ -151,6 +154,7 @@ export default function PerfilPage() {
             </div>
           </CardContent>
         </Card>
+        </DialogContent>
       </Dialog>
     </>
   );

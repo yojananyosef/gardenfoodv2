@@ -28,7 +28,7 @@ import { AgregarCultivo } from "@/components/huerto/AgregarCultivo";
 import { AgregarArbol } from "@/components/huerto/AgregarArbol";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { ListaCultivos } from "@/components/huerto/ListaCultivos";
-import { ListaArboles } from "@/components/huerto/ListaArboles";
+import { ListaArbolesAgrupada } from "@/components/huerto/ListaArbolesAgrupada";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { ModoToggle } from "./ModoToggle";
 import { AgregarEspecieTarjetas } from "@/components/huerto/AgregarEspecieTarjetas";
@@ -37,7 +37,7 @@ import { SelectorHuerto } from "./SelectorHuerto";
 import { AsistenteHuerto } from "@/components/huerto/AsistenteHuerto";
 import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
 import { pasosAsistente } from "@/components/huerto/pasosAsistente";
-import { marcarAsistenteCompletado } from "@/lib/huerto/actions";
+import { marcarAsistenteCompletado, eliminarArbol } from "@/lib/huerto/actions";
 import { modoEfectivo, type ModoHuerto } from "@/lib/huerto/modo";
 import { prepararCultivos } from "@/lib/huerto/nombres";
 import { TareasDelDia } from "@/components/huerto/TareasDelDia";
@@ -228,13 +228,18 @@ export default async function HuertoPage(props: {
                 </Badge>
               </div>
               <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
-                {cultivos.length}
-                <span className="text-sm font-normal text-muted-foreground">especies</span>
+                {new Set([...cultivos.map((c) => c.especie), ...arboles.map((a) => a.especie)]).size}
+                <span className="text-sm font-normal text-muted-foreground">
+                  especies · {arboles.length} árboles
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Trees className="size-3" /> + {arboles.length} árboles inventario
+                <Trees className="size-3" /> inventario: {new Set(arboles.map((a) => a.especie)).size}{" "}
+                {new Set(arboles.map((a) => a.especie)).size === 1 ? "especie" : "especies"}{" "}
+                distintas
+              
               </div>
             </CardContent>
             <div className="h-1 w-full bg-gradient-to-r from-emerald-500/60 to-emerald-500/0" aria-hidden />
@@ -501,7 +506,7 @@ export default async function HuertoPage(props: {
                           </EmptyHeader>
                         </Empty>
                       ) : (
-                        <ListaArboles arboles={arboles} />
+                        <ListaArbolesAgrupada arboles={arboles} onEliminar={(id) => void eliminarArbol(id)} />
                       )}
                     </div>
                   </div>
