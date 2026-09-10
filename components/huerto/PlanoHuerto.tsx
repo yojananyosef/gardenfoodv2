@@ -56,14 +56,19 @@ export function PlanoHuerto({
   huertos,
   arboles,
   especies,
+  modoForzado,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
   especies: Especie[];
+  /** Cuando el lienzo (tabs) controla el modo, se fuerza y se oculta el toggle interno. */
+  modoForzado?: "2d" | "3d";
 }) {
   const router = useRouter();
   const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
-  const [modo, setModo] = useState<Modo>("2d");
+  const [modoInterno, setModoInterno] = useState<Modo>("2d");
+  const modo: Modo = modoForzado ?? modoInterno;
+  const setModo = (m: Modo) => setModoInterno(m);
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
   // Zoom/pan del 2D: el plano ocupa más pantalla y se puede explorar.
@@ -239,7 +244,7 @@ export function PlanoHuerto({
           <span className="text-sm font-medium">{huerto?.nombre}</span>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <div className="flex items-center rounded-lg border p-0.5" role="group" aria-label="Modo de vista">
+          <div className={modoForzado ? "hidden" : "flex items-center rounded-lg border p-0.5"} role="group" aria-label="Modo de vista">
             <Button
               type="button"
               size="sm"

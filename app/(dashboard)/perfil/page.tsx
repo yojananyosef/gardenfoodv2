@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { ConsentPreferences } from "@/components/cmp/ConsentPreferences";
-import { TerrenoSection } from "@/components/perfil/TerrenoSection";
+import { TerrenoSection } from "@/components/mapa/TerrenoSection";
 import { UbicacionForm } from "@/components/perfil/UbicacionForm";
 import { eliminarMiCuenta } from "@/lib/privacy/actions";
 import { clearLocalConsent } from "@/lib/consent/token";

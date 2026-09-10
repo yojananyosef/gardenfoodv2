@@ -1,8 +1,6 @@
-import Link from "next/link";
-import { Leaf, Trees } from "lucide-react";
+import { Leaf } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   ESPECIES,
   MESES,
@@ -14,6 +12,7 @@ import {
   regionGuiaDeRegion,
   tieneFertilizacion,
 } from "@/lib/agronomy/fertilizacion";
+import { IndiceEspecies } from "./IndiceEspecies";
 import { createClient } from "@/lib/supabase/server";
 import { getArboles, getCultivos, getPerfil } from "@/lib/huerto/data";
 
@@ -68,55 +67,20 @@ export default async function EspeciesIndex() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {[...fichas, ...otras].map((e) => {
-          const cantidad = porEspecie.get(e.dbKey) ?? 0;
-          const ya = enUso.includes(e.dbKey) || cantidad > 0;
+      <IndiceEspecies
+        fichas={fichas.map((e) => {
           const estado = regionGuia
             ? fenologiaPorEspecie(e.dbKey).find((f) => f.region_guia === regionGuia)
             : undefined;
-          const conGuia = tieneFertilizacion(e.dbKey);
-          return (
-            <Card key={e.dbKey} className="rounded-2xl shadow-sm">
-              <CardContent className="flex flex-col gap-2.5 p-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-2 text-base font-semibold">
-                    <span className="inline-flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Leaf className="size-4" />
-                    </span>
-                    {e.nombre}
-                  </span>
-                  {ya ? (
-                    <Badge className="rounded-full">
-                      <Trees className="size-3" /> {cantidad > 0 ? `${cantidad} en tu huerto` : "activo"}
-                    </Badge>
-                  ) : null}
-                </div>
-                <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  {conGuia && estado ? (
-                    <span>
-                      Brota {estado.brota ?? "—"} · Florece {estado.florece ?? "—"} · Cosecha{" "}
-                      {estado.cosecha ?? "—"}
-                    </span>
-                  ) : (
-                    <span>{conGuia ? "Guía disponible" : "Ficha técnica general"}</span>
-                  )}
-                  {estado?.se_cultiva === false && estado.nota ? (
-                    <span className="italic">{estado.nota}</span>
-                  ) : null}
-                </div>
-                <Badge
-                  variant="outline"
-                  className="w-fit rounded-full"
-                  render={<Link href={`/especie/especies/${e.dbKey}`} />}
-                >
-                  Ver ficha →
-                </Badge>
-              </CardContent>
-            </Card>
-          );
+          return {
+            especie: e,
+            momentoActual: estado?.se_cultiva === false ? estado.nota ?? null : null,
+            cantidad: porEspecie.get(e.dbKey) ?? 0,
+          };
         })}
-      </div>
+        otras={otras.map((e) => ({ especie: e, cantidad: porEspecie.get(e.dbKey) ?? 0 }))}
+        enUso={enUso}
+      />
     </div>
   );
 }

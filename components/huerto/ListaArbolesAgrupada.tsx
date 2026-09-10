@@ -85,8 +85,15 @@ export function ListaArbolesAgrupada({ arboles, onEliminar }: ListaArbolesAgrupa
                 >
                   Ver ficha de la especie
                 </a>
-                <Badge variant="secondary" className="rounded-full">
-                  {g.filas.length} {g.filas.length === 1 ? "ejemplar" : "ejemplares"}
+                <Badge
+                  variant={sinUbicar === 0 ? "secondary" : "outline"}
+                  className={
+                    sinUbicar === 0
+                      ? "rounded-full bg-emerald-500/10 text-emerald-700"
+                      : "rounded-full bg-amber-500/10 text-amber-700"
+                  }
+                >
+                  {sinUbicar === 0 ? "completo" : "en curso"}
                 </Badge>
                 <ChevronDown
                   className={cn("size-4 text-muted-foreground transition-transform", abierto && "rotate-180")}

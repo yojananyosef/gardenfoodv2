@@ -32,7 +32,7 @@ import { ListaArbolesAgrupada } from "@/components/huerto/ListaArbolesAgrupada";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { ModoToggle } from "./ModoToggle";
 import { AgregarEspecieTarjetas } from "@/components/huerto/AgregarEspecieTarjetas";
-import { TerrenoSection } from "@/components/perfil/TerrenoSection";
+import { TerrenoSection } from "@/components/mapa/TerrenoSection";
 import { SelectorHuerto } from "./SelectorHuerto";
 import { AsistenteHuerto } from "@/components/huerto/AsistenteHuerto";
 import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
@@ -236,10 +236,8 @@ export default async function HuertoPage(props: {
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Trees className="size-3" /> inventario: {new Set(arboles.map((a) => a.especie)).size}{" "}
-                {new Set(arboles.map((a) => a.especie)).size === 1 ? "especie" : "especies"}{" "}
-                distintas
-              
+                <Trees className="size-3" /> {arboles.filter((a) => a.huertoId).length} en plano de{" "}
+                {arboles.length}
               </div>
             </CardContent>
             <div className="h-1 w-full bg-gradient-to-r from-emerald-500/60 to-emerald-500/0" aria-hidden />
@@ -512,41 +510,19 @@ export default async function HuertoPage(props: {
                   </div>
                 </CardContent>
               </Card>
-              {/* Plano del huerto — matriz de árboles sobre el polígono del mapa */}
+              {/* Lienzo del huerto (E2): satélite / posicionar / 3D en un solo lienzo */}
               <Card className="rounded-2xl shadow-sm lg:col-span-12">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex gap-3">
                       <span className="hidden size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 sm:inline-flex">
-                        <Box className="size-4" />
-                      </span>
-                      <div className="flex flex-col gap-1">
-                        <CardTitle className="text-base">Plano de tus huertos</CardTitle>
-                        <CardDescription className="text-xs">
-                          Sincroniza tu inventario de árboles con el polígono del
-                          mapa y edítalos en la matriz.
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} />
-                </CardContent>
-              </Card>
-
-              {/* Tu terreno — vinculación con el mapa del perfil */}
-              <Card className="rounded-2xl shadow-sm lg:col-span-12">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex gap-3">
-                      <span className="hidden size-9 items-center justify-center rounded-xl bg-primary/10 text-primary sm:inline-flex">
                         <MapPinned className="size-4" />
                       </span>
                       <div className="flex flex-col gap-1">
-                        <CardTitle className="text-base">Tu terreno</CardTitle>
+                        <CardTitle className="text-base">Lienzo del huerto</CardTitle>
                         <CardDescription className="text-xs">
-                          Huertos delimitados en el mapa de tu perfil.
+                          Dibuja tu terreno en satélite, posiciona árboles en la
+                          matriz o mira la visualización 3D — sin salir de aquí.
                         </CardDescription>
                       </div>
                     </div>
@@ -556,44 +532,51 @@ export default async function HuertoPage(props: {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {huertos.length === 0 ? (
-                    <div className="flex flex-col items-start gap-3 rounded-xl border border-dashed bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="text-xs text-muted-foreground">
-                        Aún no delimitas tu huerto en el mapa. Dibuja sus bordes
-                        para ver superficie y coordenadas.
-                      </p>
-                      <Button variant="outline" size="sm" className="shrink-0 rounded-full" render={<Link href="/perfil" />}>
-                        Delimitar en el mapa <ArrowRight data-icon="inline-end" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <ul className="flex flex-col gap-2">
-                      {huertos.map((h) => (
-                        <li
-                          key={h.id}
-                          className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-3"
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium">{h.nombre}</span>
-                            <span className="font-mono text-xs text-muted-foreground">
-                              {h.centro ? formatCoordenadas(h.centro) : "—"}
-                            </span>
-                          </div>
-                          <span className="text-sm text-muted-foreground">
-                            {formatAreaM2(h.superficieM2)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <Tabs defaultValue={arboles.some((a) => a.huertoId) ? "matriz" : "satelite"} className="gap-4">
+                    <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
+                      <TabsTrigger value="satelite" className="gap-1.5 rounded-lg">
+                        <MapPinned className="size-3.5" /> Terreno (satélite)
+                      </TabsTrigger>
+                      <TabsTrigger value="matriz" className="gap-1.5 rounded-lg">
+                        <Box className="size-3.5" /> Posicionar árboles
+                      </TabsTrigger>
+                      <TabsTrigger value="tres-d" className="gap-1.5 rounded-lg">
+                        <Box className="size-3.5" /> Visualización 3D
+                      </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="satelite" className="mt-0">
+                      <div className="flex flex-col gap-3">
+                        <TerrenoSection />
+                        {huertos.length > 0 ? (
+                          <ul className="flex flex-col gap-2">
+                            {huertos.map((h) => (
+                              <li
+                                key={h.id}
+                                className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-2"
+                              >
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-medium">{h.nombre}</span>
+                                  <span className="font-mono text-xs text-muted-foreground">
+                                    {h.centro ? formatCoordenadas(h.centro) : "—"}
+                                  </span>
+                                </div>
+                                <span className="text-sm text-muted-foreground">
+                                  {formatAreaM2(h.superficieM2)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="matriz" className="mt-0">
+                      <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" />
+                    </TabsContent>
+                    <TabsContent value="tres-d" className="mt-0">
+                      <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" />
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
-                {huertos.length > 0 ? (
-                  <div className="px-6 pb-4">
-                    <Button variant="outline" size="sm" className="w-full rounded-full sm:w-fit" render={<Link href="/perfil" />}>
-                      Editar en el mapa <ArrowRight data-icon="inline-end" />
-                    </Button>
-                  </div>
-                ) : null}
               </Card>
           </div>
 
@@ -897,9 +880,16 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
           <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-[1.9rem]">
             {v.mostrarAsistente ? "Armamos tu huerto, paso a paso" : "¿Qué sigue hoy?"}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {v.zonaNombre ? `${v.zonaNombre} · ${MESES[v.mesActual]}` : "Configura tu comuna en el perfil"} ·{" "}
-            <span className="capitalize">{dias}</span>
+          <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <span>
+              {v.zonaNombre ? `${v.zonaNombre} · ${MESES[v.mesActual]}` : "Configura tu comuna en el perfil"} ·{" "}
+              <span className="capitalize">{dias}</span>
+            </span>
+            {v.alertas[0] ? (
+              <Badge variant="secondary" className="rounded-full px-2.5 py-1 font-normal">
+                {MESES[v.mesActual].slice(0, 3)}: {v.alertas[0].titulo}
+              </Badge>
+            ) : null}
           </p>
         </div>
         <ModoToggle modo="guiado" />

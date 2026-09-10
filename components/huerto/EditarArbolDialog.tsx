@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { MapPinOff, Trash2 } from "lucide-react";
@@ -144,6 +145,13 @@ export function EditarArbolDialog({
         <Button type="button" className="min-h-11 w-full" onClick={guardar} disabled={pending}>
           {pending ? "Guardando…" : "Guardar cambios"}
         </Button>
+        {/* Puente E3: los cuidados son de la especie, no del árbol individual */}
+        <Link
+          href={`/especie/especies/${arbol.especie}`}
+          className="w-full rounded-full border px-3 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+        >
+          Ver ficha de la especie →
+        </Link>
         <div className="flex gap-2">
           <Button
             type="button"

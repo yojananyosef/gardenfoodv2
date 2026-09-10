@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
-import { TerrenoMap, type HuertoMapa } from "@/components/perfil/TerrenoMap";
+import { TerrenoMap, type HuertoMapa } from "@/components/mapa/TerrenoMap";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { actualizarHuerto, crearHuerto, eliminarHuerto } from "@/lib/huerto/huertos";
 import { agregarArbolEnMapa } from "@/lib/huerto/huertos";
