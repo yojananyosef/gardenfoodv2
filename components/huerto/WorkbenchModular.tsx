@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { Box, MapPin, Search, Sprout } from "lucide-react";
+import { Box, MapPin, Plus, Search, Sprout, TreeDeciduous } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ export function WorkbenchModular({
   huertos,
   arboles,
   slots,
+  esHuertoVacio = false,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
@@ -35,6 +36,8 @@ export function WorkbenchModular({
     /** Tab estructura 3D. */
     tresD: ReactNode;
   };
+  /** true cuando la cuenta no tiene cultivos, árboles ni huertos: oculta el alta de árbol bajo un botón para no duplicar «Elegir una especie» con la card de day-zero. */
+  esHuertoVacio?: boolean;
 }) {
   const sinUbicar = arboles.filter(
     (a) => a.huertoId === null || a.posX === null || a.posY === null,
@@ -43,6 +46,7 @@ export function WorkbenchModular({
   const [tab, setTab] = useState<"satelite" | "matriz" | "tres-d">
     (arboles.some((a) => a.huertoId) ? "matriz" : "satelite");
   const [q, setQ] = useState("");
+  const [altaArbolAbierto, setAltaArbolAbierto] = useState(false);
   const filtro = q.trim().toLowerCase();
 
   // Filas agrupadas filtradas por el buscador del panel.
@@ -106,7 +110,19 @@ export function WorkbenchModular({
               )}
             </div>
 
-            {slots.registrarArbol}
+            {esHuertoVacio ? (
+              <details>
+                <summary className="flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/40">
+                  <span className="flex items-center gap-2">
+                    <TreeDeciduous className="size-3.5" /> Registrar un árbol frutal
+                  </span>
+                  <Plus className="size-3.5" />
+                </summary>
+                <div className="mt-2">{slots.registrarArbol}</div>
+              </details>
+            ) : (
+              slots.registrarArbol
+            )}
           </CardContent>
         </Card>
 

@@ -355,6 +355,7 @@ export default async function HuertoPage(props: {
               <WorkbenchModular
                 huertos={huertos}
                 arboles={arboles}
+                esHuertoVacio={esHuertoVacio}
                 slots={{
                   registrarArbol: (
                     <AgregarArbol especies={ESPECIES} uso={{ actual: arboles.length, limite: limites.arboles }} />
