@@ -141,19 +141,6 @@ export default async function HuertoPage(props: {
   }
 
   const sinUbicarTotal = sinUbicarFiltrados.length;
-  const sinUbicarArboles = arboles.filter((a) => a.posX === null || a.posY === null);
-  const pasosModular = pasosAsistente({
-    huertos,
-    arboles,
-    sinUbicar: sinUbicarArboles,
-    terrenoSlot: <TerrenoSection />,
-    altaSlot: (
-      <AgregarEspecieTarjetas especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos ?? "ilimitado" }} />
-    ),
-    planoSlot: <PlanoHuerto huertos={huertoActivoId ? huertos.filter((h) => h.id === huertoActivoId) : huertos} arboles={arbolesFiltrados} especies={ESPECIES} />,
-  });
-  const pasoInicialModular =
-    huertos.length === 0 ? 0 : cultivos.length === 0 ? 1 : sinUbicarTotal > 0 ? 2 : 3;
 
   return (
     <div className="flex flex-col gap-5">
@@ -199,14 +186,6 @@ export default async function HuertoPage(props: {
               activoId={huertoActivoId}
               className="flex sm:hidden w-full max-w-xs"
             />
-            {asistentePendiente ? null : (
-              <AsistenteFlotante
-                pasos={pasosModular}
-                pasoInicial={pasoInicialModular}
-                marcarCompletado={asistentePendiente}
-                onCompletar={marcarAsistenteCompletado}
-              />
-            )}
           </div>
 
           <Card className="hidden shrink-0 rounded-2xl border-foreground/10 bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-3">
@@ -900,16 +879,13 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
                   <Wand2 className="size-4 text-primary" />
                   Tu huerto quedó sin contenido: retoma el asistente paso a paso o cambia al banco modular.
                 </p>
-                <div className="flex gap-2">
-                  <AsistenteFlotante
-                    pasos={pasos}
-                    pasoInicial={0}
-                    marcarCompletado={v.asistentePendiente}
-                    onCompletar={marcarAsistenteCompletado}
-                    skipCompletado={!v.asistentePendiente}
-                  />
-                  <ModoToggle modo="guiado" />
-                </div>
+                <AsistenteFlotante
+                  pasos={pasos}
+                  pasoInicial={0}
+                  marcarCompletado={v.asistentePendiente}
+                  onCompletar={marcarAsistenteCompletado}
+                  skipCompletado={!v.asistentePendiente}
+                />
               </CardContent>
             </Card>
           ) : (
@@ -917,9 +893,8 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
               <CardContent className="flex flex-wrap items-center justify-between gap-2 p-4">
                 <p className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Wand2 className="size-4" />
-                  ¿Repites el asistente (por ejemplo para agregar otro huerto)? Cambia al modo modular: ahí verás «Abrir asistente» cuando ya lo completaste una vez.
+                  ¿Repites el asistente (por ejemplo para agregar otro huerto)? Vuelve al modo guiado: ahí lo reabres cuando ya lo completaste una vez.
                 </p>
-                {v.asistentePendiente && <ModoToggle modo="guiado" />}
               </CardContent>
             </Card>
           )}

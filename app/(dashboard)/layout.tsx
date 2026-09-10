@@ -16,7 +16,7 @@ export default async function DashboardLayout({
     <TelemetryProvider>
       <div className="flex min-h-full flex-col">
         <TopBar esAdmin={esAdmin} />
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-6 sm:px-6 md:pb-6">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-6 sm:px-8 lg:px-10 md:pb-6">
           {children}
         </main>
         <BottomNav esAdmin={esAdmin} />

@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { ConsentPreferences } from "@/components/cmp/ConsentPreferences";
-import { TerrenoSection } from "@/components/mapa/TerrenoSection";
 import { UbicacionForm } from "@/components/perfil/UbicacionForm";
 import { eliminarMiCuenta } from "@/lib/privacy/actions";
 import { clearLocalConsent } from "@/lib/consent/token";
@@ -61,14 +60,6 @@ export default function PerfilPage() {
               recomendaciones de cultivo.
             </p>
             <UbicacionForm />
-          </div>
-          <div className="flex flex-col gap-2 border-t pt-4">
-            <p className="text-sm font-medium">Tu terreno</p>
-            <p className="text-xs text-muted-foreground">
-              Ubícate en el mapa y dibuja los bordes de cada huerto (puedes
-              tener varios) para ver su superficie y coordenadas.
-            </p>
-            <TerrenoSection />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4">
             <div>
