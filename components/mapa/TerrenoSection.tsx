@@ -34,7 +34,7 @@ type HuertoItem = HuertoMapa & { superficieM2: number };
 
 type OpcionEspecie = { dbKey: string; nombre: string };
 
-export function TerrenoSection() {
+export function TerrenoSection({ alto = 520 }: { alto?: number }) {
   const router = useRouter();
   const [huertos, setHuertos] = useState<HuertoItem[]>([]);
   const [arboles, setArboles] = useState<Arbol[]>([]);
@@ -333,6 +333,7 @@ export function TerrenoSection() {
         </div>
       )}
       <TerrenoMap
+        alto={alto}
         huertosIniciales={huertos}
         arboles={arboles}
         puedeDibujar={puedeDibujar}

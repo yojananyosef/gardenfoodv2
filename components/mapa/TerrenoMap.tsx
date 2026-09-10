@@ -73,6 +73,8 @@ type TerrenoMapProps = {
   onEditarArbol: (id: string) => void;
   onFueraHuerto: () => void;
   nombreArbol: (especie: string) => string;
+  /** Alto del contenedor del mapa en px (default 520; usa menos dentro de modales). */
+  alto?: number;
 };
 
 function comoPolygon(layer: Leaflet.Layer): Leaflet.Polygon {
@@ -119,6 +121,7 @@ export function TerrenoMap({
   onEditarArbol,
   onFueraHuerto,
   nombreArbol,
+  alto = 520,
 }: TerrenoMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Leaflet.Map | null>(null);
@@ -696,7 +699,8 @@ export function TerrenoMap({
       <div className="relative">
         <div
           ref={containerRef}
-          className={`h-[520px] w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
+          style={{ height: alto }}
+          className={`w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
           aria-label="Mapa para delimitar tus huertos y marcar árboles"
         />
         {cargandoSatelite && (
