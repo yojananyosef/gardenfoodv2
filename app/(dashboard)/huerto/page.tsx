@@ -137,7 +137,7 @@ export default async function HuertoPage(props: {
   const mostrarAsistente = asistentePendiente && huertoVacio && modo === "guiado";
 
   if (modo === "guiado") {
-    return <VistaGuiada v={{ mostrarAsistente, asistentePendiente, cultivos, cultivosConNombre, arboles: arbolesFiltrados, huertos, tareas, alertas, zonaNombre: zona?.nombre ?? null, mesActual, especiesDisponibles, limites, recom, zonaId, userId: user.id, huertoActivoId }} />;
+    return <VistaGuiada v={{ mostrarAsistente, asistentePendiente, huertoVacio, cultivos, cultivosConNombre, arboles: arbolesFiltrados, huertos, tareas, alertas, zonaNombre: zona?.nombre ?? null, mesActual, especiesDisponibles, limites, recom, zonaId, userId: user.id, huertoActivoId }} />;
   }
 
   const sinUbicarTotal = sinUbicarFiltrados.length;
@@ -199,12 +199,14 @@ export default async function HuertoPage(props: {
               activoId={huertoActivoId}
               className="flex sm:hidden w-full max-w-xs"
             />
-            <AsistenteFlotante
-              pasos={pasosModular}
-              pasoInicial={pasoInicialModular}
-              marcarCompletado={asistentePendiente}
-              onCompletar={marcarAsistenteCompletado}
-            />
+            {asistentePendiente ? null : (
+              <AsistenteFlotante
+                pasos={pasosModular}
+                pasoInicial={pasoInicialModular}
+                marcarCompletado={asistentePendiente}
+                onCompletar={marcarAsistenteCompletado}
+              />
+            )}
           </div>
 
           <Card className="hidden shrink-0 rounded-2xl border-foreground/10 bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-3">
@@ -718,6 +720,7 @@ export default async function HuertoPage(props: {
 interface VistaGuiadaProps {
   v: {
     huertoActivoId: string | null;
+    huertoVacio: boolean;
     mostrarAsistente: boolean;
     asistentePendiente: boolean;
     cultivos: Cultivo[];
@@ -889,16 +892,40 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
             </Card>
           )}
 
-          {/* Única puerta de vuelta al asistente */}
-          <Card className="rounded-2xl bg-muted/30">
-            <CardContent className="flex flex-wrap items-center justify-between gap-2 p-4">
-              <p className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Wand2 className="size-4" />
-                ¿Repites el asistente (por ejemplo para agregar otro huerto)? Cambia al modo modular y usa «Abrir asistente», o dime cuando esté pendiente de terreno.
-              </p>
-              {v.asistentePendiente && <ModoToggle modo="guiado" />}
-            </CardContent>
-          </Card>
+          {/* Asistente a mano en el guiado: vacío ("retómalo") o repetirlo */}
+          {v.huertoVacio ? (
+            <Card className="rounded-2xl bg-primary/5">
+              <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+                <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Wand2 className="size-4 text-primary" />
+                  Tu huerto quedó sin contenido: retoma el asistente paso a paso o cambia al banco modular.
+                </p>
+                <div className="flex gap-2">
+                  <AsistenteFlotante
+                    pasos={pasos}
+                    pasoInicial={0}
+                    marcarCompletado={v.asistentePendiente}
+                    onCompletar={
+                      v.asistentePendiente
+                        ? marcarAsistenteCompletado
+                        : async () => ({ ok: true as const })
+                    }
+                  />
+                  <ModoToggle modo="guiado" />
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="rounded-2xl bg-muted/30">
+              <CardContent className="flex flex-wrap items-center justify-between gap-2 p-4">
+                <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Wand2 className="size-4" />
+                  ¿Repites el asistente (por ejemplo para agregar otro huerto)? Cambia al modo modular: ahí verás «Abrir asistente» cuando ya lo completaste una vez.
+                </p>
+                {v.asistentePendiente && <ModoToggle modo="guiado" />}
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
     </div>

@@ -696,7 +696,7 @@ export function TerrenoMap({
       <div className="relative">
         <div
           ref={containerRef}
-          className={`h-80 w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
+          className={`h-[520px] w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
           aria-label="Mapa para delimitar tus huertos y marcar árboles"
         />
         {cargandoSatelite && (

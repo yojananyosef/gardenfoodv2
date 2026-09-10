@@ -76,7 +76,7 @@ export async function TopBar({ esAdmin }: { esAdmin?: boolean }) {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <span className="inline-flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
             <Sprout className="size-4" aria-hidden />

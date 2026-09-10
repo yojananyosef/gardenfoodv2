@@ -52,9 +52,9 @@ export function WorkbenchModular({
   }, [arboles, filtro]);
 
   return (
-    <div className="grid w-full gap-4 lg:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
+    <div className="grid w-full gap-5 lg:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
       {/* ─── Panel único: cultivos y árboles (R2) ─── */}
-      <aside className="flex flex-col gap-3">
+      <aside className="flex flex-col gap-3 lg:sticky lg:top-20 lg:self-start">
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="flex flex-col gap-3 p-4">
             <h3 className="flex items-center gap-2 text-sm font-semibold">
@@ -145,7 +145,7 @@ export function WorkbenchModular({
             {huertos.length} {huertos.length === 1 ? "huerto" : "huertos"}
           </Badge>
         </div>
-        <CardContent className="p-3 sm:p-4">
+        <CardContent className="p-4 sm:p-5">
           <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="gap-4">
             <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
               <TabsTrigger value="satelite" className="gap-1.5 rounded-lg">

@@ -35,7 +35,7 @@ export function AsistenteFlotante({ pasos, pasoInicial, marcarCompletado, onComp
         <Wand2 data-icon="inline-start" />
         <span className="hidden sm:inline">Abrir asistente</span>
       </DialogTrigger>
-      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-2xl">
+      <DialogContent className="max-h-[88vh] w-[min(96vw,56rem)] max-w-none overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle>Asistente del huerto</DialogTitle>
           <DialogDescription>
