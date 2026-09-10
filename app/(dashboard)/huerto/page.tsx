@@ -732,6 +732,7 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
     huertos: v.huertos,
     arboles: v.arboles,
     sinUbicar,
+    terrenoSlot: <TerrenoSection />,
     altaSlot: (
       <AgregarEspecieTarjetas
         especies={v.especiesDisponibles}
