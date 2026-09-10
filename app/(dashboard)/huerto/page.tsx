@@ -7,7 +7,6 @@ import {
   MapPinned,
   Plus,
   ArrowRight,
-  Box,
   Trees,
   CheckCircle2,
   Sun,
@@ -28,7 +27,7 @@ import { AgregarCultivo } from "@/components/huerto/AgregarCultivo";
 import { AgregarArbol } from "@/components/huerto/AgregarArbol";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { ListaCultivos } from "@/components/huerto/ListaCultivos";
-import { ListaArbolesAgrupada } from "@/components/huerto/ListaArbolesAgrupada";
+import { WorkbenchModular } from "@/components/huerto/WorkbenchModular";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { ModoToggle } from "./ModoToggle";
 import { AgregarEspecieTarjetas } from "@/components/huerto/AgregarEspecieTarjetas";
@@ -37,7 +36,7 @@ import { SelectorHuerto } from "./SelectorHuerto";
 import { AsistenteHuerto } from "@/components/huerto/AsistenteHuerto";
 import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
 import { pasosAsistente } from "@/components/huerto/pasosAsistente";
-import { marcarAsistenteCompletado, eliminarArbol } from "@/lib/huerto/actions";
+import { marcarAsistenteCompletado } from "@/lib/huerto/actions";
 import { modoEfectivo, type ModoHuerto } from "@/lib/huerto/modo";
 import { prepararCultivos } from "@/lib/huerto/nombres";
 import { TareasDelDia } from "@/components/huerto/TareasDelDia";
@@ -371,221 +370,109 @@ export default async function HuertoPage(props: {
 
         {/* CULTIVOS — bento 12-col */}
         <TabsContent value="cultivos" className="mt-2 flex flex-col gap-4">
-          {esHuertoVacio ? (
-            <Card className="overflow-hidden rounded-2xl border-dashed">
-              <CardContent className="p-0">
-                <Empty className="gap-6 p-6 sm:p-8">
-                  <EmptyHeader>
-                    <EmptyMedia variant="icon" className="size-12 rounded-2xl bg-primary/10 text-primary">
-                      <Sprout className="size-6" />
-                    </EmptyMedia>
-                    <EmptyTitle className="font-heading text-xl">Tu huerto está vacío</EmptyTitle>
-                    <EmptyDescription className="max-w-sm">
-                      Empieza con una especie. Te mostraremos el calendario exacto para tu comuna.
-                    </EmptyDescription>
-                  </EmptyHeader>
-
-                  <div className="grid w-full max-w-xl gap-3 text-left sm:grid-cols-3">
-                    {[
-                      { step: "1", title: "Elige especie", desc: "30 fichas", icon: Leaf },
-                      { step: "2", title: "Agrega al huerto", desc: "1 toque, ajustas después", icon: Plus },
-                      { step: "3", title: "Sigue tareas", desc: "Tareas y alertas", icon: CalendarDays },
-                    ].map((s) => (
-                      <div key={s.step} className="flex flex-col gap-2 rounded-2xl border bg-card p-3 shadow-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex size-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                            {s.step}
-                          </span>
-                          <s.icon className="size-3.5 text-muted-foreground" />
-                        </div>
-                        <span className="text-sm font-medium leading-none">{s.title}</span>
-                        <span className="text-xs text-muted-foreground">{s.desc}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <EmptyContent className="max-w-xl">
-                    <div className="w-full rounded-2xl border bg-card p-4 shadow-sm">
-                      <div className="mb-3 flex items-center gap-2">
-                        <span className="inline-flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                          <Plus className="size-4" />
-                        </span>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium leading-none">Agregar tu primer cultivo</span>
-                          <span className="text-xs text-muted-foreground">Frutilla o limonero para principiante</span>
-                        </div>
-                      </div>
-                      <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      ¿Dudas?{" "}
-                      <Link href="/recomendadas" className="font-medium text-primary underline-offset-4 hover:underline">
-                        Mira qué es recomendable en tu zona
-                      </Link>
-                    </p>
-                  </EmptyContent>
-                </Empty>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4 lg:grid-cols-12">
-              {/* Agregar — bento small, sticky */}
-              <Card className="flex flex-col rounded-2xl shadow-sm lg:col-span-5">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex size-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700">
-                      <Plus className="size-4" />
-                    </span>
-                    <div className="flex flex-col">
-                      <CardTitle className="text-base">Agregar cultivo</CardTitle>
-                      <CardDescription className="text-xs">Elige una especie y listo.</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
-                </CardContent>
-                <div className="px-6 pb-4">
-                  <div className="rounded-xl bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-                    Tip: {especiesDisponibles.length} especies aún no en tu huerto
-                  </div>
-                </div>
-              </Card>
-
-              {/* Tus cultivos — bento large */}
-              <Card className="flex flex-col rounded-2xl shadow-sm lg:col-span-7">
-                <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-                  <div className="flex flex-col gap-1">
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Leaf className="size-4 text-primary" /> Tus cultivos
-                    </CardTitle>
-                    <CardDescription className="text-xs">{cultivosConNombre.length} especies activas</CardDescription>
-                  </div>
-                  <Badge variant="secondary" className="rounded-full">
-                    {cultivosConNombre.length} activos
-                  </Badge>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <ListaCultivos cultivos={cultivosConNombre} />
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {/* Inventario, plano y terreno — siempre visibles, incluso con huerto vacío */}
-          <div className="grid gap-4 lg:grid-cols-12">
-              {/* Inventario árboles — full width bento, split inside */}
-              <Card className="rounded-2xl shadow-sm lg:col-span-12">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex gap-3">
-                      <span className="hidden size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 sm:inline-flex">
-                        <Trees className="size-4" />
-                      </span>
-                      <div className="flex flex-col gap-1">
-                        <CardTitle className="text-base">Inventario de árboles</CardTitle>
-                        <CardDescription className="text-xs">Seguimiento por árbol individual.</CardDescription>
-                      </div>
-                    </div>
-                    <Badge variant="outline" className="shrink-0 rounded-full">
-                      {arboles.length} árboles
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-                    <div className="rounded-xl border bg-card p-4">
-                      <p className="mb-3 text-sm font-medium">Registrar árbol</p>
-                      <AgregarArbol especies={ESPECIES} uso={{ actual: arboles.length, limite: limites.arboles }} />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      {arboles.length === 0 ? (
-                        <Empty className="h-full border-dashed py-8">
-                          <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                              <Trees className="size-4" />
-                            </EmptyMedia>
-                            <EmptyTitle className="text-sm">Sin árboles aún</EmptyTitle>
-                            <EmptyDescription className="text-xs">Registra tu primer árbol para cosechas y podas.</EmptyDescription>
-                          </EmptyHeader>
-                        </Empty>
-                      ) : (
-                        <ListaArbolesAgrupada arboles={arboles} onEliminar={eliminarArbol} />
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              {/* Lienzo del huerto (E2): satélite / posicionar / 3D en un solo lienzo */}
-              <Card className="rounded-2xl shadow-sm lg:col-span-12">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex gap-3">
-                      <span className="hidden size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 sm:inline-flex">
-                        <MapPinned className="size-4" />
-                      </span>
-                      <div className="flex flex-col gap-1">
-                        <CardTitle className="text-base">Lienzo del huerto</CardTitle>
+              {/* Banco modular (B1): panel único + lienzo grande */}
+              <WorkbenchModular
+                huertos={huertos}
+                arboles={arboles}
+                slots={{
+                  registrarArbol: (
+                    <AgregarArbol especies={ESPECIES} uso={{ actual: arboles.length, limite: limites.arboles }} />
+                  ),
+                  cultivos: esHuertoVacio ? (
+                    <Card className="rounded-2xl border-dashed shadow-sm">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-sm">
+                          <Sprout className="size-4 text-primary" /> Tu huerto está vacío
+                        </CardTitle>
                         <CardDescription className="text-xs">
-                          Dibuja tu terreno en satélite, posiciona árboles en la
-                          matriz o mira la visualización 3D — sin salir de aquí.
+                          Elige una especie aquí, o dibuja tu terreno en el lienzo de al lado (satélite).
                         </CardDescription>
-                      </div>
+                      </CardHeader>
+                      <CardContent className="flex flex-col gap-3">
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { step: "1", title: "Elige especie", icon: Leaf },
+                            { step: "2", title: "Agrega al huerto", icon: Plus },
+                            { step: "3", title: "Sigue tareas", icon: CalendarDays },
+                          ].map((s) => (
+                            <div key={s.step} className="flex items-center gap-2 rounded-xl border bg-card p-2">
+                              <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                                {s.step}
+                              </span>
+                              <s.icon className="size-3.5 shrink-0 text-muted-foreground" />
+                              <span className="text-xs font-medium leading-none">{s.title}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
+                        <p className="text-xs text-muted-foreground">
+                          ¿Dudas?{" "}
+                          <Link href="/recomendadas" className="font-medium text-primary underline-offset-4 hover:underline">
+                            Mira qué es recomendable en tu zona
+                          </Link>
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <Card className="rounded-2xl shadow-sm">
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex size-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700">
+                              <Plus className="size-4" />
+                            </span>
+                            <div className="flex flex-col">
+                              <CardTitle className="text-sm">Agregar cultivo</CardTitle>
+                              <CardDescription className="text-xs">Elige una especie y listo.</CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
+                        </CardContent>
+                      </Card>
+                      <Card className="rounded-2xl shadow-sm">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="flex items-center gap-2 text-sm">
+                            <Leaf className="size-4 text-primary" /> Tus cultivos
+                          </CardTitle>
+                          <CardDescription className="text-xs">{cultivosConNombre.length} especies activas</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <ListaCultivos cultivos={cultivosConNombre} />
+                        </CardContent>
+                      </Card>
                     </div>
-                    <Badge variant="outline" className="shrink-0 rounded-full">
-                      {huertos.length} {huertos.length === 1 ? "huerto" : "huertos"}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue={arboles.some((a) => a.huertoId) ? "matriz" : "satelite"} className="gap-4">
-                    <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
-                      <TabsTrigger value="satelite" className="gap-1.5 rounded-lg">
-                        <MapPinned className="size-3.5" /> Terreno (satélite)
-                      </TabsTrigger>
-                      <TabsTrigger value="matriz" className="gap-1.5 rounded-lg">
-                        <Box className="size-3.5" /> Posicionar árboles
-                      </TabsTrigger>
-                      <TabsTrigger value="tres-d" className="gap-1.5 rounded-lg">
-                        <Box className="size-3.5" /> Visualización 3D
-                      </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="satelite" className="mt-0">
-                      <div className="flex flex-col gap-3">
-                        <TerrenoSection />
-                        {huertos.length > 0 ? (
-                          <ul className="flex flex-col gap-2">
-                            {huertos.map((h) => (
-                              <li
-                                key={h.id}
-                                className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-2"
-                              >
-                                <div className="flex flex-col">
-                                  <span className="text-sm font-medium">{h.nombre}</span>
-                                  <span className="font-mono text-xs text-muted-foreground">
-                                    {h.centro ? formatCoordenadas(h.centro) : "—"}
-                                  </span>
-                                </div>
-                                <span className="text-sm text-muted-foreground">
-                                  {formatAreaM2(h.superficieM2)}
+                  ),
+                  satelite: (
+                    <div className="flex flex-col gap-3">
+                      <TerrenoSection />
+                      {huertos.length > 0 ? (
+                        <ul className="flex flex-col gap-2">
+                          {huertos.map((h) => (
+                            <li
+                              key={h.id}
+                              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-2"
+                            >
+                              <span className="grid gap-0.5">
+                                <span className="text-sm font-medium">{h.nombre}</span>
+                                <span className="font-mono text-xs text-muted-foreground">
+                                  {h.centro ? formatCoordenadas(h.centro) : "—"}
                                 </span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : null}
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="matriz" className="mt-0">
-                      <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" />
-                    </TabsContent>
-                    <TabsContent value="tres-d" className="mt-0">
-                      <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" />
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-          </div>
-
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                {formatAreaM2(h.superficieM2)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </div>
+                  ),
+                  matriz: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" />,
+                  tresD: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" />,
+                }}
+              />
           {sponsorships.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {sponsorships.slice(0, 2).map((s) => (
@@ -930,7 +817,7 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
                   <Button className="rounded-full" render={<Link href="/huerto?plano=1" />}>
                     Posicionar {sinUbicar.length} pendientes
                   </Button>
-                  <ModoToggle modo="guiado" compacto />
+                  <ModoToggle modo="guiado" />
                 </div>
               </CardContent>
             </Card>
@@ -1009,7 +896,7 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
                 <Wand2 className="size-4" />
                 ¿Repites el asistente (por ejemplo para agregar otro huerto)? Cambia al modo modular y usa «Abrir asistente», o dime cuando esté pendiente de terreno.
               </p>
-              {v.asistentePendiente && <ModoToggle modo="guiado" compacto />}
+              {v.asistentePendiente && <ModoToggle modo="guiado" />}
             </CardContent>
           </Card>
         </div>

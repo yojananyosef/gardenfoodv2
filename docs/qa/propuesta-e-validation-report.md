@@ -52,3 +52,13 @@ Dashboard: https://www.testsprite.com/dashboard/mcp/tests/5a8a625b-73c4-52c2-a48
 - R6 (especies módulo aparte): ✓ índice + fichas + buscador.
 - R7 (drag & drop): ✓ preexistente en matriz y 3D; cubierto por TC010/TC017.
 - Puente E3 árbol→ficha: ✓ en inventario agrupado y en diálogo de edición 2D/3D.
+
+
+## 6️⃣ Ajuste post-revisión (banco B1 + day-zero)
+
+Feedback del socio (capturas de cuenta vacía): el modular day-zero caía al estado vacío genérico y el lienzo quedaba encajonado abajo, sin parecerse a la Propuesta B. Cambios:
+
+- Nuevo `components/huerto/WorkbenchModular.tsx` (banco de trabajo B1): panel único de cultivos/árboles (buscador de especies, filas agrupadas por especie con badges, alta de árbol, repartir sin ubicar) + lienzo grande a la derecha con tabs Terreno (satélite)/Posicionar/3D, siempre visible también cuando el huerto está vacío.
+- El cascarón vacío genérico se eliminó: day-zero muestra el mismo banco con guías de 3 pasos dentro del panel y el satélite listo para dibujar el primer huerto.
+- Evidencia: `docs/qa/img/b1-dayzero.png`, `b1-banco-final.png`.
+- Verificación rápida post-cambio: lint ✓ · tsc ✓ · 175/175 tests ✓ · src市值無 manual de la pantalla.
