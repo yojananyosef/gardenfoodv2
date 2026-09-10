@@ -1,0 +1,116 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - link "GardenFood v2" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e11]: GardenFood
+        - generic [ref=e12]: v2
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]: Agronomía doméstica · Chile
+          - heading "Tu huerto, con rigor chileno." [level=1] [ref=e16]: Tu huerto,con rigor chileno.
+          - paragraph [ref=e17]: De Arica a Punta Arenas, 245 comunas en 20 zonas agroclimáticas. Calendario fenológico, riego por comuna y fertilización a la medida.
+        - generic [ref=e18]:
+          - generic [ref=e27]:
+            - generic [ref=e28]: Poda guiada
+            - generic [ref=e29]: Ventana exacta por especie y zona
+          - generic [ref=e35]:
+            - generic [ref=e36]: Riego a la medida
+            - generic [ref=e37]: Dosis por suelo y lluvia local
+          - generic [ref=e44]:
+            - generic [ref=e45]: Tu comuna importa
+            - generic [ref=e46]: No es consejo genérico del hemisferio norte
+        - generic [ref=e48]:
+          - paragraph [ref=e53]: “Por fin sé cuándo podar mi durazno en La Serena. Antes lo hacía a ojo y perdía la mitad de la fruta.”
+          - generic [ref=e54]:
+            - generic [ref=e55]: MR
+            - generic [ref=e56]:
+              - generic [ref=e57]: María R.
+              - generic [ref=e58]: La Serena · Zona 3
+            - generic [ref=e59]: Huerto desde 2024
+      - generic [ref=e62]:
+        - generic [ref=e63]: Datos validados con fichas agronómicas chilenas · Gratis y sin tarjeta
+        - separator [ref=e68]
+        - generic [ref=e69]:
+          - generic [ref=e70]: © 2026 GardenFood — huertos informados
+          - generic [ref=e71]: 16 regiones · 245 comunas
+    - generic [ref=e72]:
+      - generic [ref=e75]:
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: Gratis · 2 minutos
+            - generic [ref=e80]: Paso 1 de 2
+          - generic [ref=e86]:
+            - generic [ref=e87]: Crear cuenta
+            - generic [ref=e88]: Tu huerto a la medida de tu comuna. Sin tarjeta, cancela cuando quieras.
+          - generic [ref=e89]:
+            - generic [ref=e90]: "1"
+            - generic [ref=e91]: Cuenta
+            - separator [ref=e92]
+            - generic [ref=e93]: "2"
+            - generic [ref=e94]: Huerto
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - group [ref=e98]:
+                - generic [ref=e99]: Nombre
+                - group [ref=e100]:
+                  - group [ref=e101]
+                  - textbox "Nombre" [ref=e105]:
+                    - /placeholder: Ej. Camila Rojas
+                - paragraph [ref=e106]: Como aparecerá en tu huerto.
+              - group [ref=e107]:
+                - generic [ref=e108]: Correo
+                - group [ref=e109]:
+                  - group [ref=e110]
+                  - textbox "Correo" [ref=e114]:
+                    - /placeholder: tu@correo.cl
+              - group [ref=e115]:
+                - generic [ref=e116]: Contraseña
+                - group [ref=e117]:
+                  - group [ref=e118]
+                  - textbox "Contraseña" [ref=e122]:
+                    - /placeholder: Mínimo 8 caracteres
+                - paragraph [ref=e123]: Mínimo 8 caracteres. Usa una clave segura.
+              - group [ref=e124]:
+                - generic [ref=e125]: Comuna
+                - group [ref=e126]:
+                  - combobox "Comuna" [ref=e127]
+                  - group [ref=e128]:
+                    - combobox [ref=e129]
+                - textbox [aria-hidden] [ref=e130]
+                - paragraph [ref=e131]: 346 comunas — escribe y elige. Región y zona se asignan solas.
+            - button "Crear cuenta" [ref=e132]
+            - paragraph [ref=e133]:
+              - text: Al crear tu cuenta aceptas los
+              - link "términos" [ref=e134] [cursor=pointer]:
+                - /url: /legal/terminos
+              - text: y la
+              - link "privacidad" [ref=e135] [cursor=pointer]:
+                - /url: /legal/privacidad
+              - text: . Usamos tu comuna solo para personalizar tu calendario.
+            - generic [ref=e136]:
+              - checkbox [ref=e137]
+              - checkbox [aria-hidden] [ref=e138]
+              - generic [ref=e139] [cursor=pointer]:
+                - text: Declaro tener al menos
+                - strong [ref=e140]: 14 años
+                - text: . Si tengo entre 14 y 16, cuento con la autorización de mis representantes legales.
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - separator [ref=e143]
+              - generic [ref=e144]: ¿ya tienes cuenta?
+              - separator [ref=e145]
+            - button "Iniciar sesión" [ref=e146] [cursor=pointer]
+          - generic [ref=e147]:
+            - generic [ref=e148]: 346 comunas
+            - generic [ref=e151]: 20 zonas
+            - generic [ref=e154]: Datos chilenos
+      - generic [ref=e158]: Al continuar aceptas nuestros términos y la política de privacidad · Tus datos de comuna solo se usan para personalizar el calendario
+  - button "Open Next.js Dev Tools" [ref=e164] [cursor=pointer]:
+    - generic [ref=e167]:
+      - text: Compiling
+      - generic [ref=e168]:
+        - generic [ref=e169]: .
+        - generic [ref=e170]: .
+        - generic [ref=e171]: .

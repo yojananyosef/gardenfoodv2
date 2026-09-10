@@ -21,13 +21,13 @@ Usuario: admin de prueba (solo lectura, no se modificaron datos)
 
 ## Hallazgos por requerimiento
 
-### 1. Mapa satelital fuera de «Mi Huerto» — CONFIRMADO
+### 1. Mapa satelital fuera de «Mi Huerto» — RESUELTO (2026-09-10): lienzo con tabs satélite/matriz/3D embebido en huerto modular; perfil conserva su página completa
 El dibujo de polígonos vive solo en `/perfil` (`TerrenoSection` + `TerrenoMap`). Desde `/huerto` hay una card «Tu terreno» cuyo único CTA es saltar a Perfil. El usuario pierde el contexto (bento, tabs) al cruzar.
 
-### 2. Duplicación «Tus cultivos» vs «Inventario de árboles» — CONFIRMADO, peor de lo esperado
+### 2. Duplicación «Tus cultivos» vs «Inventario de árboles» — RESUELTO (2026-09-10): inventario agrupado por especie (una fila por especie, expandible) — fin del muro de 24 filas, peor de lo esperado
 Con datos reales: 1 cultivo (Ciruela ×1) + **24 filas de árboles** donde «Durazno» aparece repetido ~16 veces, todas «Sin fecha de plantación» con badge «En plano». Dos formularios separados piden «Especie» (+ fecha/observaciones en árboles) para la misma información. La «sincronización» convierte inventario agregado en ejemplares individuales (reemplaza filas en `gf_arboles`). El muro de 24 filas idénticas es el mayor ruido de la pantalla.
 
-### 3. Contador de especies — PARCIALMENTE RESUELTO en UI
+### 3. Contador de especies — RESUELTO (2026-09-10): especies únicas de cultivos∪árboles + detalle «K en plano de M», sin duplicado, badges en curso/completo en UI
 El bento ya muestra «1 especies» (filas de `gf_cultivos`, únicas por especie) + «+ 24 árboles inventario». El ajuste pendiente: el «+24» cuenta filas de `gf_arboles`; si se quiere especies únicas del inventario habría que deduplicar (Durazno/Uva/Arándano/Durazno… = ~4 especies). Propuesta de copy: «4 especies · 24 árboles».
 
 ### 4. Renombrar «2D / 3D» — CONFIRMADO
@@ -43,7 +43,7 @@ En el mapa satelital hay árboles amontonados y superpuestos (clusters arriba a 
 
 ## Bugs encontrados de paso (fuera de alcance de wireframes, para registrar)
 
-1. **CSP bloquea `server.arcgisonline.com`** en producción: `connect-src` no incluye el dominio → el ajuste dinámico de maxNativeZoom del TerrenoMap falla con 2 errores por visita. Fix: agregar host a `connect-src` en `proxy.ts`/CSP.
+1. **CSP bloquea `server.arcgisonline.com`** — RESUELTO (incl. rama dev que pisaba el fix) en producción: `connect-src` no incluye el dominio → el ajuste dinámico de maxNativeZoom del TerrenoMap falla con 2 errores por visita. Fix: agregar host a `connect-src` en `proxy.ts`/CSP.
 2. **`/api/v1/cmp/consent` devuelve 400** tras «Rechazar todo» en desktop. Un rechazo debería ser 200. Probable raíz del freeze del modal en iOS/Safari (si la promesa queda pendiente/rota, el modal nunca resuelve). Investigar con WebKit.
 3. **Inconsistencia de datos del usuario**: perfil dice Maipú/Buin (RM) pero los 5 huertos están en ~-36.63, -71.84 (región de Ñuble). El header mezcla ambos («Tu zona: Santiago Sur - Buin… para Maipú»). Refuerza la necesidad del selector de huerto global.
 

@@ -1,0 +1,1088 @@
+[
+  {
+    "id": "TC001",
+    "title": "Sign in and reach the orchard dashboard",
+    "description": "A registered user can sign in with valid credentials and land on the orchard dashboard.",
+    "category": "Autenticación",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the orchard dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the protected area is accessible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Sign in and land on the orchard dashboard",
+    "description": "A registered user can sign in and reach the protected orchard dashboard after authentication.",
+    "category": "Authentication and protected-route redirects",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the orchard dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify guided orchard tasks are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Access the login screen for authentication",
+    "description": "A first-time or returning user can open the login screen and start signing in to reach the app.",
+    "category": "Autenticación",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the login form is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sign-in controls are available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Redirect unauthenticated users to sign in from the protected dashboard",
+    "description": "A visitor who opens the protected orchard dashboard is redirected to sign in instead of accessing protected content.",
+    "category": "Authentication and protected-route redirects",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sign-in page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify protected orchard content is not displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Record fertilizer application from a species detail page",
+    "description": "A user can confirm that fertilizer was applied and see the next task scheduled on the species detail page.",
+    "category": "Ficha de especie con fertilización casera",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /especie/especies/Duraznero"
+      },
+      {
+        "type": "action",
+        "description": "Record that the fertilizer has been applied"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a confirmation message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the next scheduled task is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Preserve the intended destination after login",
+    "description": "An unauthenticated user sent to login can sign in and continue to the protected area they originally requested.",
+    "category": "Autenticación",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the orchard dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the requested orchard area is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Register access from a protected orchard route",
+    "description": "A visitor without a session can be redirected from a protected orchard route to registration and continue account creation.",
+    "category": "Autenticación",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /registro"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the registration form is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user can continue account creation from the protected-route redirect"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Review today's guided orchard tasks",
+    "description": "A logged-in user can open the guided orchard overview and see the current task list for orchard care.",
+    "category": "Modo guiado del huerto",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the guided orchard overview is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify today's tasks are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Move from pending positioning to the setup flow",
+    "description": "A logged-in user can review pending positioning work in guided mode and open the positioning flow to continue setup.",
+    "category": "Modo guiado del huerto",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Open the pending positioning action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the positioning setup flow is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the orchard setup can continue"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Work in the modular orchard canvas",
+    "description": "A logged-in user can switch between the main workspace tabs and see the orchard canvas content change accordingly.",
+    "category": "Modo modular con lienzo",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Switch to modular mode"
+      },
+      {
+        "type": "action",
+        "description": "Switch between the canvas tabs"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the canvas content changes with the selected tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the orchard workspace remains visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Search a species and open its detail page",
+    "description": "A user can find a species from the index search and open the matching species detail page.",
+    "category": "Ficha de especie con fertilización casera",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /especie/especies"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a species name into the search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the species cards update to match the search"
+      },
+      {
+        "type": "action",
+        "description": "Open a matching species card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the species detail page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Mark a guided task as completed",
+    "description": "A logged-in user can complete a task in guided mode and see the task update in the list.",
+    "category": "Modo guiado del huerto",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Mark a task as done"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task status is updated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task remains visible in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Review fertilizer guidance, annual care, and traceability for a species",
+    "description": "A user can inspect a species detail page to review fertilizer stages, home doses, watering guidance, annual care, and traceability notes.",
+    "category": "Ficha de especie con fertilización casera",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /especie/especies/Duraznero"
+      },
+      {
+        "type": "action",
+        "description": "Review the fertilizer program by growth stage"
+      },
+      {
+        "type": "action",
+        "description": "Review the home measurement doses and watering method"
+      },
+      {
+        "type": "action",
+        "description": "Open the annual care calendar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify annual care information is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify traceability notes are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Open a species guidance page from the guided summary",
+    "description": "A logged-in user can open a species from the guided orchard summary and see its guidance page.",
+    "category": "Modo guiado del huerto",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Open a species from the summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the species guidance page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify species-specific care guidance is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Change commune and persist the profile update",
+    "description": "A user can update their comuna on the profile page and see the saved commune reflected in the profile.",
+    "category": "Perfil y mapa de terreno",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /perfil"
+      },
+      {
+        "type": "action",
+        "description": "Choose a comuna"
+      },
+      {
+        "type": "action",
+        "description": "Save the profile update"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated comuna is reflected in the profile"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the profile settings remain visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Keep the preferred orchard mode after switching",
+    "description": "A logged-in user can switch from guided mode to modular mode and later return to the same preferred mode.",
+    "category": "Modo guiado del huerto",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Switch to modular mode"
+      },
+      {
+        "type": "action",
+        "description": "Return to the orchard workspace later"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify modular mode is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the preferred mode is preserved"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Expand and collapse grouped orchard inventory",
+    "description": "A logged-in user can expand a grouped species row to inspect individual trees and then collapse it again.",
+    "category": "Modo modular con lienzo",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Switch to modular mode"
+      },
+      {
+        "type": "action",
+        "description": "Expand a species row in the grouped inventory"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the individual trees for that species are displayed"
+      },
+      {
+        "type": "action",
+        "description": "Collapse the species row"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the individual trees are hidden"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Manage privacy consent from the profile page",
+    "description": "A user can open privacy settings, change consent preferences, and see the updated consent state on the profile page.",
+    "category": "Perfil y mapa de terreno",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /perfil"
+      },
+      {
+        "type": "action",
+        "description": "Open privacy settings"
+      },
+      {
+        "type": "action",
+        "description": "Review the consent options"
+      },
+      {
+        "type": "action",
+        "description": "Manage the privacy preference"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated consent state is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the privacy settings remain accessible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Filter the workspace to one orchard",
+    "description": "A logged-in user can open the orchard workspace for a selected huerto and see the matching inventory and canvas content.",
+    "category": "Modo modular con lienzo",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto?huerto=selected"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the workspace is filtered to the selected orchard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify only the matching orchard content is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC020",
+    "title": "View recommended species for the current commune",
+    "description": "A user can open the recommendations page and review the species suggested for their commune.",
+    "category": "Especies recomendadas",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /recomendadas"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify recommended species are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify commune-based recommendations are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Open the floating orchard assistant",
+    "description": "A logged-in user can open the floating assistant and review the 4-step orchard setup flow.",
+    "category": "Modo modular con lienzo",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /huerto"
+      },
+      {
+        "type": "action",
+        "description": "Open the floating assistant"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the orchard assistant is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the 4-step setup flow is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC022",
+    "title": "Review terrain map details on the profile page",
+    "description": "A user can inspect the terrain map on the profile page and return to the profile settings view.",
+    "category": "Perfil y mapa de terreno",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /perfil"
+      },
+      {
+        "type": "action",
+        "description": "Review the terrain map"
+      },
+      {
+        "type": "action",
+        "description": "Inspect the mapped terrain area"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the terrain map is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify terrain area details are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC023",
+    "title": "Review the annual care calendar by species",
+    "description": "Verifies that a user can open the annual care calendar and see seasonal care guidance organized by species.",
+    "category": "Calendario anual de cuidados",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the annual care calendar is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify care guidance is organized by species"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC024",
+    "title": "Compare seasonal care moments across species",
+    "description": "Verifies that a user can compare different species in the annual calendar to understand which ones need attention now.",
+    "category": "Calendario anual de cuidados",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "action",
+        "description": "Scroll the calendar to review different species"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify multiple species care schedules are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify seasonal care moments are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC025",
+    "title": "Open the annual care calendar",
+    "description": "A user can navigate to the annual care calendar and review seasonal care across the year.",
+    "category": "Annual care calendar browsing",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify annual care calendar content is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify species care planning information is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC026",
+    "title": "Identify care tasks for the current season",
+    "description": "Verifies that a user can inspect the calendar to find the tasks that apply to the current season and plan care accordingly.",
+    "category": "Calendario anual de cuidados",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the currently relevant part of the calendar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify current-season care tasks are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the calendar supports planning upcoming care"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC027",
+    "title": "Use the calendar to choose the next species to care for",
+    "description": "Verifies that a user can look across the annual calendar and determine which species need attention next.",
+    "category": "Calendario anual de cuidados",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "action",
+        "description": "Review the calendar entries for different species"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify upcoming care items are visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the calendar helps distinguish species needing attention"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC028",
+    "title": "Delete an account after typed confirmation",
+    "description": "A user can open the delete-account dialog, type the required confirmation text, and proceed with the account removal flow.",
+    "category": "Perfil y mapa de terreno",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /perfil"
+      },
+      {
+        "type": "action",
+        "description": "Open the delete-account dialog"
+      },
+      {
+        "type": "action",
+        "description": "Type ELIMINAR into the confirmation field"
+      },
+      {
+        "type": "action",
+        "description": "Confirm account deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the account removal flow proceeds"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a deletion confirmation is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC029",
+    "title": "Review care guidance for one species at a time",
+    "description": "Verifies that a user can focus on a single species in the annual calendar and inspect its care timeline without losing context.",
+    "category": "Calendario anual de cuidados",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "action",
+        "description": "Scroll until a species-specific care section is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a single species care section is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify its seasonal timeline is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC030",
+    "title": "Browse the calendar when no species are highlighted",
+    "description": "Verifies that the annual care calendar remains usable as a browseable overview even when the user has not selected a specific species.",
+    "category": "Calendario anual de cuidados",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendario"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the calendar page loads successfully"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an overview of species care guidance is displayed"
+      }
+    ],
+    "priority": "Low"
+  }
+]

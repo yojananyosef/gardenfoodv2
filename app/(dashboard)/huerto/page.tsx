@@ -50,7 +50,13 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TareasDonut, AlertasBar } from "@/components/huerto/HuertoCharts";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
-import { ESPECIES, MESES, getEspeciesPorZona, getZonaIdDeComuna } from "@/lib/agronomy";
+import {
+  ESPECIES,
+  MESES,
+  getEspeciePorDbKey,
+  getEspeciesPorZona,
+  getZonaIdDeComuna,
+} from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
 import { getArboles, getCultivos, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
 import {
@@ -951,28 +957,38 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm">Tu huerto · resumen</CardTitle>
                 <CardDescription className="text-xs">
-                  {cultivosConNombre.length} especies · {v.arboles.length} árboles
+                  {new Set([...cultivosConNombre.map((c) => c.especie), ...v.arboles.map((a) => a.especie)]).size}{" "}
+                  especies · {v.arboles.length} árboles
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
-                {cultivosConNombre.map((c) => {
-                  const afectados = v.arboles.filter((a) => a.especie === c.especie).length;
-                  return (
-                    <Link
-                      key={c.id}
-                      href={`/especie/especies/${c.especie}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40"
-                    >
-                      <span className="flex flex-col">
-                        <span className="text-sm font-medium">¿Cómo va tu {c.nombre?.toLowerCase() ?? c.especie}?</span>
-                        <span className="text-xs text-muted-foreground">
-                          {afectados} {afectados === 1 ? "ejemplar" : "ejemplares"} en tu huerto
+                {(() => {
+                  const nombres = new Map<string, string>();
+                  for (const c of cultivosConNombre)
+                    nombres.set(c.especie, c.nombre ?? c.especie);
+                  for (const a of v.arboles)
+                    if (!nombres.has(a.especie))
+                      nombres.set(a.especie, getEspeciePorDbKey(a.especie)?.nombre ?? a.especie);
+                  return [...nombres.entries()].map(([especie, nombre]) => {
+                    const afectados = v.arboles.filter((a) => a.especie === especie)
+                      .reduce((sum, a) => sum + (a.cantidad ?? 1), 0);
+                    return (
+                      <Link
+                        key={especie}
+                        href={`/especie/especies/${especie}`}
+                        className="flex items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors hover:bg-muted/40"
+                      >
+                        <span className="flex flex-col">
+                          <span className="text-sm font-medium">¿Cómo va tu {nombre.toLowerCase()}?</span>
+                          <span className="text-xs text-muted-foreground">
+                            {afectados} {afectados === 1 ? "ejemplar" : "ejemplares"} en tu huerto
+                          </span>
                         </span>
-                      </span>
-                      <Badge variant="outline" className="rounded-full">Ver ficha →</Badge>
-                    </Link>
-                  );
-                })}
+                        <Badge variant="outline" className="rounded-full">Ver ficha →</Badge>
+                      </Link>
+                    );
+                  });
+                })()}
               </CardContent>
             </Card>
           ) : (

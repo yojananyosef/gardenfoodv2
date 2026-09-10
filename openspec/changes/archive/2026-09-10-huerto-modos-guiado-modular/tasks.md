@@ -44,5 +44,5 @@
 ## 7. QA e integración
 
 - [x] 7.1 Tests vitest de actions nuevas (setHuertoModo, alta desde asistente, Lo eché) y del default de modo; `pnpm test` verde con la suite completa
-- [ ] 7.2 Verificación manual en dev de los 5 pantallazos de la Propuesta E (docs/propuestas-ui/propuesta-e.html) contra la app: modo guiado día 1, toggle, «¿qué sigue?», ficha de especie desde un árbol, móvil
+- [x] 7.2 Verificación manual en dev de los 5 pantallazos de la Propuesta E (docs/propuestas-ui/propuesta-e.html) contra la app: modo guiado día 1, toggle, «¿qué sigue?», ficha de especie desde un árbol, móvil
 - [x] 7.3 `pnpm lint && pnpm tsc --noEmit` + validación `openspec validate huerto-modos-guiado-modular`

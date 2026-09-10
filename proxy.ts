@@ -46,7 +46,8 @@ function buildCsp(nonce: string): string {
     "upgrade-insecure-requests",
   ];
   if (dev) {
-    csp[5] = "connect-src 'self' ws: wss: https://*.supabase.co wss://*.supabase.co";
+    csp[5] =
+      "connect-src 'self' ws: wss: https://*.supabase.co wss://*.supabase.co https://server.arcgisonline.com https://services.arcgisonline.com https://tiles.maps.eox.at";
   }
   return csp.join("; ");
 }
