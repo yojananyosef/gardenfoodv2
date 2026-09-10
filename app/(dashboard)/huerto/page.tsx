@@ -140,7 +140,7 @@ export default async function HuertoPage(props: {
     return <VistaGuiada v={{ mostrarAsistente, asistentePendiente, huertoVacio, cultivos, cultivosConNombre, arboles: arbolesFiltrados, huertos, tareas, alertas, zonaNombre: zona?.nombre ?? null, mesActual, especiesDisponibles, limites, recom, zonaId, userId: user.id, huertoActivoId }} />;
   }
 
-  const sinUbicarTotal = sinUbicarFiltrados.length;
+
 
   return (
     <div className="flex flex-col gap-5">

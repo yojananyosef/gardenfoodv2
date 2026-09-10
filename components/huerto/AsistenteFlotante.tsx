@@ -53,7 +53,7 @@ export function AsistenteFlotante({ pasos, pasoInicial, marcarCompletado, onComp
           pasos={pasos}
           pasoInicial={pasoInicial}
           marcarCompletado={marcarCompletado}
-          alCompletar={onCompletar}
+          alCompletar={alCompletar}
         />
       </DialogContent>
     </Dialog>
