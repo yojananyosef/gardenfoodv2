@@ -18,7 +18,10 @@ interface AsistenteFlotanteProps {
   pasoInicial: number;
   /** false cuando el usuario ya lo corrió (no re-marca completado). */
   marcarCompletado: boolean;
+  /** Action server serializable (debe venir de un server component). */
   onCompletar: () => Promise<{ ok: boolean } | { error: string }>;
+  /** True si el asistente ya fue completado una vez: no vuelve a marcar. */
+  skipCompletado?: boolean;
 }
 
 /**
@@ -26,8 +29,12 @@ interface AsistenteFlotanteProps {
  * de la C en un modal, retomando lo pendiente. Deja de marcar completado
  * si ya lo estaba (es la puerta de vuelta, no una repetición obligatoria).
  */
-export function AsistenteFlotante({ pasos, pasoInicial, marcarCompletado, onCompletar }: AsistenteFlotanteProps) {
+export function AsistenteFlotante({ pasos, pasoInicial, marcarCompletado, onCompletar, skipCompletado = false }: AsistenteFlotanteProps) {
   const [abierto, setAbierto] = useState(false);
+
+  const alCompletar = skipCompletado
+    ? async () => ({ ok: true })
+    : onCompletar;
 
   return (
     <Dialog open={abierto} onOpenChange={setAbierto}>
@@ -35,7 +42,7 @@ export function AsistenteFlotante({ pasos, pasoInicial, marcarCompletado, onComp
         <Wand2 data-icon="inline-start" />
         <span className="hidden sm:inline">Abrir asistente</span>
       </DialogTrigger>
-      <DialogContent className="max-h-[88vh] w-[min(96vw,56rem)] max-w-none overflow-y-auto rounded-2xl">
+      <DialogContent className="max-h-[88vh] w-[min(96vw,56rem)] sm:max-w-[56rem] overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle>Asistente del huerto</DialogTitle>
           <DialogDescription>

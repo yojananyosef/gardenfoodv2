@@ -905,11 +905,8 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
                     pasos={pasos}
                     pasoInicial={0}
                     marcarCompletado={v.asistentePendiente}
-                    onCompletar={
-                      v.asistentePendiente
-                        ? marcarAsistenteCompletado
-                        : async () => ({ ok: true as const })
-                    }
+                    onCompletar={marcarAsistenteCompletado}
+                    skipCompletado={!v.asistentePendiente}
                   />
                   <ModoToggle modo="guiado" />
                 </div>
