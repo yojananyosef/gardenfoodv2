@@ -166,6 +166,10 @@ export function TerrenoMap({
   const [error, setError] = useState<string | null>(null);
   const [localizando, setLocalizando] = useState(false);
   const [ubicacionError, setUbicacionError] = useState<string | null>(null);
+  const [precisionM, setPrecisionM] = useState<number | null>(null);
+  // Cada pulsación de «Mi ubicación» invalida la anterior (evita setState
+  // tardíos y puntos de una petición vieja).
+  const pedidoUbicacionRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -260,7 +264,11 @@ export function TerrenoMap({
             fillOpacity: 0.95,
           })
             .addTo(map)
-            .bindTooltip("Tu ubicación")
+            .bindTooltip(
+              accuracy !== null && Number.isFinite(accuracy)
+                ? `Tu ubicación (±${Math.round(accuracy)} m)`
+                : "Tu ubicación",
+            )
             .openTooltip();
         }
 
@@ -465,6 +473,9 @@ export function TerrenoMap({
           actualizarAreaPantalla();
         } else {
           map.setView([CENTRO_DEFAULT.lat, CENTRO_DEFAULT.lng], ZOOM_DEFAULT);
+          // Best-effort silencioso: fix rápido de baja precisión solo como
+          // fondo inicial (caché permitida, sin GPS frío). La ubicación
+          // precisa la pide el botón «Mi ubicación» en dos fases.
           if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
               (pos) => {
@@ -482,7 +493,7 @@ export function TerrenoMap({
               () => {
                 if (cancelled || mapRef.current !== map) return;
               },
-              { enableHighAccuracy: true, timeout: 10_000, maximumAge: 60_000 },
+              { enableHighAccuracy: false, timeout: 8_000, maximumAge: 300_000 },
             );
           }
         }
@@ -599,85 +610,160 @@ export function TerrenoMap({
     }
   }, [modoMarca, mapaListo]);
 
-  function centrarEnMiUbicacion() {
-    const map = mapRef.current;
-    const leafletInstance = leafletRef.current as unknown as {
+  /** Más de esto se considera señal débil: se avisa en vez de callar. */
+  const UMBRAL_PRECISION_M = 100;
+
+  function leerPosicion(opciones: PositionOptions): Promise<GeolocationPosition> {
+    return new Promise((resolve, reject) => {
+      if (!("geolocation" in navigator)) {
+        reject(new Error("sin-soporte"));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject, opciones);
+    });
+  }
+
+  function mensajeErrorUbicacion(err: unknown): string {
+    if (err instanceof Error && err.message === "sin-soporte") {
+      return "Tu navegador no soporta geolocalización.";
+    }
+    const code = (err as GeolocationPositionError | undefined)?.code;
+    if (code === 1) {
+      return "Permiso denegado. Actívalo en el navegador (candado → Ubicación → Permitir) y vuelve a intentar.";
+    }
+    if (code === 2) return "Ubicación no disponible en este dispositivo.";
+    if (code === 3) {
+      return "Tiempo agotado buscando señal GPS. Acércate a una ventana o sal al exterior y vuelve a intentar.";
+    }
+    return "No se pudo obtener tu ubicación. Revisa los permisos.";
+  }
+
+  function dibujarUbicacion(lat: number, lng: number, accuracy: number | null) {
+    const currentMap = mapRef.current;
+    const Ll = leafletRef.current as unknown as {
       circle: typeof import("leaflet").circle;
       circleMarker: typeof import("leaflet").circleMarker;
     } | null;
-    if (!map || !leafletInstance) return;
-    if (!("geolocation" in navigator)) {
-      setUbicacionError("Tu navegador no soporta geolocalización.");
-      return;
+    if (!currentMap || !Ll) return;
+    currentMap.setView(
+      [lat, lng],
+      Math.min(ZOOM_UBICACION, MAPA_MAX_ZOOM),
+    );
+    if (ubicacionMarkerRef.current) {
+      currentMap.removeLayer(ubicacionMarkerRef.current);
+      ubicacionMarkerRef.current = null;
     }
+    if (ubicacionCirculoRef.current) {
+      currentMap.removeLayer(ubicacionCirculoRef.current);
+      ubicacionCirculoRef.current = null;
+    }
+    if (accuracy !== null && Number.isFinite(accuracy)) {
+      ubicacionCirculoRef.current = Ll.circle([lat, lng], {
+        radius: Math.min(accuracy, 5000),
+        color: "#2563eb",
+        weight: 1,
+        fillColor: "#2563eb",
+        fillOpacity: 0.12,
+      }).addTo(currentMap);
+    }
+    const etiqueta =
+      accuracy !== null && Number.isFinite(accuracy)
+        ? `Tu ubicación (±${Math.round(accuracy)} m)`
+        : "Tu ubicación";
+    ubicacionMarkerRef.current = Ll.circleMarker([lat, lng], {
+      radius: 7,
+      color: "#ffffff",
+      weight: 2,
+      fillColor: "#2563eb",
+      fillOpacity: 0.95,
+    })
+      .addTo(currentMap)
+      .bindTooltip(etiqueta)
+      .openTooltip();
+  }
+
+  /**
+   * «Mi ubicación» en dos fases (web, iOS y Android): primero un fix rápido
+   * de baja precisión para responder al toque (en iOS el GPS frío con alta
+   * precisión suele exceder 10 s), luego un refinamiento GPS que solo
+   * reemplaza el punto si es mejor. Nunca se dibuja un fix grueso como
+   * si fuera preciso: se muestra su ±m y se avisa de señal débil.
+   */
+  async function centrarEnMiUbicacion() {
+    if (!mapRef.current || !leafletRef.current) return;
+    const pedido = pedidoUbicacionRef.current + 1;
+    pedidoUbicacionRef.current = pedido;
+    const vigente = () => pedidoUbicacionRef.current === pedido && mapRef.current;
     setLocalizando(true);
     setUbicacionError(null);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        if (!mapRef.current) return;
-        setLocalizando(false);
-        const currentMap = mapRef.current!;
-        const Ll = leafletRef.current as unknown as {
-          circle: typeof import("leaflet").circle;
-          circleMarker: typeof import("leaflet").circleMarker;
-        } | null;
-        if (!Ll) return;
-        currentMap.setView(
-          [pos.coords.latitude, pos.coords.longitude],
-          Math.min(ZOOM_UBICACION, MAPA_MAX_ZOOM),
+    let mejor: { lat: number; lng: number; accuracy: number | null } | null = null;
+    try {
+      // Fase 1: respuesta inmediata (caché/WiFi/red). En iOS evita el largo
+      // arranque del GPS antes de mostrar algo.
+      try {
+        const rapido = await leerPosicion({
+          enableHighAccuracy: false,
+          timeout: 8_000,
+          maximumAge: 30_000,
+        });
+        if (!vigente()) return;
+        mejor = {
+          lat: rapido.coords.latitude,
+          lng: rapido.coords.longitude,
+          accuracy: rapido.coords.accuracy ?? null,
+        };
+        dibujarUbicacion(mejor.lat, mejor.lng, mejor.accuracy);
+        if (mejor.accuracy !== null) setPrecisionM(mejor.accuracy);
+      } catch {
+        // Sin fix rápido: se intenta igual el refinamiento GPS abajo.
+      }
+      // Fase 2: refinamiento GPS fresco (timeout largo: el GPS frío de iOS
+      // y Android lo necesita). Solo reemplaza si mejora la precisión.
+      try {
+        const fino = await leerPosicion({
+          enableHighAccuracy: true,
+          timeout: 25_000,
+          maximumAge: 0,
+        });
+        if (!vigente()) return;
+        const accuracyFino = fino.coords.accuracy ?? null;
+        const mejorPrevia = mejor?.accuracy;
+        const esMejor =
+          accuracyFino !== null &&
+          (mejorPrevia === null ||
+            mejorPrevia === undefined ||
+            !Number.isFinite(mejorPrevia) ||
+            accuracyFino < mejorPrevia);
+        if (esMejor || !mejor) {
+          mejor = {
+            lat: fino.coords.latitude,
+            lng: fino.coords.longitude,
+            accuracy: accuracyFino,
+          };
+          dibujarUbicacion(mejor.lat, mejor.lng, mejor.accuracy);
+          if (accuracyFino !== null) setPrecisionM(accuracyFino);
+        }
+      } catch (err) {
+        // Sin refinamiento: se conserva el fix rápido si lo hubo.
+        if (!mejor) throw err;
+      }
+      if (!mejor) return;
+      if (
+        mejor.accuracy !== null &&
+        Number.isFinite(mejor.accuracy) &&
+        mejor.accuracy > UMBRAL_PRECISION_M
+      ) {
+        setUbicacionError(
+          `Señal débil (±${Math.round(mejor.accuracy)} m): el punto es aproximado. Sal al exterior o acércate a una ventana y pulsa «Mi ubicación» de nuevo.`,
         );
-        if (ubicacionMarkerRef.current) {
-          currentMap.removeLayer(ubicacionMarkerRef.current);
-          ubicacionMarkerRef.current = null;
-        }
-        if (ubicacionCirculoRef.current) {
-          currentMap.removeLayer(ubicacionCirculoRef.current);
-          ubicacionCirculoRef.current = null;
-        }
-        if (Number.isFinite(pos.coords.accuracy)) {
-          ubicacionCirculoRef.current = Ll.circle(
-            [pos.coords.latitude, pos.coords.longitude],
-            {
-              radius: Math.min(pos.coords.accuracy, 5000),
-              color: "#2563eb",
-              weight: 1,
-              fillColor: "#2563eb",
-              fillOpacity: 0.12,
-            },
-          ).addTo(currentMap);
-        }
-        ubicacionMarkerRef.current = Ll.circleMarker(
-          [pos.coords.latitude, pos.coords.longitude],
-          {
-            radius: 7,
-            color: "#ffffff",
-            weight: 2,
-            fillColor: "#2563eb",
-            fillOpacity: 0.95,
-          },
-        )
-          .addTo(currentMap)
-          .bindTooltip("Tu ubicación")
-          .openTooltip();
-      },
-      (err) => {
-        setLocalizando(false);
-        if (err.code === err.PERMISSION_DENIED) {
-          setUbicacionError(
-            "Permiso denegado. Actívalo en el navegador (candado → Ubicación → Permitir) y vuelve a intentar.",
-          );
-        } else if (err.code === err.POSITION_UNAVAILABLE) {
-          setUbicacionError("Ubicación no disponible en este dispositivo.");
-        } else if (err.code === err.TIMEOUT) {
-          setUbicacionError(
-            "Tiempo agotado. Acércate a una ventana y vuelve a intentar.",
-          );
-        } else {
-          setUbicacionError("No se pudo obtener tu ubicación. Revisa los permisos.");
-        }
-      },
-      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 },
-    );
+      }
+    } catch (err) {
+      if (!vigente()) return;
+      setPrecisionM(null);
+      setUbicacionError(mensajeErrorUbicacion(err));
+    } finally {
+      if (vigente()) setLocalizando(false);
+    }
   }
 
   function cancelarDibujo() {
@@ -725,12 +811,17 @@ export function TerrenoMap({
             variant="outline"
             size="sm"
             className="min-h-9"
-            onClick={centrarEnMiUbicacion}
+            onClick={() => void centrarEnMiUbicacion()}
             disabled={localizando}
           >
             <LocateFixed className="size-4" />
             {localizando ? "Ubicando…" : "Mi ubicación"}
           </Button>
+          {precisionM !== null && Number.isFinite(precisionM) && !localizando ? (
+            <span className="text-[11px] text-muted-foreground">
+              ±{Math.round(precisionM)} m
+            </span>
+          ) : null}
           {dibujando && (
             <Button
               type="button"

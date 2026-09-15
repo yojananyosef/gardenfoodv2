@@ -26,13 +26,46 @@ export interface LocalConsent {
 
 function writeCookie(name: string, value: string, ttlMs: number): void {
   if (typeof document === "undefined") return;
-  const secure = window.location.protocol === "https:" ? "; Secure" : "";
-  document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${Math.floor(ttlMs / 1000)}; Path=/; SameSite=Lax${secure}`;
+  try {
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${Math.floor(ttlMs / 1000)}; Path=/; SameSite=Lax${secure}`;
+  } catch {
+    // cookies bloqueadas: se ignora sin romper el flujo
+  }
+}
+
+function readLocal(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    // Safari privado / storage bloqueado
+    return null;
+  }
+}
+
+function writeLocal(key: string, value: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch {
+    // Safari privado / storage bloqueado: solo queda la cookie
+    return false;
+  }
+}
+
+function removeLocal(key: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // sin almacenamiento: nada que limpiar
+  }
 }
 
 export function getLocalConsent(): LocalConsent | null {
-  if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(LOCAL_CONSENT_KEY);
+  const raw = readLocal(LOCAL_CONSENT_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as LocalConsent;
@@ -97,13 +130,13 @@ export function getConsentPurpose(purpose: ConsentPurpose): boolean {
 
 export function setLocalConsent(consent: LocalConsent): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(LOCAL_CONSENT_KEY, JSON.stringify(consent));
+  writeLocal(LOCAL_CONSENT_KEY, JSON.stringify(consent));
   writeCookie(CONSENT_COOKIE_NAME, consent.expiresAt, CONSENT_TTL_MS);
 }
 
 export function clearLocalConsent(): void {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(LOCAL_CONSENT_KEY);
+  removeLocal(LOCAL_CONSENT_KEY);
   writeCookie(CONSENT_COOKIE_NAME, "", 0);
 }
 

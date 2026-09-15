@@ -98,13 +98,11 @@ export default function PerfilPage() {
         </CardContent>
       </Card>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto rounded-2xl">
-          <ConsentPreferences
-            title="Ajustes de privacidad"
-            deviceId={getDeviceId()}
-            onConfirm={() => setOpen(false)}
-          />
-        </DialogContent>
+        <ConsentPreferences
+          title="Ajustes de privacidad"
+          deviceId={getDeviceId()}
+          onConfirm={() => setOpen(false)}
+        />
       </Dialog>
       <Dialog open={borrarOpen} onOpenChange={setBorrarOpen}>
         <DialogContent className="w-[min(92vw,420px)] rounded-2xl">

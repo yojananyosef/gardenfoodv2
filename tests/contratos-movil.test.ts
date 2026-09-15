@@ -47,7 +47,20 @@ describe("contratos-movil: payloads de ejemplo validan contra los schemas", () =
     expect(parsed.success).toBe(true);
   });
 
-  it("ejemplo de consent CMP", () => {
+  it("ejemplo de consent CMP (nombres cortos, como envían los clientes)", () => {
+    const parsed = consentUpdateSchema.safeParse({
+      deviceId: "install-uuid",
+      personalizedAds: false,
+      preciseGeo: false,
+      thirdPartySharing: false,
+      deviceLinking: false,
+      legitimateInterestOpposed: false,
+      consentString: null,
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it("ejemplo de consent CMP legacy (prefijo consent*) sigue válido", () => {
     const parsed = consentUpdateSchema.safeParse({
       deviceId: "install-uuid",
       consentPersonalizedAds: false,

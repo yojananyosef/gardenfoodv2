@@ -96,6 +96,15 @@ describe("telemetryBatchSchema", () => {
 describe("consentUpdateSchema", () => {
   const valid = {
     deviceId: "dev-1",
+    personalizedAds: true,
+    preciseGeo: false,
+    thirdPartySharing: true,
+    deviceLinking: true,
+    legitimateInterestOpposed: false,
+  };
+
+  const legacyPrefixed = {
+    deviceId: "dev-1",
     consentPersonalizedAds: true,
     consentPreciseGeo: false,
     consentThirdPartySharing: true,
@@ -103,14 +112,28 @@ describe("consentUpdateSchema", () => {
     legitimateInterestOpposed: false,
   };
 
-  it("accepts a well-formed consent update", () => {
-    expect(consentUpdateSchema.safeParse(valid).success).toBe(true);
+  it("accepts a well-formed consent update (short names, as clients send)", () => {
+    const parsed = consentUpdateSchema.safeParse(valid);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.preciseGeo).toBe(false);
+      expect(parsed.data.personalizedAds).toBe(true);
+    }
+  });
+
+  it("accepts legacy consent-prefixed names and normalizes to short names", () => {
+    const parsed = consentUpdateSchema.safeParse(legacyPrefixed);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.preciseGeo).toBe(false);
+      expect(parsed.data.personalizedAds).toBe(true);
+      expect("consentPreciseGeo" in parsed.data).toBe(false);
+    }
   });
 
   it("rejects non-boolean purpose flags", () => {
     expect(
-      consentUpdateSchema.safeParse({ ...valid, consentPreciseGeo: "yes" })
-        .success,
+      consentUpdateSchema.safeParse({ ...valid, preciseGeo: "yes" }).success,
     ).toBe(false);
   });
 
@@ -120,9 +143,11 @@ describe("consentUpdateSchema", () => {
     expect(consentUpdateSchema.safeParse(rest).success).toBe(false);
   });
 
-  it("rejects unknown extra keys (strict)", () => {
-    expect(consentUpdateSchema.safeParse({ ...valid, evil: 1 }).success).toBe(
-      false,
-    );
+  it("strips unknown extra keys instead of rejecting", () => {
+    const parsed = consentUpdateSchema.safeParse({ ...valid, evil: 1 });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect("evil" in parsed.data).toBe(false);
+    }
   });
 });

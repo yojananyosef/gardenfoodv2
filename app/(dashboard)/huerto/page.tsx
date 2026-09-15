@@ -829,8 +829,15 @@ function VistaGuiada({ v }: VistaGuiadaProps) {
               <CardContent className="flex flex-wrap items-center justify-between gap-2 p-4">
                 <p className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Wand2 className="size-4" />
-                  ¿Repites el asistente (por ejemplo para agregar otro huerto)? Vuelve al modo guiado: ahí lo reabres cuando ya lo completaste una vez.
+                  ¿Agregas otro huerto o repasas tus árboles? Reabre el asistente cuando quieras.
                 </p>
+                <AsistenteFlotante
+                  pasos={pasos}
+                  pasoInicial={pasoInicial}
+                  marcarCompletado={false}
+                  onCompletar={marcarAsistenteCompletado}
+                  skipCompletado
+                />
               </CardContent>
             </Card>
           )}

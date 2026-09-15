@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useConsentSave } from "@/lib/consent/useConsentSave";
+import { getLocalConsent, isConsentValid } from "@/lib/consent/token";
 
 export interface ConsentDraft {
   consentString?: string | null;
@@ -51,19 +52,43 @@ export interface ConsentPreferencesProps {
   onConfirm: (draft: ConsentDraft) => void;
 }
 
+function draftInicial(): ConsentDraft {
+  if (typeof window === "undefined") {
+    return {
+      personalizedAds: false,
+      preciseGeo: false,
+      thirdPartySharing: false,
+      deviceLinking: false,
+      legitimateInterestOpposed: false,
+    };
+  }
+  const guardado = getLocalConsent();
+  if (guardado && isConsentValid(guardado)) {
+    return {
+      personalizedAds: guardado.personalizedAds,
+      preciseGeo: guardado.preciseGeo,
+      thirdPartySharing: guardado.thirdPartySharing,
+      deviceLinking: guardado.deviceLinking,
+      legitimateInterestOpposed: guardado.legitimateInterestOpposed,
+    };
+  }
+  return {
+    personalizedAds: false,
+    preciseGeo: false,
+    thirdPartySharing: false,
+    deviceLinking: false,
+    legitimateInterestOpposed: false,
+  };
+}
+
 export function ConsentPreferences({
   title,
   deviceId,
   onBack,
   onConfirm,
 }: ConsentPreferencesProps) {
-  const [draft, setDraft] = useState<ConsentDraft>({
-    personalizedAds: false,
-    preciseGeo: false,
-    thirdPartySharing: false,
-    deviceLinking: false,
-    legitimateInterestOpposed: false,
-  });
+  const [draft, setDraft] = useState<ConsentDraft>(draftInicial);
+  const [error, setError] = useState<string | null>(null);
   const { saving, save } = useConsentSave(deviceId);
 
   function toggle(key: keyof ConsentDraft) {
@@ -71,12 +96,17 @@ export function ConsentPreferences({
   }
 
   async function handleConfirm() {
+    setError(null);
     const result = await save(draft);
-    if (result) onConfirm(result);
+    if (!result) {
+      setError("No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.");
+      return;
+    }
+    onConfirm(result);
   }
 
   return (
-    <DialogContent className="max-w-sm" showCloseButton={false}>
+    <DialogContent className="max-w-sm max-h-[85vh] overflow-y-auto rounded-2xl" showCloseButton={false}>
       <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
       <DialogDescription className="text-muted-foreground">
         Gestiona qué datos nos permites usar. Puedes cambiar estas opciones
@@ -120,6 +150,11 @@ export function ConsentPreferences({
         </div>
       </div>
       <div className="flex flex-col gap-2 pt-2">
+        {error ? (
+          <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive">
+            {error}
+          </p>
+        ) : null}
         {onBack ? (
           <Button variant="ghost" className="min-h-11" onClick={onBack}>
             Volver
