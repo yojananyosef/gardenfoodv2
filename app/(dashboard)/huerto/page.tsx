@@ -1,12 +1,10 @@
 import Link from "next/link";
 import {
-  Sprout,
   Leaf,
   CalendarDays,
   AlertTriangle,
   MapPinned,
   ArrowRight,
-  Trees,
   CheckCircle2,
   Sun,
   Droplets,
@@ -21,11 +19,9 @@ import {
 
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
 import { SponsoredBanner } from "@/components/ads/SponsoredBanner";
-import { AgregarArbol } from "@/components/huerto/AgregarArbol";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { WorkbenchModular } from "@/components/huerto/WorkbenchModular";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
-import { AgregarEspecieTarjetas } from "@/components/huerto/AgregarEspecieTarjetas";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
 import { SelectorHuerto } from "./SelectorHuerto";
 import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
@@ -48,12 +44,11 @@ import {
   getZonaIdDeComuna,
 } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
-import { getArboles, getCultivos, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
+import { getArboles, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
 import {
   formatAreaM2,
   formatCoordenadas,
 } from "@/lib/huerto/terreno";
-import { limitesDe, type PlanAcceso } from "@/lib/payments/plans";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
 
@@ -75,8 +70,7 @@ export default async function HuertoPage(props: {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [cultivos, tareas, perfil, arboles, huertos, sponsorships] = await Promise.all([
-    getCultivos(user.id),
+  const [tareas, perfil, arboles, huertos, sponsorships] = await Promise.all([
     getTareasDelDia(user.id, hoyISO()),
     getPerfil(user.id),
     getArboles(user.id),
@@ -88,13 +82,9 @@ export default async function HuertoPage(props: {
   const mesActual = new Date().getMonth();
   const alertas = zona ? climateAlertsProvider.getAlertas(zona, mesActual + 1) : [];
 
-  const especiesDisponibles = ESPECIES.filter((e) => !cultivos.some((c) => c.especie === e.dbKey));
   const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
   const recom = getEspeciesPorZona(zonaId);
-  const limites = limitesDe((perfil?.plan as PlanAcceso) ?? "gratuito");
-  // El panel modular es inventario único de árboles (R2): el bloque
-  // duplicado de gf_cultivos se eliminó de la UI. El vacío modular
-  // se mide por árboles + huertos, no por cultivos legacy.
+  // Vista única: el mapa es lo principal; el vacío se mide por árboles + huertos.
   const esHuertoVacio = arboles.length === 0 && huertos.length === 0;
   const nombre = (user.user_metadata as Record<string, unknown>)?.["nombre"] as string | undefined;
   const nombreCorto = nombre ? nombre.split(" ")[0] : null;
@@ -124,15 +114,18 @@ export default async function HuertoPage(props: {
     sinUbicar,
     terrenoSlot: <TerrenoSection alto={300} />,
     altaSlot: (
-      <AgregarEspecieTarjetas
-        especies={especiesDisponibles}
-        uso={{ actual: cultivos.length, limite: limites.cultivos ?? "ilimitado" }}
-      />
+      <div className="flex flex-col gap-1.5 rounded-2xl border bg-card p-4">
+        <p className="text-sm font-medium">Planta tocando tu terreno</p>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Cierra este asistente y en el tab Terreno (satélite) pulsa «Marcar árboles»:
+          cada toque sobre tu terreno planta un árbol ya ubicado, sin formularios ni pasos extra.
+        </p>
+      </div>
     ),
     planoSlot: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} />,
   });
   const pasoInicial =
-    huertos.length === 0 ? 0 : cultivos.length === 0 ? 1 : sinUbicar.length > 0 ? 2 : 3;
+    huertos.length === 0 ? 0 : arboles.length === 0 ? 1 : sinUbicar.length > 0 ? 2 : 3;
 
   return (
     <div className="flex flex-col gap-5">
@@ -199,34 +192,8 @@ export default async function HuertoPage(props: {
           </Card>
         </div>
 
-        {/* Bento stats */}
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Card className="overflow-hidden rounded-2xl">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardDescription className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide">
-                  <Sprout className="size-3.5" /> Cultivos
-                </CardDescription>
-                <Badge variant={arboles.length > 0 ? "default" : "outline"} className="rounded-full px-1.5 py-0 text-[10px]">
-                  {arboles.length > 0 ? "activo" : "vacío"}
-                </Badge>
-              </div>
-              <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
-                {new Set(arboles.map((a) => a.especie)).size}
-                <span className="text-sm font-normal text-muted-foreground">
-                  especies · {arboles.length} árboles
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Trees className="size-3" /> {arboles.filter((a) => a.huertoId).length} en plano de{" "}
-                {arboles.length}
-              </div>
-            </CardContent>
-            <div className="h-1 w-full bg-gradient-to-r from-emerald-500/60 to-emerald-500/0" aria-hidden />
-          </Card>
-
+        {/* Bento stats (el conteo de árboles vive en la cabecera del lienzo) */}
+        <div className="grid gap-3 sm:grid-cols-2">
           <Card className="overflow-hidden rounded-2xl">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
@@ -322,9 +289,9 @@ export default async function HuertoPage(props: {
       </Card>
 
       {/* TABS + BENTO — core fix for scroll fatigue */}
-      <Tabs defaultValue={esHuertoVacio ? "cultivos" : "cultivos"} className="w-full gap-4">
+      <Tabs defaultValue="huerto" className="w-full gap-4">
         <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
-          <TabsTrigger value="cultivos" className="gap-1.5 rounded-lg data-[state=active]:shadow-sm">
+          <TabsTrigger value="huerto" className="gap-1.5 rounded-lg data-[state=active]:shadow-sm">
             <LayoutGrid className="size-4" />
             Mi huerto
             <Badge variant="secondary" className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
@@ -348,16 +315,12 @@ export default async function HuertoPage(props: {
         </TabsList>
 
         {/* CULTIVOS — bento 12-col */}
-        <TabsContent value="cultivos" className="mt-2 flex flex-col gap-4">
+        <TabsContent value="huerto" className="mt-2 flex flex-col gap-4">
               {/* Banco modular (B1): panel único + lienzo grande */}
               <WorkbenchModular
                 huertos={huertos}
                 arboles={arboles}
-                esHuertoVacio={esHuertoVacio}
                 slots={{
-                  registrarArbol: (
-                    <AgregarArbol especies={ESPECIES} uso={{ actual: arboles.length, limite: limites.arboles }} />
-                  ),
                   satelite: (
                     <div className="flex flex-col gap-3">
                       <TerrenoSection />

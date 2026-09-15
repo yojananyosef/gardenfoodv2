@@ -22,17 +22,17 @@ The system SHALL let authenticated users create, list, update and delete individ
 
 ### Requirement: Tree inventory is reachable from the dashboard
 
-The system SHALL expose the tree inventory in the single /huerto view: as the species list of the left panel (with counts per species, position state and drag support), and inside the step 2 «Árboles» of the asistente modal (alta por tarjeta), so the inventory is never orphaned nor duplicated across a separate cultivos/inventory pair.
+The system SHALL expose the tree inventory in the single /huerto view: as markers on the maps, as the legend with per-species counts and ficha links, and inside the per-tree edit dialog, so the inventory is never orphaned nor duplicated across a separate cultivos/inventory pair. There SHALL be no side panel: the map is full width with the counts («N especies · M árboles») in the canvas header.
 
-#### Scenario: Inventory is reachable in the panel
+#### Scenario: Inventory is reachable on the map
 
-- **WHEN** an authenticated user opens the huerto panel
-- **THEN** the system renders the tree list grouped by species with per-species counts and management controls
+- **WHEN** an authenticated user opens the huerto canvas
+- **THEN** the system renders each tree as a marker, the legend grouped by species with counts, and management controls in the tree dialog
 
 #### Scenario: Inventory is reachable in the assistant
 
 - **WHEN** the user opens step 2 of the asistente modal
-- **THEN** the system shows the same tree data (species, counts, pending placement) from the single inventory source
+- **THEN** the system guides to plant by tapping the terrain («Marcar árboles» in the satellite tab) from the single inventory source
 
 #### Scenario: Inventory is reachable
 
@@ -77,9 +77,9 @@ The system SHALL show on the huerto dashboard a "Tu terreno" card listing the ma
 - **WHEN** a user has no delimited huertos
 - **THEN** the card shows an empty state with a CTA to draw the huerto on the profile map
 
-### Requirement: Plano del huerto con matriz de árboles
+### Requirement: Plano del huerto con árboles marcados en el mapa
 
-El sistema SHALL permitir sincronizar el inventario de árboles con un huerto delimitado en el mapa: cada fila con `cantidad N` sin posición se expande en N árboles individuales (`cantidad 1`) distribuidos en una matriz regular dentro del polígono. Los árboles ya posicionados (marcados a mano en el mapa) SHALL permanecer intactos: la sincronización solo completa la matriz de filas sin posición, evitando sus celdas, y el techo de 200 árboles por plano SHALL considerar el total (posicionados + nuevas).
+El sistema SHALL crear árboles ya posicionados tocando el terreno («Marcar árboles» en el tab Terreno satélite, con especie elegida): cada tap dentro de un polígono crea una unidad individual (`cantidad 1`) con posición. Para filas legacy sin posición, el sistema SHALL ofrecer una única acción «Ubicar N pendientes en el mapa» visible solo cuando hay pendientes; el techo de 200 árboles por plano SHALL considerar el total (posicionados + nuevas).
 
 #### Scenario: Sincronizar inventario con un huerto
 
@@ -137,17 +137,17 @@ El sistema SHALL mostrar el plano del huerto fiel al mapa: en 2D, el polígono d
 
 ### Requirement: Edición individual de cada árbol del plano
 
-El sistema SHALL permitir editar cada árbol del plano individualmente (especie, fecha de plantación, observaciones), quitarlo del plano o eliminarlo; un árbol en plano SHALL conservar cantidad 1 y el sistema SHALL rechazar cambiar su cantidad desde el inventario.
+El sistema SHALL permitir editar cada árbol del plano individualmente (especie, fecha de plantación, observaciones) o eliminarlo; un árbol en plano SHALL conservar cantidad 1 y el sistema SHALL rechazar cambiar su cantidad desde el inventario.
 
 #### Scenario: Editar un árbol desde la matriz
 
 - **WHEN** el usuario toca el punto de un árbol y guarda cambios
 - **THEN** el sistema persiste los cambios solo de esa unidad
 
-#### Scenario: Quitar del plano
+#### Scenario: Eliminar un árbol desde la matriz
 
-- **WHEN** el usuario quita un árbol del plano
-- **THEN** el árbol vuelve al inventario sin posición y sin huerto asignado
+- **WHEN** el usuario elimina un árbol del plano
+- **THEN** el árbol se borra definitivamente (no existe inventario fuera del plano)
 
 #### Scenario: Cantidad protegida en el plano
 
@@ -217,7 +217,7 @@ The system SHALL limit the free tier (`perfiles.plan = "gratuito"`) to 3 active 
 
 ### Requirement: Vista única Mi Huerto con asistente modal
 
-La vista /huerto SHALL ser una sola: panel de árboles + lienzo central con pestañas Terreno, Posicionar árboles y Visualización 3D. No SHALL existir toggle de modos. La guía SHALL vivir como acción «Abrir asistente» en la cabecera (escritorio y móvil), que abre el asistente de 4 pasos en un modal sin cambiar de vista.
+La vista /huerto SHALL ser una sola: lienzo a ancho completo con pestañas Terreno, Posicionar árboles y Visualización 3D, con el conteo («N especies · M árboles») en la cabecera del lienzo. No SHALL existir panel lateral ni toggle de modos. La guía SHALL vivir como acción «Abrir asistente» en la cabecera (escritorio y móvil), que abre el asistente de 4 pasos en un modal sin cambiar de vista.
 
 #### Scenario: Usuario nuevo abre /huerto
 
@@ -256,19 +256,14 @@ El detalle de un árbol (plano, mapa o ficha) SHALL incluir la acción «Ver fic
 - **WHEN** el usuario abre el detalle de «Durazno #12» y pulsa «Ver ficha de Durazno»
 - **THEN** el sistema muestra la ficha de especie Durazno con las opciones de cuidado aplicable a los árboles del usuario de esa especie
 
-### Requirement: Estado por especie en inventario agrupado
+### Requirement: Leyenda por especie con conteos y ficha
 
-El inventario de árboles agrupado por especie SHALL mostrar por cada especie un badge de estado: «completo» cuando todos sus ejemplares están posicionados en plano, «en curso» cuando quedan ejemplares sin ubicar, y la suma de ejemplares en plano vs. sin ubicar como detalle visible.
+La leyenda del plano SHALL mostrar por cada especie su color, su conteo y un enlace a su ficha («/especie/especies/<especie>»), de modo que el estado del inventario se lee de un vistazo sin panel lateral.
 
-#### Scenario: Especie con ejemplares sin ubicar
+#### Scenario: Especie con varios ejemplares
 
-- **WHEN** una especie tiene al menos un ejemplar sin posición
-- **THEN** su fila muestra el badge «en curso» junto al detalle «N en plano · M sin ubicar»
-
-#### Scenario: Especie completa
-
-- **WHEN** todos los ejemplares de una especie están posicionados
-- **THEN** su fila muestra el badge «completo»
+- **WHEN** el plano tiene árboles de una especie
+- **THEN** su chip muestra el nombre y el total (×N) y abre la ficha de la especie
 
 ### Requirement: Puente árbol → ficha de especie en edición del plano
 

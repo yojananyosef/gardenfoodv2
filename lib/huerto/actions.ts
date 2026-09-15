@@ -204,10 +204,6 @@ const AGREGAR_ARBOL = z.object({
   cantidad: z.number().int().min(1).max(1000).default(1),
   fechaPlantacion: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   observaciones: z.string().max(500).nullable().optional(),
-  /** Plantado directo en el plano: huerto propio + posición 0..1. */
-  huertoId: z.string().uuid().optional(),
-  posX: z.number().min(0).max(1).optional(),
-  posY: z.number().min(0).max(1).optional(),
 });
 
 export async function agregarArbol(input: z.input<typeof AGREGAR_ARBOL>) {
@@ -232,33 +228,12 @@ export async function agregarArbol(input: z.input<typeof AGREGAR_ARBOL>) {
     }
   }
 
-  // Plantado directo en el plano: valida que el huerto sea propio y crea
-  // la unidad ya posicionada (cantidad 1, como exige el plano).
-  let huertoId: string | null = null;
-  let posX: number | null = null;
-  let posY: number | null = null;
-  if (parsed.huertoId !== undefined) {
-    const { data: huerto } = await supabase
-      .from("gf_huertos")
-      .select("id")
-      .eq("id", parsed.huertoId)
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (!huerto) return { error: "Ese huerto no existe en tu mapa." };
-    huertoId = parsed.huertoId;
-    posX = Math.max(0, Math.min(1, parsed.posX ?? 0.5));
-    posY = Math.max(0, Math.min(1, parsed.posY ?? 0.5));
-  }
-
   const { error } = await supabase.from("gf_arboles").insert({
     user_id: user.id,
     especie: parsed.especie,
-    cantidad: huertoId ? 1 : parsed.cantidad,
+    cantidad: parsed.cantidad,
     fecha_plantacion: parsed.fechaPlantacion ?? null,
     observaciones: parsed.observaciones ?? null,
-    huerto_id: huertoId,
-    pos_x: posX,
-    pos_y: posY,
   });
 
   if (error) return { error: "No se pudo agregar el árbol." };

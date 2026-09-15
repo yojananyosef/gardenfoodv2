@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, Maximize, RefreshCw, Sprout, X, ZoomIn, ZoomOut } from "lucide-react";
+import { MapPin, Maximize, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,7 +18,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { IconoArbol } from "@/components/huerto/IconoArbol";
 import { sincronizarPlanoHuerto } from "@/lib/huerto/huertos";
-import { agregarArbol, moverArbol } from "@/lib/huerto/actions";
+import { moverArbol } from "@/lib/huerto/actions";
 import {
   ALTO_VISTA,
   ANCHO_VISTA,
@@ -75,10 +75,6 @@ export function PlanoHuerto({
   const setModo = (m: Modo) => setModoInterno(m);
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
-  // Plantar directo en el mapa: especie elegida + toque en el plato.
-  const [plantando, setPlantando] = useState<string | null>(null);
-  const [plantandoPending, startPlantarTransition] = useTransition();
-  const plantarRef = useRef<{ x: number; y: number } | null>(null);
   // Zoom/pan del 2D: el plano ocupa más pantalla y se puede explorar.
   const [zoom2d, setZoom2d] = useState(1);
   const [pan2d, setPan2d] = useState({ x: 0, y: 0 });
@@ -270,45 +266,6 @@ export function PlanoHuerto({
     [feature],
   );
 
-  // --- Plantar con un toque en el mapa (flujo directo, sin inventario) ---
-  function registrarToquePlantar(e: React.PointerEvent) {
-    if (!plantando) return;
-    plantarRef.current = { x: e.clientX, y: e.clientY };
-  }
-
-  function resolverToquePlantar(e: React.PointerEvent) {
-    const inicio = plantarRef.current;
-    plantarRef.current = null;
-    if (!plantando || !inicio || !huerto) return;
-    if (Math.hypot(e.clientX - inicio.x, e.clientY - inicio.y) > 6) return;
-    const el = e.target as HTMLElement;
-    // Los toques en marcadores los gestiona el drag/clic del árbol.
-    if (el.closest("[data-arbol-id]")) return;
-    if (!platoRef.current?.contains(el)) return;
-    const pos = posDesdeEvento(e, { x: 0.5, y: 0.5 });
-    const especie = plantando;
-    const huertoId = huerto.id;
-    startPlantarTransition(async () => {
-      const result = await agregarArbol({
-        especie,
-        huertoId,
-        posX: Math.round(pos.x * 1000) / 1000,
-        posY: Math.round(pos.y * 1000) / 1000,
-      });
-      if (result && "error" in result) {
-        if ("limite" in result && result.limite) {
-          toast.error(result.error, {
-            action: { label: "Ver planes", onClick: () => router.push("/pricing") },
-          });
-        } else {
-          toast.error(result.error);
-        }
-        return;
-      }
-      toast.success(`${nombreDeEspecie(especie)} plantado en el mapa.`);
-      router.refresh();
-    });
-  }
   const clipId = useId().replace(/[^a-zA-Z0-9]/g, "");
   // Aspecto real en metros: el plato y el polígono comparten proyección.
   // Sin esto, un huerto alargado/diagonal se ve como un rombo flotando
@@ -438,20 +395,21 @@ export function PlanoHuerto({
               Visualización 3D
             </Button>
           </div>
-          <Button
-            type="button"
-            size="sm"
-            className="rounded-full"
-            onClick={sincronizar}
-            disabled={pending || !huerto?.feature || nadaPorSincronizar}
-          >
-            <RefreshCw className={pending ? "animate-spin" : undefined} />
-            {pending
-              ? "Sincronizando…"
-              : arbolesPlano.length > 0
-                ? `Completar matriz${unidadesNuevas > 0 ? ` (${unidadesNuevas})` : ""}`
-                : `Sincronizar árboles${unidadesNuevas > 0 ? ` (${unidadesNuevas})` : ""}`}
-          </Button>
+          {unidadesNuevas > 0 ? (
+            <Button
+              type="button"
+              size="sm"
+              className="rounded-full"
+              onClick={sincronizar}
+              disabled={pending || !huerto?.feature}
+              title="Los ejemplares antiguos sin posición se reparten en el mapa"
+            >
+              <RefreshCw className={pending ? "animate-spin" : undefined} />
+              {pending
+                ? "Ubicando…"
+                : `Ubicar ${unidadesNuevas} pendiente${unidadesNuevas === 1 ? "" : "s"} en el mapa`}
+            </Button>
+          ) : null}
         </div>
       </div>
 
@@ -478,62 +436,15 @@ export function PlanoHuerto({
           )}
         </div>
       ) : (
-      <>
-      {huerto?.feature ? (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-muted/30 px-3 py-2">
-          <span className="flex items-center gap-1.5 text-xs font-medium">
-            <Sprout className="size-3.5 text-primary" /> Plantar en el mapa
-          </span>
-          <Select value={plantando ?? undefined} onValueChange={(v) => setPlantando(v)}>
-            <SelectTrigger className="h-9 w-48" aria-label="Especie a plantar">
-              <SelectValue placeholder="Elige especie…" />
-            </SelectTrigger>
-            <SelectContent className="max-h-72">
-              {especies.map((e) => (
-                <SelectItem key={e.dbKey} value={e.dbKey}>
-                  {e.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {plantando ? (
-            <>
-              <span className="text-[11px] text-muted-foreground">
-                {plantandoPending ? "Plantando…" : "Toca el mapa para plantar (sigue activa para varios)."}
-              </span>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                className="size-8 rounded-full px-0"
-                onClick={() => setPlantando(null)}
-                aria-label="Dejar de plantar"
-              >
-                <X className="size-4" />
-              </Button>
-            </>
-          ) : (
-            <span className="text-[11px] text-muted-foreground">
-              Sin pasos extra: el árbol nace ya ubicado.
-            </span>
-          )}
-        </div>
-      ) : null}
       <div
         ref={marco2dRef}
         className={`relative h-[480px] overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 md:h-[600px] dark:from-sky-950/50 dark:to-emerald-950/30 ${
-          plantando ? "cursor-crosshair" : arrastrando2d ? "cursor-grabbing" : "cursor-grab"
+          arrastrando2d ? "cursor-grabbing" : "cursor-grab"
         }`}
         style={{ touchAction: "none" }}
-        onPointerDown={(e) => {
-          registrarToquePlantar(e);
-          iniciarPan2d(e);
-        }}
+        onPointerDown={iniciarPan2d}
         onPointerMove={moverPan2d}
-        onPointerUp={(e) => {
-          terminarPan2d();
-          resolverToquePlantar(e);
-        }}
+        onPointerUp={terminarPan2d}
         onPointerCancel={terminarPan2d}
       >
           {/* Controles de zoom */}
@@ -663,17 +574,16 @@ export function PlanoHuerto({
               Este huerto no tiene un polígono válido en el mapa.
             </p>
           )}
-          {vista && arbolesPlano.length === 0 ? (
+          {vista && arbolesPlano.length === 0 && (nadaPorSincronizar || unidadesNuevas > 0) ? (
             <p className="pointer-events-none absolute inset-x-4 top-1/2 z-20 -translate-y-1/2 text-center text-xs text-emerald-50/85">
               {nadaPorSincronizar
-                ? "Aún no tienes árboles. Elige una especie arriba y toca el mapa para plantarlos."
-                : `Tienes ${unidadesNuevas} árbol${unidadesNuevas === 1 ? "" : "es"} por sincronizar. Pulsa «Sincronizar árboles» o plántalos tocando el mapa.`}
+                ? "Aún no tienes árboles. En el tab Terreno (satélite) pulsa «Marcar árboles» y toca tu terreno para plantarlos."
+                : `Tienes ${unidadesNuevas} árbol${unidadesNuevas === 1 ? "" : "es"} sin ubicar. Pulsa «Ubicar ${unidadesNuevas} pendiente${unidadesNuevas === 1 ? "" : "s"} en el mapa».`}
             </p>
           ) : null}
           </div>
           </div>
       </div>
-      </>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
@@ -681,20 +591,22 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Elige especie y toca el mapa para plantar · arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · arrastra el fondo para mover el plano"}</span>
+        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Planta en el tab Terreno (satélite) con «Marcar árboles» · arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · arrastra el fondo para mover el plano"}</span>
       </div>
 
       {leyenda.length > 0 ? (
         <div className="flex flex-wrap gap-1.5">
           {leyenda.map((item) => (
-            <span
+            <Link
               key={item.especie}
-              className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs"
+              href={`/especie/especies/${item.especie}`}
+              title={`Ver ficha de ${nombreDeEspecie(item.especie)}`}
+              className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs transition-colors hover:bg-muted/50"
             >
               <span className="size-2.5 rounded-full" style={{ backgroundColor: item.color }} />
               {nombreDeEspecie(item.especie)}
               <span className="font-mono text-muted-foreground">×{item.total}</span>
-            </span>
+            </Link>
           ))}
         </div>
       ) : null}
