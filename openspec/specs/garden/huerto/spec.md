@@ -217,7 +217,7 @@ The system SHALL limit the free tier (`perfiles.plan = "gratuito"`) to 3 active 
 
 ### Requirement: Vista única Mi Huerto con asistente modal
 
-La vista /huerto SHALL ser una sola: lienzo a ancho completo con pestañas Terreno, Posicionar árboles y Visualización 3D, con el conteo («N especies · M árboles») en la cabecera del lienzo. No SHALL existir panel lateral ni toggle de modos. La guía SHALL vivir como acción «Abrir asistente» en la cabecera (escritorio y móvil), que abre el asistente de 4 pasos en un modal sin cambiar de vista.
+La vista /huerto SHALL ser una sola: lienzo a ancho completo con pestañas Terreno (satélite, la vista principal), Posicionar árboles y Visualización 3D. El bento SHALL mostrar el conteo («N especies · M árboles»). No SHALL existir panel lateral ni toggle de modos. «Marcar árboles» (plantar tocando el terreno con especie elegida) SHALL estar disponible en los 3 tabs: en Terreno activa el modo marca; en Posicionar y 3D salta al satélite y lo activa (flujo único de plantado). La guía SHALL vivir como acción «Abrir asistente» junto a las pestañas Mi huerto/Tareas/Clima, que abre el asistente de 4 pasos en un modal sin cambiar de vista.
 
 #### Scenario: Usuario nuevo abre /huerto
 

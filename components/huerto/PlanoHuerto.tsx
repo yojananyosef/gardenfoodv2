@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, Maximize, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
+import { MapPin, Maximize, MousePointerClick, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -61,12 +61,15 @@ export function PlanoHuerto({
   arboles,
   especies,
   modoForzado,
+  onMarcar,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
   especies: Especie[];
   /** Cuando el lienzo (tabs) controla el modo, se fuerza y se oculta el toggle interno. */
   modoForzado?: "2d" | "3d";
+  /** Ir a marcar árboles en el satélite (flujo único de plantado). Sin esto no se muestra el botón. */
+  onMarcar?: () => void;
 }) {
   const router = useRouter();
   const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
@@ -395,6 +398,19 @@ export function PlanoHuerto({
               Visualización 3D
             </Button>
           </div>
+          {onMarcar ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              onClick={onMarcar}
+              disabled={!huerto?.feature}
+              title="Ir al satélite a marcar árboles tocando tu terreno"
+            >
+              <MousePointerClick /> Marcar árboles
+            </Button>
+          ) : null}
           {unidadesNuevas > 0 ? (
             <Button
               type="button"

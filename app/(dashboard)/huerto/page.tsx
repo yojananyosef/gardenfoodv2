@@ -1,10 +1,12 @@
 import Link from "next/link";
 import {
+  Sprout,
   Leaf,
   CalendarDays,
   AlertTriangle,
   MapPinned,
   ArrowRight,
+  Trees,
   CheckCircle2,
   Sun,
   Droplets,
@@ -45,10 +47,6 @@ import {
 } from "@/lib/agronomy";
 import { climateAlertsProvider } from "@/lib/climate";
 import { getArboles, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
-import {
-  formatAreaM2,
-  formatCoordenadas,
-} from "@/lib/huerto/terreno";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
 
@@ -163,15 +161,6 @@ export default async function HuertoPage(props: {
               activoId={huertoActivoId}
               className="hidden lg:inline-flex"
             />
-            <div className="flex items-center gap-2">
-              <AsistenteFlotante
-                pasos={pasos}
-                pasoInicial={pasoInicial}
-                marcarCompletado={asistentePendiente}
-                onCompletar={marcarAsistenteCompletado}
-                skipCompletado={!asistentePendiente}
-              />
-            </div>
             <SelectorHuerto
               huertos={huertos.map((h) => ({ id: h.id, nombre: h.nombre, superficieM2: h.superficieM2 }))}
               activoId={huertoActivoId}
@@ -192,8 +181,34 @@ export default async function HuertoPage(props: {
           </Card>
         </div>
 
-        {/* Bento stats (el conteo de árboles vive en la cabecera del lienzo) */}
-        <div className="grid gap-3 sm:grid-cols-2">
+        {/* Bento stats */}
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Card className="overflow-hidden rounded-2xl">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between gap-2">
+                <CardDescription className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide">
+                  <Sprout className="size-3.5" /> Cultivos
+                </CardDescription>
+                <Badge variant={arboles.length > 0 ? "default" : "outline"} className="rounded-full px-1.5 py-0 text-[10px]">
+                  {arboles.length > 0 ? "activo" : "vacío"}
+                </Badge>
+              </div>
+              <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
+                {new Set(arboles.map((a) => a.especie)).size}
+                <span className="text-sm font-normal text-muted-foreground">
+                  especies · {arboles.length} árboles
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Trees className="size-3" /> {arboles.filter((a) => a.huertoId).length} en plano de{" "}
+                {arboles.length}
+              </div>
+            </CardContent>
+            <div className="h-1 w-full bg-gradient-to-r from-emerald-500/60 to-emerald-500/0" aria-hidden />
+          </Card>
+
           <Card className="overflow-hidden rounded-2xl">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
@@ -288,68 +303,44 @@ export default async function HuertoPage(props: {
         </CardContent>
       </Card>
 
-      {/* TABS + BENTO — core fix for scroll fatigue */}
+      {/* TABS + asistente */}
       <Tabs defaultValue="huerto" className="w-full gap-4">
-        <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
-          <TabsTrigger value="huerto" className="gap-1.5 rounded-lg data-[state=active]:shadow-sm">
-            <LayoutGrid className="size-4" />
-            Mi huerto
-            <Badge variant="secondary" className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
-              {arboles.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="tareas" className="gap-1.5 rounded-lg">
-            <ListTodo className="size-4" />
-            Tareas
-            <Badge variant={tareas.length > 0 ? "default" : "outline"} className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
-              {tareas.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="clima" className="gap-1.5 rounded-lg">
-            <Thermometer className="size-4" />
-            Clima
-            <Badge variant={alertas.length > 0 ? "destructive" : "outline"} className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
-              {alertas.length}
-            </Badge>
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
+            <TabsTrigger value="huerto" className="gap-1.5 rounded-lg data-[state=active]:shadow-sm">
+              <LayoutGrid className="size-4" />
+              Mi huerto
+              <Badge variant="secondary" className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
+                {arboles.length}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="tareas" className="gap-1.5 rounded-lg">
+              <ListTodo className="size-4" />
+              Tareas
+              <Badge variant={tareas.length > 0 ? "default" : "outline"} className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
+                {tareas.length}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="clima" className="gap-1.5 rounded-lg">
+              <Thermometer className="size-4" />
+              Clima
+              <Badge variant={alertas.length > 0 ? "destructive" : "outline"} className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
+                {alertas.length}
+              </Badge>
+            </TabsTrigger>
+          </TabsList>
+          <AsistenteFlotante
+            pasos={pasos}
+            pasoInicial={pasoInicial}
+            marcarCompletado={asistentePendiente}
+            onCompletar={marcarAsistenteCompletado}
+            skipCompletado={!asistentePendiente}
+          />
+        </div>
 
-        {/* CULTIVOS — bento 12-col */}
+        {/* Lienzo a ancho completo (el mapa es lo principal) */}
         <TabsContent value="huerto" className="mt-2 flex flex-col gap-4">
-              {/* Banco modular (B1): panel único + lienzo grande */}
-              <WorkbenchModular
-                huertos={huertos}
-                arboles={arboles}
-                slots={{
-                  satelite: (
-                    <div className="flex flex-col gap-3">
-                      <TerrenoSection />
-                      {huertos.length > 0 ? (
-                        <ul className="flex flex-col gap-2">
-                          {huertos.map((h) => (
-                            <li
-                              key={h.id}
-                              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-2"
-                            >
-                              <span className="grid gap-0.5">
-                                <span className="text-sm font-medium">{h.nombre}</span>
-                                <span className="font-mono text-xs text-muted-foreground">
-                                  {h.centro ? formatCoordenadas(h.centro) : "—"}
-                                </span>
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                {formatAreaM2(h.superficieM2)}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </div>
-                  ),
-                  matriz: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" />,
-                  tresD: <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" />,
-                }}
-              />
+              <WorkbenchModular huertos={huertos} arboles={arboles} />
           {sponsorships.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {sponsorships.slice(0, 2).map((s) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Check, Copy, MousePointerClick, Pencil, X } from "lucide-react";
@@ -34,7 +34,12 @@ type HuertoItem = HuertoMapa & { superficieM2: number };
 
 type OpcionEspecie = { dbKey: string; nombre: string };
 
-export function TerrenoSection({ alto = 520 }: { alto?: number }) {
+export interface TerrenoSectionHandle {
+  /** Activa «Marcar árboles» (flujo único de plantado) con sus validaciones. */
+  activarMarca: () => void;
+}
+
+export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<TerrenoSectionHandle> }) {
   const router = useRouter();
   const [huertos, setHuertos] = useState<HuertoItem[]>([]);
   const [arboles, setArboles] = useState<Arbol[]>([]);
@@ -122,14 +127,14 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
     huertosRef.current = huertos;
   }, [huertos]);
 
-  function mensajeUpsellArboles() {
+  const mensajeUpsellArboles = useCallback(() => {
     toast.error(
       `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para marcar todos los árboles que ves.`,
       {
         action: { label: "Ver planes", onClick: () => router.push("/pricing") },
       },
     );
-  }
+  }, [router]);
 
   async function handleCrear(feature: TerrenoFeature): Promise<string | null> {
     const result = await crearHuerto({ feature });
@@ -198,6 +203,27 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
     }
     setModoMarca((v) => !v);
   }
+
+  // Puerta para los otros tabs (matriz/3D): se invoca en el gesto del
+  // botón, sin effects ni remontajes.
+  useImperativeHandle(
+    ref,
+    () => ({
+      activarMarca: () => {
+        if (modoMarca) return;
+        if (huertos.length === 0) {
+          toast.error("Dibuja un huerto en el mapa para poder marcar árboles.");
+          return;
+        }
+        if (!puedeMarcar) {
+          mensajeUpsellArboles();
+          return;
+        }
+        setModoMarca(true);
+      },
+    }),
+    [modoMarca, huertos.length, puedeMarcar, mensajeUpsellArboles],
+  );
 
   async function handleMarcarArbol(
     huertoId: string,
