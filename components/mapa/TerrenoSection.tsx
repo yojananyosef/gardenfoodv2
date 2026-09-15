@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, ExternalLink, MousePointerClick, Pencil, X } from "lucide-react";
+import { Check, Maximize, MousePointerClick, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -284,12 +284,12 @@ export function TerrenoSection({
     })();
   }
 
-  /** Google Maps en satelital centrado en el huerto (URL universal
-   *  documentada: map_action=map + basemap=satellite). Las coordenadas
-   *  crudas no las entiende el usuario final; esto abre el detalle fuera. */
+  /** Detalle del huerto en grande (pestaña nueva): pin sobre el centroide
+   *  (q=lat,lng) + satelital directo (t=k) + zoom 18. El pin evita que el
+   *  usuario se pierda; el nombre del botón es neutro a propósito. */
   function urlGoogleMaps(huerto: HuertoItem): string {
     const centro = terrenoCentro(huerto.feature.geometry.coordinates);
-    return `https://www.google.com/maps/@?api=1&map_action=map&center=${centro.lat},${centro.lng}&zoom=18&basemap=satellite`;
+    return `https://maps.google.com/maps?q=${centro.lat},${centro.lng}&z=18&t=k`;
   }
 
   if (cargando) {
@@ -459,8 +459,8 @@ export function TerrenoSection({
                     />
                   }
                 >
-                  <ExternalLink className="size-3" />
-                  Ver en Google Maps
+                  <Maximize className="size-3" />
+                  Ver en grande
                 </Button>
               </div>
             </li>
