@@ -31,7 +31,7 @@ import {
   posAVista,
 } from "@/lib/huerto/plano";
 import { formatAreaM2 } from "@/lib/huerto/terreno";
-import { getEspeciePorDbKey, type Especie } from "@/lib/agronomy";
+import { getEspeciePorDbKey, urlFichaEspecie, type Especie } from "@/lib/agronomy";
 import type { Arbol, HuertoResumen } from "@/types";
 
 type Modo = "2d" | "3d";
@@ -695,7 +695,9 @@ export function PlanoHuerto({
           {leyenda.map((item) => (
             <Link
               key={item.especie}
-              href={`/especie/especies/${item.especie}`}
+              href={urlFichaEspecie(item.especie)}
+              target="_blank"
+              rel="noopener noreferrer"
               title={`Ver ficha de ${nombreDeEspecie(item.especie)}`}
               className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs transition-colors hover:bg-muted/50"
             >

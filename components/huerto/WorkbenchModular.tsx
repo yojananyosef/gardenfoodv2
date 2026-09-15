@@ -16,7 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
-import { ESPECIES, getEspeciePorDbKey } from "@/lib/agronomy";
+import { ESPECIES, getEspeciePorDbKey, urlFichaEspecie } from "@/lib/agronomy";
 import { colorDeEspecie } from "@/lib/huerto/plano";
 import type { Arbol, HuertoResumen } from "@/types";
 
@@ -114,7 +114,9 @@ export function WorkbenchModular({
                   {leyenda.map((item) => (
                     <Link
                       key={item.especie}
-                      href={`/especie/especies/${item.especie}`}
+                      href={urlFichaEspecie(item.especie)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       title={`Ver ficha de ${item.nombre}`}
                       className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs transition-colors hover:bg-muted/50"
                     >

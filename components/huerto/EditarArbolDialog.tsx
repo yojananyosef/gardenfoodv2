@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
-import { getEspeciePorDbKey } from "@/lib/agronomy";
+import { getEspeciePorDbKey, urlFichaEspecie } from "@/lib/agronomy";
 import { cn } from "@/lib/utils";
 import type { Arbol } from "@/types";
 
@@ -98,9 +98,11 @@ export function EditarArbolDialog({
         Árbol individual. Cada unidad se edita por separado.
       </DialogDescription>
       <div className="mt-2 flex flex-col gap-3">
-        {/* Puente E3 primero: los cuidados son de la especie, no del árbol individual */}
+        {/* Puente E3 primero: ficha pública aprobada (nueva pestaña) */}
         <Link
-          href={`/especie/especies/${arbol.especie}`}
+          href={urlFichaEspecie(arbol.especie)}
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-full rounded-full border px-3 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
         >
           Ver ficha de la especie →

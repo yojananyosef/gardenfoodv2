@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
 import { ControlCantidad } from "@/components/huerto/ControlCantidad";
-import { getEspeciePorDbKey } from "@/lib/agronomy";
+import { getEspeciePorDbKey, urlFichaEspecie } from "@/lib/agronomy";
 import type { Arbol } from "@/types";
 
 export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
@@ -60,9 +60,11 @@ export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              {/* Puente árbol → ficha de especie (Propuesta E) */}
+              {/* Puente árbol → ficha pública (la vista interna queda sin uso) */}
               <a
-                href={`/especie/especies/${a.especie}`}
+                href={urlFichaEspecie(a.especie)}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
               >
                 Ver ficha de la especie

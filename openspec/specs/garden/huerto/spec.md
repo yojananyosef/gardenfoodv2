@@ -249,7 +249,7 @@ El selector global de huerto SHALL filtrar el panel, el lienzo y los contadores 
 
 ### Requirement: Puente único de árbol a ficha de especie
 
-El detalle de un árbol (plano, mapa o ficha) SHALL incluir la acción «Ver ficha de <especie>» que navegue a la ficha de especie del módulo Especies. La ficha de árbol SHALL conservar solo el estado individual del árbol (posición, edad estimada, fecha de plantación, notas) sin duplicar los cuidados.
+El detalle de un árbol (plano, mapa o ficha) SHALL incluir la acción «Ver ficha de <especie>» que navegue a la ficha pública aprobada (`https://gardenfoodv2.vercel.app/especies/<slug>`, slug en minúsculas derivado del `dbKey` vía `urlFichaEspecie`, en nueva pestaña). La vista interna `/especie/especies/[especie]` SHALL quedar sin uso hasta su aprobación (no se enlaza desde ningún flujo). La ficha de árbol SHALL conservar solo el estado individual del árbol (posición, edad estimada, fecha de plantación, notas) sin duplicar los cuidados.
 
 #### Scenario: Navegar de árbol a ficha de especie
 

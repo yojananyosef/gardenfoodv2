@@ -815,7 +815,9 @@ export function TerrenoMap({
         <div
           ref={containerRef}
           style={{ height: alto }}
-          className={`w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
+          // isolate: contiene los z-index internos de Leaflet (panes hasta
+          // 1000) dentro del mapa para que no tapen los modales (z-50).
+          className={`isolate w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
           aria-label="Mapa para delimitar tus huertos y agregar árboles"
         />
         {cargandoSatelite && (
