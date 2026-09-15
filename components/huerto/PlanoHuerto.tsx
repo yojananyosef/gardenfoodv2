@@ -673,7 +673,7 @@ export function PlanoHuerto({
           {vista && arbolesPlano.length === 0 && (nadaPorSincronizar || unidadesNuevas > 0) ? (
             <p className="pointer-events-none absolute inset-x-4 top-1/2 z-20 -translate-y-1/2 text-center text-xs text-emerald-50/85">
               {nadaPorSincronizar
-                ? "Aún no tienes árboles. En el tab Terreno (satélite) pulsa «Marcar árboles» y toca tu terreno para plantarlos."
+                ? "Aún no tienes árboles. Pulsa «Agregar árboles» y toca la tierra para plantarlos."
                 : `Tienes ${unidadesNuevas} árbol${unidadesNuevas === 1 ? "" : "es"} sin ubicar. Pulsa «Ubicar ${unidadesNuevas} pendiente${unidadesNuevas === 1 ? "" : "s"} en el mapa».`}
             </p>
           ) : null}

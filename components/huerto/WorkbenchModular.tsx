@@ -68,7 +68,11 @@ export function WorkbenchModular({
                 onValueChange={(value) => setHuertoId(value ?? null)}
               >
                 <SelectTrigger className="ml-auto w-52 min-h-9" aria-label="Huerto activo">
-                  <SelectValue placeholder="Elige un huerto…" />
+                  <SelectValue>
+                    {(value: string | null) =>
+                      huertos.find((h) => h.id === value)?.nombre ?? "Elige un huerto…"
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {huertos.map((h) => (
