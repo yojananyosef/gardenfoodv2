@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
 import { getEspeciePorDbKey } from "@/lib/agronomy";
+import { cn } from "@/lib/utils";
 import type { Arbol } from "@/types";
 
 export type OpcionEspecie = { dbKey: string; nombre: string };
@@ -48,6 +49,10 @@ export function EditarArbolDialog({
   const [fecha, setFecha] = useState(arbol.fechaPlantacion ?? "");
   const [observaciones, setObservaciones] = useState(arbol.observaciones ?? "");
   const [pending, startTransition] = useTransition();
+  // Los detalles parten expandidos solo si el árbol ya tiene datos.
+  const [detallesAbiertos, setDetallesAbiertos] = useState(
+    Boolean(arbol.fechaPlantacion || arbol.observaciones),
+  );
 
   function guardar() {
     startTransition(async () => {
@@ -93,51 +98,73 @@ export function EditarArbolDialog({
         Árbol individual. Cada unidad se edita por separado.
       </DialogDescription>
       <div className="mt-2 flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="plano-especie">Especie</Label>
-          <Select value={especie} onValueChange={(value) => setEspecie(value ?? "")}>
-            <SelectTrigger id="plano-especie" className="w-full min-h-11">
-              <SelectValue placeholder="Elige una especie…" />
-            </SelectTrigger>
-            <SelectContent className="max-h-72">
-              {especies.map((e) => (
-                <SelectItem key={e.dbKey} value={e.dbKey}>
-                  {e.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="plano-fecha">Fecha de plantación</Label>
-          <Input
-            id="plano-fecha"
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            className="min-h-11"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="plano-obs">Observaciones</Label>
-          <Input
-            id="plano-obs"
-            value={observaciones}
-            maxLength={500}
-            onChange={(e) => setObservaciones(e.target.value)}
-            className="min-h-11"
-          />
-        </div>
-        <Button type="button" className="min-h-11 w-full" onClick={guardar} disabled={pending}>
-          {pending ? "Guardando…" : "Guardar cambios"}
-        </Button>
-        {/* Puente E3: los cuidados son de la especie, no del árbol individual */}
+        {/* Puente E3 primero: los cuidados son de la especie, no del árbol individual */}
         <Link
           href={`/especie/especies/${arbol.especie}`}
           className="w-full rounded-full border px-3 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
         >
           Ver ficha de la especie →
         </Link>
+        <button
+          type="button"
+          onClick={() => setDetallesAbiertos((v) => !v)}
+          aria-expanded={detallesAbiertos}
+          className="flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted/50"
+        >
+          Agrega más detalles a tu árbol
+          <ChevronDown
+            className={cn(
+              "size-4 text-muted-foreground transition-transform",
+              detallesAbiertos && "rotate-180",
+            )}
+          />
+        </button>
+        {detallesAbiertos ? (
+          <>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="plano-especie">Especie</Label>
+              <Select value={especie} onValueChange={(value) => setEspecie(value ?? "")}>
+                <SelectTrigger id="plano-especie" className="w-full min-h-11">
+                  <SelectValue>
+                    {(value: string | null) =>
+                      especies.find((e) => e.dbKey === value)?.nombre ?? "Elige una especie…"
+                    }
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {especies.map((e) => (
+                    <SelectItem key={e.dbKey} value={e.dbKey}>
+                      {e.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="plano-fecha">Fecha de plantación</Label>
+              <Input
+                id="plano-fecha"
+                type="date"
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
+                className="min-h-11"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="plano-obs">Observaciones</Label>
+              <Input
+                id="plano-obs"
+                value={observaciones}
+                maxLength={500}
+                onChange={(e) => setObservaciones(e.target.value)}
+                className="min-h-11"
+              />
+            </div>
+            <Button type="button" className="min-h-11 w-full" onClick={guardar} disabled={pending}>
+              {pending ? "Guardando…" : "Guardar cambios"}
+            </Button>
+          </>
+        ) : null}
         <Button
           type="button"
           variant="outline"
