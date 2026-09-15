@@ -34,7 +34,16 @@ type HuertoItem = HuertoMapa & { superficieM2: number };
 
 type OpcionEspecie = { dbKey: string; nombre: string };
 
-export function TerrenoSection({ alto = 520 }: { alto?: number }) {
+export function TerrenoSection({
+  alto = 520,
+  huertoId,
+  onHuertoChange,
+}: {
+  alto?: number;
+  /** Huerto activo global (lo controla el Workbench junto a los tabs). */
+  huertoId?: string | null;
+  onHuertoChange?: (id: string | null) => void;
+}) {
   const router = useRouter();
   const [huertos, setHuertos] = useState<HuertoItem[]>([]);
   const [arboles, setArboles] = useState<Arbol[]>([]);
@@ -44,7 +53,6 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
   const [limiteArboles, setLimiteArboles] = useState<number | null>(null);
   const [modoMarca, setModoMarca] = useState(false);
   const [especieActiva, setEspecieActiva] = useState<string | null>(null);
-  const [huertoEncuadre, setHuertoEncuadre] = useState<string | null>(null);
   const mapaRef = useRef<TerrenoMapHandle>(null);
   const [renombrandoId, setRenombrandoId] = useState<string | null>(null);
   const [nombreBorrador, setNombreBorrador] = useState("");
@@ -124,6 +132,18 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
     huertosRef.current = huertos;
   }, [huertos]);
 
+  // El huerto activo lo controla el Workbench: al cambiar arriba se encuadra
+  // el mapa (se salta el primer render, el mapa ya ajusta a todo al montar).
+  const huertoIdPrevioRef = useRef<string | null | undefined>(undefined);
+  useEffect(() => {
+    if (huertoIdPrevioRef.current === undefined) {
+      huertoIdPrevioRef.current = huertoId ?? null;
+      return;
+    }
+    huertoIdPrevioRef.current = huertoId ?? null;
+    if (huertoId) mapaRef.current?.encuadrarHuerto(huertoId);
+  }, [huertoId]);
+
   const mensajeUpsellArboles = useCallback(() => {
     toast.error(
       `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para agregar todos los árboles que ves.`,
@@ -146,6 +166,8 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
       return null;
     }
     setHuertos((prev) => [...prev, { ...result.huerto }]);
+    onHuertoChange?.(result.huerto.id);
+    router.refresh();
     toast.success(`"${result.huerto.nombre}" guardado en el mapa.`);
     return result.huerto.id;
   }
@@ -180,6 +202,9 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
     setArboles((prev) =>
       prev.map((a) => (a.huertoId === id ? { ...a, huertoId: null, posX: null, posY: null } : a)),
     );
+    const restantes = huertosRef.current.filter((h) => h.id !== id);
+    onHuertoChange?.(restantes[0]?.id ?? null);
+    router.refresh();
     toast.success("Huerto eliminado.");
     return true;
   }
@@ -255,6 +280,7 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
         return;
       }
       setHuertos((prev) => prev.map((h) => (h.id === id ? { ...h, nombre } : h)));
+      router.refresh();
       toast.success("Nombre actualizado.");
     })();
   }
@@ -317,28 +343,6 @@ export function TerrenoSection({ alto = 520 }: { alto?: number }) {
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-2">
-          {huertos.length > 1 ? (
-            <Select
-              value={huertoEncuadre ?? undefined}
-              onValueChange={(value) => {
-                setHuertoEncuadre(value ?? null);
-                mapaRef.current?.encuadrarHuerto(value ?? null);
-              }}
-            >
-              <SelectTrigger className="w-52 min-h-9" aria-label="Huerto del mapa">
-                <SelectValue placeholder="Elige un huerto…" />
-              </SelectTrigger>
-              <SelectContent>
-                {huertos.map((h) => (
-                  <SelectItem key={h.id} value={h.id}>
-                    {h.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <span className="text-sm font-medium">{huertos[0]?.nombre ?? "Mi huerto"}</span>
-          )}
           <div className="ml-auto">
             <Button
               type="button"

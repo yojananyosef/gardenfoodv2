@@ -62,15 +62,21 @@ export function PlanoHuerto({
   arboles,
   especies,
   modoForzado,
+  huertoId: huertoIdProp,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
   especies: Especie[];
   /** Cuando el lienzo (tabs) controla el modo, se fuerza y se oculta el toggle interno. */
   modoForzado?: "2d" | "3d";
+  /** Huerto activo global (lo controla el Workbench junto a los tabs). */
+  huertoId?: string | null;
 }) {
   const router = useRouter();
-  const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
+  // El huerto activo lo controla el padre; se cae al primero si el id ya no existe.
+  const huertoId = huertos.some((h) => h.id === huertoIdProp)
+    ? huertoIdProp ?? null
+    : (huertos[0]?.id ?? null);
   const [modoInterno, setModoInterno] = useState<Modo>("2d");
   const modo: Modo = modoForzado ?? modoInterno;
   const setModo = (m: Modo) => setModoInterno(m);
@@ -79,7 +85,6 @@ export function PlanoHuerto({
   // Agregar en este tab: especie elegida + toque en el mapa/maqueta.
   const [agregando, setAgregando] = useState<string | null>(null);
   const [agregandoPending, startAgregarTransition] = useTransition();
-  const toqueAgregarRef = useRef<{ x: number; y: number } | null>(null);
   // Zoom/pan del 2D: el plano ocupa más pantalla y se puede explorar.
   const [zoom2d, setZoom2d] = useState(1);
   const [pan2d, setPan2d] = useState({ x: 0, y: 0 });
@@ -103,13 +108,16 @@ export function PlanoHuerto({
 
   const en3d = modo === "3d";
 
-  function elegirHuerto(id: string | null) {
-    setHuertoId(id);
+  // Al cambiar el huerto global se recentra el plano y se sale del modo agregar.
+  const huertoIdRef = useRef(huertoId);
+  useEffect(() => {
+    if (huertoIdRef.current === huertoId) return;
+    huertoIdRef.current = huertoId;
     setZoom2d(1);
     setPan2d({ x: 0, y: 0 });
     setPosLocales({});
     setAgregando(null);
-  }
+  }, [huertoId]);
 
   // Rueda → zoom (listener no pasivo para poder prevenir el scroll).
   useEffect(() => {
@@ -296,20 +304,15 @@ export function PlanoHuerto({
     });
   }
 
-  function registrarToqueAgregar(e: React.PointerEvent) {
-    if (!agregando) return;
-    toqueAgregarRef.current = { x: e.clientX, y: e.clientY };
-  }
-
-  function resolverToqueAgregar(e: React.PointerEvent) {
-    const inicio = toqueAgregarRef.current;
-    toqueAgregarRef.current = null;
-    if (!agregando || !inicio || !huerto?.feature) return;
-    if (Math.hypot(e.clientX - inicio.x, e.clientY - inicio.y) > 6) return;
+  // Opción A: mientras se agrega, el arrastre del fondo queda pausado y
+  // cada toque en la tierra planta. No se usa e.target como filtro (el
+  // pointer capture del pan lo rompía): se planta por coordenadas.
+  function plantarDesdeEvento2D(e: React.PointerEvent) {
+    if (!agregando || !huerto?.feature) return;
     const el = e.target as HTMLElement;
-    // Los toques en marcadores los gestiona el drag/clic del árbol.
+    // Los toques en árboles o botones los gestiona su propio handler.
     if (el.closest("[data-arbol-id]")) return;
-    if (!platoRef.current?.contains(el)) return;
+    if (el.closest("button")) return;
     const pos = posDesdeEvento(e, { x: 0.5, y: 0.5 });
     const punto = latLngDesdePos(pos, huerto.feature.geometry.coordinates);
     plantarEn(punto.lat, punto.lng);
@@ -408,26 +411,6 @@ export function PlanoHuerto({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
-        {huertos.length > 1 ? (
-          <Select value={huerto?.id ?? undefined} onValueChange={elegirHuerto}>
-            <SelectTrigger className="w-52 min-h-9" aria-label="Huerto del plano">
-              <SelectValue>
-                {(value: string | null) =>
-                  huertos.find((h) => h.id === value)?.nombre ?? "Elige un huerto…"
-                }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {huertos.map((h) => (
-                <SelectItem key={h.id} value={h.id}>
-                  {h.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <span className="text-sm font-medium">{huerto?.nombre}</span>
-        )}
         <div className="ml-auto flex items-center gap-2">
           <div className={modoForzado ? "hidden" : "flex items-center rounded-lg border p-0.5"} role="group" aria-label="Modo de vista">
             <Button
@@ -511,7 +494,11 @@ export function PlanoHuerto({
             </SelectContent>
           </Select>
           <span className="text-[11px] text-muted-foreground">
-            {agregandoPending ? "Agregando…" : en3d ? "Toca la tierra 3D para agregar." : "Toca el mapa para agregar."}
+            {agregandoPending
+              ? "Agregando…"
+              : en3d
+                ? "Toca la tierra 3D para agregar."
+                : "Toca la tierra para agregar (el arrastre está pausado mientras agregas)."}
           </span>
         </div>
       ) : null}
@@ -548,15 +535,9 @@ export function PlanoHuerto({
           agregando ? "cursor-crosshair" : arrastrando2d ? "cursor-grabbing" : "cursor-grab"
         }`}
         style={{ touchAction: "none" }}
-        onPointerDown={(e) => {
-          registrarToqueAgregar(e);
-          iniciarPan2d(e);
-        }}
-        onPointerMove={moverPan2d}
-        onPointerUp={(e) => {
-          terminarPan2d();
-          resolverToqueAgregar(e);
-        }}
+        onPointerDown={agregando ? undefined : iniciarPan2d}
+        onPointerMove={agregando ? undefined : moverPan2d}
+        onPointerUp={terminarPan2d}
         onPointerCancel={terminarPan2d}
       >
           {/* Controles de zoom */}
@@ -606,7 +587,10 @@ export function PlanoHuerto({
           >
           <div
             ref={platoRef}
-            className="relative max-h-full rounded-md shadow-[0_18px_35px_rgba(0,0,0,0.30)]"
+            className={`relative max-h-full rounded-md shadow-[0_18px_35px_rgba(0,0,0,0.30)] ${
+              agregando ? "cursor-crosshair" : ""
+            }`}
+            onPointerUp={plantarDesdeEvento2D}
             style={{
               aspectRatio: `${aspectoTerreno}`,
               height: aspectoTerreno >= 1.4 ? "auto" : "88%",
@@ -703,7 +687,7 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo · con «Agregar árboles» toca la tierra para plantar" : "Con «Agregar árboles» toca el mapa para plantar · arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · arrastra el fondo para mover el plano"}</span>
+        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo · con «Agregar árboles» toca la tierra para plantar" : "Con «Agregar árboles» toca la tierra para plantar (sin arrastre mientras agregas) · arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · sin agregar, arrastra el fondo para mover el plano"}</span>
       </div>
 
       {leyenda.length > 0 ? (

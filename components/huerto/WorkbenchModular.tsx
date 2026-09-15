@@ -5,6 +5,13 @@ import { Box, MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
@@ -13,9 +20,9 @@ import { formatAreaM2, formatCoordenadas } from "@/lib/huerto/terreno";
 import type { Arbol, HuertoResumen } from "@/types";
 
 /** Lienzo del huerto a ancho completo (el mapa es lo principal): la vista
- *  principal es el satélite; «Marcar árboles» está disponible en los 3 tabs
- *  (desde matriz/3D salta al satélite y activa el modo marca: flujo único
- *  de plantado tocando el terreno). Sin panel lateral. */
+ *  principal es el satélite; «Agregar árboles» está disponible en los 3 tabs
+ *  (cada tab planta in situ con el único endpoint de creación). Sin panel
+ *  lateral. El selector de huerto es único y global, junto a los tabs. */
 export function WorkbenchModular({
   huertos,
   arboles,
@@ -24,6 +31,12 @@ export function WorkbenchModular({
   arboles: Arbol[];
 }) {
   const [tab, setTab] = useState<"satelite" | "matriz" | "tres-d">("satelite");
+  const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
+  // El id efectivo cae al primer huerto si el seleccionado ya no existe
+  // (p. ej. recién eliminado en el satélite antes del refresh).
+  const huertoActivoId = huertos.some((h) => h.id === huertoId)
+    ? huertoId
+    : (huertos[0]?.id ?? null);
 
   return (
     <Card className="overflow-hidden rounded-2xl shadow-sm">
@@ -37,20 +50,39 @@ export function WorkbenchModular({
       </div>
       <CardContent className="p-4 sm:p-5">
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="gap-4">
-          <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
-            <TabsTrigger value="satelite" className="gap-1.5 rounded-lg">
-              <MapPin className="size-3.5" /> Terreno (satélite)
-            </TabsTrigger>
-            <TabsTrigger value="matriz" className="gap-1.5 rounded-lg">
-              <Box className="size-3.5" /> Posicionar árboles
-            </TabsTrigger>
-            <TabsTrigger value="tres-d" className="gap-1.5 rounded-lg">
-              <Box className="size-3.5" /> Visualización 3D
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex flex-wrap items-center gap-2">
+            <TabsList className="min-w-0 flex-1 justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:flex-none">
+              <TabsTrigger value="satelite" className="gap-1.5 rounded-lg">
+                <MapPin className="size-3.5" /> Terreno (satélite)
+              </TabsTrigger>
+              <TabsTrigger value="matriz" className="gap-1.5 rounded-lg">
+                <Box className="size-3.5" /> Posicionar árboles
+              </TabsTrigger>
+              <TabsTrigger value="tres-d" className="gap-1.5 rounded-lg">
+                <Box className="size-3.5" /> Visualización 3D
+              </TabsTrigger>
+            </TabsList>
+            {huertos.length > 1 ? (
+              <Select
+                value={huertoActivoId ?? undefined}
+                onValueChange={(value) => setHuertoId(value ?? null)}
+              >
+                <SelectTrigger className="ml-auto w-52 min-h-9" aria-label="Huerto activo">
+                  <SelectValue placeholder="Elige un huerto…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {huertos.map((h) => (
+                    <SelectItem key={h.id} value={h.id}>
+                      {h.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : null}
+          </div>
           <TabsContent value="satelite" className="mt-0">
             <div className="flex flex-col gap-3">
-              <TerrenoSection />
+              <TerrenoSection huertoId={huertoActivoId} onHuertoChange={setHuertoId} />
               {huertos.length > 0 ? (
                 <ul className="flex flex-col gap-2">
                   {huertos.map((h) => (
@@ -74,10 +106,22 @@ export function WorkbenchModular({
             </div>
           </TabsContent>
           <TabsContent value="matriz" className="mt-0">
-            <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" />
+            <PlanoHuerto
+              huertos={huertos}
+              arboles={arboles}
+              especies={ESPECIES}
+              modoForzado="2d"
+              huertoId={huertoActivoId}
+            />
           </TabsContent>
           <TabsContent value="tres-d" className="mt-0">
-            <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" />
+            <PlanoHuerto
+              huertos={huertos}
+              arboles={arboles}
+              especies={ESPECIES}
+              modoForzado="3d"
+              huertoId={huertoActivoId}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>
