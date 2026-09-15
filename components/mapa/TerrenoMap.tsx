@@ -617,6 +617,17 @@ export function TerrenoMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!mapaListo || !map) return;
+    // Crosshair por estilo inline (no por className): React reescribe el
+    // atributo class completo cuando cambia y borraría las clases que
+    // Leaflet agrega al contenedor (leaflet-container, leaflet-grab…).
+    // Sin .leaflet-container, la guarda `.leaflet-container .leaflet-tile
+    // { max-width: none }` deja de aplicar, Tailwind (max-width: 100%)
+    // colapsa los tiles a 0 px y el satélite queda en blanco fijo.
+    // El inline además pisa el cursor grab de Leaflet sin pelear
+    // especificidad con sus hojas.
+    if (containerRef.current) {
+      containerRef.current.style.cursor = modoMarca ? "crosshair" : "";
+    }
     for (const boton of ["drawPolygon", "editMode", "removalMode"]) {
       map.pm.Toolbar.setButtonDisabled(boton, modoMarca);
     }
@@ -813,7 +824,10 @@ export function TerrenoMap({
           style={{ height: alto }}
           // isolate: contiene los z-index internos de Leaflet (panes hasta
           // 1000) dentro del mapa para que no tapen los modales (z-50).
-          className={`isolate w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
+          // className INTENCIONALMENTE estático: si React lo reescribe,
+          // borra las clases de Leaflet (leaflet-container…) y el fondo
+          // satelital colapsa a blanco (ver efecto modoMarca).
+          className="isolate w-full overflow-hidden rounded-md border"
           aria-label="Mapa para delimitar tus huertos y agregar árboles"
         />
         {cargandoSatelite && (
