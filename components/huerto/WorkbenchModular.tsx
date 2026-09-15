@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Box, MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -13,11 +14,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DetalleEspecies } from "@/components/huerto/DetalleEspecies";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
-import { ESPECIES } from "@/lib/agronomy";
+import { ESPECIES, getEspeciePorDbKey } from "@/lib/agronomy";
+import { colorDeEspecie } from "@/lib/huerto/plano";
 import type { Arbol, HuertoResumen } from "@/types";
+
+function nombreDeEspecie(especie: string): string {
+  return getEspeciePorDbKey(especie)?.nombre ?? especie;
+}
 
 /** Lienzo del huerto a ancho completo (el mapa es lo principal): la vista
  *  principal es el satélite; «Agregar árboles» está disponible en los 3 tabs
@@ -37,6 +42,23 @@ export function WorkbenchModular({
   const huertoActivoId = huertos.some((h) => h.id === huertoId)
     ? huertoId
     : (huertos[0]?.id ?? null);
+
+  // Leyenda igual que en los tabs 2D/3D: chips por especie del huerto activo.
+  const leyenda = useMemo(() => {
+    const conteo = new Map<string, number>();
+    for (const a of arboles) {
+      if (huertoActivoId && a.huertoId !== huertoActivoId) continue;
+      conteo.set(a.especie, (conteo.get(a.especie) ?? 0) + 1);
+    }
+    return [...conteo.entries()]
+      .map(([especie, total]) => ({
+        especie,
+        total,
+        color: colorDeEspecie(especie),
+        nombre: nombreDeEspecie(especie),
+      }))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+  }, [arboles, huertoActivoId]);
 
   return (
     <Card className="overflow-hidden rounded-2xl shadow-sm">
@@ -87,7 +109,22 @@ export function WorkbenchModular({
           <TabsContent value="satelite" className="mt-0">
             <div className="flex flex-col gap-3">
               <TerrenoSection huertoId={huertoActivoId} onHuertoChange={setHuertoId} />
-              <DetalleEspecies arboles={arboles} huertos={huertos} />
+              {leyenda.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {leyenda.map((item) => (
+                    <Link
+                      key={item.especie}
+                      href={`/especie/especies/${item.especie}`}
+                      title={`Ver ficha de ${item.nombre}`}
+                      className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs transition-colors hover:bg-muted/50"
+                    >
+                      <span className="size-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      {item.nombre}
+                      <span className="font-mono text-muted-foreground">×{item.total}</span>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </TabsContent>
           <TabsContent value="matriz" className="mt-0">

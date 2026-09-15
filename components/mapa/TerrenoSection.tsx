@@ -300,7 +300,24 @@ export function TerrenoSection({
   }
 
   if (cargando) {
-    return <p className="text-sm text-muted-foreground">Cargando…</p>;
+    // Esqueleto con el mismo alto del contenido real (botonera + mapa) para
+    // no provocar layout shift al resolver la carga en cliente.
+    return (
+      <div
+        className="flex flex-col gap-3"
+        aria-busy="true"
+        aria-label="Cargando terreno"
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="ml-auto h-9 w-36 animate-pulse rounded-full bg-muted" />
+        </div>
+        <div
+          className="w-full animate-pulse rounded-md border bg-muted"
+          style={{ height: alto }}
+        />
+        <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+      </div>
+    );
   }
 
   return (
