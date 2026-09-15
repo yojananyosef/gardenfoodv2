@@ -256,6 +256,7 @@ export function TerrenoSection({
       createdAt: new Date().toISOString(),
     };
     setArboles((prev) => [...prev, nuevo]);
+    router.refresh();
     return nuevo.id;
   }
 
@@ -467,14 +468,16 @@ export function TerrenoSection({
             arbol={arbolEditando}
             especies={especies}
             onCerrar={() => setArbolEditando(null)}
-            onActualizado={(actualizado) =>
+            onActualizado={(actualizado) => {
               setArboles((prev) =>
                 prev.map((a) => (a.id === actualizado.id ? actualizado : a)),
-              )
-            }
-            onEliminado={() =>
-              setArboles((prev) => prev.filter((a) => a.id !== arbolEditando.id))
-            }
+              );
+              router.refresh();
+            }}
+            onEliminado={() => {
+              setArboles((prev) => prev.filter((a) => a.id !== arbolEditando.id));
+              router.refresh();
+            }}
           />
         ) : null}
       </Dialog>

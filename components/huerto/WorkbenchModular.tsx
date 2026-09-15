@@ -13,10 +13,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DetalleEspecies } from "@/components/huerto/DetalleEspecies";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
 import { ESPECIES } from "@/lib/agronomy";
-import { formatAreaM2, formatCoordenadas } from "@/lib/huerto/terreno";
 import type { Arbol, HuertoResumen } from "@/types";
 
 /** Lienzo del huerto a ancho completo (el mapa es lo principal): la vista
@@ -87,26 +87,7 @@ export function WorkbenchModular({
           <TabsContent value="satelite" className="mt-0">
             <div className="flex flex-col gap-3">
               <TerrenoSection huertoId={huertoActivoId} onHuertoChange={setHuertoId} />
-              {huertos.length > 0 ? (
-                <ul className="flex flex-col gap-2">
-                  {huertos.map((h) => (
-                    <li
-                      key={h.id}
-                      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-2"
-                    >
-                      <span className="grid gap-0.5">
-                        <span className="text-sm font-medium">{h.nombre}</span>
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {h.centro ? formatCoordenadas(h.centro) : "—"}
-                        </span>
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {formatAreaM2(h.superficieM2)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+              <DetalleEspecies arboles={arboles} huertos={huertos} />
             </div>
           </TabsContent>
           <TabsContent value="matriz" className="mt-0">
