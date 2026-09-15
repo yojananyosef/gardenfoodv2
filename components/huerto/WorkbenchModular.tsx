@@ -54,7 +54,7 @@ export function WorkbenchModular({
   }, [arboles, filtro]);
 
   return (
-    <div className="grid w-full gap-5 lg:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
+    <div className="grid w-full gap-5 lg:grid-cols-[minmax(240px,280px)_minmax(0,1fr)]">
       {/* ─── Panel único: inventario de árboles (R2, alta única) ─── */}
       <aside className="flex flex-col gap-3 lg:sticky lg:top-20 lg:self-start">
         <Card className="rounded-2xl shadow-sm">

@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { MapPinOff, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,20 +62,6 @@ export function EditarArbolDialog({
       }
       toast.success("Árbol actualizado.");
       onActualizado?.({ ...arbol, especie, fechaPlantacion: fecha ? fecha : null, observaciones: observaciones.trim() ? observaciones.trim() : null });
-      onCerrar();
-      router.refresh();
-    });
-  }
-
-  function quitarDelPlano() {
-    startTransition(async () => {
-      const result = await actualizarArbol(arbol.id, { huertoId: null });
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success("Árbol quitado del plano.");
-      onActualizado?.({ ...arbol, huertoId: null, posX: null, posY: null });
       onCerrar();
       router.refresh();
     });
@@ -152,28 +138,16 @@ export function EditarArbolDialog({
         >
           Ver ficha de la especie →
         </Link>
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={quitarDelPlano}
-            disabled={pending || !arbol.huertoId}
-          >
-            <MapPinOff data-icon="inline-start" /> Quitar del plano
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex-1 text-destructive hover:text-destructive"
-            onClick={eliminar}
-            disabled={pending}
-          >
-            <Trash2 data-icon="inline-start" /> Eliminar
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full text-destructive hover:text-destructive"
+          onClick={eliminar}
+          disabled={pending}
+        >
+          <Trash2 data-icon="inline-start" /> Eliminar
+        </Button>
       </div>
     </DialogContent>
   );
