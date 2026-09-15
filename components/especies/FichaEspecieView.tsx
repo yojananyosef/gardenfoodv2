@@ -534,8 +534,6 @@ export function FichaEspecieView({
         </Card>
       </div>
 
-      <Card className="rounded-2xl lg:col-span-12"><CardContent className="pt-6"><Descripcion desc={ficha.desc} /></CardContent></Card>
-
       {(() => {
         const tabs = (
           <Tabs defaultValue="calendario" className="w-full gap-4">
