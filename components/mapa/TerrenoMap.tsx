@@ -390,10 +390,6 @@ export function TerrenoMap({
           void ajustarZoomNativo();
         });
 
-        map.on("moveend", () => {
-          void ajustarZoomNativo();
-        });
-
         map.on("pm:drawstart", () => {
           if (!puedeDibujarRef.current) {
             map.pm.disableDraw();
