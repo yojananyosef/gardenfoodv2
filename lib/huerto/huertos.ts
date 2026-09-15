@@ -238,7 +238,7 @@ export async function sincronizarPlanoHuerto(
     return { ok: false, error: "No se pudo leer tu inventario de árboles." };
   }
 
-  // Los árboles ya posicionados (marcados a mano en el mapa) se protegen:
+  // Los árboles ya posicionados (agregados a mano en el mapa) se protegen:
   // la sincronización solo reemplaza filas sin posición.
   const posicionadas = (filas ?? []).filter(
     (fila) =>
@@ -259,14 +259,14 @@ export async function sincronizarPlanoHuerto(
   if (unidades.length === 0 && posicionadas.length === 0) {
     return {
       ok: false,
-      error: "No hay árboles para sincronizar. Registra o marca árboles primero.",
+      error: "No hay árboles para ubicar. Agrégalos tocando el mapa primero.",
     };
   }
   const cupo = PLANO_MAX_ARBOLES - posicionadas.length;
   if (unidades.length > cupo) {
     return {
       ok: false,
-      error: `El plano admite hasta ${PLANO_MAX_ARBOLES} árboles y ya hay ${posicionadas.length} marcados. Reduce tu inventario o divide en más huertos.`,
+      error: `El plano admite hasta ${PLANO_MAX_ARBOLES} árboles y ya hay ${posicionadas.length} en el mapa. Reduce tu inventario o divide en más huertos.`,
     };
   }
 
@@ -343,7 +343,7 @@ export async function agregarArbolEnMapa(
   input: z.input<typeof MARCAR_ARBOL>,
 ): Promise<ArbolEnMapaResult> {
   const parsed = MARCAR_ARBOL.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Datos de marcaje inválidos." };
+  if (!parsed.success) return { ok: false, error: "Datos para agregar inválidos." };
   const { huertoId, lat, lng, especie } = parsed.data;
 
   const supabase = await createClient();
@@ -365,7 +365,7 @@ export async function agregarArbolEnMapa(
 
   const punto: PuntoMapa = { lat, lng };
   if (!puntoEnPoligono(punto, feature.geometry.coordinates[0] ?? [])) {
-    return { ok: false, error: "Marca dentro de un huerto delimitado." };
+    return { ok: false, error: "Agrega dentro de un huerto delimitado." };
   }
 
   const plan = await getPlanDe(supabase, user.id);
@@ -376,7 +376,7 @@ export async function agregarArbolEnMapa(
   if (!puedeAgregarArbol(count ?? 0, plan)) {
     return {
       ok: false,
-      error: `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para marcar todos los árboles que ves.`,
+      error: `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para agregar todos los árboles que ves.`,
       limite: true,
     };
   }
@@ -395,7 +395,7 @@ export async function agregarArbolEnMapa(
     .select("id")
     .single();
 
-  if (error || !data) return { ok: false, error: "No se pudo marcar el árbol." };
+  if (error || !data) return { ok: false, error: "No se pudo agregar el árbol." };
 
   revalidatePath("/huerto");
   return {

@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Box, MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
-import { TerrenoSection, type TerrenoSectionHandle } from "@/components/mapa/TerrenoSection";
+import { TerrenoSection } from "@/components/mapa/TerrenoSection";
 import { ESPECIES } from "@/lib/agronomy";
 import { formatAreaM2, formatCoordenadas } from "@/lib/huerto/terreno";
 import type { Arbol, HuertoResumen } from "@/types";
@@ -24,12 +24,6 @@ export function WorkbenchModular({
   arboles: Arbol[];
 }) {
   const [tab, setTab] = useState<"satelite" | "matriz" | "tres-d">("satelite");
-  const terrenoRef = useRef<TerrenoSectionHandle>(null);
-
-  function irAMarcar() {
-    setTab("satelite");
-    terrenoRef.current?.activarMarca();
-  }
 
   return (
     <Card className="overflow-hidden rounded-2xl shadow-sm">
@@ -56,7 +50,7 @@ export function WorkbenchModular({
           </TabsList>
           <TabsContent value="satelite" className="mt-0">
             <div className="flex flex-col gap-3">
-              <TerrenoSection ref={terrenoRef} />
+              <TerrenoSection />
               {huertos.length > 0 ? (
                 <ul className="flex flex-col gap-2">
                   {huertos.map((h) => (
@@ -80,10 +74,10 @@ export function WorkbenchModular({
             </div>
           </TabsContent>
           <TabsContent value="matriz" className="mt-0">
-            <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" onMarcar={irAMarcar} />
+            <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="2d" />
           </TabsContent>
           <TabsContent value="tres-d" className="mt-0">
-            <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" onMarcar={irAMarcar} />
+            <PlanoHuerto huertos={huertos} arboles={arboles} especies={ESPECIES} modoForzado="3d" />
           </TabsContent>
         </Tabs>
       </CardContent>

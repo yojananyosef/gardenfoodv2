@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import type * as Leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
@@ -75,7 +75,13 @@ type TerrenoMapProps = {
   nombreArbol: (especie: string) => string;
   /** Alto del contenedor del mapa en px (default 520; usa menos dentro de modales). */
   alto?: number;
+  ref?: Ref<TerrenoMapHandle>;
 };
+
+export interface TerrenoMapHandle {
+  /** Encuadra un huerto (o todos con null) sin remontar el mapa. */
+  encuadrarHuerto: (id: string | null) => void;
+}
 
 function comoPolygon(layer: Leaflet.Layer): Leaflet.Polygon {
   return layer as unknown as Leaflet.Polygon;
@@ -122,6 +128,7 @@ export function TerrenoMap({
   onFueraHuerto,
   nombreArbol,
   alto = 520,
+  ref,
 }: TerrenoMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<Leaflet.Map | null>(null);
@@ -170,6 +177,28 @@ export function TerrenoMap({
   // Cada pulsación de «Mi ubicación» invalida la anterior (evita setState
   // tardíos y puntos de una petición vieja).
   const pedidoUbicacionRef = useRef(0);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      encuadrarHuerto: (id: string | null) => {
+        const map = mapRef.current;
+        if (!map || capasRef.current.size === 0) return;
+        if (id === null) {
+          const grupo = (leafletRef.current as unknown as {
+            featureGroup: (capas: Leaflet.Polygon[]) => Leaflet.FeatureGroup;
+          } | null)?.featureGroup([...capasRef.current.keys()]);
+          if (grupo) map.fitBounds(grupo.getBounds(), { padding: [24, 24] });
+          return;
+        }
+        const capa = [...capasRef.current.entries()].find(
+          ([, huertoId]) => huertoId === id,
+        )?.[0];
+        if (capa) map.fitBounds(capa.getBounds(), { padding: [24, 24] });
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -437,7 +466,7 @@ export function TerrenoMap({
           })();
         });
 
-        // Marcar árboles: cada tap dentro de un polígono crea un árbol en
+        // Agregar árboles: cada tap dentro de un polígono crea un árbol en
         // esa posición exacta.
         map.on("click", (e) => {
           if (!modoMarcaRef.current) return;
@@ -787,7 +816,7 @@ export function TerrenoMap({
           ref={containerRef}
           style={{ height: alto }}
           className={`w-full overflow-hidden rounded-md border ${modoMarca ? "cursor-crosshair" : ""}`}
-          aria-label="Mapa para delimitar tus huertos y marcar árboles"
+          aria-label="Mapa para delimitar tus huertos y agregar árboles"
         />
         {cargandoSatelite && (
           <p className="pointer-events-none absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[11px] text-white">
@@ -842,7 +871,7 @@ export function TerrenoMap({
       )}
       <p className="text-[11px] text-muted-foreground">
         Dibuja cada huerto con el ícono de polígono; puedes tener varios. Edita
-        vértices o borra con las herramientas del mapa; con «Marcar árboles»
+        vértices o borra con las herramientas del mapa; con «Agregar árboles»
         activo, toca cada árbol que veas en el satélite para contarlo. Vista
         Satélite (Esri) ajusta el zoom a la imagen disponible; Sentinel-2 cubre
         todo el mundo.

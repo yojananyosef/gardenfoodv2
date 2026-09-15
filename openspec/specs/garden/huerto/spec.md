@@ -31,8 +31,8 @@ The system SHALL expose the tree inventory in the single /huerto view: as marker
 
 #### Scenario: Inventory is reachable in the assistant
 
-- **WHEN** the user opens step 2 of the asistente modal
-- **THEN** the system guides to plant by tapping the terrain («Marcar árboles» in the satellite tab) from the single inventory source
+- **WHEN** el usuario abre el paso 2 del asistente modal
+- **THEN** el sistema guía a plantar tocando el terreno («Agregar árboles» en cualquier tab) desde la fuente única del inventario
 
 #### Scenario: Inventory is reachable
 
@@ -79,7 +79,7 @@ The system SHALL show on the huerto dashboard a "Tu terreno" card listing the ma
 
 ### Requirement: Plano del huerto con árboles marcados en el mapa
 
-El sistema SHALL crear árboles ya posicionados tocando el terreno («Marcar árboles» en el tab Terreno satélite, con especie elegida): cada tap dentro de un polígono crea una unidad individual (`cantidad 1`) con posición. Para filas legacy sin posición, el sistema SHALL ofrecer una única acción «Ubicar N pendientes en el mapa» visible solo cuando hay pendientes; el techo de 200 árboles por plano SHALL considerar el total (posicionados + nuevas).
+El sistema SHALL crear árboles ya posicionados tocando el terreno («Agregar árboles» con especie elegida, en el tab Terreno satélite, en la maqueta 2D y en la tierra 3D): cada toque dentro de un polígono crea una unidad individual (`cantidad 1`) con posición mediante el único endpoint de creación. Para filas legacy sin posición, el sistema SHALL ofrecer una única acción «Ubicar N pendientes en el mapa» visible solo cuando hay pendientes; el techo de 200 árboles por plano SHALL considerar el total (posicionados + nuevas).
 
 #### Scenario: Sincronizar inventario con un huerto
 

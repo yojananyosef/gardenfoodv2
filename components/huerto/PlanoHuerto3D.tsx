@@ -62,10 +62,19 @@ export function PlanoHuerto3D({
   coordinates,
   arboles,
   onEditar,
+  especieAgregar = null,
+  onAgregarEn,
+  agregando = false,
 }: {
   coordinates: TerrenoPolygonCoordinates;
   arboles: Arbol3D[];
   onEditar: (id: string) => void;
+  /** Especie activa para agregar tocando la tierra (null = modo inactivo). */
+  especieAgregar?: string | null;
+  /** Posición 0..1 donde se tocó la tierra (el padre crea y valida). */
+  onAgregarEn?: (posX: number, posY: number) => void;
+  /** Cambia el cursor a cruz cuando se está agregando. */
+  agregando?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [sinWebgl, setSinWebgl] = useState(false);
@@ -73,6 +82,14 @@ export function PlanoHuerto3D({
   useEffect(() => {
     onEditarRef.current = onEditar;
   }, [onEditar]);
+  const especieAgregarRef = useRef(especieAgregar);
+  useEffect(() => {
+    especieAgregarRef.current = especieAgregar;
+  }, [especieAgregar]);
+  const onAgregarEnRef = useRef(onAgregarEn);
+  useEffect(() => {
+    onAgregarEnRef.current = onAgregarEn;
+  }, [onAgregarEn]);
 
   useEffect(() => {
     const cont = ref.current;
@@ -260,7 +277,8 @@ export function PlanoHuerto3D({
     }
     scene.add(grupoArboles);
 
-    // Click (no drag) → editar
+    // Click (no drag) → editar árbol, o agregar en la tierra si hay
+    // especie activa (el padre valida el polígono en el servidor).
     const ray = new THREE.Raycaster();
     const puntero = new THREE.Vector2();
     let downX = 0;
@@ -275,9 +293,18 @@ export function PlanoHuerto3D({
       puntero.x = ((e.clientX - r.left) / r.width) * 2 - 1;
       puntero.y = -((e.clientY - r.top) / r.height) * 2 + 1;
       ray.setFromCamera(puntero, camera);
-      const hit = ray.intersectObjects(golpeables, false)[0];
-      const id = hit?.object.userData.arbolId as string | undefined;
-      if (id) onEditarRef.current(id);
+      const hitArbol = ray.intersectObjects(golpeables, false)[0];
+      const id = hitArbol?.object.userData.arbolId as string | undefined;
+      if (id) {
+        onEditarRef.current(id);
+        return;
+      }
+      if (!especieAgregarRef.current || !onAgregarEnRef.current) return;
+      const hitTierra = ray.intersectObject(mallaPoli, false)[0];
+      if (!hitTierra) return;
+      const nx = (hitTierra.point.x * k) / anchoM;
+      const ny = (hitTierra.point.y * k) / altoM;
+      onAgregarEnRef.current(nx + 0.5, 0.5 - ny);
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
@@ -334,7 +361,7 @@ export function PlanoHuerto3D({
 
   return (
     <div className="relative size-full bg-gradient-to-b from-sky-200 to-emerald-100 dark:from-sky-950 dark:to-emerald-950">
-      <div ref={ref} className="absolute inset-0 cursor-grab active:cursor-grabbing [&>canvas]:block" />
+      <div ref={ref} className={`absolute inset-0 ${agregando ? "cursor-crosshair" : "cursor-grab active:cursor-grabbing"} [&>canvas]:block`} />
       <div className="pointer-events-none absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[11px] text-white">
         3D
       </div>

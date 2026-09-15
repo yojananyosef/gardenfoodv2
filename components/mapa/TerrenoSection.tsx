@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Check, Copy, MousePointerClick, Pencil, X } from "lucide-react";
@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
-import { TerrenoMap, type HuertoMapa } from "@/components/mapa/TerrenoMap";
+import { TerrenoMap, type HuertoMapa, type TerrenoMapHandle } from "@/components/mapa/TerrenoMap";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { actualizarHuerto, crearHuerto, eliminarHuerto } from "@/lib/huerto/huertos";
 import { agregarArbolEnMapa } from "@/lib/huerto/huertos";
@@ -34,12 +34,7 @@ type HuertoItem = HuertoMapa & { superficieM2: number };
 
 type OpcionEspecie = { dbKey: string; nombre: string };
 
-export interface TerrenoSectionHandle {
-  /** Activa «Marcar árboles» (flujo único de plantado) con sus validaciones. */
-  activarMarca: () => void;
-}
-
-export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<TerrenoSectionHandle> }) {
+export function TerrenoSection({ alto = 520 }: { alto?: number }) {
   const router = useRouter();
   const [huertos, setHuertos] = useState<HuertoItem[]>([]);
   const [arboles, setArboles] = useState<Arbol[]>([]);
@@ -49,6 +44,8 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
   const [limiteArboles, setLimiteArboles] = useState<number | null>(null);
   const [modoMarca, setModoMarca] = useState(false);
   const [especieActiva, setEspecieActiva] = useState<string | null>(null);
+  const [huertoEncuadre, setHuertoEncuadre] = useState<string | null>(null);
+  const mapaRef = useRef<TerrenoMapHandle>(null);
   const [renombrandoId, setRenombrandoId] = useState<string | null>(null);
   const [nombreBorrador, setNombreBorrador] = useState("");
   const [copiadoId, setCopiadoId] = useState<string | null>(null);
@@ -129,7 +126,7 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
 
   const mensajeUpsellArboles = useCallback(() => {
     toast.error(
-      `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para marcar todos los árboles que ves.`,
+      `Llegaste al límite de ${FREE_LIMITS.arboles} árbol del plan gratuito. Pásate a Huertero para agregar todos los árboles que ves.`,
       {
         action: { label: "Ver planes", onClick: () => router.push("/pricing") },
       },
@@ -204,34 +201,13 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
     setModoMarca((v) => !v);
   }
 
-  // Puerta para los otros tabs (matriz/3D): se invoca en el gesto del
-  // botón, sin effects ni remontajes.
-  useImperativeHandle(
-    ref,
-    () => ({
-      activarMarca: () => {
-        if (modoMarca) return;
-        if (huertos.length === 0) {
-          toast.error("Dibuja un huerto en el mapa para poder marcar árboles.");
-          return;
-        }
-        if (!puedeMarcar) {
-          mensajeUpsellArboles();
-          return;
-        }
-        setModoMarca(true);
-      },
-    }),
-    [modoMarca, huertos.length, puedeMarcar, mensajeUpsellArboles],
-  );
-
   async function handleMarcarArbol(
     huertoId: string,
     lat: number,
     lng: number,
   ): Promise<string | null> {
     if (!especieActiva) {
-      toast.error("Elige la especie activa para marcar.");
+      toast.error("Elige la especie activa para agregar.");
       return null;
     }
     const result = await agregarArbolEnMapa({ huertoId, lat, lng, especie: especieActiva });
@@ -259,7 +235,7 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
   }
 
   function handleFueraHuerto() {
-    toast.error("Marca dentro de un huerto delimitado.");
+    toast.error("Agrega dentro de un huerto delimitado.");
   }
 
   function iniciarRenombre(huerto: HuertoItem) {
@@ -305,13 +281,13 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
       {modoMarca ? (
         <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-primary/5 p-2">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-            <MousePointerClick className="size-4 text-primary" /> Marcando
+            <MousePointerClick className="size-4 text-primary" /> Agregando
           </span>
           <Select
             value={especieActiva ?? undefined}
             onValueChange={(value) => setEspecieActiva(value ?? null)}
           >
-            <SelectTrigger className="w-48 min-h-9" aria-label="Especie activa para marcar">
+            <SelectTrigger className="w-48 min-h-9" aria-label="Especie activa para agregar">
               <SelectValue>
                 {(value: string | null) =>
                   especies.find((e) => e.dbKey === value)?.nombre ?? "Elige especie…"
@@ -327,7 +303,7 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
             </SelectContent>
           </Select>
           <span className="font-mono text-xs text-muted-foreground">
-            {arboles.length} marcado{arboles.length === 1 ? "" : "s"}
+            {arboles.length} en el mapa
           </span>
           <Button
             type="button"
@@ -340,25 +316,50 @@ export function TerrenoSection({ alto = 520, ref }: { alto?: number; ref?: Ref<T
           </Button>
         </div>
       ) : (
-        <div>
-          <Button
-            type="button"
-            variant={huertos.length > 0 ? "outline" : "secondary"}
-            size="sm"
-            className="min-h-9"
-            onClick={alternarModoMarca}
-            disabled={huertos.length === 0}
-            title={
-              huertos.length === 0
-                ? "Dibuja un huerto en el mapa para poder marcar árboles"
-                : undefined
-            }
-          >
-            <MousePointerClick className="size-4" /> Marcar árboles
-          </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {huertos.length > 1 ? (
+            <Select
+              value={huertoEncuadre ?? undefined}
+              onValueChange={(value) => {
+                setHuertoEncuadre(value ?? null);
+                mapaRef.current?.encuadrarHuerto(value ?? null);
+              }}
+            >
+              <SelectTrigger className="w-52 min-h-9" aria-label="Huerto del mapa">
+                <SelectValue placeholder="Elige un huerto…" />
+              </SelectTrigger>
+              <SelectContent>
+                {huertos.map((h) => (
+                  <SelectItem key={h.id} value={h.id}>
+                    {h.nombre}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <span className="text-sm font-medium">{huertos[0]?.nombre ?? "Mi huerto"}</span>
+          )}
+          <div className="ml-auto">
+            <Button
+              type="button"
+              variant={huertos.length > 0 ? "outline" : "secondary"}
+              size="sm"
+              className="min-h-9 rounded-full"
+              onClick={alternarModoMarca}
+              disabled={huertos.length === 0}
+              title={
+                huertos.length === 0
+                  ? "Dibuja un huerto en el mapa para poder agregar árboles"
+                  : undefined
+              }
+            >
+              <MousePointerClick className="size-4" /> Agregar árboles
+            </Button>
+          </div>
         </div>
       )}
       <TerrenoMap
+        ref={mapaRef}
         alto={alto}
         huertosIniciales={huertos}
         arboles={arboles}

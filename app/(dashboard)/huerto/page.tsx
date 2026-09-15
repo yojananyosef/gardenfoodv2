@@ -25,7 +25,6 @@ import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { WorkbenchModular } from "@/components/huerto/WorkbenchModular";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
-import { SelectorHuerto } from "./SelectorHuerto";
 import { AsistenteFlotante } from "@/components/huerto/AsistenteFlotante";
 import { pasosAsistente } from "@/components/huerto/pasosAsistente";
 import { marcarAsistenteCompletado } from "@/lib/huerto/actions";
@@ -57,11 +56,7 @@ function hoyISO(): string {
   return `${now.getFullYear()}-${mes}-${dia}`;
 }
 
-export default async function HuertoPage(props: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const sp = await props.searchParams;
-  const huertoParam = typeof sp["huerto"] === "string" ? sp["huerto"] : null;
+export default async function HuertoPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -99,9 +94,6 @@ export default async function HuertoPage(props: {
     return Array.from(map.entries()).map(([tipo, count]) => ({ tipo, count, fill: colors[tipo] ?? "var(--primary)" }));
   })();
 
-  const huertoActivoId =
-    huertoParam && huertos.some((h) => h.id === huertoParam) ? huertoParam : null;
-
   // Vista única modular: el asistente vive como modal «Abrir asistente»
   // (guía opcional sin cambiar de vista). Retoma donde quedó pendiente.
   const asistentePendiente = !perfil?.asistenteCompletadoAt;
@@ -115,7 +107,7 @@ export default async function HuertoPage(props: {
       <div className="flex flex-col gap-1.5 rounded-2xl border bg-card p-4">
         <p className="text-sm font-medium">Planta tocando tu terreno</p>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          Cierra este asistente y en el tab Terreno (satélite) pulsa «Marcar árboles»:
+          Cierra este asistente y en el tab Terreno (satélite) pulsa «Agregar árboles»:
           cada toque sobre tu terreno planta un árbol ya ubicado, sin formularios ni pasos extra.
         </p>
       </div>
@@ -153,19 +145,6 @@ export default async function HuertoPage(props: {
                 ? `Tu zona: ${zona.nombre} — ${MESES[mesActual]}. Calendario fenológico y alertas para ${perfil?.comuna ?? "tu comuna"}.`
                 : "Actualiza tu comuna en tu perfil para recomendaciones a la medida."}
             </p>
-          </div>
-
-          <div className="flex flex-col items-end gap-2">
-            <SelectorHuerto
-              huertos={huertos.map((h) => ({ id: h.id, nombre: h.nombre, superficieM2: h.superficieM2 }))}
-              activoId={huertoActivoId}
-              className="hidden lg:inline-flex"
-            />
-            <SelectorHuerto
-              huertos={huertos.map((h) => ({ id: h.id, nombre: h.nombre, superficieM2: h.superficieM2 }))}
-              activoId={huertoActivoId}
-              className="flex sm:hidden w-full max-w-xs"
-            />
           </div>
 
           <Card className="hidden shrink-0 rounded-2xl border-foreground/10 bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-3">

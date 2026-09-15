@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MapPin, Maximize, MousePointerClick, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
+import { MapPin, Maximize, MousePointerClick, RefreshCw, X, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -17,7 +17,7 @@ import {
 import { Dialog } from "@/components/ui/dialog";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { IconoArbol } from "@/components/huerto/IconoArbol";
-import { sincronizarPlanoHuerto } from "@/lib/huerto/huertos";
+import { sincronizarPlanoHuerto, agregarArbolEnMapa } from "@/lib/huerto/huertos";
 import { moverArbol } from "@/lib/huerto/actions";
 import {
   ALTO_VISTA,
@@ -27,6 +27,7 @@ import {
   colorDeEspecie,
   crearVistaPlano,
   expandirUnidades,
+  latLngDesdePos,
   posAVista,
 } from "@/lib/huerto/plano";
 import { formatAreaM2 } from "@/lib/huerto/terreno";
@@ -61,15 +62,12 @@ export function PlanoHuerto({
   arboles,
   especies,
   modoForzado,
-  onMarcar,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
   especies: Especie[];
   /** Cuando el lienzo (tabs) controla el modo, se fuerza y se oculta el toggle interno. */
   modoForzado?: "2d" | "3d";
-  /** Ir a marcar árboles en el satélite (flujo único de plantado). Sin esto no se muestra el botón. */
-  onMarcar?: () => void;
 }) {
   const router = useRouter();
   const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
@@ -78,6 +76,10 @@ export function PlanoHuerto({
   const setModo = (m: Modo) => setModoInterno(m);
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
+  // Agregar en este tab: especie elegida + toque en el mapa/maqueta.
+  const [agregando, setAgregando] = useState<string | null>(null);
+  const [agregandoPending, startAgregarTransition] = useTransition();
+  const toqueAgregarRef = useRef<{ x: number; y: number } | null>(null);
   // Zoom/pan del 2D: el plano ocupa más pantalla y se puede explorar.
   const [zoom2d, setZoom2d] = useState(1);
   const [pan2d, setPan2d] = useState({ x: 0, y: 0 });
@@ -106,6 +108,7 @@ export function PlanoHuerto({
     setZoom2d(1);
     setPan2d({ x: 0, y: 0 });
     setPosLocales({});
+    setAgregando(null);
   }
 
   // Rueda → zoom (listener no pasivo para poder prevenir el scroll).
@@ -270,6 +273,56 @@ export function PlanoHuerto({
   );
 
   const clipId = useId().replace(/[^a-zA-Z0-9]/g, "");
+
+  // --- Agregar en este tab (2D o 3D): un solo endpoint de creación ---
+  function plantarEn(lat: number, lng: number) {
+    if (!agregando || !huerto) return;
+    const especie = agregando;
+    const huertoId = huerto.id;
+    startAgregarTransition(async () => {
+      const result = await agregarArbolEnMapa({ huertoId, lat, lng, especie });
+      if (!result.ok) {
+        if (result.limite) {
+          toast.error(result.error, {
+            action: { label: "Ver planes", onClick: () => router.push("/pricing") },
+          });
+        } else {
+          toast.error(result.error);
+        }
+        return;
+      }
+      toast.success(`${nombreDeEspecie(especie)} agregado en el mapa.`);
+      router.refresh();
+    });
+  }
+
+  function registrarToqueAgregar(e: React.PointerEvent) {
+    if (!agregando) return;
+    toqueAgregarRef.current = { x: e.clientX, y: e.clientY };
+  }
+
+  function resolverToqueAgregar(e: React.PointerEvent) {
+    const inicio = toqueAgregarRef.current;
+    toqueAgregarRef.current = null;
+    if (!agregando || !inicio || !huerto?.feature) return;
+    if (Math.hypot(e.clientX - inicio.x, e.clientY - inicio.y) > 6) return;
+    const el = e.target as HTMLElement;
+    // Los toques en marcadores los gestiona el drag/clic del árbol.
+    if (el.closest("[data-arbol-id]")) return;
+    if (!platoRef.current?.contains(el)) return;
+    const pos = posDesdeEvento(e, { x: 0.5, y: 0.5 });
+    const punto = latLngDesdePos(pos, huerto.feature.geometry.coordinates);
+    plantarEn(punto.lat, punto.lng);
+  }
+
+  function agregarDesde3D(posX: number, posY: number) {
+    if (!agregando || !huerto?.feature) return;
+    const punto = latLngDesdePos(
+      { x: Math.max(0, Math.min(1, posX)), y: Math.max(0, Math.min(1, posY)) },
+      huerto.feature.geometry.coordinates,
+    );
+    plantarEn(punto.lat, punto.lng);
+  }
   // Aspecto real en metros: el plato y el polígono comparten proyección.
   // Sin esto, un huerto alargado/diagonal se ve como un rombo flotando
   // sobre un rectángulo genérico (preserveAspectRatio="none" lo estiraba).
@@ -398,19 +451,30 @@ export function PlanoHuerto({
               Visualización 3D
             </Button>
           </div>
-          {onMarcar ? (
+          {agregando ? (
             <Button
               type="button"
               size="sm"
               variant="outline"
               className="rounded-full"
-              onClick={onMarcar}
-              disabled={!huerto?.feature}
-              title="Ir al satélite a marcar árboles tocando tu terreno"
+              onClick={() => setAgregando(null)}
+              aria-label="Dejar de agregar"
             >
-              <MousePointerClick /> Marcar árboles
+              <X /> Listo
             </Button>
-          ) : null}
+          ) : (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
+              onClick={() => setAgregando(especies[0]?.dbKey ?? null)}
+              disabled={!huerto?.feature || especies.length === 0}
+              title="Elige especie y toca el mapa para agregar"
+            >
+              <MousePointerClick /> Agregar árboles
+            </Button>
+          )}
           {unidadesNuevas > 0 ? (
             <Button
               type="button"
@@ -429,6 +493,29 @@ export function PlanoHuerto({
         </div>
       </div>
 
+      {agregando ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-primary/5 px-3 py-2">
+          <span className="flex items-center gap-1.5 text-xs font-medium">
+            <MousePointerClick className="size-3.5 text-primary" /> Agregando
+          </span>
+          <Select value={agregando} onValueChange={(v) => setAgregando(v ?? null)}>
+            <SelectTrigger className="h-9 w-48" aria-label="Especie a agregar">
+              <SelectValue placeholder="Elige especie…" />
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              {especies.map((e) => (
+                <SelectItem key={e.dbKey} value={e.dbKey}>
+                  {e.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-[11px] text-muted-foreground">
+            {agregandoPending ? "Agregando…" : en3d ? "Toca la tierra 3D para agregar." : "Toca el mapa para agregar."}
+          </span>
+        </div>
+      ) : null}
+
       {en3d ? (
         <div className="relative h-[480px] overflow-hidden rounded-xl border bg-[#0b1a12] md:h-[600px]">
           {vista && feature ? (
@@ -444,6 +531,9 @@ export function PlanoHuerto({
                 const encontrado = arbolesPlano.find((a) => a.id === id);
                 if (encontrado) setEditando(encontrado);
               }}
+              especieAgregar={agregando}
+              onAgregarEn={(posX, posY) => agregarDesde3D(posX, posY)}
+              agregando={agregando !== null}
             />
           ) : (
             <p className="flex h-full items-center justify-center text-sm text-emerald-50/80">
@@ -455,12 +545,18 @@ export function PlanoHuerto({
       <div
         ref={marco2dRef}
         className={`relative h-[480px] overflow-hidden rounded-xl border bg-gradient-to-b from-sky-100 to-emerald-50 md:h-[600px] dark:from-sky-950/50 dark:to-emerald-950/30 ${
-          arrastrando2d ? "cursor-grabbing" : "cursor-grab"
+          agregando ? "cursor-crosshair" : arrastrando2d ? "cursor-grabbing" : "cursor-grab"
         }`}
         style={{ touchAction: "none" }}
-        onPointerDown={iniciarPan2d}
+        onPointerDown={(e) => {
+          registrarToqueAgregar(e);
+          iniciarPan2d(e);
+        }}
         onPointerMove={moverPan2d}
-        onPointerUp={terminarPan2d}
+        onPointerUp={(e) => {
+          terminarPan2d();
+          resolverToqueAgregar(e);
+        }}
         onPointerCancel={terminarPan2d}
       >
           {/* Controles de zoom */}
@@ -607,7 +703,7 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Planta en el tab Terreno (satélite) con «Marcar árboles» · arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · arrastra el fondo para mover el plano"}</span>
+        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo · con «Agregar árboles» toca la tierra para plantar" : "Con «Agregar árboles» toca el mapa para plantar · arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · arrastra el fondo para mover el plano"}</span>
       </div>
 
       {leyenda.length > 0 ? (
