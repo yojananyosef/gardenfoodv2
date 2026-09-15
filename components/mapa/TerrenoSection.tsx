@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Copy, MousePointerClick, Pencil, X } from "lucide-react";
+import { Check, ExternalLink, MousePointerClick, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,7 +21,6 @@ import { agregarArbolEnMapa } from "@/lib/huerto/huertos";
 import { listarEspecies } from "@/lib/huerto/actions";
 import {
   formatAreaM2,
-  formatCoordenadas,
   parseTerrenoFeature,
   terrenoAreaM2,
   terrenoCentro,
@@ -56,7 +55,6 @@ export function TerrenoSection({
   const mapaRef = useRef<TerrenoMapHandle>(null);
   const [renombrandoId, setRenombrandoId] = useState<string | null>(null);
   const [nombreBorrador, setNombreBorrador] = useState("");
-  const [copiadoId, setCopiadoId] = useState<string | null>(null);
   const [arbolEditando, setArbolEditando] = useState<Arbol | null>(null);
 
   useEffect(() => {
@@ -286,17 +284,12 @@ export function TerrenoSection({
     })();
   }
 
-  async function copiarCoordenadas(huerto: HuertoItem) {
-    const texto = formatCoordenadas(
-      terrenoCentro(huerto.feature.geometry.coordinates),
-    );
-    try {
-      await navigator.clipboard.writeText(texto);
-      setCopiadoId(huerto.id);
-      window.setTimeout(() => setCopiadoId(null), 1500);
-    } catch {
-      toast.error("No se pudieron copiar las coordenadas.");
-    }
+  /** Google Maps en satelital centrado en el huerto (URL universal
+   *  documentada: map_action=map + basemap=satellite). Las coordenadas
+   *  crudas no las entiende el usuario final; esto abre el detalle fuera. */
+  function urlGoogleMaps(huerto: HuertoItem): string {
+    const centro = terrenoCentro(huerto.feature.geometry.coordinates);
+    return `https://www.google.com/maps/@?api=1&map_action=map&center=${centro.lat},${centro.lng}&zoom=18&basemap=satellite`;
   }
 
   if (cargando) {
@@ -453,22 +446,21 @@ export function TerrenoSection({
                 <span className="font-medium text-foreground">
                   {formatAreaM2(huerto.superficieM2)}
                 </span>
-                <span className="font-mono">
-                  {formatCoordenadas(terrenoCentro(huerto.feature.geometry.coordinates))}
-                </span>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   className="min-h-7 gap-1 px-2 text-xs"
-                  onClick={() => copiarCoordenadas(huerto)}
+                  render={
+                    <a
+                      href={urlGoogleMaps(huerto)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
                 >
-                  {copiadoId === huerto.id ? (
-                    <Check className="size-3" />
-                  ) : (
-                    <Copy className="size-3" />
-                  )}
-                  {copiadoId === huerto.id ? "Copiadas" : "Copiar"}
+                  <ExternalLink className="size-3" />
+                  Ver en Google Maps
                 </Button>
               </div>
             </li>
