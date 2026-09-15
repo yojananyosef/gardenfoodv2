@@ -129,3 +129,37 @@
     @apply font-sans;
   }
 }
+
+/* Controles del mapa (Leaflet + Geoman) al estilo del sistema: fondo card,
+   borde y radio del tema en vez del gris/plano de fábrica. Los tooltips son
+   `title` nativos (los traduce Geoman con setLang("es")). */
+.leaflet-bar,
+.leaflet-control-layers {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  overflow: hidden;
+}
+.leaflet-bar a {
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
+}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+.leaflet-control-layers {
+  background: var(--card);
+  color: var(--card-foreground);
+  font:
+    12px/1.5 var(--font-sans),
+    sans-serif;
+}
+.leaflet-pm-toolbar .button-container a.leaflet-buttons-control-button {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+}
+.leaflet-pm-toolbar .button-container a.leaflet-buttons-control-button:hover {
+  background-color: var(--muted);
+}

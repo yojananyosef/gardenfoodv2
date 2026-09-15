@@ -213,9 +213,17 @@ export function TerrenoMap({
 
         const map = L.map(containerRef.current, {
           maxZoom: MAPA_MAX_ZOOM,
-          zoomControl: true,
+          // Sin zoomControl por defecto: se agrega abajo con títulos en
+          // español (Acercar/Alejar en vez de Zoom in/out).
+          zoomControl: false,
         });
         mapRef.current = map;
+        // Controles en español: Geoman trae traducción "es" (Dibujar
+        // Polígono, Editar/Eliminar Capas, Finalizar/Cancelar…).
+        map.pm.setLang("es");
+        L.control
+          .zoom({ zoomInTitle: "Acercar", zoomOutTitle: "Alejar" })
+          .addTo(map);
 
         const satelite = L.tileLayer(ESRI_URL, {
           maxZoom: MAPA_MAX_ZOOM,
@@ -248,7 +256,7 @@ export function TerrenoMap({
         window.setTimeout(() => {
           if (!cancelled) setCargandoSatelite(false);
         }, 15_000);
-        L.control
+        const controlCapas = L.control
           .layers(
             {
               "Satélite (Esri)": satelite,
@@ -258,6 +266,15 @@ export function TerrenoMap({
             { "Límites y lugares": limites },
           )
           .addTo(map);
+        // El toggle de capas trae title="Layers" de fábrica: en español.
+        controlCapas
+          .getContainer()
+          ?.querySelector(".leaflet-control-layers-toggle")
+          ?.setAttribute("title", "Capas");
+        controlCapas
+          .getContainer()
+          ?.querySelector(".leaflet-control-layers-toggle")
+          ?.setAttribute("aria-label", "Capas del mapa");
 
         // Sin vista por defecto aquí: se fija UNA sola vez más abajo (huertos
         // → fitBounds, si no → vista país). Fijar dos vistas en el mismo tick

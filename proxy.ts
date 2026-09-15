@@ -36,7 +36,7 @@ function buildCsp(nonce: string): string {
     "default-src 'self'",
     `script-src ${scriptSrc}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' blob: data: https://server.arcgisonline.com https://services.arcgisonline.com https://tiles.maps.eox.at",
+    "img-src 'self' blob: data: https://server.arcgisonline.com https://services.arcgisonline.com https://tiles.maps.eox.at https://*.tile.openstreetmap.org",
     "font-src 'self' data:",
     `connect-src 'self' ${dev ? "ws:" : ""} https://*.supabase.co wss://*.supabase.co https://server.arcgisonline.com https://services.arcgisonline.com https://tiles.maps.eox.at`,
     "frame-ancestors 'none'",
