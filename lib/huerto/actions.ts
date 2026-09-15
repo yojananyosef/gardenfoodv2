@@ -368,33 +368,9 @@ export async function eliminarArbol(id: string) {
   revalidatePath("/huerto");
   return { ok: true as const };
 }
-/* ---------- Modos de la vista /huerto (Propuesta E) ---------- */
+/* ---------- Asistente del huerto (modal «Abrir asistente») ---------- */
 
-const HUERTO_MODO = z.object({
-  modo: z.enum(["guiado", "modular"]),
-});
-
-/** Guarda la preferencia de modo del usuario en su perfil. */
-export async function setHuertoModo(input: z.input<typeof HUERTO_MODO>) {
-  const parsed = HUERTO_MODO.parse(input);
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "No autenticado." };
-
-  const { error } = await supabase
-    .from("perfiles")
-    .update({ huerto_modo: parsed.modo })
-    .eq("id", user.id);
-
-  if (error) return { error: "No se pudo guardar tu preferencia." };
-
-  revalidatePath("/huerto");
-  return { ok: true as const, modo: parsed.modo };
-}
-
-/** Marca que el asistente guiado ya corrió (no vuelve a dispararse solo). */
+/** Marca que el asistente ya corrió (el modal no vuelve a marcarlo). */
 export async function marcarAsistenteCompletado() {
   const supabase = await createClient();
   const {

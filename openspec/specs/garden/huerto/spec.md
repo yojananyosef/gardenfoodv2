@@ -22,16 +22,16 @@ The system SHALL let authenticated users create, list, update and delete individ
 
 ### Requirement: Tree inventory is reachable from the dashboard
 
-The system SHALL expose the tree inventory through both view modes of /huerto: as the species list of the left panel (with counts per species, position state and drag support) in `modular` mode, and inside the step 2 «Árboles» of the asistente (alta por tarjeta) plus the species summary of «¿qué sigue?» in `guiado` mode, so the inventory is never orphaned nor duplicated across a separate cultivos/inventory pair.
+The system SHALL expose the tree inventory in the single /huerto view: as the species list of the left panel (with counts per species, position state and drag support), and inside the step 2 «Árboles» of the asistente modal (alta por tarjeta), so the inventory is never orphaned nor duplicated across a separate cultivos/inventory pair.
 
-#### Scenario: Inventory is reachable in modular mode
+#### Scenario: Inventory is reachable in the panel
 
-- **WHEN** an authenticated user in modular mode opens the huerto panel
+- **WHEN** an authenticated user opens the huerto panel
 - **THEN** the system renders the tree list grouped by species with per-species counts and management controls
 
-#### Scenario: Inventory is reachable in guided mode
+#### Scenario: Inventory is reachable in the assistant
 
-- **WHEN** the user in guided mode opens step 2 of the asistente or the «¿qué sigue?» summary
+- **WHEN** the user opens step 2 of the asistente modal
 - **THEN** the system shows the same tree data (species, counts, pending placement) from the single inventory source
 
 #### Scenario: Inventory is reachable
@@ -156,12 +156,12 @@ El sistema SHALL permitir editar cada árbol del plano individualmente (especie,
 
 ### Requirement: Summary of the day
 
-La vista guiada «¿Qué sigue hoy?» SHALL listar: (a) la tarjeta de pendientes de posicionamiento con CTA «Posicionar N pendientes» y «Más tarde», (b) la tarjeta de tareas de la semana con marcado rápido, (c) el resumen por especie con enlace a cada ficha, y (d) la única puerta de vuelta al asistente vía modo modular. El bento de resumen SHALL evitar duplicar el conteo de inventario (debe leerse «N especies · M árboles» una sola vez).
+La vista única /huerto SHALL organizar el día en pestañas (Mi huerto, Tareas, Clima): el bento de resumen SHALL evitar duplicar el conteo de inventario (debe leerse «N especies · M árboles» una sola vez, solo de árboles), y la guía SHALL estar siempre a un toque con «Abrir asistente» en la cabecera.
 
 #### Scenario: Resumen bento no duplica conteos
 
-- **WHEN** se muestra el resumen del día con cultivos e inventario
-- **THEN** el conteo de especies únicas (cultivos ∪ árboles) y de árboles aparece una sola vez, sin línea redundante de «+M inventario»
+- **WHEN** se muestra el resumen con el inventario de árboles
+- **THEN** el conteo de especies únicas y de árboles aparece una sola vez, sin línea redundante ni bloque duplicado
 
 #### Scenario: Dashboard shows daily summary
 
@@ -215,66 +215,37 @@ The system SHALL limit the free tier (`perfiles.plan = "gratuito"`) to 3 active 
 - **WHEN** a Huertero (or higher) user adds crops beyond the free limit
 - **THEN** the action accepts without restriction
 
-### Requirement: Modos de la vista Mi Huerto con toggle persistente
+### Requirement: Vista única Mi Huerto con asistente modal
 
-La vista /huerto SHALL ofrecer dos modos: `guiado` (asistente y luego la pantalla «¿qué sigue?») y `modular` (panel de cultivos + lienzo central con pestañas Terreno, Posicionar árboles y Visualización 3D). El cambio de modo SHALL ser instantáneo y sin recargar los datos del huerto, SHALL estar disponible desde la cabecera en escritorio y de forma compacta en móvil en ambos modos, y la preferencia SHALL persistir por usuario entre sesiones. El modo inicial SHALL ser `guiado` para usuarios sin terreno dibujado y sin cultivos, y `modular` para los que ya tienen árboles (con su preferencia grabada manda sobre el default).
+La vista /huerto SHALL ser una sola: panel de árboles + lienzo central con pestañas Terreno, Posicionar árboles y Visualización 3D. No SHALL existir toggle de modos. La guía SHALL vivir como acción «Abrir asistente» en la cabecera (escritorio y móvil), que abre el asistente de 4 pasos en un modal sin cambiar de vista.
 
-#### Scenario: Usuario nuevo entra en modo guiado
+#### Scenario: Usuario nuevo abre /huerto
 
-- **WHEN** un usuario sin huertos delimitados ni cultivos abre /huerto por primera vez
-- **THEN** el sistema muestra el modo guiado con el asistente de 4 pasos disponible y el toggle visible
+- **WHEN** un usuario sin huertos delimitados ni árboles abre /huerto por primera vez
+- **THEN** el sistema muestra la vista única con el panel, el lienzo y la acción «Abrir asistente» visible en la cabecera
 
-#### Scenario: Toggle instantáneo que persiste
+#### Scenario: Abrir asistente no cambia la vista
 
-- **WHEN** el usuario cambia de Guiado a Modular (o viceversa) con el toggle
-- **THEN** la vista cambia al otro modo sin recargar datos (mismo huerto elegido en el selector) y la preferencia queda guardada para su próxima sesión
+- **WHEN** el usuario pulsa «Abrir asistente»
+- **THEN** el asistente se abre en un modal sobre la misma vista y al cerrarlo vuelve al panel y lienzo sin recargar datos
 
-#### Scenario: Preferencia del usuario manda sobre el default
+### Requirement: El asistente corre una sola vez como guía
 
-- **WHEN** un usuario con 24 árboles ya grabó su preferencia en Modular y abre /huerto
-- **THEN** el sistema abre directamente en Modular, no en el asistente
+El asistente de 4 pasos (Terreno → Árboles → Posicionar → Listo, con guardado por paso) SHALL marcarse como corrido al completarlo; no SHALL dispararse automáticamente al abrir /huerto. La acción «Abrir asistente» SHALL seguir disponible en la cabecera y SHALL retomar el pendiente (por ejemplo, Posicionar con árboles sin ubicar) sin repetir lo completado ni volver a marcar.
 
-#### Scenario: Toggle compacto en móvil
+#### Scenario: El asistente no se repite solo
 
-- **WHEN** el usuario abre /huerto en móvil
-- **THEN** el toggle Guiado/Modular cabe en la cabecera sin desplazar el contenido principal
+- **WHEN** el usuario terminó el asistente y abre /huerto de nuevo
+- **THEN** el sistema muestra la vista única directamente, sin abrir el asistente
 
-### Requirement: El asistente guiado corre una sola vez
+#### Scenario: Reanudar desde la cabecera
 
-El asistente de 4 pasos (Terreno → Árboles → Posicionar → Listo, con guardado por paso) SHALL presentarse automáticamente en modo guiado solo la primera vez, completándolo el usuario o decidiendo «Más tarde» en cualquiera de sus pasos. Terminado o pospuesto el asistente, /huerto SHALL abrir en la pantalla «¿qué sigue?» y no SHALL volver a dispararse el asistente de forma automática; en modo modular queda accesible de forma manual (acción «Abrir asistente») con el progreso pendiente.
-
-#### Scenario: El asistente no se repite
-
-- **WHEN** el usuario termina el asistente (o lo pospone) y abre /huerto de nuevo en modo guiado
-- **THEN** el sistema muestra la pantalla «¿qué sigue?» y no el paso 1 del asistente
-
-#### Scenario: Reanudar desde el modo modular
-
-- **WHEN** el usuario en modo modular pulsa «Abrir asistente» con árboles sin posicionar pendientes
+- **WHEN** el usuario pulsa «Abrir asistente» con árboles sin posicionar pendientes
 - **THEN** el asistente se abre retomando el pendiente (por ejemplo, Posicionar con la cola de reparto) sin repetir la parte ya completada
 
-### Requirement: Pantalla «¿qué sigue?» del modo guiado
+### Requirement: Selector global de huerto
 
-La pantalla de inicio del modo guiado, una vez que el asistente no está pendiente, SHALL presentar un resumen accionable del huerto elegido: árboles sin posicionar con CTA «Posicionar N pendientes», tareas de la semana para la zona con marca de hecha, un alto por especie con su estado del mes (enlazando a la ficha de especie) y los datos de resumen (especies únicas y árboles totales). Todas las entradas SHALL respetar el huerto del selector global.
-
-#### Scenario: Pendientes de posicionamiento
-
-- **WHEN** el usuario con 15 duraznos sin ubicao abre la pantalla «¿qué sigue?»
-- **THEN** el sistema muestra la fila con «15 árboles por posicionar» y el CTA para el reparto guiado, y la acción «Más tarde» la descarta sin perder el pendiente
-
-#### Scenario: Resumen y enlace por especie
-
-- **WHEN** la pantalla calcula el resumen del día
-- **THEN** muestra especies únicas y árboles totales del huerto activo y, por cada especie en curso, un bloque con el estado del mes enlazado a la ficha de especie
-
-### Requirement: Selector global aplica a ambos modos
-
-El selector global de huerto SHALL filtrar el panel, el lienzo, la pantalla «¿qué sigue?» y los contadores en ambos modos sin recargar la página; la elección SHALL persistir para toda la sesión en cualquier modo y SHALL mantenerse estable al cruzar el toggle.
-
-#### Scenario: Cambio de huerto conserva datos elegidos al alternar modo
-
-- **WHEN** el usuario cambia el selectador global a «Huerto 2» y luego alterna Guiado/Modular
-- **THEN** las dos vistas muestran los datos del Huerto 2 sin recarga ni cambio de selección
+El selector global de huerto SHALL filtrar el panel, el lienzo y los contadores de la vista sin recargar la página; la elección SHALL persistir para toda la sesión.
 
 ### Requirement: Puente único de árbol a ficha de especie
 
@@ -298,20 +269,6 @@ El inventario de árboles agrupado por especie SHALL mostrar por cada especie un
 
 - **WHEN** todos los ejemplares de una especie están posicionados
 - **THEN** su fila muestra el badge «completo»
-
-### Requirement: Chip mensual en la vista guiada
-
-La cabecera de la vista guiada (día a día, no el asistente) SHALL mostrar un chip con la recomendación agronómica clave del mes activo para la zona del usuario, además de la zona y la fecha; si no hay recomendación aplicable, el chip no se muestra.
-
-#### Scenario: Mes con recomendación
-
-- **WHEN** el usuario entra a la vista guiada con zona configurada y hay recomendación para el mes
-- **THEN** el header muestra un chip tipo «sept: [recomendación]» junto a la huerta y la fecha
-
-#### Scenario: Sin recomendación ni zona
-
-- **WHEN** no hay recomendación para el mes o el usuario no tiene zona
-- **THEN** el header omite el chip sin romper el layout
 
 ### Requirement: Puente árbol → ficha de especie en edición del plano
 
