@@ -111,7 +111,7 @@ export function UbicacionForm() {
           </ComboboxContent>
         </Combobox>
         <FieldDescription>
-          254 comunas disponibles — de Arica a Punta Arenas. Escribe para filtrar y elige; región y zona se asignan solas.
+          {COMUNAS.length} comunas disponibles — de Arica a Punta Arenas. Escribe para filtrar y elige; región y zona se asignan solas.
         </FieldDescription>
       </Field>
       <Button type="submit" className="min-h-11 w-full rounded-full" disabled={pending || !comuna}>

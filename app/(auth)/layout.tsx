@@ -3,6 +3,7 @@ import { Leaf, Sprout, Droplets, Scissors, MapPinned, CalendarDays, ShieldCheck,
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { COMUNAS } from "@/lib/agronomy/comunas";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,7 +34,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <span className="text-primary">con rigor chileno.</span>
             </h1>
             <p className="max-w-[44ch] text-[15px] leading-relaxed text-muted-foreground">
-              De Arica a Punta Arenas, 245 comunas en 20 zonas agroclimáticas. Calendario fenológico, riego por comuna y fertilización a la medida.
+              De Arica a Punta Arenas, {COMUNAS.length} comunas en 20 zonas agroclimáticas. Calendario fenológico, riego por comuna y fertilización a la medida.
             </p>
           </div>
 
@@ -85,7 +86,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <Separator />
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>© 2026 GardenFood — huertos informados</span>
-            <span className="font-mono">16 regiones · 245 comunas</span>
+            <span className="font-mono">16 regiones · {COMUNAS.length} comunas</span>
           </div>
         </div>
       </div>
