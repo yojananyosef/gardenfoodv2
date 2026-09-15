@@ -248,6 +248,8 @@ const ACTUALIZAR_ARBOL = z.object({
   fechaPlantacion: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   observaciones: z.string().max(500).nullable().optional(),
   huertoId: z.string().uuid().nullable().optional(),
+  posX: z.number().min(0).max(1).optional(),
+  posY: z.number().min(0).max(1).optional(),
 });
 
 export async function actualizarArbol(
@@ -286,11 +288,36 @@ export async function actualizarArbol(
     }
   }
 
+  // Reubicación manual en el plano: exige que el árbol ya esté posicionado
+  // en un huerto propio; clamp defensivo a 0..1 aunque el cliente ya recorta.
+  if (parsed.posX !== undefined || parsed.posY !== undefined) {
+    const { data: fila } = await supabase
+      .from("gf_arboles")
+      .select("huerto_id")
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!fila?.huerto_id) {
+      return { error: "Ese árbol aún no está en un plano." };
+    }
+    const { data: huerto } = await supabase
+      .from("gf_huertos")
+      .select("id")
+      .eq("id", fila.huerto_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!huerto) return { error: "Ese huerto no existe en tu mapa." };
+  }
+
   const patch: Record<string, unknown> = {};
   if (parsed.especie !== undefined) patch.especie = parsed.especie;
   if (parsed.cantidad !== undefined) patch.cantidad = parsed.cantidad;
   if (parsed.fechaPlantacion !== undefined) patch.fecha_plantacion = parsed.fechaPlantacion;
   if (parsed.observaciones !== undefined) patch.observaciones = parsed.observaciones;
+  if (parsed.posX !== undefined)
+    patch.pos_x = Math.max(0, Math.min(1, parsed.posX));
+  if (parsed.posY !== undefined)
+    patch.pos_y = Math.max(0, Math.min(1, parsed.posY));
   if (parsed.huertoId !== undefined) {
     patch.huerto_id = parsed.huertoId;
     if (parsed.huertoId === null) {
@@ -310,6 +337,17 @@ export async function actualizarArbol(
 
   revalidatePath("/huerto");
   return { ok: true as const };
+}
+
+const MOVER_ARBOL = z.object({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+});
+
+/** Reubicación manual por drag & drop en el plano 2D: persiste posX/posY. */
+export async function moverArbol(id: string, input: z.input<typeof MOVER_ARBOL>) {
+  const parsed = MOVER_ARBOL.parse(input);
+  return actualizarArbol(id, { posX: parsed.x, posY: parsed.y });
 }
 
 export async function eliminarArbol(id: string) {

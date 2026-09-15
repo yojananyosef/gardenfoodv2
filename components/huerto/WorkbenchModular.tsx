@@ -12,7 +12,7 @@ import { ListaArbolesAgrupada } from "@/components/huerto/ListaArbolesAgrupada";
 import { eliminarArbol } from "@/lib/huerto/actions";
 import type { Arbol, HuertoResumen } from "@/types";
 
-/** Banco de trabajo modular (Propuesta B1): panel único de cultivos y árboles
+/** Banco de trabajo modular (Propuesta B1): panel único de árboles
  *  a la izquierda + lienzo grande con tabs (satélite / matriz / 3D) a la
  *  derecha. El buscador filtra las filas de especie; «Repartir sin ubicar»
  *  salta al tab de la matriz. */
@@ -27,8 +27,6 @@ export function WorkbenchModular({
   slots: {
     /** Formulario compacto de alta de árbol (R2, alta única). */
     registrarArbol: ReactNode;
-    /** Bloque de cultivos (agregar + lista), reutilizado del dashboard. */
-    cultivos: ReactNode;
     /** Tab satélite: mapa con dibujo de polígono y resumen de huertos. */
     satelite: ReactNode;
     /** Tab matriz (PlanoHuerto 2D). */
@@ -36,7 +34,7 @@ export function WorkbenchModular({
     /** Tab estructura 3D. */
     tresD: ReactNode;
   };
-  /** true cuando la cuenta no tiene cultivos, árboles ni huertos: oculta el alta de árbol bajo un botón para no duplicar «Elegir una especie» con la card de day-zero. */
+  /** true cuando no hay árboles ni huertos: colapsa el alta de árbol. */
   esHuertoVacio?: boolean;
 }) {
   const sinUbicar = arboles.filter(
@@ -57,12 +55,12 @@ export function WorkbenchModular({
 
   return (
     <div className="grid w-full gap-5 lg:grid-cols-[minmax(300px,340px)_minmax(0,1fr)]">
-      {/* ─── Panel único: cultivos y árboles (R2) ─── */}
+      {/* ─── Panel único: inventario de árboles (R2, alta única) ─── */}
       <aside className="flex flex-col gap-3 lg:sticky lg:top-20 lg:self-start">
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="flex flex-col gap-3 p-4">
             <h3 className="flex items-center gap-2 text-sm font-semibold">
-              <Sprout className="size-4 text-primary" /> Cultivos y árboles
+              <Sprout className="size-4 text-primary" /> Tus árboles
             </h3>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-xl bg-muted/50 px-3 py-2">
@@ -125,8 +123,6 @@ export function WorkbenchModular({
             )}
           </CardContent>
         </Card>
-
-        {slots.cultivos}
 
         {/* Acciones rápidas del banco (B1) */}
         <div className="flex flex-col gap-2">

@@ -18,7 +18,11 @@ import { Dialog } from "@/components/ui/dialog";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
 import { IconoArbol } from "@/components/huerto/IconoArbol";
 import { sincronizarPlanoHuerto } from "@/lib/huerto/huertos";
+import { moverArbol } from "@/lib/huerto/actions";
 import {
+  ALTO_VISTA,
+  ANCHO_VISTA,
+  MARGEN_VISTA,
   bboxEnMetros,
   colorDeEspecie,
   crearVistaPlano,
@@ -77,6 +81,20 @@ export function PlanoHuerto({
   const [arrastrando2d, setArrastrando2d] = useState(false);
   const panRef = useRef<{ x: number; y: number; px: number; py: number; activo: boolean } | null>(null);
   const marco2dRef = useRef<HTMLDivElement>(null);
+  const platoRef = useRef<HTMLDivElement>(null);
+  // Reubicación manual por árbol (R7): posiciones optimistas + drag activo.
+  // Se guardan con el huerto activo para no mezclar huertos sin effects.
+  const [posLocales, setPosLocales] = useState<Record<string, { x: number; y: number; h: string }>>({});
+  const [arbolArrastrado, setArbolArrastrado] = useState<string | null>(null);
+  const dragRef = useRef<{
+    id: string;
+    pointerId: number;
+    startX: number;
+    startY: number;
+    origX: number;
+    origY: number;
+    movido: boolean;
+  } | null>(null);
 
   const en3d = modo === "3d";
 
@@ -84,6 +102,7 @@ export function PlanoHuerto({
     setHuertoId(id);
     setZoom2d(1);
     setPan2d({ x: 0, y: 0 });
+    setPosLocales({});
   }
 
   // Rueda → zoom (listener no pasivo para poder prevenir el scroll).
@@ -100,6 +119,7 @@ export function PlanoHuerto({
   }, [en3d]);
 
   function iniciarPan2d(e: React.PointerEvent<HTMLDivElement>) {
+    if ((e.target as HTMLElement).closest("[data-arbol-id]")) return;
     if ((e.target as HTMLElement).closest("button")) return;
     panRef.current = { x: e.clientX, y: e.clientY, px: pan2d.x, py: pan2d.y, activo: false };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -122,6 +142,100 @@ export function PlanoHuerto({
     setArrastrando2d(false);
   }
 
+  // --- Drag & drop de árboles (R7): mover marcador y guardar al soltar ---
+  function posDesdeEvento(e: React.PointerEvent, fallback: { x: number; y: number }) {
+    const plato = platoRef.current;
+    if (!plato) return fallback;
+    const rect = plato.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return fallback;
+    const anchoUtil = ANCHO_VISTA - 2 * MARGEN_VISTA;
+    const altoUtil = ALTO_VISTA - 2 * MARGEN_VISTA;
+    const pX = ((e.clientX - rect.left) / rect.width) * ANCHO_VISTA;
+    const pY = ((e.clientY - rect.top) / rect.height) * ALTO_VISTA;
+    return {
+      x: Math.max(0, Math.min(1, (pX - MARGEN_VISTA) / anchoUtil)),
+      // Y invertida: pos.y=1 (norte) arriba, pos.y=0 (sur) abajo.
+      y: Math.max(0, Math.min(1, (ALTO_VISTA - MARGEN_VISTA - pY) / altoUtil)),
+    };
+  }
+
+  function iniciarArrastreArbol(e: React.PointerEvent<HTMLButtonElement>, arbol: Arbol) {
+    e.stopPropagation();
+    e.preventDefault();
+    const local = posLocales[arbol.id];
+    const mismaHuerta = local && local.h === (arbol.huertoId ?? "");
+    const orig = mismaHuerta
+      ? { x: local.x, y: local.y }
+      : { x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 };
+    dragRef.current = {
+      id: arbol.id,
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: orig.x,
+      origY: orig.y,
+      movido: false,
+    };
+    setArbolArrastrado(arbol.id);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+
+  function moverArrastreArbol(e: React.PointerEvent<HTMLButtonElement>, arbol: Arbol) {
+    const drag = dragRef.current;
+    if (!drag || drag.id !== arbol.id) return;
+    if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) < 4 && !drag.movido) return;
+    drag.movido = true;
+    const orig = { x: drag.origX, y: drag.origY };
+    const nueva = posDesdeEvento(e, orig);
+    const h = arbol.huertoId ?? "";
+    setPosLocales((prev) => ({ ...prev, [arbol.id]: { ...nueva, h } }));
+  }
+
+  function terminarArrastreArbol(e: React.PointerEvent<HTMLButtonElement>, arbol: Arbol) {
+    const drag = dragRef.current;
+    dragRef.current = null;
+    setArbolArrastrado(null);
+    if (!drag || drag.id !== arbol.id) return;
+    // Clic corto (sin mover): abre el diálogo como antes.
+    if (!drag.movido) {
+      setEditando(arbol);
+      return;
+    }
+    const destino = posDesdeEvento(e, { x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 });
+    const redondeado = {
+      x: Math.round(Math.max(0, Math.min(1, destino.x)) * 1000) / 1000,
+      y: Math.round(Math.max(0, Math.min(1, destino.y)) * 1000) / 1000,
+    };
+    setPosLocales((prev) => ({ ...prev, [arbol.id]: { ...redondeado, h: arbol.huertoId ?? "" } }));
+    startTransition(async () => {
+      const result = await moverArbol(arbol.id, redondeado);
+      if (!result || "error" in result) {
+        const mensaje = result && "error" in result ? result.error : "No se pudo mover el árbol.";
+        toast.error(mensaje);
+        // Revertir al valor del servidor.
+        setPosLocales((prev) => {
+          const copia = { ...prev };
+          delete copia[arbol.id];
+          return copia;
+        });
+        return;
+      }
+      toast.success("Árbol reubicado.");
+      router.refresh();
+    });
+  }
+
+  function cancelarArrastreArbol(arbol: Arbol) {
+    if (dragRef.current?.id !== arbol.id) return;
+    dragRef.current = null;
+    setArbolArrastrado(null);
+    setPosLocales((prev) => {
+      const copia = { ...prev };
+      delete copia[arbol.id];
+      return copia;
+    });
+  }
+
   function centrar2d() {
     setZoom2d(1);
     setPan2d({ x: 0, y: 0 });
@@ -131,6 +245,20 @@ export function PlanoHuerto({
   const arbolesPlano = useMemo(
     () => (huerto ? arboles.filter((a) => a.huertoId === huerto.id) : []),
     [arboles, huerto],
+  );
+  // Se derivan en render (sin effects): solo aplican al huerto del árbol
+  // y se ignoran cuando el servidor ya las confirmó.
+  const arbolesPlanoConPos = useMemo(
+    () =>
+      arbolesPlano.map((a) => {
+        const local = posLocales[a.id];
+        if (!local || local.h !== (a.huertoId ?? "")) return a;
+        const sx = a.posX ?? 0.5;
+        const sy = a.posY ?? 0.5;
+        if (Math.abs(local.x - sx) < 0.0005 && Math.abs(local.y - sy) < 0.0005) return a;
+        return { ...a, posX: local.x, posY: local.y };
+      }),
+    [arbolesPlano, posLocales],
   );
   const feature = huerto?.feature ?? null;
   const vista = useMemo(
@@ -363,6 +491,7 @@ export function PlanoHuerto({
             }}
           >
           <div
+            ref={platoRef}
             className="relative max-h-full rounded-md shadow-[0_18px_35px_rgba(0,0,0,0.30)]"
             style={{
               aspectRatio: `${aspectoTerreno}`,
@@ -406,22 +535,29 @@ export function PlanoHuerto({
                   opacity={0.95}
                 />
               </svg>
-              {arbolesPlano.map((arbol) => {
+              {arbolesPlanoConPos.map((arbol) => {
                 const p = posAVista({ x: arbol.posX ?? 0.5, y: arbol.posY ?? 0.5 }, vista);
+                const activo = arbolArrastrado === arbol.id;
                 return (
                   <button
                     key={arbol.id}
                     type="button"
-                    onClick={() => setEditando(arbol)}
-                    aria-label={`Editar ${nombreDeEspecie(arbol.especie)} en el plano`}
-                    className="absolute z-10"
+                    data-arbol-id={arbol.id}
+                    onPointerDown={(e) => iniciarArrastreArbol(e, arbol)}
+                    onPointerMove={(e) => moverArrastreArbol(e, arbol)}
+                    onPointerUp={(e) => terminarArrastreArbol(e, arbol)}
+                    onPointerCancel={() => cancelarArrastreArbol(arbol)}
+                    aria-label={`Mover ${nombreDeEspecie(arbol.especie)} en el plano (arrastrar) o editar con un toque`}
+                    className={`absolute z-10 ${activo ? "z-20" : ""}`}
                     style={{
                       left: `${p.x}%`,
                       top: `${p.y}%`,
                       transform: "translate(-50%, -80%)",
+                      touchAction: "none",
+                      cursor: activo ? "grabbing" : "grab",
                     }}
                   >
-                      <span className="block outline-none transition-transform hover:scale-125 focus-visible:scale-125">
+                      <span className={`block outline-none transition-transform hover:scale-125 focus-visible:scale-125 ${activo ? "scale-125" : ""}`}>
                         <IconoArbol
                           especie={arbol.especie}
                           className="block h-9 w-7 drop-shadow-md"
@@ -453,7 +589,7 @@ export function PlanoHuerto({
           {arbolesPlano.length} árbol{arbolesPlano.length === 1 ? "" : "es"} en el
           plano · Superficie: {huerto ? formatAreaM2(huerto.superficieM2) : "—"}
         </span>
-        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Arrastra para mover · rueda o botones para zoom · toca un árbol para editarlo · Sincronizar reparte tu inventario en la matriz"}</span>
+        <span>{en3d ? "En 3D, arrastra para orbitar · rueda para zoom · clic en un árbol para editarlo" : "Arrastra un árbol para reubicarlo (se guarda al soltar) · clic corto para editarlo · arrastra el fondo para mover el plano · rueda o botones para zoom"}</span>
       </div>
 
       {leyenda.length > 0 ? (

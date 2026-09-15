@@ -5,7 +5,6 @@ import {
   CalendarDays,
   AlertTriangle,
   MapPinned,
-  Plus,
   ArrowRight,
   Trees,
   CheckCircle2,
@@ -23,10 +22,8 @@ import {
 
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
 import { SponsoredBanner } from "@/components/ads/SponsoredBanner";
-import { AgregarCultivo } from "@/components/huerto/AgregarCultivo";
 import { AgregarArbol } from "@/components/huerto/AgregarArbol";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
-import { ListaCultivos } from "@/components/huerto/ListaCultivos";
 import { WorkbenchModular } from "@/components/huerto/WorkbenchModular";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { ModoToggle } from "./ModoToggle";
@@ -104,7 +101,10 @@ export default async function HuertoPage(props: {
   const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
   const recom = getEspeciesPorZona(zonaId);
   const limites = limitesDe((perfil?.plan as PlanAcceso) ?? "gratuito");
-  const esHuertoVacio = cultivos.length === 0 && arboles.length === 0;
+  // El panel modular es inventario único de árboles (R2): el bloque
+  // duplicado de gf_cultivos se eliminó de la UI. El vacío modular
+  // se mide por árboles + huertos, no por cultivos legacy.
+  const esHuertoVacio = arboles.length === 0 && huertos.length === 0;
   const nombre = (user.user_metadata as Record<string, unknown>)?.["nombre"] as string | undefined;
   const nombreCorto = nombre ? nombre.split(" ")[0] : null;
 
@@ -214,7 +214,7 @@ export default async function HuertoPage(props: {
                 </Badge>
               </div>
               <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
-                {new Set([...cultivos.map((c) => c.especie), ...arboles.map((a) => a.especie)]).size}
+                {new Set(arboles.map((a) => a.especie)).size}
                 <span className="text-sm font-normal text-muted-foreground">
                   especies · {arboles.length} árboles
                 </span>
@@ -330,7 +330,7 @@ export default async function HuertoPage(props: {
             <LayoutGrid className="size-4" />
             Mi huerto
             <Badge variant="secondary" className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
-              {cultivos.length + arboles.length}
+              {arboles.length}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="tareas" className="gap-1.5 rounded-lg">
@@ -359,72 +359,6 @@ export default async function HuertoPage(props: {
                 slots={{
                   registrarArbol: (
                     <AgregarArbol especies={ESPECIES} uso={{ actual: arboles.length, limite: limites.arboles }} />
-                  ),
-                  cultivos: esHuertoVacio ? (
-                    <Card className="rounded-2xl border-dashed shadow-sm">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="flex items-center gap-2 text-sm">
-                          <Sprout className="size-4 text-primary" /> Tu huerto está vacío
-                        </CardTitle>
-                        <CardDescription className="text-xs">
-                          Elige una especie aquí, o dibuja tu terreno en el lienzo de al lado (satélite).
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="flex flex-col gap-3">
-                        <div className="grid grid-cols-3 gap-2">
-                          {[
-                            { step: "1", title: "Elige especie", icon: Leaf },
-                            { step: "2", title: "Agrega al huerto", icon: Plus },
-                            { step: "3", title: "Sigue tareas", icon: CalendarDays },
-                          ].map((s) => (
-                            <div key={s.step} className="flex items-center gap-2 rounded-xl border bg-card p-2">
-                              <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                                {s.step}
-                              </span>
-                              <s.icon className="size-3.5 shrink-0 text-muted-foreground" />
-                              <span className="text-xs font-medium leading-none">{s.title}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
-                        <p className="text-xs text-muted-foreground">
-                          ¿Dudas?{" "}
-                          <Link href="/recomendadas" className="font-medium text-primary underline-offset-4 hover:underline">
-                            Mira qué es recomendable en tu zona
-                          </Link>
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <div className="flex flex-col gap-3">
-                      <Card className="rounded-2xl shadow-sm">
-                        <CardHeader className="pb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex size-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700">
-                              <Plus className="size-4" />
-                            </span>
-                            <div className="flex flex-col">
-                              <CardTitle className="text-sm">Agregar cultivo</CardTitle>
-                              <CardDescription className="text-xs">Elige una especie y listo.</CardDescription>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <AgregarCultivo especies={especiesDisponibles} uso={{ actual: cultivos.length, limite: limites.cultivos }} />
-                        </CardContent>
-                      </Card>
-                      <Card className="rounded-2xl shadow-sm">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="flex items-center gap-2 text-sm">
-                            <Leaf className="size-4 text-primary" /> Tus cultivos
-                          </CardTitle>
-                          <CardDescription className="text-xs">{cultivosConNombre.length} especies activas</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <ListaCultivos cultivos={cultivosConNombre} />
-                        </CardContent>
-                      </Card>
-                    </div>
                   ),
                   satelite: (
                     <div className="flex flex-col gap-3">
