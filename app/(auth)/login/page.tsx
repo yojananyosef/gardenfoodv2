@@ -4,7 +4,6 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Leaf, Lock, LogIn, Mail, ShieldCheck } from "lucide-react";
-import { BrandMark } from "@/components/layout/BrandMark";
 
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -72,15 +71,12 @@ function LoginForm() {
             <ShieldCheck className="size-3.5 text-primary" /> Seguro
           </span>
         </div>
-        <div className="flex items-start gap-3">
-          <BrandMark className="hidden size-10 rounded-xl sm:inline-flex" />
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
             <CardTitle className="text-xl leading-none">Iniciar sesión</CardTitle>
             <CardDescription className="text-[13px] leading-relaxed">
               Entra a tu huerto para ver tus tareas y alertas de hoy.
             </CardDescription>
           </div>
-        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         {hasError ? (
@@ -172,11 +168,6 @@ function LoginForm() {
             </Button>
           </div>
           <p className="text-center font-mono text-[11px] text-muted-foreground">Próximamente · Por ahora usa correo y clave</p>
-        </div>
-
-        <div className="flex items-center justify-center gap-1.5 rounded-xl bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 shrink-0" />
-          <span>Cifrado y protegido · Tus datos de comuna solo personalizan tu calendario.</span>
         </div>
       </CardContent>
     </Card>
