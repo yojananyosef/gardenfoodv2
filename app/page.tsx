@@ -120,7 +120,7 @@ export default async function Home() {
 
               {/* Right — field notebook signature */}
               <div className="flex flex-col gap-3 lg:sticky lg:top-20">
-                <Card className="card-tinta overflow-hidden">
+                <Card className="overflow-hidden rounded-2xl">
                   <div className="h-1.5 w-full bg-primary" aria-hidden />
                   <CardHeader className="gap-3 pb-3">
                     <div className="flex items-start justify-between gap-3">
