@@ -1,0 +1,67 @@
+- generic [ref=f10e3]:
+  - generic [ref=f10e4]:
+    - link "GardenFood GardenFood" [ref=f10e5] [cursor=pointer]:
+      - /url: /
+      - img "GardenFood" [ref=f10e6]
+      - generic [ref=f10e7]: GardenFood
+    - generic [ref=f10e8]: Gratis
+  - generic [ref=f10e11]:
+    - generic [ref=f10e13]:
+      - generic [ref=f10e14]:
+        - generic [ref=f10e15]: Gratis · 2 minutos
+        - generic [ref=f10e16]: Paso 1 de 2
+      - generic [ref=f10e17]:
+        - generic [ref=f10e18]: Crear cuenta
+        - generic [ref=f10e19]: Tu huerto a la medida de tu comuna. Sin tarjeta, cancela cuando quieras.
+    - generic [ref=f10e20]:
+      - generic [ref=f10e21]:
+        - generic [ref=f10e22]:
+          - group [ref=f10e23]:
+            - generic [ref=f10e24]: Nombre
+            - group [ref=f10e25]:
+              - group [ref=f10e26]
+              - textbox "Nombre" [ref=f10e30]:
+                - /placeholder: Ej. Camila Rojas
+            - paragraph [ref=f10e31]: Como aparecerá en tu huerto.
+          - group [ref=f10e32]:
+            - generic [ref=f10e33]: Correo
+            - group [ref=f10e34]:
+              - group [ref=f10e35]
+              - textbox "Correo" [ref=f10e39]:
+                - /placeholder: tu@correo.cl
+          - group [ref=f10e40]:
+            - generic [ref=f10e41]: Contraseña
+            - group [ref=f10e42]:
+              - group [ref=f10e43]
+              - textbox "Contraseña" [ref=f10e47]:
+                - /placeholder: Mínimo 8 caracteres
+            - paragraph [ref=f10e48]: Mínimo 8 caracteres. Usa una clave segura.
+          - group [ref=f10e49]:
+            - generic [ref=f10e50]: Comuna
+            - group [ref=f10e51]:
+              - combobox "Comuna" [ref=f10e52]
+              - group [ref=f10e53]:
+                - combobox [ref=f10e54]
+            - textbox [aria-hidden] [ref=f10e55]
+            - paragraph [ref=f10e56]: 346 comunas — escribe y elige. Región y zona se asignan solas.
+        - button "Crear cuenta" [ref=f10e57]
+        - generic [ref=f10e58]:
+          - checkbox [ref=f10e59]
+          - checkbox [aria-hidden] [ref=f10e60]
+          - generic [ref=f10e61] [cursor=pointer]:
+            - text: Declaro tener al menos
+            - strong [ref=f10e62]: 14 años
+            - text: . Si tengo entre 14 y 16, cuento con la autorización de mis representantes legales. Al crear tu cuenta aceptas los
+            - link "términos" [ref=f10e63]:
+              - /url: /legal/terminos
+            - text: y la
+            - link "privacidad" [ref=f10e64]:
+              - /url: /legal/privacidad
+            - text: .
+      - generic [ref=f10e65]:
+        - generic [ref=f10e66]:
+          - separator [ref=f10e67]
+          - generic [ref=f10e68]: ¿ya tienes cuenta?
+          - separator [ref=f10e69]
+        - button "Iniciar sesión" [ref=f10e70] [cursor=pointer]
+  - generic [ref=f10e71]: Al continuar aceptas nuestros términos y la política de privacidad · Tus datos de comuna solo se usan para personalizar el calendario

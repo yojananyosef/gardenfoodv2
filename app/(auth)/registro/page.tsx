@@ -152,17 +152,6 @@ export default function RegistroPage() {
               Tu huerto a la medida de tu comuna. Sin tarjeta, cancela cuando quieras.
             </CardDescription>
           </div>
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="inline-flex size-6 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
-              1
-            </span>
-            <span className="font-medium text-foreground">Cuenta</span>
-            <Separator className="mx-1 w-8" />
-            <span className="inline-flex size-6 items-center justify-center rounded-full bg-muted text-[11px] font-medium text-muted-foreground">
-              2
-            </span>
-            <span className="text-muted-foreground">Huerto</span>
-          </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           {esperandoConfirmacion ? (
