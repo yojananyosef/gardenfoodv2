@@ -78,7 +78,7 @@ export default async function Home() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary" className="gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
                     <Leaf className="size-3" aria-hidden />
-                    Agronomía doméstica · Chile
+                    Agronomía doméstica
                   </Badge>
                   <span className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs text-muted-foreground">
                     <span className="size-2 rounded-full bg-cosecha animate-pulse" aria-hidden />
@@ -334,7 +334,7 @@ export default async function Home() {
                     <Separator className="my-1 bg-white/10" />
                     <div className="flex items-center justify-between text-xs text-white/60">
                       <span>346 comunas · 20 zonas</span>
-                      <span className="font-mono">v2 · 2026</span>
+                      <span className="font-mono">2026</span>
                     </div>
                   </div>
                 </div>
