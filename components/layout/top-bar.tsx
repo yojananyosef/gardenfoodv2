@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Calculator, Compass, LogIn, ShieldCheck, Sprout, User } from "lucide-react";
+import { Calculator, Compass, LogIn, ShieldCheck, User } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { createClient } from "@/lib/supabase/server";
 
@@ -78,9 +79,7 @@ export async function TopBar({ esAdmin }: { esAdmin?: boolean }) {
     <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
         <Link href="/" className="inline-flex items-center gap-2.5">
-          <span className="inline-flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-            <Sprout className="size-4" aria-hidden />
-          </span>
+          <BrandMark />
           <span className="font-heading text-[15px] font-semibold tracking-tight">GardenFood</span>
           <Badge variant="secondary" className="hidden rounded-full px-1.5 py-0 text-[10px] sm:inline-flex">
             CHILE

@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Leaf, Mail, Lock, User, MapPinned, Sprout, ShieldCheck, Check } from "lucide-react";
+import { ArrowRight, Leaf, Mail, Lock, User, MapPinned, ShieldCheck, Check } from "lucide-react";
+import { BrandMark } from "@/components/layout/BrandMark";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -147,9 +148,7 @@ export default function RegistroPage() {
             <span className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">Paso 1 de 2</span>
           </div>
           <div className="flex items-start gap-3">
-            <span className="hidden size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm sm:inline-flex">
-              <Sprout className="size-5" aria-hidden />
-            </span>
+            <BrandMark className="hidden size-10 rounded-xl sm:inline-flex" />
             <div className="flex flex-col gap-1">
               <CardTitle className="text-xl leading-none">Crear cuenta</CardTitle>
               <CardDescription className="text-[13px] leading-relaxed">

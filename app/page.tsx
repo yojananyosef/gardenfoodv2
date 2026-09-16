@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TopBar } from "@/components/layout/top-bar";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ZoneWidget } from "@/components/landing/zone-widget";
 import { MapaChile } from "@/components/landing/mapa-chile";
@@ -345,9 +346,7 @@ export default async function Home() {
         <footer className={isAuthenticated ? "border-t bg-muted/20 pb-24 md:pb-0" : "border-t bg-muted/20"}>
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-center gap-2">
-              <span className="inline-flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Sprout className="size-4" />
-              </span>
+              <BrandMark className="size-7" />
               <span>
                 <span className="font-heading font-semibold text-foreground">GardenFood</span> — huertos frutales informados, de Arica a Punta Arenas.
               </span>

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Leaf, Sprout, Droplets, Scissors, MapPinned, CalendarDays, ShieldCheck, Quote } from "lucide-react";
+import { Leaf, Droplets, Scissors, MapPinned, CalendarDays, ShieldCheck, Quote } from "lucide-react";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -14,9 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-[size:28px_28px] opacity-[0.04]" />
 
         <Link href="/" className="inline-flex items-center gap-2.5 self-start">
-          <span className="inline-flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-            <Sprout className="size-4" aria-hidden />
-          </span>
+          <BrandMark />
           <span className="font-heading text-[15px] font-semibold tracking-tight">GardenFood</span>
           <Badge variant="secondary" className="rounded-full px-1.5 py-0 text-[10px]">
             v2
@@ -95,9 +94,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex flex-1 flex-col bg-background">
         <div className="flex h-12 items-center justify-between border-b px-4 lg:hidden">
           <Link href="/" className="inline-flex items-center gap-2">
-            <span className="inline-flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Sprout className="size-4" />
-            </span>
+            <BrandMark className="size-7" />
             <span className="font-heading text-sm font-semibold">GardenFood</span>
           </Link>
           <Badge variant="secondary" className="rounded-full">Gratis</Badge>

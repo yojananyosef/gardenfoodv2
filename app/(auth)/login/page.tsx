@@ -3,7 +3,8 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Lock, LogIn, Mail, ShieldCheck, Sprout } from "lucide-react";
+import { Leaf, Lock, LogIn, Mail, ShieldCheck } from "lucide-react";
+import { BrandMark } from "@/components/layout/BrandMark";
 
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -72,9 +73,7 @@ function LoginForm() {
           </span>
         </div>
         <div className="flex items-start gap-3">
-          <span className="hidden size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm sm:inline-flex">
-            <Sprout className="size-5" aria-hidden />
-          </span>
+          <BrandMark className="hidden size-10 rounded-xl sm:inline-flex" />
           <div className="flex flex-col gap-1">
             <CardTitle className="text-xl leading-none">Iniciar sesión</CardTitle>
             <CardDescription className="text-[13px] leading-relaxed">
