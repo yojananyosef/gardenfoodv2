@@ -138,7 +138,7 @@ export default function RegistroPage() {
   return (
     <>
       <Card className="overflow-hidden rounded-[1.25rem] border-foreground/10 shadow-lg">
-        <div className="h-1 w-full bg-gradient-to-r from-primary via-emerald-500 to-amber-400" aria-hidden />
+        <div className="h-1 w-full bg-primary" aria-hidden />
         <CardHeader className="gap-3 pb-4">
           <div className="flex items-center justify-between gap-3">
             <Badge variant="secondary" className="gap-1.5 rounded-full">

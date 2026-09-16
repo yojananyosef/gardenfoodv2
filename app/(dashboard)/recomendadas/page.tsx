@@ -19,7 +19,7 @@ export default async function RecomendadasPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Recomendadas</h1>
+        <h1 className="font-heading text-2xl font-semibold">Recomendadas</h1>
         <p className="text-sm text-muted-foreground">Qué puedes cultivar en tu comuna</p>
       </div>
       <RecomendacionesView si={si} riesgo={riesgo} no={no} zonaNombre={zona?.nombre ?? "Santiago Norte"} comuna={comuna} isFallback={fallback} />

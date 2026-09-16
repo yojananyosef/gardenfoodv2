@@ -17,26 +17,26 @@ const LINKS_USUARIO = [
 function GuestNav() {
   return (
     <nav className="flex items-center gap-1 sm:gap-1.5">
-      <Button variant="ghost" size="sm" className="hidden h-8 rounded-full sm:inline-flex" render={<Link href="/explorar" />}>
+      <Button variant="ghost" size="sm" className="hidden h-8 rounded-lg sm:inline-flex" render={<Link href="/explorar" />}>
         <Compass data-icon="inline-start" />
         Explorar
       </Button>
-      <Button variant="ghost" size="sm" className="hidden h-8 rounded-full sm:inline-flex" render={<Link href="/calculadoras" />}>
+      <Button variant="ghost" size="sm" className="hidden h-8 rounded-lg sm:inline-flex" render={<Link href="/calculadoras" />}>
         <Calculator data-icon="inline-start" />
         Calculadoras
       </Button>
       {/* mobile compact */}
-      <Link href="/explorar" className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Explorar">
+      <Link href="/explorar" className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Explorar">
         <Compass className="size-4" />
       </Link>
-      <Link href="/calculadoras" className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Calculadoras">
+      <Link href="/calculadoras" className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Calculadoras">
         <Calculator className="size-4" />
       </Link>
-      <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/login" />}>
+      <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/login" />}>
         <LogIn data-icon="inline-start" />
         Entrar
       </Button>
-      <Button size="sm" className="h-8 rounded-full px-3" render={<Link href="/registro" />}>
+      <Button size="sm" className="h-8 rounded-lg px-3" render={<Link href="/registro" />}>
         Registrarme
       </Button>
     </nav>
@@ -48,18 +48,18 @@ function UserNav({ esAdmin }: { esAdmin?: boolean }) {
     <nav className="flex items-center gap-1 sm:gap-3">
       <div className="hidden items-center gap-1 text-sm md:flex">
         {LINKS_USUARIO.map(({ href, label }) => (
-          <Button key={href} variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href={href} />}>
+          <Button key={href} variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href={href} />}>
             {label}
           </Button>
         ))}
       </div>
       {esAdmin ? (
-        <Button variant="ghost" size="sm" className="h-8 rounded-full text-primary" render={<Link href="/admin" />}>
+        <Button variant="ghost" size="sm" className="h-8 rounded-lg text-primary" render={<Link href="/admin" />}>
           <ShieldCheck data-icon="inline-start" />
           Admin
         </Button>
       ) : null}
-      <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/perfil" />}>
+      <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/perfil" />}>
         <User data-icon="inline-start" />
         <span className="hidden lg:inline">Perfil</span>
       </Button>
@@ -76,7 +76,7 @@ export async function TopBar({ esAdmin }: { esAdmin?: boolean }) {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-8 lg:px-10">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <span className="inline-flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
             <Sprout className="size-4" aria-hidden />

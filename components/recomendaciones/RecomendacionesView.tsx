@@ -8,8 +8,8 @@ import { Pie, PieChart } from "recharts";
 import type { EspeciePorZona } from "@/lib/agronomy";
 
 function ViabBadge({ v }: { v: string }) {
-  if (v === "si") return <Badge className="bg-emerald-600 text-white">Recomendado</Badge>;
-  if (v === "riesgo") return <Badge className="bg-amber-500 text-white">Con riesgo</Badge>;
+  if (v === "si") return <Badge className="bg-primary text-primary-foreground">Recomendado</Badge>;
+  if (v === "riesgo") return <Badge className="bg-cosecha/15 text-cosecha-ink">Con riesgo</Badge>;
   return <Badge variant="secondary">No recomendado</Badge>;
 }
 
@@ -20,8 +20,8 @@ function Section({ title, items }: { title: string; items: EspeciePorZona[] }) {
       {items.length === 0 ? <p className="text-xs text-muted-foreground">—</p> : (
         <ul className="grid gap-2 sm:grid-cols-2">
           {items.map((e) => (
-            <li key={e.slug} className="overflow-hidden rounded-lg border bg-card">
-              <Link href={`/especies/${e.slug}`} className="flex gap-3 p-3 hover:bg-muted">
+            <li key={e.slug} className="row-click overflow-hidden rounded-lg border bg-card">
+              <Link href={`/especies/${e.slug}`} className="flex gap-3 p-3">
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={e.imagen} alt={e.nombre} width={48} height={48} className="h-12 w-12 object-cover" />
@@ -84,8 +84,8 @@ export function RecomendacionesView({ si, riesgo, no, zonaNombre, comuna, isFall
         <CardContent className="grid gap-4 sm:grid-cols-[1.2fr_0.8fr] sm:items-center">
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap gap-2 text-sm">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 font-medium text-emerald-700"><span className="size-2 rounded-full bg-emerald-500" />{si.length} recomendadas</span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 font-medium text-amber-700"><span className="size-2 rounded-full bg-amber-500" />{riesgo.length} con riesgo</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 font-medium text-primary"><span className="size-2 rounded-full bg-primary" />{si.length} recomendadas</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-cosecha/10 px-2.5 py-1 font-medium text-cosecha-ink"><span className="size-2 rounded-full bg-cosecha" />{riesgo.length} con riesgo</span>
               <span className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-muted-foreground">{no.length} no recomendadas</span>
             </div>
             <p className="text-xs leading-relaxed text-muted-foreground">Basado en viabilidad por zona agroclimática — filtrado para tu comuna, no genérico.</p>

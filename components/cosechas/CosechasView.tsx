@@ -77,7 +77,7 @@ export function Estadisticas({ registros }: { registros: RegistroCosecha[] }) {
       {stats.map((s) => (
         <div key={s.label} className="rounded-lg border bg-card px-4 py-3">
           <div className="text-xs text-muted-foreground">{s.label}</div>
-          <div className="font-fraunces text-xl font-semibold">{s.valor}</div>
+          <div className="font-heading text-xl font-semibold">{s.valor}</div>
         </div>
       ))}
     </div>

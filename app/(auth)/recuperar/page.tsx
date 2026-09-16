@@ -34,7 +34,7 @@ export default function RecuperarPage() {
 
   return (
     <Card className="overflow-hidden rounded-[1.25rem] border-foreground/10 shadow-lg">
-      <div className="h-1 w-full bg-gradient-to-r from-primary via-emerald-500 to-amber-400" aria-hidden />
+      <div className="h-1 w-full bg-primary" aria-hidden />
       <CardHeader className="gap-3 pb-4">
         <span className="inline-flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
           <KeyRound className="size-5" aria-hidden />

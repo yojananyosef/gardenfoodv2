@@ -185,7 +185,7 @@ export default async function HuertoPage() {
                 {arboles.length}
               </div>
             </CardContent>
-            <div className="h-1 w-full bg-gradient-to-r from-emerald-500/60 to-emerald-500/0" aria-hidden />
+            <div className="h-1 w-full bg-primary" aria-hidden />
           </Card>
 
           <Card className="overflow-hidden rounded-2xl">
@@ -208,7 +208,7 @@ export default async function HuertoPage() {
                 <CalendarDays className="size-3" /> {new Date().toLocaleDateString("es-CL", { weekday: "long" })}
               </div>
             </CardContent>
-            <div className="h-1 w-full bg-gradient-to-r from-sky-500/60 to-sky-500/0" aria-hidden />
+            <div className="h-1 w-full bg-chart-3" aria-hidden />
           </Card>
 
           <Card className="overflow-hidden rounded-2xl">
@@ -233,7 +233,7 @@ export default async function HuertoPage() {
               </div>
             </CardContent>
             <div
-              className={`h-1 w-full ${alertas.length > 0 ? "bg-gradient-to-r from-amber-500/60 to-amber-500/0" : "bg-gradient-to-r from-muted to-transparent"}`}
+              className={`h-1 w-full ${alertas.length > 0 ? "bg-cosecha" : "bg-muted"}`}
               aria-hidden
             />
           </Card>
@@ -241,7 +241,7 @@ export default async function HuertoPage() {
       </div>
 
       {/* Recomendadas — hero bento (outside tabs, always visible but compact) */}
-      <Card className="overflow-hidden rounded-2xl border-primary/20 bg-gradient-to-br from-primary/[0.08] via-card to-amber-500/[0.06] shadow-sm">
+      <Card className="overflow-hidden rounded-2xl border-primary/20 shadow-sm">
         <CardHeader className="gap-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex flex-col gap-1.5">
@@ -261,19 +261,19 @@ export default async function HuertoPage() {
               </CardDescription>
             </div>
             <div className="hidden items-center gap-1.5 rounded-full border bg-card px-2.5 py-1.5 shadow-sm sm:flex">
-              <span className="size-2 rounded-full bg-emerald-500" />
+              <span className="size-2 rounded-full bg-primary" />
               <span className="text-xs font-medium">{recom.si.length} óptimas</span>
               <Separator orientation="vertical" className="mx-1 h-3" />
-              <span className="size-2 rounded-full bg-amber-500" />
+              <span className="size-2 rounded-full bg-cosecha" />
               <span className="text-xs font-medium">{recom.riesgo.length} riesgo</span>
               <Separator orientation="vertical" className="mx-1 h-3" />
-              <span className="size-2 rounded-full bg-red-500" />
+              <span className="size-2 rounded-full bg-muted-foreground" />
               <span className="text-xs font-medium">{recom.no.length} evitar</span>
             </div>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button className="rounded-full" render={<Link href="/recomendadas" />}>
+          <Button className="rounded-lg" render={<Link href="/recomendadas" />}>
             <Compass data-icon="inline-start" />
             Ver recomendadas
             <ArrowRight data-icon="inline-end" />
@@ -336,7 +336,7 @@ export default async function HuertoPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="inline-flex size-8 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700">
+                    <span className="inline-flex size-8 items-center justify-center rounded-xl bg-chart-3/15 text-chart-3">
                       <CalendarDays className="size-4" />
                     </span>
                     <div className="flex flex-col">
@@ -440,7 +440,7 @@ export default async function HuertoPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex gap-3">
-                    <span className="hidden size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 sm:inline-flex">
+                    <span className="hidden size-9 items-center justify-center rounded-xl bg-cosecha/10 text-cosecha-ink sm:inline-flex">
                       <AlertTriangle className="size-4" />
                     </span>
                     <div className="flex flex-col gap-1">

@@ -66,7 +66,7 @@ function Resultado({
   return (
     <div className="rounded-lg border bg-muted px-4 py-3">
       <div className="text-xs text-muted-foreground">{label}</div>
-      <div className={cn("font-fraunces text-lg font-semibold", className)}>{valor}</div>
+      <div className={cn("font-heading text-lg font-semibold", className)}>{valor}</div>
     </div>
   );
 }
@@ -255,8 +255,8 @@ export function Diagnostico() {
                   className={cn(
                     "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium",
                     r.gravedad === "Media-Alta"
-                      ? "bg-orange-100 text-orange-700"
-                      : "bg-amber-100 text-amber-700",
+                      ? "bg-cosecha/10 text-cosecha-ink"
+                      : "bg-muted text-muted-foreground",
                   )}
                 >
                   {r.gravedad}

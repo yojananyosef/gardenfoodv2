@@ -8,7 +8,7 @@ export default function CalculadorasPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Calculadoras</h1>
+        <h1 className="font-heading text-2xl font-semibold">Calculadoras</h1>
         <p className="text-sm text-muted-foreground">
           Herramientas prácticas para planificar tu huerto. Funcionan sin necesidad de iniciar sesión.
         </p>

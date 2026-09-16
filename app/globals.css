@@ -35,6 +35,8 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-cosecha: var(--cosecha);
+  --color-cosecha-ink: var(--cosecha-ink);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -49,38 +51,46 @@
 }
 
 :root {
-  /* Stone-paper warm — -1.7% L vs pure white, reduce glare, still AAA */
-  --background: oklch(0.968 0.013 100);
+  /* Cuaderno de campo: escritorio de papel cálido + fichas claras con tinta.
+     El fondo NO es blanco: oklch(0.93 0.028 92) ≈ #eee8d3. */
+  --background: oklch(0.93 0.028 92);
   --foreground: oklch(0.23 0.05 150);
-  --card: oklch(0.993 0.007 100);
+  --card: oklch(0.975 0.014 95);
   --card-foreground: oklch(0.23 0.05 150);
-  --popover: oklch(0.993 0.007 100);
+  --popover: oklch(0.975 0.014 95);
   --popover-foreground: oklch(0.23 0.05 150);
   --primary: oklch(0.42 0.11 150);
   --primary-foreground: oklch(0.985 0.012 100);
-  --secondary: oklch(0.93 0.02 90);
+  --secondary: oklch(0.9 0.024 92);
   --secondary-foreground: oklch(0.3 0.06 150);
-  --muted: oklch(0.94 0.012 100);
+  --muted: oklch(0.905 0.026 92);
   --muted-foreground: oklch(0.43 0.03 145);
-  --accent: oklch(0.9 0.06 85);
+  --accent: oklch(0.87 0.03 92);
   --accent-foreground: oklch(0.32 0.06 150);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.88 0.012 100);
-  --input: oklch(0.88 0.012 100);
+  --border: oklch(0.83 0.025 92);
+  --input: oklch(0.83 0.025 92);
   --ring: oklch(0.42 0.11 150);
+  /* Acento único para datos/detalles gráficos — nunca para CTA (eso es verde).
+     ≈ #b36139; solo tamaños grandes o gráficos por contraste. */
+  --cosecha: oklch(0.58 0.12 45);
+  /* Terracota tinta: la misma familia, oscurecida para texto pequeño (6.4:1). */
+  --cosecha-ink: oklch(0.48 0.11 45);
+  /* Sombra tinta sólida (print) para .card-tinta, sin blur lodoso. */
+  --tinta-shadow: oklch(0.82 0.03 90);
   --chart-1: oklch(0.42 0.11 150);
   --chart-2: oklch(0.72 0.1 85);
   --chart-3: oklch(0.55 0.09 180);
   --chart-4: oklch(0.62 0.08 35);
   --chart-5: oklch(0.45 0.07 250);
   --radius: 0.625rem;
-  --sidebar: oklch(0.968 0.013 100);
+  --sidebar: oklch(0.93 0.028 92);
   --sidebar-foreground: oklch(0.23 0.05 150);
   --sidebar-primary: oklch(0.42 0.11 150);
   --sidebar-primary-foreground: oklch(0.985 0.012 100);
-  --sidebar-accent: oklch(0.93 0.02 90);
+  --sidebar-accent: oklch(0.9 0.024 92);
   --sidebar-accent-foreground: oklch(0.3 0.06 150);
-  --sidebar-border: oklch(0.88 0.012 100);
+  --sidebar-border: oklch(0.83 0.025 92);
   --sidebar-ring: oklch(0.42 0.11 150);
 }
 
@@ -108,6 +118,9 @@
   --chart-3: oklch(0.6 0.09 180);
   --chart-4: oklch(0.65 0.08 35);
   --chart-5: oklch(0.55 0.07 250);
+  --cosecha: oklch(0.72 0.1 45);
+  --cosecha-ink: oklch(0.78 0.09 50);
+  --tinta-shadow: oklch(0.13 0.02 150);
   --sidebar: oklch(0.21 0.03 150);
   --sidebar-foreground: oklch(0.94 0.02 100);
   --sidebar-primary: oklch(0.75 0.09 145);
@@ -124,10 +137,74 @@
   }
   body {
     @apply bg-background text-foreground;
+    touch-action: manipulation;
   }
   html {
     @apply font-sans;
   }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading tracking-tight text-balance;
+  }
+}
+
+/* Ficha con tinta: la firma del cuaderno. Borde tinta + sombra dura sólida
+   (print, sin blur). Solo en cards protagonista, no en todo. */
+@utility card-tinta {
+  background-color: var(--card);
+  border: 1.5px solid color-mix(in oklch, var(--foreground) 50%, transparent);
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 0 var(--tinta-shadow);
+}
+
+/* Card clicable: levante honesto para lo que NAVEGA. Solo transform/opacity
+   (compositor), propiedades explícitas, sin motion si el usuario lo pide.
+   Usar junto a .card-tinta en protagonistas, o solo en rows (ver row-click).
+   Regla: si no navega ni acciona, NO lleva hover. */
+@utility card-click {
+  transition-property: transform, box-shadow, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  &:hover {
+    transform: translate(-1px, -1px);
+    border-color: color-mix(in oklch, var(--foreground) 70%, transparent);
+    box-shadow: 5px 5px 0 0 var(--tinta-shadow);
+  }
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 0 var(--tinta-shadow);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0ms;
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+/* Row clicable: para filas/listas que navegan. Tinta de fondo + borde,
+   sin levante (en listas el translate se siente nervioso). */
+@utility row-click {
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  &:hover {
+    background-color: var(--card);
+    border-color: color-mix(in oklch, var(--foreground) 50%, transparent);
+    box-shadow: 2px 2px 0 0 var(--tinta-shadow);
+  }
+}
+/* Grano de papel: film-grain sutil sobre todo el viewport (e-ink-paper).
+   Estático (sin motion), pointer-events none, no afecta legibilidad. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
 }
 
 /* Controles del mapa (Leaflet + Geoman) al estilo del sistema: fondo card,
