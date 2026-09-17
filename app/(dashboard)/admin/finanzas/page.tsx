@@ -20,7 +20,7 @@ export default async function AdminFinanzasPage({ searchParams }: { searchParams
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Finanzas</h1>
+        <h1 className="font-heading text-2xl font-semibold">Finanzas</h1>
         <p className="text-sm text-muted-foreground">MRR {formatCLP(total)} · suscripciones por plan/estado</p>
       </div>
       <Card>

@@ -52,7 +52,7 @@ export default async function CosechasPage() {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Cosechas</h1>
+        <h1 className="font-heading text-2xl font-semibold">Cosechas</h1>
         <p className="text-sm text-muted-foreground">Bitácora de tu producción y logros — ahora visual.</p>
       </div>
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Sprout } from "lucide-react";
+
+import { BrandMark } from "@/components/layout/BrandMark";
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,9 +8,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       <header className="border-b">
         <div className="mx-auto flex h-12 w-full max-w-3xl items-center gap-2 px-4">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium">
-            <span className="inline-flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Sprout className="size-4" />
-            </span>
+            <BrandMark className="size-7" />
             GardenFood
           </Link>
         </div>

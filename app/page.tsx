@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TopBar } from "@/components/layout/top-bar";
+import { BrandMark } from "@/components/layout/BrandMark";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { ZoneWidget } from "@/components/landing/zone-widget";
 import { MapaChile } from "@/components/landing/mapa-chile";
 
@@ -31,21 +33,18 @@ const ACCIONES = [
     titulo: "Podar",
     descripcion: "Calendario fenológico por especie y zona. Sabrás la semana exacta, no la estación.",
     meta: "Jul — Ago · poda invernal",
-    color: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   },
   {
     icon: Droplets,
     titulo: "Regar",
     descripcion: "Dosis ajustada a tu comuna: ni gota de más en la costa, ni una menos en el norte seco.",
     meta: "4–10 días · verano",
-    color: "bg-sky-500/10 text-sky-700 dark:text-sky-300",
   },
   {
     icon: Sprout,
     titulo: "Fertilizar",
     descripcion: "Qué nutriente, en qué dosis y cuándo. Calculado para tu suelo y tu clima.",
     meta: "NPK + micro · primavera",
-    color: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
   },
 ];
 
@@ -79,18 +78,18 @@ export default async function Home() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary" className="gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
                     <Leaf className="size-3" aria-hidden />
-                    Agronomía doméstica · Chile
+                    Agronomía doméstica
                   </Badge>
                   <span className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs text-muted-foreground">
-                    <span className="size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden />
+                    <span className="size-2 rounded-full bg-cosecha animate-pulse" aria-hidden />
                     Calendario vivo 2026
                   </span>
                 </div>
 
-                <h1 className="font-heading text-[2.2rem] leading-[0.95] font-semibold tracking-tight sm:text-5xl lg:text-[3.4rem]">
+                <h1 className="font-heading text-[2.2rem] leading-[1.02] font-semibold tracking-tight sm:text-5xl lg:text-[3.4rem]">
                   Tu huerto frutal,
                   <br />
-                  <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  <span className="text-primary">
                     al ritmo de tu
                   </span>
                   <br />
@@ -103,11 +102,11 @@ export default async function Home() {
                 </p>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <Button size="lg" className="h-11 rounded-full px-6 text-[15px]" render={<Link href="/registro" />}>
+                  <Button size="lg" className="h-11 rounded-lg px-6 text-[15px]" render={<Link href="/registro" />}>
                     Crear mi huerto gratis
                     <ArrowRight data-icon="inline-end" />
                   </Button>
-                  <Button size="lg" variant="outline" className="h-11 rounded-full px-6" render={<Link href="/explorar" />}>
+                  <Button size="lg" variant="outline" className="h-11 rounded-lg px-6" render={<Link href="/explorar" />}>
                     <Compass data-icon="inline-start" />
                     Explorar especies
                   </Button>
@@ -117,38 +116,12 @@ export default async function Home() {
                   <Check className="size-3.5 text-primary" aria-hidden />
                   <span>Empieza gratis con 3 cultivos · Sin tarjeta · Desde $9.990/mes si necesitas más</span>
                 </div>
-
-                {/* Stats — as harvested strip */}
-                <div className="mt-2 flex overflow-hidden rounded-2xl border bg-card shadow-sm">
-                  {STATS.map((s, i) => (
-                    <div key={s.label} className="flex flex-1 items-center">
-                      <div className="flex flex-1 flex-col items-center gap-0.5 px-4 py-4 text-center">
-                        <span className="font-heading text-2xl font-semibold leading-none tracking-tight sm:text-3xl">
-                          {s.value}
-                        </span>
-                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{s.label}</span>
-                        <span className="hidden text-[11px] text-muted-foreground/70 sm:block">{s.sub}</span>
-                      </div>
-                      {i < STATS.length - 1 ? <Separator orientation="vertical" className="h-12 self-center" /> : null}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPinned className="size-3.5" /> Exploración libre: RM · Ñuble · O&rsquo;Higgins · 16 regiones con cuenta
-                  </span>
-                  <span className="size-1 rounded-full bg-border" aria-hidden />
-                  <span className="inline-flex items-center gap-1.5">
-                    <CalendarDays className="size-3.5" /> Actualizado a {new Date().toLocaleDateString("es-CL", { month: "long", year: "numeric" })}
-                  </span>
-                </div>
               </div>
 
               {/* Right — field notebook signature */}
               <div className="flex flex-col gap-3 lg:sticky lg:top-20">
-                <Card className="overflow-hidden rounded-[1.25rem] border-foreground/10 shadow-lg shadow-primary/5">
-                  <div className="h-1.5 w-full bg-gradient-to-r from-primary via-emerald-500 to-amber-400" aria-hidden />
+                <Card className="overflow-hidden rounded-2xl">
+                  <div className="h-1.5 w-full bg-primary" aria-hidden />
                   <CardHeader className="gap-3 pb-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex flex-col gap-1.5">
@@ -210,6 +183,35 @@ export default async function Home() {
             </div>
           </section>
 
+          {/* Franja de prueba: los números respiran fuera del hero */}
+          <section className="border-b bg-muted/20" aria-label="Cobertura GardenFood">
+            <div className="mx-auto w-full max-w-6xl px-4 py-6">
+              <div className="flex overflow-hidden rounded-2xl border bg-card shadow-sm">
+                {STATS.map((s, i) => (
+                  <div key={s.label} className="flex flex-1 items-center">
+                    <div className="flex flex-1 flex-col items-center gap-0.5 px-4 py-3 text-center">
+                      <span className="font-heading text-2xl font-semibold leading-none tracking-tight text-cosecha sm:text-3xl">
+                        {s.value}
+                      </span>
+                      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{s.label}</span>
+                      <span className="hidden text-[11px] text-muted-foreground/70 sm:block">{s.sub}</span>
+                    </div>
+                    {i < STATS.length - 1 ? <Separator orientation="vertical" className="h-12 self-center" /> : null}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPinned className="size-3.5" /> Exploración libre: RM · Ñuble · O&rsquo;Higgins · 16 regiones con cuenta
+                </span>
+                <span className="size-1 rounded-full bg-border" aria-hidden />
+                <span className="inline-flex items-center gap-1.5">
+                  <CalendarDays className="size-3.5" /> Actualizado a {new Date().toLocaleDateString("es-CL", { month: "long", year: "numeric" })}
+                </span>
+              </div>
+            </div>
+          </section>
+
           {/* 3 decisiones */}
           <section className="border-b bg-muted/20">
             <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-20">
@@ -228,9 +230,9 @@ export default async function Home() {
 
               <div className="mt-10 grid gap-4 sm:grid-cols-3">
                 {ACCIONES.map((accion) => (
-                  <Card key={accion.titulo} className="group relative overflow-hidden rounded-2xl transition-all hover:shadow-md hover:shadow-foreground/5">
+                  <Card key={accion.titulo} className="relative overflow-hidden rounded-2xl">
                     <CardHeader className="gap-3">
-                      <div className={`inline-flex size-10 items-center justify-center rounded-xl ${accion.color}`}>
+                      <div className="inline-flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <accion.icon className="size-5" aria-hidden />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -240,11 +242,7 @@ export default async function Home() {
                     </CardHeader>
                     <CardContent className="pt-0">
                       <p className="text-sm leading-relaxed text-muted-foreground">{accion.descripcion}</p>
-                      <div className="mt-4 flex items-center gap-1.5 text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                        Ver cómo lo calculamos <ArrowRight className="size-3" />
-                      </div>
                     </CardContent>
-                    <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
                   </Card>
                 ))}
               </div>
@@ -264,7 +262,7 @@ export default async function Home() {
                     Pasa el cursor por el mapa: 2–3 frutales <span className="font-medium text-foreground">Fáciles</span> y viables por banda. Cada ficha trae poda, riego y fertilización adaptada a tu comuna. No buscamos “frutales”, buscamos tu frutal.
                   </p>
                 </div>
-                <Button variant="outline" className="hidden sm:inline-flex rounded-full" render={<Link href="/explorar" />}>
+                <Button variant="outline" className="hidden sm:inline-flex rounded-lg" render={<Link href="/explorar" />}>
                   Ver 30 especies <ArrowRight data-icon="inline-end" />
                 </Button>
               </div>
@@ -274,7 +272,7 @@ export default async function Home() {
               </div>
 
               <div className="mt-6 flex justify-center sm:hidden">
-                <Button variant="outline" className="w-full rounded-full" render={<Link href="/explorar" />}>
+                <Button variant="outline" className="w-full rounded-lg" render={<Link href="/explorar" />}>
                   Ver las 30 especies <ArrowRight data-icon="inline-end" />
                 </Button>
               </div>
@@ -285,7 +283,7 @@ export default async function Home() {
           {/* CTA final — greenhouse */}
           <section className="px-4 py-12 sm:py-16">
             <div className="mx-auto w-full max-w-6xl">
-              <Card className="overflow-hidden rounded-[1.5rem] border-0 bg-primary text-primary-foreground shadow-xl">
+              <Card className="overflow-hidden rounded-2xl border-0 bg-primary text-primary-foreground shadow-xl">
                 <div className="grid gap-8 p-8 sm:p-10 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
                   <div className="flex flex-col gap-4">
                     <Badge variant="secondary" className="w-fit bg-white/15 text-white hover:bg-white/20 border-0">
@@ -300,14 +298,14 @@ export default async function Home() {
                       Crea tu huerto en 2 minutos, elige tus especies y recibe tareas semanales por comuna. De Arica a Punta Arenas, con rigor agronómico y lenguaje humano.
                     </p>
                     <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-                      <Button size="lg" variant="secondary" className="h-11 rounded-full bg-white text-primary hover:bg-white/90" render={<Link href="/registro" />}>
+                      <Button size="lg" variant="secondary" className="h-11 rounded-lg bg-white text-primary hover:bg-white/90" render={<Link href="/registro" />}>
                         Crear mi huerto gratis
                         <ArrowRight data-icon="inline-end" />
                       </Button>
                       <Button
                         size="lg"
                         variant="outline"
-                        className="h-11 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                        className="h-11 rounded-lg border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
                         render={<Link href="/explorar" />}
                       >
                         Ver el catálogo
@@ -336,7 +334,7 @@ export default async function Home() {
                     <Separator className="my-1 bg-white/10" />
                     <div className="flex items-center justify-between text-xs text-white/60">
                       <span>346 comunas · 20 zonas</span>
-                      <span className="font-mono">v2 · 2026</span>
+                      <span className="font-mono">2026</span>
                     </div>
                   </div>
                 </div>
@@ -345,29 +343,28 @@ export default async function Home() {
           </section>
         </main>
 
-        <footer className="border-t bg-muted/20">
+        <footer className={isAuthenticated ? "border-t bg-muted/20 pb-24 md:pb-0" : "border-t bg-muted/20"}>
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-center gap-2">
-              <span className="inline-flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Sprout className="size-4" />
-              </span>
+              <BrandMark className="size-7" />
               <span>
                 <span className="font-heading font-semibold text-foreground">GardenFood</span> — huertos frutales informados, de Arica a Punta Arenas.
               </span>
             </p>
             <nav className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/explorar" />}>
+              <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/explorar" />}>
                 Explorar
               </Button>
-              <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/calculadoras" />}>
+              <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/calculadoras" />}>
                 Calculadoras
               </Button>
-              <Button variant="ghost" size="sm" className="h-8 rounded-full" render={<Link href="/registro" />}>
+              <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/registro" />}>
                 Registro
               </Button>
             </nav>
           </div>
         </footer>
+        {isAuthenticated ? <BottomNav /> : null}
       </div>
     </TelemetryProvider>
   );

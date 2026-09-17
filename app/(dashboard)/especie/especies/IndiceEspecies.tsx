@@ -74,7 +74,7 @@ export function IndiceEspecies({
             <p className="text-sm text-muted-foreground">
               Sin coincidencias para «{q}».
             </p>
-            <Button variant="outline" size="sm" className="rounded-full" onClick={() => setQ("")}>
+            <Button variant="outline" size="sm" className="rounded-lg" onClick={() => setQ("")}>
               Limpiar filtro
             </Button>
           </CardContent>
@@ -88,7 +88,7 @@ export function IndiceEspecies({
             href={`/especie/especies/${especie.dbKey}`}
             className="group"
           >
-            <Card className="h-full rounded-2xl transition-shadow group-hover:shadow-md">
+            <Card className="card-click h-full rounded-2xl">
               <CardContent className="flex h-full flex-col gap-2 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex flex-col">
@@ -117,7 +117,7 @@ export function IndiceEspecies({
 
         {otrasVisibles.map(({ especie, cantidad }) => (
           <Link key={especie.dbKey} href={`/especie/especies/${especie.dbKey}`} className="group">
-            <Card className="h-full rounded-2xl bg-muted/30 transition-shadow group-hover:shadow-md">
+            <Card className="card-click h-full rounded-2xl bg-muted/30">
               <CardContent className="flex h-full flex-col gap-2 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex flex-col">
@@ -151,7 +151,7 @@ export function IndiceEspecies({
                 trae la ficha de cuidados de paso.
               </span>
             </div>
-            <Button size="sm" className="w-fit rounded-full" render={<Link href="/huerto" />}>
+            <Button size="sm" className="w-fit rounded-lg" render={<Link href="/huerto" />}>
               Crear mi huerto con tarjetas
             </Button>
           </CardContent>

@@ -41,12 +41,15 @@ export function BottomNav({ esAdmin }: { esAdmin?: boolean }) {
               key={href}
               href={href}
               className={cn(
-                "flex h-14 flex-col items-center justify-center gap-1 text-[11px] font-medium",
+                "relative flex h-14 flex-col items-center justify-center gap-1 text-[11px] font-medium",
                 activo
-                  ? "text-primary"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
+              {activo ? (
+                <span className="absolute top-1.5 size-1 rounded-full bg-cosecha" aria-hidden />
+              ) : null}
               <Icon className="size-5" aria-hidden />
               <span>{label}</span>
             </Link>

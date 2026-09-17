@@ -39,7 +39,7 @@ export default async function CalendarioPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Calendario</h1>
+        <h1 className="font-heading text-2xl font-semibold">Calendario</h1>
         <p className="text-sm text-muted-foreground">
           Tareas programadas y sugerencias agronómicas.
         </p>

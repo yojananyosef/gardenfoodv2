@@ -132,7 +132,7 @@ export function CalendarioView({
         >
           <ChevronLeft className="size-5" aria-hidden />
         </Button>
-        <h2 className="font-fraunces text-xl font-semibold">
+        <h2 className="font-heading text-xl font-semibold">
           {MESES[mes]} {anio}
         </h2>
         <Button
@@ -184,7 +184,7 @@ export function CalendarioView({
                       key={t.id}
                       className={cn(
                         "size-1.5 rounded-full",
-                        t.estado === "completada" ? "bg-primary" : "bg-amber-400",
+                        t.estado === "completada" ? "bg-primary" : "bg-cosecha",
                       )}
                     />
                   ))}

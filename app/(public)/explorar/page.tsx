@@ -1,4 +1,4 @@
-import { Lock } from "lucide-react";
+import { ChevronRight, Lock } from "lucide-react";
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import { ESPECIES, esMuestraGratuis } from "@/lib/agronomy";
@@ -31,7 +31,7 @@ export default async function ExplorarPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-fraunces text-2xl font-semibold">Explorar especies</h1>
+        <h1 className="font-heading text-2xl font-semibold">Explorar especies</h1>
         <p className="text-sm text-muted-foreground">
           {esAnonimo
             ? `${ESPECIES.length} frutales con ficha técnica. El duraznero está desbloqueado como muestra; regístrate gratis para ver los demás.`
@@ -55,34 +55,38 @@ export default async function ExplorarPage() {
                     <a
                       href={`/especies/${especie.slug}`}
                       className={cn(
-                        "flex min-h-12 items-center justify-between gap-3 rounded-lg border bg-card px-4 text-sm font-medium text-card-foreground",
+                        "group row-click flex min-h-12 items-center justify-between gap-3 rounded-lg border bg-card px-4 text-sm font-medium text-card-foreground",
                         bloqueada && "opacity-75",
                       )}
                     >
-                      <span className="flex items-center gap-2">
-                        {especie.nombre}
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="truncate">{especie.nombre}</span>
                         {bloqueada ? (
-                          <Lock className="size-3.5 text-muted-foreground" aria-label="Ficha bloqueada" />
+                          <Lock className="size-3.5 shrink-0 text-muted-foreground" aria-label="Ficha bloqueada" />
                         ) : null}
                       </span>
-                      {bloqueada ? (
-                        <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                          Con registro
-                        </span>
-                      ) : (
-                        <span
-                          className={cn(
-                            "shrink-0 rounded-full px-2 py-0.5 text-[11px]",
-                            especie.dificultad === "Fácil"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : especie.dificultad === "Moderado"
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-orange-100 text-orange-700",
-                          )}
-                        >
-                          {especie.dificultad}
-                        </span>
-                      )}
+                      <span className="flex shrink-0 items-center gap-1.5">
+                        {bloqueada ? (
+                          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                            Con registro
+                          </span>
+                        ) : (
+                          <span
+                            className={cn(
+                              "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                              especie.dificultad === "Fácil"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-cosecha/10 text-cosecha-ink",
+                            )}
+                          >
+                            {especie.dificultad}
+                          </span>
+                        )}
+                        <ChevronRight
+                          className="size-4 text-muted-foreground transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+                          aria-hidden
+                        />
+                      </span>
                     </a>
                   </li>
                 );

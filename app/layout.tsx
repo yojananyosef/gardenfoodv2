@@ -81,9 +81,10 @@ const jsonLd = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#15803d",
+  themeColor: "#eee8d3",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Leaf, Mail, Lock, User, MapPinned, Sprout, ShieldCheck, Check } from "lucide-react";
+import { ArrowRight, Leaf, Mail, Lock, User, MapPinned } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -138,7 +138,7 @@ export default function RegistroPage() {
   return (
     <>
       <Card className="overflow-hidden rounded-[1.25rem] border-foreground/10 shadow-lg">
-        <div className="h-1 w-full bg-gradient-to-r from-primary via-emerald-500 to-amber-400" aria-hidden />
+        <div className="h-1 w-full bg-primary" aria-hidden />
         <CardHeader className="gap-3 pb-4">
           <div className="flex items-center justify-between gap-3">
             <Badge variant="secondary" className="gap-1.5 rounded-full">
@@ -146,27 +146,11 @@ export default function RegistroPage() {
             </Badge>
             <span className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">Paso 1 de 2</span>
           </div>
-          <div className="flex items-start gap-3">
-            <span className="hidden size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm sm:inline-flex">
-              <Sprout className="size-5" aria-hidden />
-            </span>
-            <div className="flex flex-col gap-1">
-              <CardTitle className="text-xl leading-none">Crear cuenta</CardTitle>
-              <CardDescription className="text-[13px] leading-relaxed">
-                Tu huerto a la medida de tu comuna. Sin tarjeta, cancela cuando quieras.
-              </CardDescription>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="inline-flex size-6 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
-              1
-            </span>
-            <span className="font-medium text-foreground">Cuenta</span>
-            <Separator className="mx-1 w-8" />
-            <span className="inline-flex size-6 items-center justify-center rounded-full bg-muted text-[11px] font-medium text-muted-foreground">
-              2
-            </span>
-            <span className="text-muted-foreground">Huerto</span>
+          <div className="flex flex-col gap-1">
+            <CardTitle className="text-xl leading-none">Crear cuenta</CardTitle>
+            <CardDescription className="text-[13px] leading-relaxed">
+              Tu huerto a la medida de tu comuna. Sin tarjeta, cancela cuando quieras.
+            </CardDescription>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
@@ -305,18 +289,6 @@ export default function RegistroPage() {
               )}
             </Button>
 
-            <FieldDescription className="text-center text-xs leading-relaxed">
-              Al crear tu cuenta aceptas los{" "}
-              <Link href="/legal/terminos" className="font-medium text-primary underline-offset-4 hover:underline">
-                términos
-              </Link>{" "}
-              y la{" "}
-              <Link href="/legal/privacidad" className="font-medium text-primary underline-offset-4 hover:underline">
-                privacidad
-              </Link>
-              . Usamos tu comuna solo para personalizar tu calendario.
-            </FieldDescription>
-
             <div className="flex items-start gap-2.5">
               <Checkbox id="edad-confirmada" required className="mt-0.5" />
               <label
@@ -324,7 +296,15 @@ export default function RegistroPage() {
                 className="cursor-pointer text-xs leading-relaxed text-muted-foreground"
               >
                 Declaro tener al menos <strong>14 años</strong>. Si tengo entre 14 y 16, cuento con
-                la autorización de mis representantes legales.
+                la autorización de mis representantes legales. Al crear tu cuenta aceptas los{" "}
+                <Link href="/legal/terminos" className="font-medium text-primary underline-offset-4 hover:underline">
+                  términos
+                </Link>{" "}
+                y la{" "}
+                <Link href="/legal/privacidad" className="font-medium text-primary underline-offset-4 hover:underline">
+                  privacidad
+                </Link>
+                .
               </label>
             </div>
           </form>
@@ -342,18 +322,6 @@ export default function RegistroPage() {
           </div>
           </>
           )}
-
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1">
-              <Check className="size-3 text-primary" /> 346 comunas
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1">
-              <Check className="size-3 text-primary" /> 20 zonas
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1">
-              <ShieldCheck className="size-3 text-primary" /> Datos chilenos
-            </span>
-          </div>
         </CardContent>
       </Card>
       <ConsentModal open={showConsent} deviceId={getDeviceId()} userId={userId} onConsent={handleConsentDone} />

@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Lock, LogIn, Mail, ShieldCheck, Sprout } from "lucide-react";
+import { Leaf, Lock, LogIn, Mail, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -61,7 +61,7 @@ function LoginForm() {
 
   return (
     <Card className="overflow-hidden rounded-[1.25rem] border-foreground/10 shadow-lg">
-      <div className="h-1 w-full bg-gradient-to-r from-primary via-emerald-500 to-amber-400" aria-hidden />
+      <div className="h-1 w-full bg-primary" aria-hidden />
       <CardHeader className="gap-3 pb-4">
         <div className="flex items-center justify-between gap-3">
           <Badge variant="secondary" className="gap-1.5 rounded-full">
@@ -71,17 +71,12 @@ function LoginForm() {
             <ShieldCheck className="size-3.5 text-primary" /> Seguro
           </span>
         </div>
-        <div className="flex items-start gap-3">
-          <span className="hidden size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm sm:inline-flex">
-            <Sprout className="size-5" aria-hidden />
-          </span>
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
             <CardTitle className="text-xl leading-none">Iniciar sesión</CardTitle>
             <CardDescription className="text-[13px] leading-relaxed">
               Entra a tu huerto para ver tus tareas y alertas de hoy.
             </CardDescription>
           </div>
-        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         {hasError ? (
@@ -173,11 +168,6 @@ function LoginForm() {
             </Button>
           </div>
           <p className="text-center font-mono text-[11px] text-muted-foreground">Próximamente · Por ahora usa correo y clave</p>
-        </div>
-
-        <div className="flex items-center justify-center gap-1.5 rounded-xl bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 shrink-0" />
-          <span>Cifrado y protegido · Tus datos de comuna solo personalizan tu calendario.</span>
         </div>
       </CardContent>
     </Card>
