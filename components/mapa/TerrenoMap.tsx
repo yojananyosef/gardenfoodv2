@@ -4,7 +4,6 @@ import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "reac
 import type * as Leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import { LocateFixed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   CENTRO_DEFAULT,
@@ -148,6 +147,7 @@ export function TerrenoMap({
   const leafletRef = useRef<typeof Leaflet | null>(null);
   const ubicacionMarkerRef = useRef<Leaflet.CircleMarker | null>(null);
   const ubicacionCirculoRef = useRef<Leaflet.Circle | null>(null);
+  const ubicacionBtnRef = useRef<HTMLButtonElement | null>(null);
   const inicialesRef = useRef(huertosIniciales);
   const puedeDibujarRef = useRef(puedeDibujar);
   const modoMarcaRef = useRef(modoMarca);
@@ -238,6 +238,31 @@ export function TerrenoMap({
         L.control
           .zoom({ zoomInTitle: "Acercar", zoomOutTitle: "Alejar" })
           .addTo(map);
+
+        // «Mi ubicación» integrado al mapa (abajo-derecha, estilo Google
+        // Maps) en vez de un botón React desacoplado bajo el mapa. Es DOM
+        // puro de Leaflet: llama a la misma localización en dos fases.
+        class ControlUbicacion extends L.Control {
+          override onAdd(): HTMLElement {
+            const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+            const btn = L.DomUtil.create("button", "", container) as HTMLButtonElement;
+            btn.type = "button";
+            btn.title = "Centrar en mi ubicación";
+            btn.setAttribute("aria-label", "Centrar en mi ubicación");
+            btn.style.cssText =
+              "display:flex;align-items:center;justify-content:center;width:34px;height:34px;cursor:pointer;background:#fff;border:none;border-radius:4px;color:#333;";
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>`;
+            L.DomEvent.disableClickPropagation(container);
+            L.DomEvent.disableScrollPropagation(container);
+            L.DomEvent.on(btn, "click", (ev) => {
+              L.DomEvent.stopPropagation(ev);
+              void centrarEnMiUbicacion();
+            });
+            ubicacionBtnRef.current = btn;
+            return container;
+          }
+        }
+        new ControlUbicacion({ position: "bottomright" }).addTo(map);
 
         const satelite = L.tileLayer(ESRI_URL, {
           maxZoom: MAPA_MAX_ZOOM,
@@ -629,10 +654,14 @@ export function TerrenoMap({
       sateliteRef.current = null;
       ubicacionMarkerRef.current = null;
       ubicacionCirculoRef.current = null;
+      ubicacionBtnRef.current = null;
       setMapaListo(false);
     };
     // El mapa se monta una sola vez; los huertos iniciales ya están cargados
     // cuando la sección lo renderiza (se oculta mientras carga).
+    // centrarEnMiUbicacion solo usa refs + setState: el closure del primer
+    // render sigue válido para el botón del control.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Con keepMounted el tab puede ocultarse (display:none) y volver: el
@@ -657,6 +686,20 @@ export function TerrenoMap({
       ro.disconnect();
     };
   }, [mapaListo]);
+
+  // Estado del botón de ubicación dentro del mapa (DOM de Leaflet, fuera
+  // de React): se atenúa y cambia su etiqueta mientras localiza.
+  useEffect(() => {
+    const btn = ubicacionBtnRef.current;
+    if (!mapaListo || !btn) return;
+    btn.disabled = localizando;
+    btn.classList.toggle("leaflet-disabled", localizando);
+    btn.style.opacity = localizando ? "0.5" : "";
+    btn.style.cursor = localizando ? "wait" : "pointer";
+    const etiqueta = localizando ? "Ubicando…" : "Centrar en mi ubicación";
+    btn.setAttribute("aria-label", etiqueta);
+    btn.title = etiqueta;
+  }, [localizando, mapaListo]);
 
   // Resalta el polígono del huerto activo sin remontar el mapa.
   useEffect(() => {
@@ -772,6 +815,33 @@ export function TerrenoMap({
   /** Más de esto se considera señal débil: se avisa en vez de callar. */
   const UMBRAL_PRECISION_M = 100;
 
+  /** Guía paso a paso para quien bloqueó el permiso sin darse cuenta
+   *  (lenguaje simple: sirve para un niño o un anciano). */
+  const GUIA_UBICACION_BLOQUEADA =
+    "La ubicación está bloqueada en tu navegador. Actívala así: 1) toca el candado junto a la dirección de esta página, 2) toca Ubicación y elige Permitir, 3) pulsa de nuevo el botón de ubicación del mapa.";
+
+  const [infoUbicacion, setInfoUbicacion] = useState<string | null>(null);
+
+  type EstadoPermisoGeo = "granted" | "prompt" | "denied" | "desconocido";
+
+  /** Pre-chequeo del permiso ANTES de pedir la posición: si ya está
+   *  bloqueado no se lanza una petición condenada al fallo y se muestra
+   *  la guía al instante. Con fallback al flujo actual si el navegador
+   *  no soporta la Permissions API. */
+  async function estadoPermisoUbicacion(): Promise<EstadoPermisoGeo> {
+    try {
+      const permisos = navigator.permissions as Permissions | undefined;
+      if (!permisos?.query) return "desconocido";
+      const estado = await permisos.query({ name: "geolocation" as PermissionName });
+      if (estado.state === "granted" || estado.state === "prompt" || estado.state === "denied") {
+        return estado.state;
+      }
+      return "desconocido";
+    } catch {
+      return "desconocido";
+    }
+  }
+
   function leerPosicion(opciones: PositionOptions): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (!("geolocation" in navigator)) {
@@ -788,7 +858,7 @@ export function TerrenoMap({
     }
     const code = (err as GeolocationPositionError | undefined)?.code;
     if (code === 1) {
-      return "Permiso denegado. Actívalo en el navegador (candado → Ubicación → Permitir) y vuelve a intentar.";
+      return GUIA_UBICACION_BLOQUEADA;
     }
     if (code === 2) return "Ubicación no disponible en este dispositivo.";
     if (code === 3) {
@@ -855,8 +925,23 @@ export function TerrenoMap({
     const vigente = () => pedidoUbicacionRef.current === pedido && mapRef.current;
     setLocalizando(true);
     setUbicacionError(null);
+    setInfoUbicacion(null);
     let mejor: { lat: number; lng: number; accuracy: number | null } | null = null;
     try {
+      // Pre-chequeo: si el permiso ya está bloqueado se muestra la guía
+      // paso a paso al instante, sin pedir una posición que va a fallar.
+      const permiso = await estadoPermisoUbicacion();
+      if (!vigente()) return;
+      if (permiso === "denied") {
+        setPrecisionM(null);
+        setUbicacionError(GUIA_UBICACION_BLOQUEADA);
+        return;
+      }
+      if (permiso === "prompt") {
+        // Primera vez (o permiso revertido a pregunta): se avisa qué hacer
+        // cuando el navegador pregunte, para no perder ese único intento.
+        setInfoUbicacion("Tu navegador te va a preguntar: pulsa «Permitir» para centrar el mapa en tu posición.");
+      }
       // Fase 1: respuesta inmediata (caché/WiFi/red). En iOS evita el largo
       // arranque del GPS antes de mostrar algo.
       try {
@@ -907,18 +992,21 @@ export function TerrenoMap({
         if (!mejor) throw err;
       }
       if (!mejor) return;
+      // Hubo fix (rápido o fino): el aviso previo ya cumplió su misión.
+      setInfoUbicacion(null);
       if (
         mejor.accuracy !== null &&
         Number.isFinite(mejor.accuracy) &&
         mejor.accuracy > UMBRAL_PRECISION_M
       ) {
         setUbicacionError(
-          `Señal débil (±${Math.round(mejor.accuracy)} m): el punto es aproximado. Sal al exterior o acércate a una ventana y pulsa «Mi ubicación» de nuevo.`,
+          `Señal débil (±${Math.round(mejor.accuracy)} m): el punto es aproximado. Sal al exterior o acércate a una ventana y pulsa de nuevo el botón de ubicación del mapa.`,
         );
       }
     } catch (err) {
       if (!vigente()) return;
       setPrecisionM(null);
+      setInfoUbicacion(null);
       setUbicacionError(mensajeErrorUbicacion(err));
     } finally {
       if (vigente()) setLocalizando(false);
@@ -958,52 +1046,49 @@ export function TerrenoMap({
             Cargando satélite…
           </p>
         )}
+        {/* Precisión y errores de ubicación como chips superpuestos al mapa
+            (el botón vive dentro del mapa, abajo-derecha). */}
+        {precisionM !== null && Number.isFinite(precisionM) && !localizando ? (
+          <p className="pointer-events-none absolute left-2 bottom-2 rounded-full bg-black/55 px-2 py-0.5 text-[11px] text-white">
+            ±{Math.round(precisionM)} m
+          </p>
+        ) : null}
+        {ubicacionError ? (
+          <p
+            role="alert"
+            className="absolute left-2 right-14 bottom-2 rounded-lg bg-amber-50/95 px-2.5 py-1.5 text-[11px] leading-snug text-amber-800 shadow"
+          >
+            {ubicacionError}
+          </p>
+        ) : infoUbicacion ? (
+          <p className="absolute left-2 right-14 bottom-2 rounded-lg bg-sky-50/95 px-2.5 py-1.5 text-[11px] leading-snug text-sky-900 shadow">
+            {infoUbicacion}
+          </p>
+        ) : null}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground">
-          {dibujando && areaPantalla !== null
-            ? `Superficie aproximada: ${formatAreaM2(areaPantalla.total)}`
-            : areaPantalla && areaPantalla.huertos > 0
-              ? `${areaPantalla.huertos} ${areaPantalla.huertos === 1 ? "huerto" : "huertos"} · Superficie total: ${formatAreaM2(areaPantalla.total)}`
-              : modoMarca
-                ? "Activa el ícono de polígono para delimitar tu terreno primero."
-                : "Activa el ícono de polígono y toca las esquinas de tu terreno."}
-        </p>
-        <div className="flex items-center gap-2">
+      {/* Barra contextual solo mientras se dibuja: superficie en vivo +
+          cancelar. El resumen agregado («N huertos · Superficie total») se
+          eliminó: el nombre vive en la card y el conteo en los chips. */}
+      {dibujando && areaPantalla !== null ? (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs text-muted-foreground">
+            Superficie aproximada: {formatAreaM2(areaPantalla.total)}
+          </p>
           <Button
             type="button"
             variant="outline"
             size="sm"
             className="min-h-9"
-            onClick={() => void centrarEnMiUbicacion()}
-            disabled={localizando}
+            onClick={cancelarDibujo}
           >
-            <LocateFixed className="size-4" />
-            {localizando ? "Ubicando…" : "Mi ubicación"}
+            Cancelar dibujo
           </Button>
-          {precisionM !== null && Number.isFinite(precisionM) && !localizando ? (
-            <span className="text-[11px] text-muted-foreground">
-              ±{Math.round(precisionM)} m
-            </span>
-          ) : null}
-          {dibujando && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="min-h-9"
-              onClick={cancelarDibujo}
-            >
-              Cancelar dibujo
-            </Button>
-          )}
         </div>
-      </div>
-      {ubicacionError && (
-        <p className="text-xs text-amber-700" role="alert">
-          {ubicacionError}
+      ) : huertosIniciales.length === 0 ? (
+        <p className="text-xs text-muted-foreground">
+          Activa el ícono de polígono y toca las esquinas de tu terreno.
         </p>
-      )}
+      ) : null}
       <p className="text-[11px] text-muted-foreground">
         Dibuja cada huerto con el ícono de polígono; puedes tener varios. Edita
         vértices o borra con las herramientas del mapa; con «Agregar árboles»

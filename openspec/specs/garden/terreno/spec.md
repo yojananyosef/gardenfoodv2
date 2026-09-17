@@ -6,7 +6,7 @@ Permite al usuario ver su ubicación sobre un mapa y delimitar los bordes de sus
 ## Requirements
 
 ### Requirement: Visualización del mapa con ubicación del usuario
-El sistema SHALL mostrar un mapa interactivo (calles y vista satelital conmutables) centrado en la ubicación del usuario, sin requerir claves de API ni servicios pagos. La vista inicial SHALL fijarse una sola vez (huertos → encuadre de sus límites; si no → vista país con refinamiento async por geolocalización) para no abortar la carga de teselas, SHALL revalidar el tamaño del contenedor tras el primer pintado y SHALL mostrar un distintivo "Cargando satélite…" hasta los primeros tiles.
+El sistema SHALL mostrar un mapa interactivo (calles y vista satelital conmutables) centrado en la ubicación del usuario, sin requerir claves de API ni servicios pagos. La vista inicial SHALL fijarse una sola vez (huertos → encuadre de sus límites; si no → vista país con refinamiento async por geolocalización) para no abortar la carga de teselas, SHALL revalidar el tamaño del contenedor tras el primer pintado y SHALL mostrar un distintivo "Cargando satélite…" hasta los primeros tiles. El botón «Mi ubicación» SHALL vivir integrado al mapa como control abajo-derecha (con su precisión y errores como chips superpuestos, no como botones fuera del mapa).
 
 #### Scenario: Mapa se centra en la geolocalización del navegador
 - **WHEN** el usuario autoriza el permiso de geolocalización al abrir el mapa
@@ -83,7 +83,7 @@ El sistema SHALL persistir cada huerto como una fila con GeoJSON asociado exclus
 
 #### Scenario: Superficie total recalculada
 - **WHEN** el usuario crea, edita o elimina un huerto
-- **THEN** el sistema muestra y persiste la superficie total en m² como suma de todos sus huertos
+- **THEN** el sistema persiste la superficie total en m² como suma de todos sus huertos y muestra la superficie por huerto en su card (sin línea agregada bajo el mapa: el nombre vive en la card y el conteo en los chips)
 
 ### Requirement: Coordenadas del centro de cada huerto
 El sistema SHALL mostrar para cada huerto las coordenadas geográficas de su centro (latitud y longitud a 5 decimales) junto a su superficie, y SHALL permitir copiarlas al portapapeles.
