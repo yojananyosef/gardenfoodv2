@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { Box, MapPin } from "lucide-react";
+import { BotonFichaEspecie } from "@/components/huerto/FichaEspecieSheet";
+
+const CLAVE_HUERTO_ACTIVO = "gf-huerto-activo";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
-import { ESPECIES, getEspeciePorDbKey, urlFichaEspecie } from "@/lib/agronomy";
+import { ESPECIES, getEspeciePorDbKey } from "@/lib/agronomy";
 import { colorDeEspecie } from "@/lib/huerto/plano";
 import type { Arbol, HuertoResumen } from "@/types";
 
@@ -36,12 +38,29 @@ export function WorkbenchModular({
   arboles: Arbol[];
 }) {
   const [tab, setTab] = useState<"satelite" | "matriz" | "tres-d">("satelite");
-  const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
+  // Huerto activo recordado en la sesión: al volver a /huerto retoma donde
+  // estaba trabajando en vez de saltar siempre al primer polígono.
+  const [huertoId, setHuertoId] = useState<string | null>(() => {
+    try {
+      const recordado = sessionStorage.getItem(CLAVE_HUERTO_ACTIVO);
+      if (recordado && huertos.some((h) => h.id === recordado)) return recordado;
+    } catch {
+      // Sin sessionStorage (SSR): se cae al primero abajo.
+    }
+    return huertos[0]?.id ?? null;
+  });
   // El id efectivo cae al primer huerto si el seleccionado ya no existe
   // (p. ej. recién eliminado en el satélite antes del refresh).
   const huertoActivoId = huertos.some((h) => h.id === huertoId)
     ? huertoId
     : (huertos[0]?.id ?? null);
+  useEffect(() => {
+    try {
+      if (huertoActivoId) sessionStorage.setItem(CLAVE_HUERTO_ACTIVO, huertoActivoId);
+    } catch {
+      // Persistencia best-effort: no bloquea el lienzo.
+    }
+  }, [huertoActivoId]);
 
   // Leyenda igual que en los tabs 2D/3D: chips por especie del huerto activo.
   const leyenda = useMemo(() => {
@@ -106,30 +125,35 @@ export function WorkbenchModular({
               </Select>
             ) : null}
           </div>
-          <TabsContent value="satelite" className="mt-0">
+          {/* keepMounted: el mapa satelital no se destruye al cambiar de tab,
+              así los tiles y la instancia Leaflet se conservan en memoria. */}
+          <TabsContent value="satelite" keepMounted className="mt-0">
             <div className="flex flex-col gap-3">
-              <TerrenoSection huertoId={huertoActivoId} onHuertoChange={setHuertoId} />
+              <TerrenoSection
+                huertoId={huertoActivoId}
+                onHuertoChange={setHuertoId}
+                huertosIniciales={huertos}
+                arbolesIniciales={arboles}
+              />
               {leyenda.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
                   {leyenda.map((item) => (
-                    <Link
+                    <BotonFichaEspecie
                       key={item.especie}
-                      href={urlFichaEspecie(item.especie)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title={`Ver ficha de ${item.nombre}`}
-                      className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs transition-colors hover:bg-muted/50"
+                      dbKey={item.especie}
+                      nombre={item.nombre}
+                      variante="chip"
                     >
                       <span className="size-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                       {item.nombre}
                       <span className="font-mono text-muted-foreground">×{item.total}</span>
-                    </Link>
+                    </BotonFichaEspecie>
                   ))}
                 </div>
               ) : null}
             </div>
           </TabsContent>
-          <TabsContent value="matriz" className="mt-0">
+          <TabsContent value="matriz" keepMounted className="mt-0">
             <PlanoHuerto
               huertos={huertos}
               arboles={arboles}
@@ -138,14 +162,19 @@ export function WorkbenchModular({
               huertoId={huertoActivoId}
             />
           </TabsContent>
+          {/* 3D sin keepMounted a propósito: cada canvas WebGL vivo cuenta
+              para el límite del navegador ("Too many active WebGL contexts").
+              Satélite (tiles) y 2D (SVG) sí se conservan montados. */}
           <TabsContent value="tres-d" className="mt-0">
-            <PlanoHuerto
-              huertos={huertos}
-              arboles={arboles}
-              especies={ESPECIES}
-              modoForzado="3d"
-              huertoId={huertoActivoId}
-            />
+            {tab === "tres-d" ? (
+              <PlanoHuerto
+                huertos={huertos}
+                arboles={arboles}
+                especies={ESPECIES}
+                modoForzado="3d"
+                huertoId={huertoActivoId}
+              />
+            ) : null}
           </TabsContent>
         </Tabs>
       </CardContent>

@@ -245,11 +245,11 @@ El asistente de 4 pasos (Terreno → Árboles → Posicionar → Listo, con guar
 
 ### Requirement: Selector global de huerto
 
-El selector global de huerto SHALL filtrar el panel, el lienzo y los contadores de la vista sin recargar la página; la elección SHALL persistir para toda la sesión.
+El selector global de huerto SHALL filtrar el panel, el lienzo y los contadores de la vista sin recargar la página; la elección SHALL persistir para toda la sesión. El mapa SHALL dibujar el polígono del huerto activo con un borde destacado distinto a los demás, SHALL encuadrarlo al abrir la vista cuando hay un activo recordado y SHALL seleccionar el huerto al tocar su polígono.
 
 ### Requirement: Puente único de árbol a ficha de especie
 
-El detalle de un árbol (plano, mapa o ficha) SHALL incluir la acción «Ver ficha de <especie>» que navegue a la ficha pública aprobada (`https://gardenfoodv2.vercel.app/especies/<slug>`, slug en minúsculas derivado del `dbKey` vía `urlFichaEspecie`, en nueva pestaña). La vista interna `/especie/especies/[especie]` SHALL quedar sin uso hasta su aprobación (no se enlaza desde ningún flujo). La ficha de árbol SHALL conservar solo el estado individual del árbol (posición, edad estimada, fecha de plantación, notas) sin duplicar los cuidados.
+El detalle de un árbol (plano, mapa o ficha) SHALL incluir la acción «Ver ficha de <especie>» que abra la ficha pública aprobada (`/especies/<slug>`, slug en minúsculas derivado del `dbKey` vía `urlFichaEspecie`) en un sheet sobre la misma página, preservando el estado del mapa (zoom, polígono, modo marca) al cerrar. El sheet SHALL ofrecer un enlace secundario a la página completa de la ficha. La vista interna `/especie/especies/[especie]` SHALL quedar sin uso hasta su aprobación (no se enlaza desde ningún flujo). La ficha de árbol SHALL conservar solo el estado individual del árbol (posición, edad estimada, fecha de plantación, notas) sin duplicar los cuidados.
 
 #### Scenario: Navegar de árbol a ficha de especie
 
@@ -258,7 +258,7 @@ El detalle de un árbol (plano, mapa o ficha) SHALL incluir la acción «Ver fic
 
 ### Requirement: Leyenda por especie con conteos y ficha
 
-La leyenda del plano SHALL mostrar por cada especie su color, su conteo y un enlace a su ficha («/especie/especies/<especie>»), de modo que el estado del inventario se lee de un vistazo sin panel lateral.
+La leyenda del plano SHALL mostrar por cada especie su color, su conteo y un botón que abre su ficha en un sheet sobre la misma página, de modo que el estado del inventario se lee de un vistazo sin panel lateral y sin salir del mapa.
 
 #### Scenario: Especie con varios ejemplares
 

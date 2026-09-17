@@ -37,17 +37,28 @@ export function TerrenoSection({
   alto = 520,
   huertoId,
   onHuertoChange,
+  huertosIniciales,
+  arbolesIniciales,
 }: {
   alto?: number;
   /** Huerto activo global (lo controla el Workbench junto a los tabs). */
   huertoId?: string | null;
   onHuertoChange?: (id: string | null) => void;
+  /** Datos ya cargados en servidor (/huerto): evitan refetchear huertos+árboles en cliente. */
+  huertosIniciales?: { id: string; nombre: string; superficieM2: number; feature: HuertoItem["feature"] | null }[];
+  arbolesIniciales?: Arbol[];
 }) {
   const router = useRouter();
-  const [huertos, setHuertos] = useState<HuertoItem[]>([]);
-  const [arboles, setArboles] = useState<Arbol[]>([]);
+  const [huertos, setHuertos] = useState<HuertoItem[]>(() =>
+    (huertosIniciales ?? []).flatMap((h) =>
+      h.feature ? [{ id: h.id, nombre: h.nombre, feature: h.feature, superficieM2: h.superficieM2 }] : [],
+    ),
+  );
+  const [arboles, setArboles] = useState<Arbol[]>(() => arbolesIniciales ?? []);
   const [especies, setEspecies] = useState<OpcionEspecie[]>([]);
-  const [cargando, setCargando] = useState(true);
+  // Si el server ya entregó huertos+árboles, no mostramos esqueleto completo:
+  // solo falta el catálogo de especies + límites (rápido).
+  const [cargando, setCargando] = useState(!(huertosIniciales && arbolesIniciales));
   const [limiteHuertos, setLimiteHuertos] = useState<number | null>(null);
   const [limiteArboles, setLimiteArboles] = useState<number | null>(null);
   const [modoMarca, setModoMarca] = useState(false);
@@ -57,6 +68,7 @@ export function TerrenoSection({
   const [nombreBorrador, setNombreBorrador] = useState("");
   const [arbolEditando, setArbolEditando] = useState<Arbol | null>(null);
 
+  const tieneIniciales = Boolean(huertosIniciales && arbolesIniciales);
   useEffect(() => {
     let active = true;
     (async () => {
@@ -65,54 +77,71 @@ export function TerrenoSection({
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        const [huertosRes, arbolesRes, perfilRes, especiesRes] = await Promise.all([
-          supabase
-            .from("gf_huertos")
-            .select("id, nombre, terreno_geojson, superficie_m2, created_at")
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: true }),
-          supabase
-            .from("gf_arboles")
-            .select(
-              "id, especie, cantidad, fecha_plantacion, observaciones, huerto_id, pos_x, pos_y, created_at",
-            )
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: true }),
-          supabase.from("perfiles").select("plan").eq("id", user.id).maybeSingle(),
-          listarEspecies(),
-        ]);
-        if (active) {
-          const listaHuertos = (huertosRes.data ?? []).flatMap((row) => {
-            const feature = parseTerrenoFeature(row.terreno_geojson);
-            if (!feature) return [];
-            return [
-              {
-                id: row.id as string,
-                nombre: (row.nombre as string) ?? "Mi huerto",
-                feature,
-                superficieM2: Number(row.superficie_m2 ?? 0),
-              },
-            ];
-          });
-          const listaArboles: Arbol[] = (arbolesRes.data ?? []).map((row) => ({
-            id: row.id as string,
-            especie: row.especie as string,
-            cantidad: Number(row.cantidad ?? 1),
-            fechaPlantacion: (row.fecha_plantacion as string | null) ?? null,
-            observaciones: (row.observaciones as string | null) ?? null,
-            huertoId: (row.huerto_id as string | null) ?? null,
-            posX: row.pos_x === null ? null : Number(row.pos_x),
-            posY: row.pos_y === null ? null : Number(row.pos_y),
-            createdAt: (row.created_at as string) ?? new Date().toISOString(),
-          }));
-          setHuertos(listaHuertos);
-          setArboles(listaArboles);
-          setEspecies(especiesRes);
-          setEspecieActiva(especiesRes[0]?.dbKey ?? null);
-          const plan = (perfilRes.data?.plan as PlanAcceso | undefined) ?? "gratuito";
-          const limites = limitesDe(plan);
-          setLimiteHuertos(limites.huertos);
-          setLimiteArboles(limites.arboles);
+        if (tieneIniciales) {
+          // Ruta rápida: el server ya dio huertos+árboles; solo faltan
+          // especies + plan (sin consultas pesadas a gf_huertos/gf_arboles).
+          const [perfilRes, especiesRes] = await Promise.all([
+            supabase.from("perfiles").select("plan").eq("id", user.id).maybeSingle(),
+            listarEspecies(),
+          ]);
+          if (active) {
+            setEspecies(especiesRes);
+            setEspecieActiva((prev) => prev ?? especiesRes[0]?.dbKey ?? null);
+            const plan = (perfilRes.data?.plan as PlanAcceso | undefined) ?? "gratuito";
+            const limites = limitesDe(plan);
+            setLimiteHuertos(limites.huertos);
+            setLimiteArboles(limites.arboles);
+          }
+        } else {
+          const [huertosRes, arbolesRes, perfilRes, especiesRes] = await Promise.all([
+            supabase
+              .from("gf_huertos")
+              .select("id, nombre, terreno_geojson, superficie_m2, created_at")
+              .eq("user_id", user.id)
+              .order("created_at", { ascending: true }),
+            supabase
+              .from("gf_arboles")
+              .select(
+                "id, especie, cantidad, fecha_plantacion, observaciones, huerto_id, pos_x, pos_y, created_at",
+              )
+              .eq("user_id", user.id)
+              .order("created_at", { ascending: true }),
+            supabase.from("perfiles").select("plan").eq("id", user.id).maybeSingle(),
+            listarEspecies(),
+          ]);
+          if (active) {
+            const listaHuertos = (huertosRes.data ?? []).flatMap((row) => {
+              const feature = parseTerrenoFeature(row.terreno_geojson);
+              if (!feature) return [];
+              return [
+                {
+                  id: row.id as string,
+                  nombre: (row.nombre as string) ?? "Mi huerto",
+                  feature,
+                  superficieM2: Number(row.superficie_m2 ?? 0),
+                },
+              ];
+            });
+            const listaArboles: Arbol[] = (arbolesRes.data ?? []).map((row) => ({
+              id: row.id as string,
+              especie: row.especie as string,
+              cantidad: Number(row.cantidad ?? 1),
+              fechaPlantacion: (row.fecha_plantacion as string | null) ?? null,
+              observaciones: (row.observaciones as string | null) ?? null,
+              huertoId: (row.huerto_id as string | null) ?? null,
+              posX: row.pos_x === null ? null : Number(row.pos_x),
+              posY: row.pos_y === null ? null : Number(row.pos_y),
+              createdAt: (row.created_at as string) ?? new Date().toISOString(),
+            }));
+            setHuertos(listaHuertos);
+            setArboles(listaArboles);
+            setEspecies(especiesRes);
+            setEspecieActiva(especiesRes[0]?.dbKey ?? null);
+            const plan = (perfilRes.data?.plan as PlanAcceso | undefined) ?? "gratuito";
+            const limites = limitesDe(plan);
+            setLimiteHuertos(limites.huertos);
+            setLimiteArboles(limites.arboles);
+          }
         }
       }
       if (active) setCargando(false);
@@ -120,6 +149,7 @@ export function TerrenoSection({
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const puedeDibujar = limiteHuertos === null || huertos.length < limiteHuertos;
@@ -129,6 +159,26 @@ export function TerrenoSection({
   useEffect(() => {
     huertosRef.current = huertos;
   }, [huertos]);
+
+  // Los datos del server (router.refresh tras mover/crear/eliminar en 2D, 3D
+  // o satélite) son la fuente de verdad: al cambiar las props iniciales se
+  // sincronizan al estado local para que el satélite refleje lo movido en 2D.
+  const huertosInicialesRef = useRef(huertosIniciales);
+  const arbolesInicialesRef = useRef(arbolesIniciales);
+  useEffect(() => {
+    if (huertosIniciales && huertosIniciales !== huertosInicialesRef.current) {
+      huertosInicialesRef.current = huertosIniciales;
+      setHuertos(
+        huertosIniciales.flatMap((h) =>
+          h.feature ? [{ id: h.id, nombre: h.nombre, feature: h.feature, superficieM2: h.superficieM2 }] : [],
+        ),
+      );
+    }
+    if (arbolesIniciales && arbolesIniciales !== arbolesInicialesRef.current) {
+      arbolesInicialesRef.current = arbolesIniciales;
+      setArboles(arbolesIniciales);
+    }
+  }, [huertosIniciales, arbolesIniciales]);
 
   // El huerto activo lo controla el Workbench: al cambiar arriba se encuadra
   // el mapa (se salta el primer render, el mapa ya ajusta a todo al montar).
@@ -380,6 +430,8 @@ export function TerrenoSection({
         arboles={arboles}
         puedeDibujar={puedeDibujar}
         modoMarca={modoMarca}
+        huertoActivoId={huertoId ?? null}
+        onSeleccionarHuerto={(id) => onHuertoChange?.(id)}
         onCrear={handleCrear}
         onEditar={handleEditar}
         onEliminar={handleEliminar}

@@ -55,14 +55,12 @@ export function getEspeciePorDbKey(dbKey: string): Especie | null {
   return ESPECIES.find((e) => e.dbKey === dbKey) ?? null;
 }
 
-/** URL pública de la ficha de una especie (sitio aprobado en producción).
- *  La vista interna /especie/especies/[especie] aún no está aprobada y
- *  queda sin uso: todos los puentes árbol → ficha usan esta URL. */
-const FICHAS_PUBLICAS_BASE = "https://gardenfoodv2.vercel.app/especies";
-
+/** URL de la ficha de una especie (ruta pública aprobada).
+ *  Relativa a propósito: los puentes árbol → ficha navegan en la misma
+ *  pestaña (o en un sheet) y funcionan en prod, previews y local. */
 export function urlFichaEspecie(dbKey: string): string {
   const slug = getEspeciePorDbKey(dbKey)?.slug ?? dbKey.toLowerCase();
-  return `${FICHAS_PUBLICAS_BASE}/${slug}`;
+  return `/especies/${slug}`;
 }
 
 export function getEspeciesPorZona(zonaId: number): {

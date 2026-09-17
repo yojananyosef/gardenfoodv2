@@ -102,7 +102,9 @@ export default async function HuertoPage() {
     huertos,
     arboles,
     sinUbicar,
-    terrenoSlot: <TerrenoSection alto={300} />,
+    // Se monta solo al abrir el asistente (Dialog) y reutiliza los datos del
+    // server para no refetchear huertos+árboles ni recargar tiles de más.
+    terrenoSlot: <TerrenoSection alto={300} huertosIniciales={huertos} arbolesIniciales={arboles} />,
     altaSlot: (
       <div className="flex flex-col gap-1.5 rounded-2xl border bg-card p-4">
         <p className="text-sm font-medium">Planta tocando tu terreno</p>

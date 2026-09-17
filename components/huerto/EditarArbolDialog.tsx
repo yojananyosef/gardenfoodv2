@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown, Trash2 } from "lucide-react";
+import { BotonFichaEspecie } from "@/components/huerto/FichaEspecieSheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
-import { getEspeciePorDbKey, urlFichaEspecie } from "@/lib/agronomy";
+import { getEspeciePorDbKey } from "@/lib/agronomy";
 import { cn } from "@/lib/utils";
 import type { Arbol } from "@/types";
 
@@ -98,15 +98,8 @@ export function EditarArbolDialog({
         Árbol individual. Cada unidad se edita por separado.
       </DialogDescription>
       <div className="mt-2 flex flex-col gap-3">
-        {/* Puente E3 primero: ficha pública aprobada (nueva pestaña) */}
-        <Link
-          href={urlFichaEspecie(arbol.especie)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full rounded-full border px-3 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-        >
-          Ver ficha de la especie →
-        </Link>
+        {/* Puente E3 primero: ficha en sheet sobre la misma página */}
+        <BotonFichaEspecie dbKey={arbol.especie} nombre={nombreArbol(arbol.especie)} />
         <button
           type="button"
           onClick={() => setDetallesAbiertos((v) => !v)}

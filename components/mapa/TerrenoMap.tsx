@@ -73,10 +73,18 @@ type TerrenoMapProps = {
   onEditarArbol: (id: string) => void;
   onFueraHuerto: () => void;
   nombreArbol: (especie: string) => string;
+  /** Huerto activo global: se dibuja destacado para no confundirlo con los demás. */
+  huertoActivoId?: string | null;
+  /** Click en un polígono selecciona ese huerto (sin salir del mapa). */
+  onSeleccionarHuerto?: (id: string) => void;
   /** Alto del contenedor del mapa en px (default 520; usa menos dentro de modales). */
   alto?: number;
   ref?: Ref<TerrenoMapHandle>;
 };
+
+// Borde del polígono activo vs. inactivos: el activo se distingue de un vistazo.
+const ESTILO_POLIGONO_ACTIVO = { color: "#22c55e", weight: 3, fillOpacity: 0.12 };
+const ESTILO_POLIGONO_INACTIVO = { color: "#3388ff", weight: 2, fillOpacity: 0.2 };
 
 export interface TerrenoMapHandle {
   /** Encuadra un huerto (o todos con null) sin remontar el mapa. */
@@ -127,6 +135,8 @@ export function TerrenoMap({
   onEditarArbol,
   onFueraHuerto,
   nombreArbol,
+  huertoActivoId,
+  onSeleccionarHuerto,
   alto = 520,
   ref,
 }: TerrenoMapProps) {
@@ -149,12 +159,16 @@ export function TerrenoMap({
   const onEditarArbolRef = useRef(onEditarArbol);
   const onFueraHuertoRef = useRef(onFueraHuerto);
   const nombreArbolRef = useRef(nombreArbol);
+  const huertoActivoRef = useRef(huertoActivoId ?? null);
+  const onSeleccionarHuertoRef = useRef(onSeleccionarHuerto);
   const [mapaListo, setMapaListo] = useState(false);
   const [cargandoSatelite, setCargandoSatelite] = useState(true);
 
   useEffect(() => {
     puedeDibujarRef.current = puedeDibujar;
     modoMarcaRef.current = modoMarca;
+    huertoActivoRef.current = huertoActivoId ?? null;
+    onSeleccionarHuertoRef.current = onSeleccionarHuerto;
     onCrearRef.current = onCrear;
     onEditarRef.current = onEditar;
     onEliminarRef.current = onEliminar;
@@ -163,7 +177,7 @@ export function TerrenoMap({
     onEditarArbolRef.current = onEditarArbol;
     onFueraHuertoRef.current = onFueraHuerto;
     nombreArbolRef.current = nombreArbol;
-  }, [puedeDibujar, modoMarca, onCrear, onEditar, onEliminar, onLimite, onMarcarArbol, onEditarArbol, onFueraHuerto, nombreArbol]);
+  }, [puedeDibujar, modoMarca, huertoActivoId, onSeleccionarHuerto, onCrear, onEditar, onEliminar, onLimite, onMarcarArbol, onEditarArbol, onFueraHuerto, nombreArbol]);
 
   const [areaPantalla, setAreaPantalla] = useState<{
     total: number;
@@ -206,6 +220,9 @@ export function TerrenoMap({
     (async () => {
       try {
         const L = (await import("leaflet")).default;
+        // Geoman se importa ANTES de crear el mapa: el plugin registra
+        // `map.pm` al cargarse; diferirlo dejaba `map.pm` indefinido y
+        // rompía con `map.pm.setLang` (TypeError).
         await import("@geoman-io/leaflet-geoman-free");
         if (cancelled || !containerRef.current) return;
 
@@ -218,9 +235,6 @@ export function TerrenoMap({
           zoomControl: false,
         });
         mapRef.current = map;
-        // Controles en español: Geoman trae traducción "es" (Dibujar
-        // Polígono, Editar/Eliminar Capas, Finalizar/Cancelar…).
-        map.pm.setLang("es");
         L.control
           .zoom({ zoomInTitle: "Acercar", zoomOutTitle: "Alejar" })
           .addTo(map);
@@ -231,23 +245,49 @@ export function TerrenoMap({
           // 17-18; el tilemap lo sube dinámicamente donde hay más detalle.
           maxNativeZoom: ZOOM_NATIVO_MIN,
           attribution: ESRI_ATTR,
+          keepBuffer: 4,
+          updateWhenIdle: true,
         });
         sateliteRef.current = satelite;
         const calles = L.tileLayer(OSM_URL, {
           maxZoom: MAPA_MAX_ZOOM,
           attribution: OSM_ATTR,
+          keepBuffer: 4,
+          updateWhenIdle: true,
         });
         const sentinel = L.tileLayer(EOX_URL, {
           maxZoom: MAPA_MAX_ZOOM,
           maxNativeZoom: 14,
           attribution: EOX_ATTR,
+          keepBuffer: 4,
+          updateWhenIdle: true,
         });
         const limites = L.tileLayer(ESRI_REF_URL, {
           maxZoom: MAPA_MAX_ZOOM,
           attribution: ESRI_REF_ATTR,
+          keepBuffer: 4,
+          updateWhenIdle: true,
         });
         satelite.addTo(map);
         limites.addTo(map);
+        // Controles en español: Geoman trae traducción "es" (Dibujar
+        // Polígono, Editar/Eliminar Capas, Finalizar/Cancelar…).
+        map.pm.setLang("es");
+        map.pm.addControls({
+          position: "topleft",
+          drawMarker: false,
+          drawCircleMarker: false,
+          drawPolyline: false,
+          drawRectangle: false,
+          drawCircle: false,
+          drawText: false,
+          cutPolygon: false,
+          rotateMode: false,
+          dragMode: false,
+          drawPolygon: true,
+          editMode: true,
+          removalMode: true,
+        });
         // Distintivo de carga: se oculta con los primeros tiles o por
         // seguridad a los 15 s (red lenta con tiles 404 persistentes).
         satelite.once("load", () => {
@@ -318,22 +358,6 @@ export function TerrenoMap({
             .openTooltip();
         }
 
-        map.pm.addControls({
-          position: "topleft",
-          drawMarker: false,
-          drawCircleMarker: false,
-          drawPolyline: false,
-          drawRectangle: false,
-          drawCircle: false,
-          drawText: false,
-          cutPolygon: false,
-          rotateMode: false,
-          dragMode: false,
-          drawPolygon: true,
-          editMode: true,
-          removalMode: true,
-        });
-
         function featureDeCapa(capa: Leaflet.Polygon): TerrenoFeature | null {
           const puntos = anilloDePolygon(capa);
           if (puntos.length < 3) return null;
@@ -355,7 +379,27 @@ export function TerrenoMap({
         // que Leaflet reescale el último nivel existente en lugar de mostrar
         // tiles "Map data not yet available". Tope en 18: el nivel 19 de Esri
         // no es uniforme y un falso positivo deja tiles 404 (fondo blanco).
+        // Persiste en sessionStorage: al volver a la página no se re-consulta.
         const zoomNativoCache = new Map<string, number>();
+        try {
+          const raw = sessionStorage.getItem("gf-esri-zoom");
+          if (raw) {
+            for (const [k, v] of Object.entries(JSON.parse(raw) as Record<string, number>)) {
+              zoomNativoCache.set(k, v);
+            }
+          }
+        } catch {
+          // sessionStorage no disponible: caché solo en memoria.
+        }
+        function guardarZoomCache() {
+          try {
+            const obj: Record<string, number> = {};
+            for (const [k, v] of zoomNativoCache) obj[k] = v;
+            sessionStorage.setItem("gf-esri-zoom", JSON.stringify(obj));
+          } catch {
+            // Sin persistencia: no bloquea el mapa.
+          }
+        }
         let ajustandoZoom = false;
         async function ajustarZoomNativo() {
           if (cancelled || mapRef.current !== map || ajustandoZoom) return;
@@ -384,6 +428,7 @@ export function TerrenoMap({
                   disponible = 0;
                 }
                 zoomNativoCache.set(clave, disponible);
+                guardarZoomCache();
               }
               if (disponible >= nivel) {
                 if (capa.options.maxNativeZoom !== nivel) {
@@ -398,8 +443,13 @@ export function TerrenoMap({
           }
         }
 
+        // Debounce 400ms: evita una consulta tilemap por cada micro-movimiento.
+        let moveendTimer: ReturnType<typeof setTimeout> | null = null;
         map.on("moveend", () => {
-          void ajustarZoomNativo();
+          if (moveendTimer) clearTimeout(moveendTimer);
+          moveendTimer = setTimeout(() => {
+            void ajustarZoomNativo();
+          }, 400);
         });
         // El ajuste nativo corre tras la primera carga, no en el mismo tick
         // de la vista inicial (evita redraw encima de tiles en vuelo).
@@ -409,7 +459,8 @@ export function TerrenoMap({
 
         map.on("pm:drawstart", () => {
           if (!puedeDibujarRef.current) {
-            map.pm.disableDraw();
+            // Geoman puede aún estar cargando (import diferido): guard.
+            (map.pm as unknown as { disableDraw?: () => void } | undefined)?.disableDraw?.();
             onLimiteRef.current();
             return;
           }
@@ -429,6 +480,12 @@ export function TerrenoMap({
             if (id) {
               capasRef.current.set(capa, id);
               capa.bindTooltip("Huerto");
+              capa.setStyle(
+                id === huertoActivoRef.current
+                  ? ESTILO_POLIGONO_ACTIVO
+                  : ESTILO_POLIGONO_INACTIVO,
+              );
+              capa.on("click", () => onSeleccionarHuertoRef.current?.(id));
               actualizarAreaPantalla();
             } else {
               map.removeLayer(capa);
@@ -502,16 +559,27 @@ export function TerrenoMap({
         for (const huerto of inicialesRef.current) {
           const puntos = puntosDesdeFeature(huerto.feature);
           if (puntos.length < 3) continue;
-          const capa = L.polygon(puntos).addTo(map);
+          const esActivo = huerto.id === huertoActivoRef.current;
+          const capa = L.polygon(puntos, esActivo ? ESTILO_POLIGONO_ACTIVO : ESTILO_POLIGONO_INACTIVO).addTo(map);
           capa.bindTooltip(huerto.nombre);
           capasRef.current.set(capa, huerto.id);
+          const huertoIdCapturado = huerto.id;
+          capa.on("click", () => onSeleccionarHuertoRef.current?.(huertoIdCapturado));
         }
 
-        // Vista inicial ÚNICA: con huertos encuadra sus bounds; sin ellos,
-        // vista país (la geolocalización la refina async si está disponible).
+        // Vista inicial ÚNICA: si hay huerto activo recordado se encuadra ese
+        // (retoma donde estaba trabajando); si no, todos los bounds; sin
+        // huertos, vista país (la geolocalización la refina async).
         if (capasRef.current.size > 0) {
-          const grupo = L.featureGroup([...capasRef.current.keys()]);
-          map.fitBounds(grupo.getBounds(), { padding: [24, 24] });
+          const activo = huertoActivoRef.current
+            ? [...capasRef.current.entries()].find(([, id]) => id === huertoActivoRef.current)?.[0]
+            : undefined;
+          if (activo) {
+            map.fitBounds(activo.getBounds(), { padding: [24, 24] });
+          } else {
+            const grupo = L.featureGroup([...capasRef.current.keys()]);
+            map.fitBounds(grupo.getBounds(), { padding: [24, 24] });
+          }
           actualizarAreaPantalla();
         } else {
           map.setView([CENTRO_DEFAULT.lat, CENTRO_DEFAULT.lng], ZOOM_DEFAULT);
@@ -566,6 +634,41 @@ export function TerrenoMap({
     // El mapa se monta una sola vez; los huertos iniciales ya están cargados
     // cuando la sección lo renderiza (se oculta mientras carga).
   }, []);
+
+  // Con keepMounted el tab puede ocultarse (display:none) y volver: el
+  // contenedor pasa por tamaño 0 y Leaflet debe revalidar al reaparecer.
+  useEffect(() => {
+    if (!mapaListo) return;
+    const el = containerRef.current;
+    const map = mapRef.current;
+    if (!el || !map) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const ro = new ResizeObserver(() => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (mapRef.current === map && el.clientWidth > 0 && el.clientHeight > 0) {
+          map.invalidateSize();
+        }
+      }, 150);
+    });
+    ro.observe(el);
+    return () => {
+      if (timer) clearTimeout(timer);
+      ro.disconnect();
+    };
+  }, [mapaListo]);
+
+  // Resalta el polígono del huerto activo sin remontar el mapa.
+  useEffect(() => {
+    if (!mapaListo) return;
+    for (const [capa, id] of capasRef.current) {
+      capa.setStyle(
+        id === (huertoActivoId ?? null)
+          ? ESTILO_POLIGONO_ACTIVO
+          : ESTILO_POLIGONO_INACTIVO,
+      );
+    }
+  }, [huertoActivoId, mapaListo]);
 
   // Marcadores de árboles: sincroniza los puntos con posición guardada.
   useEffect(() => {
@@ -645,8 +748,11 @@ export function TerrenoMap({
     if (containerRef.current) {
       containerRef.current.style.cursor = modoMarca ? "crosshair" : "";
     }
+    // Geoman carga diferido: si aún no llegó, no hay botones que deshabilitar.
+    const pmToolbar = (map.pm as unknown as { Toolbar?: { setButtonDisabled?: (b: string, d: boolean) => void } } | undefined)?.Toolbar;
+    if (!pmToolbar?.setButtonDisabled) return;
     for (const boton of ["drawPolygon", "editMode", "removalMode"]) {
-      map.pm.Toolbar.setButtonDisabled(boton, modoMarca);
+      pmToolbar.setButtonDisabled(boton, modoMarca);
     }
     if (modoMarca) {
       const pm = map.pm as unknown as {
@@ -822,7 +928,7 @@ export function TerrenoMap({
   function cancelarDibujo() {
     const map = mapRef.current;
     if (!map) return;
-    map.pm.disableDraw();
+    (map.pm as unknown as { disableDraw?: () => void } | undefined)?.disableDraw?.();
   }
 
   if (error) {

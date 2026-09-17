@@ -115,7 +115,7 @@ export function PlanoHuerto3D({
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     cont.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();

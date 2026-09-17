@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
 import { ControlCantidad } from "@/components/huerto/ControlCantidad";
-import { getEspeciePorDbKey, urlFichaEspecie } from "@/lib/agronomy";
+import { getEspeciePorDbKey } from "@/lib/agronomy";
+import { BotonFichaEspecie } from "@/components/huerto/FichaEspecieSheet";
 import type { Arbol } from "@/types";
 
 export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
@@ -60,15 +61,14 @@ export function ListaArboles({ arboles }: { arboles: Arbol[] }) {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              {/* Puente árbol → ficha pública (la vista interna queda sin uso) */}
-              <a
-                href={urlFichaEspecie(a.especie)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-              >
-                Ver ficha de la especie
-              </a>
+              {/* Puente árbol → ficha en la misma página (sheet) */}
+              <BotonFichaEspecie
+                dbKey={a.especie}
+                nombre={nombre}
+                variante="chip"
+                texto="Ver ficha de la especie"
+                className="text-[11px] font-medium text-muted-foreground hover:text-foreground"
+              />
               {a.huertoId ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1.5 text-[11px] text-muted-foreground">
                   <MapPin className="size-3" /> En plano
