@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Box, MapPin } from "lucide-react";
+import { Box, MapPin, MousePointerClick, X } from "lucide-react";
 import { BotonFichaEspecie } from "@/components/huerto/FichaEspecieSheet";
 
 const CLAVE_HUERTO_ACTIVO = "gf-huerto-activo";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
@@ -20,9 +20,10 @@ function nombreDeEspecie(especie: string): string {
 }
 
 /** Lienzo del huerto a ancho completo (el mapa es lo principal): la vista
- *  principal es el satélite; «Agregar árboles» está disponible en los 3 tabs
- *  (cada tab planta in situ con el único endpoint de creación). Sin panel
- *  lateral. El selector de huerto es único y global, junto a los tabs. */
+ *  principal es el satélite; «Agregar árboles» vive UNA sola vez en el header
+ *  del lienzo (acción primaria) y planta in situ en el tab activo con el único
+ *  endpoint de creación. Sin panel lateral. Sin badge de conteo arriba: el
+ *  huerto activo ya se muestra abajo en su card con stepper. */
 export function WorkbenchModular({
   huertos,
   arboles,
@@ -35,6 +36,11 @@ export function WorkbenchModular({
   asistente?: React.ReactNode;
 }) {
   const [tab, setTab] = useState<"satelite" | "matriz" | "tres-d">("satelite");
+  // «Agregar árboles» global: null = apagado, dbKey = agregando esa especie.
+  // Vive aquí para no duplicar el botón en cada tab y no confundirlo con el
+  // asistente (terciario). La especie por defecto sale del catálogo.
+  const [especieAgregar, setEspecieAgregar] = useState<string | null>(null);
+  const agregando = especieAgregar !== null;
   // Estado inicial = primer huerto (igual en server y cliente para hidratar).
   const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
   // El id efectivo cae al primer huerto si el seleccionado ya no existe
@@ -86,13 +92,15 @@ export function WorkbenchModular({
 
   return (
     <Card className="overflow-hidden rounded-2xl shadow-sm">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2.5">
         <h3 className="flex items-center gap-2 text-sm font-semibold">
           <MapPin className="size-4 text-primary" /> Lienzo del huerto
         </h3>
-        <Badge variant="outline" className="ml-auto rounded-full">
-          {huertos.length} {huertos.length === 1 ? "huerto" : "huertos"}
-        </Badge>
+        {asistente ? (
+          <div className="ml-auto [&_button]:h-7 [&_button]:px-2 [&_button]:text-xs [&_button]:text-muted-foreground">
+            {asistente}
+          </div>
+        ) : null}
       </div>
       <CardContent className="p-4 sm:p-5">
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="gap-4">
@@ -108,7 +116,35 @@ export function WorkbenchModular({
                 <Box className="size-3.5" /> Visualización 3D
               </TabsTrigger>
             </TabsList>
-            {asistente ? <div className="ml-auto">{asistente}</div> : null}
+            <div className="ml-auto flex flex-wrap items-center gap-2">
+              {agregando ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => setEspecieAgregar(null)}
+                  aria-label="Dejar de agregar árboles"
+                >
+                  <X /> Listo
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  className="rounded-full"
+                  onClick={() => setEspecieAgregar(ESPECIES[0]?.dbKey ?? null)}
+                  disabled={huertos.length === 0 || ESPECIES.length === 0}
+                  title={
+                    huertos.length === 0
+                      ? "Dibuja un huerto en el mapa para poder agregar árboles"
+                      : "Elige especie y toca el terreno para plantar"
+                  }
+                >
+                  <MousePointerClick /> Agregar árboles
+                </Button>
+              )}
+            </div>
           </div>
           {/* keepMounted: el mapa satelital no se destruye al cambiar de tab,
               así los tiles y la instancia Leaflet se conservan en memoria. */}
@@ -119,6 +155,8 @@ export function WorkbenchModular({
                 onHuertoChange={setHuertoId}
                 huertosIniciales={huertos}
                 arbolesIniciales={arboles}
+                especieAgregar={especieAgregar}
+                onEspecieAgregarChange={setEspecieAgregar}
               />
               {leyenda.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
@@ -145,6 +183,8 @@ export function WorkbenchModular({
               especies={ESPECIES}
               modoForzado="2d"
               huertoId={huertoActivoId}
+              especieAgregar={especieAgregar}
+              onEspecieAgregarChange={setEspecieAgregar}
             />
           </TabsContent>
           {/* 3D sin keepMounted a propósito: cada canvas WebGL vivo cuenta
@@ -158,6 +198,8 @@ export function WorkbenchModular({
                 especies={ESPECIES}
                 modoForzado="3d"
                 huertoId={huertoActivoId}
+                especieAgregar={especieAgregar}
+                onEspecieAgregarChange={setEspecieAgregar}
               />
             ) : null}
           </TabsContent>

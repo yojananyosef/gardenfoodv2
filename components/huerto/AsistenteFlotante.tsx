@@ -38,7 +38,7 @@ export function AsistenteFlotante({ pasos, pasoInicial, marcarCompletado, onComp
 
   return (
     <Dialog open={abierto} onOpenChange={setAbierto}>
-      <DialogTrigger render={<Button variant="outline" className="rounded-full" />}>
+      <DialogTrigger render={<Button variant="ghost" size="sm" className="rounded-full text-muted-foreground hover:text-foreground" />}>
         <Wand2 data-icon="inline-start" />
         <span className="hidden sm:inline">Abrir asistente</span>
       </DialogTrigger>

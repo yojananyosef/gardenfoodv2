@@ -64,6 +64,8 @@ export function PlanoHuerto({
   especies,
   modoForzado,
   huertoId: huertoIdProp,
+  especieAgregar: especieAgregarProp,
+  onEspecieAgregarChange,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
@@ -72,6 +74,9 @@ export function PlanoHuerto({
   modoForzado?: "2d" | "3d";
   /** Huerto activo global (lo controla el Workbench junto a los tabs). */
   huertoId?: string | null;
+  /** Modo agregar global (header del lienzo): null = apagado, dbKey = agregando. */
+  especieAgregar?: string | null;
+  onEspecieAgregarChange?: (especie: string | null) => void;
 }) {
   const router = useRouter();
   // El huerto activo lo controla el padre; se cae al primero si el id ya no existe.
@@ -83,8 +88,17 @@ export function PlanoHuerto({
   const setModo = (m: Modo) => setModoInterno(m);
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
-  // Agregar en este tab: especie elegida + toque en el mapa/maqueta.
-  const [agregando, setAgregando] = useState<string | null>(null);
+  // Agregar controlado por el header cuando se pasan props; standalone si no.
+  const [agregandoInterno, setAgregandoInterno] = useState<string | null>(null);
+  const controlado = onEspecieAgregarChange !== undefined;
+  const agregando = controlado ? (especieAgregarProp ?? null) : agregandoInterno;
+  function setAgregando(v: string | null) {
+    if (controlado) {
+      onEspecieAgregarChange?.(v);
+    } else {
+      setAgregandoInterno(v);
+    }
+  }
   const [agregandoPending, startAgregarTransition] = useTransition();
   // Zoom/pan del 2D: el plano ocupa más pantalla y se puede explorar.
   const [zoom2d, setZoom2d] = useState(1);
@@ -118,6 +132,8 @@ export function PlanoHuerto({
     setPan2d({ x: 0, y: 0 });
     setPosLocales({});
     setAgregando(null);
+    // setAgregando es estable (wrapper sobre setState/prop); solo reacciona al huerto.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [huertoId]);
 
   // Rueda → zoom (listener no pasivo para poder prevenir el scroll).
@@ -435,34 +451,37 @@ export function PlanoHuerto({
               Visualización 3D
             </Button>
           </div>
-          {agregando ? (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="rounded-full"
-              onClick={() => setAgregando(null)}
-              aria-label="Dejar de agregar"
-            >
-              <X /> Listo
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="rounded-full"
-              onClick={() => setAgregando(especies[0]?.dbKey ?? null)}
-              disabled={!huerto?.feature || especies.length === 0}
-              title="Elige especie y toca el mapa para agregar"
-            >
-              <MousePointerClick /> Agregar árboles
-            </Button>
-          )}
+          {!controlado ? (
+            agregando ? (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => setAgregando(null)}
+                aria-label="Dejar de agregar"
+              >
+                <X /> Listo
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => setAgregando(especies[0]?.dbKey ?? null)}
+                disabled={!huerto?.feature || especies.length === 0}
+                title="Elige especie y toca el mapa para agregar"
+              >
+                <MousePointerClick /> Agregar árboles
+              </Button>
+            )
+          ) : null}
           {unidadesNuevas > 0 ? (
             <Button
               type="button"
               size="sm"
+              variant="secondary"
               className="rounded-full"
               onClick={sincronizar}
               disabled={pending || !huerto?.feature}

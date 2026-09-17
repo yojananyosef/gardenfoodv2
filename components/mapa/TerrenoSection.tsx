@@ -195,6 +195,8 @@ export function TerrenoSection({
   onHuertoChange,
   huertosIniciales,
   arbolesIniciales,
+  especieAgregar,
+  onEspecieAgregarChange,
 }: {
   alto?: number;
   /** Huerto activo global (lo controla el Workbench junto a los tabs). */
@@ -203,6 +205,10 @@ export function TerrenoSection({
   /** Datos ya cargados en servidor (/huerto): evitan refetchear huertos+árboles en cliente. */
   huertosIniciales?: { id: string; nombre: string; superficieM2: number; feature: HuertoItem["feature"] | null }[];
   arbolesIniciales?: Arbol[];
+  /** Modo agregar global (lo controla el header del lienzo): null = apagado,
+   *  dbKey = agregando esa especie. */
+  especieAgregar?: string | null;
+  onEspecieAgregarChange?: (especie: string | null) => void;
 }) {
   const router = useRouter();
   const [huertos, setHuertos] = useState<HuertoItem[]>(() =>
@@ -217,8 +223,13 @@ export function TerrenoSection({
   const [cargando, setCargando] = useState(!(huertosIniciales && arbolesIniciales));
   const [limiteHuertos, setLimiteHuertos] = useState<number | null>(null);
   const [limiteArboles, setLimiteArboles] = useState<number | null>(null);
-  const [modoMarca, setModoMarca] = useState(false);
-  const [especieActiva, setEspecieActiva] = useState<string | null>(null);
+  // Controlado por el header del lienzo cuando se pasan las props; si no,
+  // funciona standalone (asistente y otros usos).
+  const controlado = onEspecieAgregarChange !== undefined;
+  const [modoMarcaInterno, setModoMarcaInterno] = useState(false);
+  const [especieActivaInterna, setEspecieActivaInterna] = useState<string | null>(null);
+  const modoMarca = controlado ? especieAgregar != null : modoMarcaInterno;
+  const especieActiva = controlado ? (especieAgregar ?? null) : especieActivaInterna;
   const mapaRef = useRef<TerrenoMapHandle>(null);
   const [renombrandoId, setRenombrandoId] = useState<string | null>(null);
   const [nombreBorrador, setNombreBorrador] = useState("");
@@ -242,7 +253,7 @@ export function TerrenoSection({
           ]);
           if (active) {
             setEspecies(especiesRes);
-            setEspecieActiva((prev) => prev ?? especiesRes[0]?.dbKey ?? null);
+            setEspecieActivaInterna((prev) => prev ?? especiesRes[0]?.dbKey ?? null);
             const plan = (perfilRes.data?.plan as PlanAcceso | undefined) ?? "gratuito";
             const limites = limitesDe(plan);
             setLimiteHuertos(limites.huertos);
@@ -292,7 +303,7 @@ export function TerrenoSection({
             setHuertos(listaHuertos);
             setArboles(listaArboles);
             setEspecies(especiesRes);
-            setEspecieActiva(especiesRes[0]?.dbKey ?? null);
+            setEspecieActivaInterna(especiesRes[0]?.dbKey ?? null);
             const plan = (perfilRes.data?.plan as PlanAcceso | undefined) ?? "gratuito";
             const limites = limitesDe(plan);
             setLimiteHuertos(limites.huertos);
@@ -422,12 +433,36 @@ export function TerrenoSection({
     );
   }
 
+  function cerrarModoMarca() {
+    if (controlado) {
+      onEspecieAgregarChange?.(null);
+    } else {
+      setModoMarcaInterno(false);
+    }
+  }
+
+  function cambiarEspecie(dbKey: string | null) {
+    if (controlado) {
+      onEspecieAgregarChange?.(dbKey);
+    } else {
+      setEspecieActivaInterna(dbKey);
+    }
+  }
+
   function alternarModoMarca() {
     if (!modoMarca && !puedeMarcar) {
       mensajeUpsellArboles();
       return;
     }
-    setModoMarca((v) => !v);
+    if (controlado) {
+      if (modoMarca) {
+        onEspecieAgregarChange?.(null);
+      } else if (especies.length > 0) {
+        onEspecieAgregarChange?.(especieActiva ?? especies[0]?.dbKey ?? null);
+      }
+    } else {
+      setModoMarcaInterno((v) => !v);
+    }
   }
 
   async function handleMarcarArbol(
@@ -524,11 +559,11 @@ export function TerrenoSection({
       {modoMarca ? (
         <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-primary/5 p-2">
           <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-            <MousePointerClick className="size-4 text-primary" /> Agregando
+            <MousePointerClick className="size-4 text-primary" /> Agregando — toca tu terreno para plantar
           </span>
           <Select
             value={especieActiva ?? undefined}
-            onValueChange={(value) => setEspecieActiva(value ?? null)}
+            onValueChange={(value) => cambiarEspecie(value ?? null)}
           >
             <SelectTrigger className="w-48 min-h-9" aria-label="Especie activa para agregar">
               <SelectValue>
@@ -548,17 +583,20 @@ export function TerrenoSection({
           <span className="font-mono text-xs text-muted-foreground">
             {arboles.length} en el mapa
           </span>
+          {/* Salida cercana al selector; el header del lienzo tiene el Listo
+              principal. Ambos cierran lo mismo. */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             className="ml-auto min-h-8"
-            onClick={() => setModoMarca(false)}
+            onClick={cerrarModoMarca}
           >
             <X className="size-4" /> Listo
           </Button>
         </div>
-      ) : (
+      ) : null}
+      {!controlado && !modoMarca ? (
         <div className="flex flex-wrap items-center gap-2">
           <div className="ml-auto">
             <Button
@@ -578,7 +616,7 @@ export function TerrenoSection({
             </Button>
           </div>
         </div>
-      )}
+      ) : null}
       <TerrenoMap
         ref={mapaRef}
         alto={alto}
