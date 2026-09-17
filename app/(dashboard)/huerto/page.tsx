@@ -39,6 +39,7 @@ import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import {
   ESPECIES,
   MESES,
+  getEspeciePorDbKey,
   getEspeciesPorZona,
   getZonaIdDeComuna,
 } from "@/lib/agronomy";
@@ -75,6 +76,23 @@ export default async function HuertoPage() {
 
   const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
   const recom = getEspeciesPorZona(zonaId);
+  // Segunda línea del card Cultivos: aporta valor sin repetir el conteo
+  // del título (N especies · M árboles) ni el «en plano» ya eliminado.
+  const superficieTotal = huertos.reduce((acc, h) => acc + (h.superficieM2 ?? 0), 0);
+  const especieTop = (() => {
+    if (arboles.length === 0) return null;
+    const conteo = new Map<string, number>();
+    for (const a of arboles) conteo.set(a.especie, (conteo.get(a.especie) ?? 0) + 1);
+    let top: { especie: string; total: number } | null = null;
+    for (const [especie, total] of conteo) {
+      if (!top || total > top.total) top = { especie, total };
+    }
+    if (!top) return null;
+    return {
+      nombre: getEspeciePorDbKey(top.especie)?.nombre ?? top.especie,
+      total: top.total,
+    };
+  })();
   // Vista única: el mapa es lo principal; el vacío se mide por árboles + huertos.
   const esHuertoVacio = arboles.length === 0 && huertos.length === 0;
   const nombre = (user.user_metadata as Record<string, unknown>)?.["nombre"] as string | undefined;
@@ -166,7 +184,21 @@ export default async function HuertoPage() {
                 </span>
               </CardTitle>
             </CardHeader>
-            <div className="h-1 w-full bg-primary" aria-hidden />
+            <CardContent className="pt-0">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <MapPinned className="size-3" />
+                  {huertos.length === 0
+                    ? "sin terreno dibujado"
+                    : `${huertos.length} ${huertos.length === 1 ? "huerto" : "huertos"} · ${Math.round(superficieTotal)} m²`}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Sprout className="size-3" />
+                  {especieTop ? `${especieTop.nombre} ×${especieTop.total} lidera` : "agrega tu primer cultivo"}
+                </span>
+              </div>
+            </CardContent>
+            <div className="mt-auto h-1 w-full bg-primary" aria-hidden />
           </Card>
 
           {/* Hoy: tareas + clima en un solo card, sin repetir zona */}
@@ -203,7 +235,7 @@ export default async function HuertoPage() {
                 </span>
               </div>
             </CardContent>
-            <div className="h-1 w-full bg-chart-3" aria-hidden />
+            <div className="mt-auto h-1 w-full bg-chart-3" aria-hidden />
           </Card>
         </div>
       </div>
