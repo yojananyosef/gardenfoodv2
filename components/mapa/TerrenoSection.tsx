@@ -105,20 +105,44 @@ function CardHuertoActivo({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="min-h-9 min-w-9 text-muted-foreground hover:text-foreground"
+                    className="min-h-9 min-w-9 shrink-0 text-muted-foreground hover:text-foreground"
                     aria-label="Huerto anterior"
                     onClick={() => paso(-1)}
                   >
                     <ChevronLeft className="size-4" />
                   </Button>
-                  <span className="text-xs tabular-nums text-muted-foreground" aria-live="polite">
-                    {indice + 1} de {total}
+                  {/* Puntos de salto directo: posición + acceso al N°7 sin
+                      ciclar (usuarios con 8+ huertos). Activo destacado. */}
+                  <span className="flex max-w-32 flex-wrap items-center justify-center gap-1" role="group" aria-label="Ir a un huerto">
+                    {huertos.map((h, i) => (
+                      <button
+                        key={h.id}
+                        type="button"
+                        onClick={() => onCambiarHuerto(h.id)}
+                        aria-label={`Ir a ${h.nombre} (huerto ${i + 1} de ${total})`}
+                        aria-current={i === indice ? "true" : undefined}
+                        title={`${h.nombre} (${i + 1} de ${total})`}
+                        className="flex p-1.5"
+                      >
+                        <span
+                          aria-hidden
+                          className={
+                            i === indice
+                              ? "size-2 rounded-full bg-primary"
+                              : "size-2 rounded-full bg-muted-foreground/30 transition-colors hover:bg-muted-foreground/60"
+                          }
+                        />
+                      </button>
+                    ))}
+                  </span>
+                  <span className="sr-only" aria-live="polite">
+                    Huerto {indice + 1} de {total}
                   </span>
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="min-h-9 min-w-9 text-muted-foreground hover:text-foreground"
+                    className="min-h-9 min-w-9 shrink-0 text-muted-foreground hover:text-foreground"
                     aria-label="Huerto siguiente"
                     onClick={() => paso(1)}
                   >

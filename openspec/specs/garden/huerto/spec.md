@@ -243,9 +243,9 @@ El asistente de 4 pasos (Terreno → Árboles → Posicionar → Listo, con guar
 - **WHEN** el usuario pulsa «Abrir asistente» con árboles sin posicionar pendientes
 - **THEN** el asistente se abre retomando el pendiente (por ejemplo, Posicionar con la cola de reparto) sin repetir la parte ya completada
 
-### Requirement: Selector global de huerto
+### Requirement: Cambio de huerto activo
 
-El selector global de huerto SHALL filtrar el panel, el lienzo y los contadores de la vista sin recargar la página; la elección SHALL persistir para toda la sesión. El mapa SHALL dibujar el polígono del huerto activo con un borde destacado distinto a los demás, SHALL encuadrarlo al abrir la vista cuando hay un activo recordado y SHALL seleccionar el huerto al tocar su polígono.
+El cambio de huerto activo SHALL filtrar el panel, el lienzo y los contadores de la vista sin recargar la página; la elección SHALL persistir para toda la sesión. El cambio SHALL ofrecerse desde el stepper y los puntos de salto de la card («N de M») y desde el toque en cada polígono; no SHALL existir un dropdown selector separado. El mapa SHALL dibujar el polígono del huerto activo con un borde destacado distinto a los demás y SHALL encuadrarlo al abrir la vista cuando hay un activo recordado. La acción «Abrir asistente» SHALL vivir junto a las tabs del lienzo (Terreno/Posicionar/3D).
 
 ### Requirement: Puente único de árbol a ficha de especie
 

@@ -8,13 +8,6 @@ const CLAVE_HUERTO_ACTIVO = "gf-huerto-activo";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
@@ -33,22 +26,17 @@ function nombreDeEspecie(especie: string): string {
 export function WorkbenchModular({
   huertos,
   arboles,
+  asistente,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
+  /** Botón «Abrir asistente» (lo entrega el server): vive junto a las tabs
+   *  del lienzo, que es su contexto, en el hueco del antiguo selector. */
+  asistente?: React.ReactNode;
 }) {
   const [tab, setTab] = useState<"satelite" | "matriz" | "tres-d">("satelite");
-  // Huerto activo recordado en la sesión: al volver a /huerto retoma donde
-  // estaba trabajando en vez de saltar siempre al primer polígono.
-  const [huertoId, setHuertoId] = useState<string | null>(() => {
-    try {
-      const recordado = sessionStorage.getItem(CLAVE_HUERTO_ACTIVO);
-      if (recordado && huertos.some((h) => h.id === recordado)) return recordado;
-    } catch {
-      // Sin sessionStorage (SSR): se cae al primero abajo.
-    }
-    return huertos[0]?.id ?? null;
-  });
+  // Estado inicial = primer huerto (igual en server y cliente para hidratar).
+  const [huertoId, setHuertoId] = useState<string | null>(huertos[0]?.id ?? null);
   // El id efectivo cae al primer huerto si el seleccionado ya no existe
   // (p. ej. recién eliminado en el satélite antes del refresh).
   const huertoActivoId = huertos.some((h) => h.id === huertoId)
@@ -61,6 +49,23 @@ export function WorkbenchModular({
       // Persistencia best-effort: no bloquea el lienzo.
     }
   }, [huertoActivoId]);
+  // Huerto recordado: se aplica SOLO tras montar. Leer sessionStorage en el
+  // primer render pintaba otro huerto en cliente que en server (hydration
+  // mismatch); así el primer pintado coincide y luego retoma donde estaba.
+  useEffect(() => {
+    try {
+      const recordado = sessionStorage.getItem(CLAVE_HUERTO_ACTIVO);
+      if (recordado && huertos.some((h) => h.id === recordado)) {
+        // set-state-in-effect intencional: sincroniza con el store externo post-hidratación.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setHuertoId((prev) => (prev === recordado ? prev : recordado));
+      }
+    } catch {
+      // Sin sessionStorage: se queda el primero.
+    }
+    // Solo al montar: huertos viene del server y no cambia en esta vista.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Leyenda igual que en los tabs 2D/3D: chips por especie del huerto activo.
   const leyenda = useMemo(() => {
@@ -103,27 +108,7 @@ export function WorkbenchModular({
                 <Box className="size-3.5" /> Visualización 3D
               </TabsTrigger>
             </TabsList>
-            {huertos.length > 1 ? (
-              <Select
-                value={huertoActivoId ?? undefined}
-                onValueChange={(value) => setHuertoId(value ?? null)}
-              >
-                <SelectTrigger className="ml-auto w-52 min-h-9" aria-label="Huerto activo">
-                  <SelectValue>
-                    {(value: string | null) =>
-                      huertos.find((h) => h.id === value)?.nombre ?? "Elige un huerto…"
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {huertos.map((h) => (
-                    <SelectItem key={h.id} value={h.id}>
-                      {h.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : null}
+            {asistente ? <div className="ml-auto">{asistente}</div> : null}
           </div>
           {/* keepMounted: el mapa satelital no se destruye al cambiar de tab,
               así los tiles y la instancia Leaflet se conservan en memoria. */}

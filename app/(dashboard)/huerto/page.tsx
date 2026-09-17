@@ -284,7 +284,7 @@ export default async function HuertoPage() {
         </CardContent>
       </Card>
 
-      {/* TABS + asistente */}
+      {/* TABS (el asistente vive junto a las tabs del lienzo, su contexto) */}
       <Tabs defaultValue="huerto" className="w-full gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
@@ -310,18 +310,23 @@ export default async function HuertoPage() {
               </Badge>
             </TabsTrigger>
           </TabsList>
-          <AsistenteFlotante
-            pasos={pasos}
-            pasoInicial={pasoInicial}
-            marcarCompletado={asistentePendiente}
-            onCompletar={marcarAsistenteCompletado}
-            skipCompletado={!asistentePendiente}
-          />
         </div>
 
         {/* Lienzo a ancho completo (el mapa es lo principal) */}
         <TabsContent value="huerto" className="mt-2 flex flex-col gap-4">
-              <WorkbenchModular huertos={huertos} arboles={arboles} />
+              <WorkbenchModular
+                huertos={huertos}
+                arboles={arboles}
+                asistente={
+                  <AsistenteFlotante
+                    pasos={pasos}
+                    pasoInicial={pasoInicial}
+                    marcarCompletado={asistentePendiente}
+                    onCompletar={marcarAsistenteCompletado}
+                    skipCompletado={!asistentePendiente}
+                  />
+                }
+              />
           {sponsorships.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {sponsorships.slice(0, 2).map((s) => (
