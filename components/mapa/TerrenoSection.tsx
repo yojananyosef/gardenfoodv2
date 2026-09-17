@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Maximize, MousePointerClick, Pencil, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Maximize, MousePointerClick, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,6 +32,138 @@ import type { Arbol } from "@/types";
 type HuertoItem = HuertoMapa & { superficieM2: number };
 
 type OpcionEspecie = { dbKey: string; nombre: string };
+
+/** Card única del huerto activo (nombre editable, superficie, ver en grande)
+ *  con stepper ‹ › para ciclar sin lista vertical larga. El cambio usa el
+ *  mismo `onHuertoChange` que el selector superior y el click en polígonos,
+ *  así card, mapa y contadores quedan sincronizados. */
+function CardHuertoActivo({
+  huertos,
+  huertoId,
+  renombrandoId,
+  nombreBorrador,
+  onNombreBorrador,
+  onIniciarRenombre,
+  onGuardarNombre,
+  onCambiarHuerto,
+  urlGoogleMaps,
+}: {
+  huertos: HuertoItem[];
+  huertoId: string | null;
+  renombrandoId: string | null;
+  nombreBorrador: string;
+  onNombreBorrador: (nombre: string) => void;
+  onIniciarRenombre: (huerto: HuertoItem) => void;
+  onGuardarNombre: (id: string) => void;
+  onCambiarHuerto: (id: string) => void;
+  urlGoogleMaps: (huerto: HuertoItem) => string;
+}) {
+  const indice = Math.max(
+    0,
+    huertos.findIndex((h) => h.id === huertoId),
+  );
+  const huerto = huertos[indice] ?? huertos[0];
+  if (!huerto) return null;
+  const total = huertos.length;
+
+  function paso(delta: 1 | -1) {
+    if (total < 2) return;
+    const siguiente = huertos[(indice + delta + total) % total];
+    if (siguiente) onCambiarHuerto(siguiente.id);
+  }
+
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border bg-card px-4 py-3">
+      <div className="flex items-center justify-between gap-2">
+        {renombrandoId === huerto.id ? (
+          <form
+            className="flex flex-1 items-center gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onGuardarNombre(huerto.id);
+            }}
+          >
+            <Input
+              value={nombreBorrador}
+              onChange={(e) => onNombreBorrador(e.target.value)}
+              maxLength={60}
+              autoFocus
+              aria-label="Nombre del huerto"
+              className="min-h-9"
+            />
+            <Button type="submit" variant="outline" size="icon" className="min-h-9 min-w-9" aria-label="Guardar nombre">
+              <Check className="size-4" />
+            </Button>
+          </form>
+        ) : (
+          <>
+            <span className="text-sm font-medium">{huerto.nombre}</span>
+            <span className="ml-auto flex items-center gap-1">
+              {total > 1 ? (
+                <>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="min-h-9 min-w-9 text-muted-foreground hover:text-foreground"
+                    aria-label="Huerto anterior"
+                    onClick={() => paso(-1)}
+                  >
+                    <ChevronLeft className="size-4" />
+                  </Button>
+                  <span className="text-xs tabular-nums text-muted-foreground" aria-live="polite">
+                    {indice + 1} de {total}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="min-h-9 min-w-9 text-muted-foreground hover:text-foreground"
+                    aria-label="Huerto siguiente"
+                    onClick={() => paso(1)}
+                  >
+                    <ChevronRight className="size-4" />
+                  </Button>
+                </>
+              ) : null}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="min-h-9 min-w-9 text-muted-foreground hover:text-foreground"
+                aria-label={`Renombrar ${huerto.nombre}`}
+                onClick={() => onIniciarRenombre(huerto)}
+              >
+                <Pencil className="size-4" />
+              </Button>
+            </span>
+          </>
+        )}
+      </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <span className="font-medium text-foreground">
+          {formatAreaM2(huerto.superficieM2)}
+        </span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="min-h-7 gap-1 px-2 text-xs"
+          render={
+            <a
+              href={urlGoogleMaps(huerto)}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          }
+        >
+          <Maximize className="size-3" />
+          Ver en grande
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export function TerrenoSection({
   alto = 520,
@@ -451,73 +583,21 @@ export function TerrenoSection({
           y toca las esquinas de tu terreno para calcular su superficie.
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
-          {huertos.map((huerto) => (
-            <li
-              key={huerto.id}
-              className="flex flex-col gap-2 rounded-lg border bg-card px-4 py-3"
-            >
-              <div className="flex items-center justify-between gap-2">
-                {renombrandoId === huerto.id ? (
-                  <form
-                    className="flex flex-1 items-center gap-2"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      guardarNombre(huerto.id);
-                    }}
-                  >
-                    <Input
-                      value={nombreBorrador}
-                      onChange={(e) => setNombreBorrador(e.target.value)}
-                      maxLength={60}
-                      autoFocus
-                      aria-label="Nombre del huerto"
-                      className="min-h-9"
-                    />
-                    <Button type="submit" variant="outline" size="icon" className="min-h-9 min-w-9" aria-label="Guardar nombre">
-                      <Check className="size-4" />
-                    </Button>
-                  </form>
-                ) : (
-                  <>
-                    <span className="text-sm font-medium">{huerto.nombre}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="min-h-9 min-w-9 text-muted-foreground hover:text-foreground"
-                      aria-label={`Renombrar ${huerto.nombre}`}
-                      onClick={() => iniciarRenombre(huerto)}
-                    >
-                      <Pencil className="size-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">
-                  {formatAreaM2(huerto.superficieM2)}
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="min-h-7 gap-1 px-2 text-xs"
-                  render={
-                    <a
-                      href={urlGoogleMaps(huerto)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  }
-                >
-                  <Maximize className="size-3" />
-                  Ver en grande
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <CardHuertoActivo
+          huertos={huertos}
+          huertoId={huertoId ?? null}
+          renombrandoId={renombrandoId}
+          nombreBorrador={nombreBorrador}
+          onNombreBorrador={setNombreBorrador}
+          onIniciarRenombre={iniciarRenombre}
+          onGuardarNombre={guardarNombre}
+          onCambiarHuerto={(id) => {
+            // No arrastrar el borrador de renombre a otra card.
+            setRenombrandoId(null);
+            onHuertoChange?.(id);
+          }}
+          urlGoogleMaps={urlGoogleMaps}
+        />
       )}
       <Dialog
         open={!!arbolEditando}

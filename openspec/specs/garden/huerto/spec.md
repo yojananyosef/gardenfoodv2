@@ -65,7 +65,7 @@ The system SHALL allow the user to add and remove active crops (species they gro
 
 ### Requirement: Terreno link card
 
-The system SHALL show on the huerto dashboard a "Tu terreno" card listing the map-delimited huertos (`gf_huertos`) with name, surface in m²/ha and center coordinates, with a call-to-action to edit them on the profile map; when none exist, it SHALL show an empty state with a call-to-action to delimit the first huerto.
+The system SHALL show below the map a single card for the active huerto (`gf_huertos`) with editable name, surface in m²/ha and a "Ver en grande" action; with more than one huerto the card SHALL offer a stepper («N de M» with previous/next) to cycle the active huerto without a vertical list; when none exist, it SHALL show an empty state inviting to delimit the first huerto on the map.
 
 #### Scenario: Card lists delimited huertos
 
