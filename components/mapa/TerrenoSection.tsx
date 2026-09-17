@@ -557,15 +557,15 @@ export function TerrenoSection({
   return (
     <div className="flex flex-col gap-3">
       {modoMarca ? (
-        <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-primary/5 p-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-            <MousePointerClick className="size-4 text-primary" /> Agregando — toca tu terreno para plantar
+        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto rounded-lg border bg-primary/5 p-2">
+          <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium">
+            <MousePointerClick className="size-4 text-primary" /> <span className="hidden sm:inline">Agregando — toca tu terreno</span><span className="sm:hidden">Agregando</span>
           </span>
           <Select
             value={especieActiva ?? undefined}
             onValueChange={(value) => cambiarEspecie(value ?? null)}
           >
-            <SelectTrigger className="w-48 min-h-9" aria-label="Especie activa para agregar">
+            <SelectTrigger className="w-32 min-h-9 shrink-0 sm:w-48" aria-label="Especie activa para agregar">
               <SelectValue>
                 {(value: string | null) =>
                   especies.find((e) => e.dbKey === value)?.nombre ?? "Elige especie…"
@@ -580,7 +580,7 @@ export function TerrenoSection({
               ))}
             </SelectContent>
           </Select>
-          <span className="font-mono text-xs text-muted-foreground">
+          <span className="shrink-0 font-mono text-xs text-muted-foreground">
             {arboles.length} en el mapa
           </span>
           {/* Salida cercana al selector; el header del lienzo tiene el Listo
@@ -589,7 +589,7 @@ export function TerrenoSection({
             type="button"
             variant="outline"
             size="sm"
-            className="ml-auto min-h-8"
+            className="ml-auto min-h-8 shrink-0"
             onClick={cerrarModoMarca}
           >
             <X className="size-4" /> Listo

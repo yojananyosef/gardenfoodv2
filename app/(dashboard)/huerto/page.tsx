@@ -1,12 +1,10 @@
 import Link from "next/link";
 import {
   Sprout,
-  Leaf,
   CalendarDays,
   AlertTriangle,
   MapPinned,
   ArrowRight,
-  Trees,
   CheckCircle2,
   Sun,
   Droplets,
@@ -121,45 +119,32 @@ export default async function HuertoPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Header + stats — always visible, bento */}
+      {/* Header + stats — zona se lee una sola vez arriba */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary" className="gap-1.5 rounded-full px-2.5 py-1">
-                <Leaf className="size-3" /> Mi huerto
+            {zona ? (
+              <Badge
+                variant="outline"
+                className="w-fit gap-1.5 rounded-full bg-card"
+                title={perfil?.comuna ?? undefined}
+              >
+                <MapPinned className="size-3" />
+                {zona.nombre}
               </Badge>
-              {zona ? (
-                <Badge variant="outline" className="gap-1.5 rounded-full bg-card">
-                  <MapPinned className="size-3" />
-                  {zona.nombre} · {MESES[mesActual]}
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="rounded-full">Configura tu comuna</Badge>
-              )}
-            </div>
+            ) : (
+              <Badge variant="outline" className="w-fit rounded-full">Configura tu comuna</Badge>
+            )}
             <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-[1.9rem]">
               {nombreCorto ? `Hola, ${nombreCorto} —` : "Mi huerto"}
               <span className="text-muted-foreground"> {esHuertoVacio ? "empieza aquí" : "al día"}</span>
             </h1>
             <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
               {zona
-                ? `Tu zona: ${zona.nombre} — ${MESES[mesActual]}. Calendario fenológico y alertas para ${perfil?.comuna ?? "tu comuna"}.`
+                ? "Calendario fenológico y alertas de tu zona."
                 : "Actualiza tu comuna en tu perfil para recomendaciones a la medida."}
             </p>
           </div>
-
-          <Card className="hidden shrink-0 rounded-2xl border-foreground/10 bg-card p-3 shadow-sm sm:flex sm:items-center sm:gap-3">
-            <span className="inline-flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <CalendarDays className="size-4" />
-            </span>
-            <div className="flex flex-col pr-2">
-              <span className="text-xs font-medium leading-none">Hoy es</span>
-              <span className="text-sm font-semibold capitalize">
-                {new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}
-              </span>
-            </div>
-          </Card>
         </div>
 
         {/* Bento stats */}
@@ -181,63 +166,44 @@ export default async function HuertoPage() {
                 </span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Trees className="size-3" /> {arboles.filter((a) => a.huertoId).length} en plano de{" "}
-                {arboles.length}
-              </div>
-            </CardContent>
             <div className="h-1 w-full bg-primary" aria-hidden />
           </Card>
 
-          <Card className="overflow-hidden rounded-2xl">
+          {/* Hoy: tareas + clima en un solo card, sin repetir zona */}
+          <Card className="overflow-hidden rounded-2xl sm:col-span-2">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
                 <CardDescription className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide">
-                  <CheckCircle2 className="size-3.5" /> Tareas hoy
+                  <CheckCircle2 className="size-3.5" /> Hoy
                 </CardDescription>
                 <Badge variant={tareas.length > 0 ? "secondary" : "outline"} className="rounded-full px-1.5 py-0 text-[10px]">
                   {tareas.length} pendientes
+                  {alertas.length > 0 ? ` · ${alertas.length} alerta${alertas.length > 1 ? "s" : ""}` : ""}
                 </Badge>
               </div>
-              <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
-                {tareas.length}
-                <span className="text-sm font-normal text-muted-foreground">tareas</span>
+              <CardTitle className="font-heading flex flex-wrap items-baseline gap-x-4 gap-y-1 text-3xl">
+                <span className="flex items-baseline gap-2">
+                  {tareas.length}
+                  <span className="text-sm font-normal text-muted-foreground">tareas</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-sm font-normal text-muted-foreground">
+                  {alertas.length > 0 ? <AlertTriangle className="size-3.5" /> : <Sun className="size-3.5" />}
+                  {alertas.length === 0 ? "sin avisos" : `${alertas.length} aviso${alertas.length > 1 ? "s" : ""}`}
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CalendarDays className="size-3" /> {new Date().toLocaleDateString("es-CL", { weekday: "long" })}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5 capitalize">
+                  <CalendarDays className="size-3" /> {new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  {alertas.length > 0 ? <ThermometerSun className="size-3" /> : <Sun className="size-3" />}
+                  {alertas.length === 0 ? "sin heladas ni sequía crítica" : "revisa el tab Clima"}
+                </span>
               </div>
             </CardContent>
             <div className="h-1 w-full bg-chart-3" aria-hidden />
-          </Card>
-
-          <Card className="overflow-hidden rounded-2xl">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardDescription className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide">
-                  <AlertTriangle className="size-3.5" /> Alertas
-                </CardDescription>
-                <Badge variant={alertas.length > 0 ? "destructive" : "outline"} className="rounded-full px-1.5 py-0 text-[10px]">
-                  {alertas.length === 0 ? "sin alertas" : `${alertas.length} alerta${alertas.length > 1 ? "s" : ""}`}
-                </Badge>
-              </div>
-              <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
-                {alertas.length}
-                <span className="text-sm font-normal text-muted-foreground">avisos</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                {alertas.length > 0 ? <ThermometerSun className="size-3" /> : <Sun className="size-3" />}
-                {zona ? `Zona ${zona.nombre}` : "Sin zona"}
-              </div>
-            </CardContent>
-            <div
-              className={`h-1 w-full ${alertas.length > 0 ? "bg-cosecha" : "bg-muted"}`}
-              aria-hidden
-            />
           </Card>
         </div>
       </div>
@@ -251,10 +217,9 @@ export default async function HuertoPage() {
                 <Badge className="gap-1 rounded-full">
                   <Sparkles className="size-3" /> Recomendadas para tu zona
                 </Badge>
-                {zona ? <span className="font-mono text-xs text-muted-foreground">{zona.nombre} · ID {zonaId}</span> : null}
               </div>
               <CardTitle className="text-lg leading-tight">
-                {zona ? `Qué plantar en ${zona.nombre}` : "Configura tu comuna"}
+                {perfil?.comuna ? `Qué plantar en ${perfil.comuna}` : "Configura tu comuna"}
               </CardTitle>
               <CardDescription className="max-w-prose text-[13px] leading-relaxed">
                 {zona
@@ -287,7 +252,7 @@ export default async function HuertoPage() {
       {/* TABS (el asistente vive junto a las tabs del lienzo, su contexto) */}
       <Tabs defaultValue="huerto" className="w-full gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
+          <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 [scrollbar-width:none] sm:w-fit [&::-webkit-scrollbar]:hidden">
             <TabsTrigger value="huerto" className="gap-1.5 rounded-lg data-[state=active]:shadow-sm">
               <LayoutGrid className="size-4" />
               Mi huerto

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Box, MapPin, MousePointerClick, X } from "lucide-react";
+import { Box, LayoutGrid, MapPin, MousePointerClick, X } from "lucide-react";
 import { BotonFichaEspecie } from "@/components/huerto/FichaEspecieSheet";
 
 const CLAVE_HUERTO_ACTIVO = "gf-huerto-activo";
@@ -104,25 +104,25 @@ export function WorkbenchModular({
       </div>
       <CardContent className="p-4 sm:p-5">
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <TabsList className="min-w-0 flex-1 justify-start overflow-x-auto rounded-xl bg-muted p-1 sm:flex-none">
-              <TabsTrigger value="satelite" className="gap-1.5 rounded-lg">
-                <MapPin className="size-3.5" /> Terreno (satélite)
+          <div className="flex flex-nowrap items-center gap-2">
+            <TabsList className="min-w-0 flex-1 justify-start overflow-x-auto rounded-xl bg-muted p-1 [scrollbar-width:none] sm:overflow-visible [&::-webkit-scrollbar]:hidden">
+              <TabsTrigger value="satelite" className="min-h-9 gap-1.5 rounded-lg px-3" title="Terreno (satélite)" aria-label="Terreno (satélite)">
+                <MapPin className="size-4" /> Terreno
               </TabsTrigger>
-              <TabsTrigger value="matriz" className="gap-1.5 rounded-lg">
-                <Box className="size-3.5" /> Posicionar árboles
+              <TabsTrigger value="matriz" className="min-h-9 gap-1.5 rounded-lg px-3" title="Posicionar árboles" aria-label="Posicionar árboles">
+                <LayoutGrid className="size-4" /> Posicionar
               </TabsTrigger>
-              <TabsTrigger value="tres-d" className="gap-1.5 rounded-lg">
-                <Box className="size-3.5" /> Visualización 3D
+              <TabsTrigger value="tres-d" className="min-h-9 gap-1.5 rounded-lg px-3" title="Visualización 3D" aria-label="Visualización 3D">
+                <Box className="size-4" /> 3D
               </TabsTrigger>
             </TabsList>
-            <div className="ml-auto flex flex-wrap items-center gap-2">
+            <div className="ml-auto flex shrink-0 items-center gap-2">
               {agregando ? (
                 <Button
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="rounded-full"
+                  className="min-h-9 rounded-full"
                   onClick={() => setEspecieAgregar(null)}
                   aria-label="Dejar de agregar árboles"
                 >
@@ -132,7 +132,7 @@ export function WorkbenchModular({
                 <Button
                   type="button"
                   size="sm"
-                  className="rounded-full"
+                  className="min-h-9 rounded-full"
                   onClick={() => setEspecieAgregar(ESPECIES[0]?.dbKey ?? null)}
                   disabled={huertos.length === 0 || ESPECIES.length === 0}
                   title={
@@ -140,8 +140,9 @@ export function WorkbenchModular({
                       ? "Dibuja un huerto en el mapa para poder agregar árboles"
                       : "Elige especie y toca el terreno para plantar"
                   }
+                  aria-label="Agregar árboles"
                 >
-                  <MousePointerClick /> Agregar árboles
+                  <MousePointerClick /> <span className="hidden sm:inline">Agregar árboles</span><span className="sm:hidden">Agregar</span>
                 </Button>
               )}
             </div>
