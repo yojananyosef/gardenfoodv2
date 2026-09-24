@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown, Trash2 } from "lucide-react";
@@ -23,7 +24,8 @@ import {
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
 import { buscarComuna, getEspeciePorDbKey } from "@/lib/agronomy";
 import { calcularRiego } from "@/lib/riego/calc";
-import { getRiegoBase, type RiegoBasePayload } from "@/lib/riego/actions";
+import { obtenerRiegoBase } from "@/lib/riego/client-cache";
+import type { RiegoBasePayload } from "@/lib/riego/actions";
 import { cn } from "@/lib/utils";
 import type { Arbol, EdadClaseArbol, MetodoRiegoArbol } from "@/types";
 
@@ -123,7 +125,7 @@ export function EditarArbolDialog({
   const [baseKey, setBaseKey] = useState<string | null>(null);
   useEffect(() => {
     let active = true;
-    getRiegoBase(especie)
+    obtenerRiegoBase(especie)
       .then((b) => {
         if (!active) return;
         setBase(b);
@@ -390,6 +392,14 @@ export function EditarArbolDialog({
                 </Select>
               </div>
             </div>
+            {!sueloPerfil ? (
+              <Link
+                href="/perfil"
+                className="rounded-xl border border-dashed border-amber-500/50 bg-amber-500/10 px-3 py-2 text-xs font-medium leading-relaxed text-amber-900 hover:bg-amber-500/20 dark:text-amber-100"
+              >
+                Suelo no definido — cálculo con franco (referencia de la guía). Define tu suelo en tu perfil y los litros se recalculan solos.
+              </Link>
+            ) : null}
             {riegoPreview ? (
               <div className="rounded-xl border bg-muted/30 p-3" aria-live="polite">
                 <p className="text-sm font-semibold">

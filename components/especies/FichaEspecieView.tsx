@@ -14,7 +14,8 @@ import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
 import { type FichaEspecie, type Especie, getFenologia, getConsejos, ZONAS, getZonaIdDeComuna } from "@/lib/agronomy";
 import { zonaRiegoDeZonaId, type SueloId } from "@/lib/riego/datos";
-import { getRiegoBase, type RiegoBasePayload } from "@/lib/riego/actions";
+import { obtenerRiegoBase } from "@/lib/riego/client-cache";
+import type { RiegoBasePayload } from "@/lib/riego/actions";
 import { createClient } from "@/lib/supabase/client";
 
 type TabId = "calendario" | "riego" | "nutricion" | "sanidad" | "poda" | "cosecha" | "fenologia" | "consejos" | "info";
@@ -153,7 +154,7 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
 
   useEffect(() => {
     let active = true;
-    getRiegoBase(dbKey)
+    obtenerRiegoBase(dbKey)
       .then((b) => {
         if (!active) return;
         if (!b) setError(true);
@@ -213,8 +214,8 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
           <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
         </div>
       ) : (
-        <div className="flex flex-col gap-1 rounded-2xl border border-dashed px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
-          <span className="font-medium">Valores base en suelo franco.</span>
+        <div className="flex flex-col gap-1 rounded-2xl border border-dashed border-amber-500/50 bg-amber-500/10 px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
+          <span className="font-medium">Suelo no definido — valores base en suelo franco (referencia de la guía).</span>
           <span className="text-xs text-muted-foreground"><Link href="/perfil" className="underline underline-offset-2">Define tu tipo de suelo en tu perfil</Link> y estos litros y frecuencias se recalculan solos.</span>
         </div>
       )}
