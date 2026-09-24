@@ -21,9 +21,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
-import { buscarComuna, getEspeciePorDbKey, getFicha } from "@/lib/agronomy";
+import { buscarComuna, getEspeciePorDbKey } from "@/lib/agronomy";
 import { calcularRiego } from "@/lib/riego/calc";
-import { copaReferencia, EDADES_RIEGO, NIVELES_HUMEDAD } from "@/lib/riego/datos";
+import { getRiegoBase, type RiegoBasePayload } from "@/lib/riego/actions";
 import { cn } from "@/lib/utils";
 import type { Arbol, EdadClaseArbol, MetodoRiegoArbol } from "@/types";
 
@@ -32,6 +32,20 @@ export type OpcionEspecie = { dbKey: string; nombre: string };
 export function nombreArbol(especie: string): string {
   return getEspeciePorDbKey(especie)?.nombre ?? especie;
 }
+
+/** Tabla C del Excel (1 recién plantado … 4 adulto) ↔ columna edad_clase. */
+const EDAD_N_A_CLASE: Record<number, EdadClaseArbol> = {
+  1: "recien",
+  2: "joven",
+  3: "inicial",
+  4: "adulto",
+};
+const EDAD_CLASE_A_N: Record<string, number> = {
+  recien: 1,
+  joven: 2,
+  inicial: 3,
+  adulto: 4,
+};
 
 export function EditarArbolDialog({
   arbol,
@@ -50,8 +64,8 @@ export function EditarArbolDialog({
   const [especie, setEspecie] = useState(arbol.especie);
   const [fecha, setFecha] = useState(arbol.fechaPlantacion ?? "");
   const [observaciones, setObservaciones] = useState(arbol.observaciones ?? "");
-  const [edadClase, setEdadClase] = useState<EdadClaseArbol | "">(
-    (arbol.edadClase as EdadClaseArbol | undefined) ?? "",
+  const [edadN, setEdadN] = useState<string>(
+    arbol.edadClase ? String(EDAD_CLASE_A_N[arbol.edadClase] ?? 4) : "",
   );
   const [copaM, setCopaM] = useState(arbol.copaM != null ? String(arbol.copaM) : "");
   const [metodoRiego, setMetodoRiego] = useState<MetodoRiegoArbol | "">(
@@ -59,9 +73,10 @@ export function EditarArbolDialog({
   );
   const [caudalLH, setCaudalLH] = useState(arbol.caudalLH != null ? String(arbol.caudalLH) : "");
   const [humedad, setHumedad] = useState("2");
-  const [etapaObs, setEtapaObs] = useState("");
+  const [etapaCodigo, setEtapaCodigo] = useState("");
   const [sueloPerfil, setSueloPerfil] = useState<string | null>(null);
   const [zonaPerfil, setZonaPerfil] = useState<number | null>(null);
+  const [base, setBase] = useState<RiegoBasePayload | null>(null);
   const [pending, startTransition] = useTransition();
   // Los detalles parten expandidos solo si el árbol ya tiene datos.
   const [detallesAbiertos, setDetallesAbiertos] = useState(
@@ -104,22 +119,45 @@ export function EditarArbolDialog({
     };
   }, []);
 
-  const ficha = getFicha(especie);
+  // Base GARDENFOOD de la especie (Postgres, seed literal del Excel).
+  const [baseKey, setBaseKey] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    getRiegoBase(especie)
+      .then((b) => {
+        if (!active) return;
+        setBase(b);
+        setBaseKey(especie);
+      })
+      .catch(() => {
+        if (!active) return;
+        setBase(null);
+        setBaseKey(especie);
+      });
+    return () => {
+      active = false;
+    };
+  }, [especie]);
+
   const riegoPreview = useMemo(() => {
+    if (!base) return null;
     const copaNum = copaM.trim() ? Number(copaM) : null;
     const caudalNum = caudalLH.trim() ? Number(caudalLH) : null;
-    return calcularRiego({
-      dbKey: especie,
-      mes: new Date().getMonth() + 1,
-      zonaId: zonaPerfil,
-      suelo: (sueloPerfil as "G" | "MG" | "M" | "F" | null) ?? null,
-      edad: (edadClase as "recien" | "joven" | "inicial" | "adulto" | null) || null,
-      copaM: copaNum !== null && Number.isFinite(copaNum) ? copaNum : null,
-      humedad: Number(humedad) || 2,
-      etapaObs: etapaObs || null,
-      caudalLH: caudalNum !== null && Number.isFinite(caudalNum) ? caudalNum : null,
-    });
-  }, [especie, zonaPerfil, sueloPerfil, edadClase, copaM, humedad, etapaObs, caudalLH]);
+    return calcularRiego(
+      {
+        dbKey: especie,
+        mes: new Date().getMonth() + 1,
+        zonaId: zonaPerfil,
+        suelo: (sueloPerfil as "G" | "MG" | "M" | "F" | null) ?? null,
+        edadN: edadN ? Number(edadN) : null,
+        copaM: copaNum !== null && Number.isFinite(copaNum) ? copaNum : null,
+        humedad: Number(humedad) || 2,
+        etapaCodigo: etapaCodigo || null,
+        caudalLH: caudalNum !== null && Number.isFinite(caudalNum) ? caudalNum : null,
+      },
+      base,
+    );
+  }, [base, especie, zonaPerfil, sueloPerfil, edadN, copaM, humedad, etapaCodigo, caudalLH]);
 
   function guardar() {
     startTransition(async () => {
@@ -133,11 +171,12 @@ export function EditarArbolDialog({
         toast.error("El caudal debe estar entre 0 y 500 L/h.");
         return;
       }
+      const clase = edadN ? (EDAD_N_A_CLASE[Number(edadN)] ?? null) : null;
       const result = await actualizarArbol(arbol.id, {
         especie,
         fechaPlantacion: fecha ? fecha : null,
         observaciones: observaciones.trim() ? observaciones.trim() : null,
-        edadClase: edadClase ? edadClase : null,
+        edadClase: clase,
         copaM: copaNum,
         metodoRiego: metodoRiego ? metodoRiego : null,
         caudalLH: caudalNum,
@@ -152,7 +191,7 @@ export function EditarArbolDialog({
         especie,
         fechaPlantacion: fecha ? fecha : null,
         observaciones: observaciones.trim() ? observaciones.trim() : null,
-        edadClase: (edadClase as EdadClaseArbol) || null,
+        edadClase: clase,
         copaM: copaNum,
         metodoRiego: (metodoRiego as MetodoRiegoArbol) || null,
         caudalLH: caudalNum,
@@ -178,6 +217,8 @@ export function EditarArbolDialog({
       router.refresh();
     });
   }
+
+  const copaRef = base?.especie?.copaRefM ?? 2;
 
   return (
     <DialogContent className="max-h-[88vh] w-[min(96vw,42rem)] overflow-y-auto sm:max-w-[42rem]">
@@ -248,23 +289,20 @@ export function EditarArbolDialog({
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="plano-edad">Edad del árbol</Label>
-                <Select
-                  value={edadClase || undefined}
-                  onValueChange={(v) => setEdadClase((v as EdadClaseArbol) ?? "")}
-                >
+                <Select value={edadN || undefined} onValueChange={(v) => setEdadN(v ?? "")}>
                   <SelectTrigger id="plano-edad" className="min-h-11 w-full">
                     <SelectValue placeholder="Elige la edad…" />
                   </SelectTrigger>
                   <SelectContent>
-                    {EDADES_RIEGO.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>
+                    {(base?.edades ?? []).map((e) => (
+                      <SelectItem key={e.n} value={String(e.n)}>
                         {e.nombre}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Aplica el coeficiente de agua: 30 % recién plantado, 55 % joven, 80 % inicial, 100 % adulto.
+                  Coeficiente de la guía: 30 % recién plantado, 55 % joven, 80 % inicial, 100 % adulto.
                 </p>
               </div>
               <div className="flex flex-col gap-2">
@@ -276,13 +314,13 @@ export function EditarArbolDialog({
                   max={12}
                   step={0.1}
                   inputMode="decimal"
-                  placeholder={String(copaReferencia(especie))}
+                  placeholder={String(copaRef)}
                   value={copaM}
                   onChange={(e) => setCopaM(e.target.value)}
                   className="min-h-11"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Sombra al mediodía, de punta a punta. Referencia: {copaReferencia(especie)} m.
+                  Sombra al mediodía, de punta a punta. Referencia de la guía: {copaRef} m.
                 </p>
               </div>
             </div>
@@ -327,8 +365,8 @@ export function EditarArbolDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {NIVELES_HUMEDAD.map((n) => (
-                      <SelectItem key={n.n} value={String(n.n)}>
+                    {(base?.niveles ?? []).map((n) => (
+                      <SelectItem key={n.nivel} value={String(n.nivel)}>
                         {n.nombre}
                       </SelectItem>
                     ))}
@@ -337,15 +375,15 @@ export function EditarArbolDialog({
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="plano-etapa">¿Qué ves hoy en el árbol?</Label>
-                <Select value={etapaObs || "__cal"} onValueChange={(v) => setEtapaObs(!v || v === "__cal" ? "" : v)}>
+                <Select value={etapaCodigo || "__cal"} onValueChange={(v) => setEtapaCodigo(!v || v === "__cal" ? "" : v)}>
                   <SelectTrigger id="plano-etapa" className="min-h-11 w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="__cal">Que lo decida el calendario</SelectItem>
-                    {(ficha?.riego ?? []).map((r) => (
-                      <SelectItem key={r.etapa} value={r.etapa}>
-                        {r.etapa}
+                    {(base?.etapas ?? []).map((e) => (
+                      <SelectItem key={e.codigo} value={e.codigo}>
+                        {e.etapaPrograma}{e.coincideExacta ? "" : " (aprox.)"}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -363,12 +401,13 @@ export function EditarArbolDialog({
                   Rango {riegoPreview.litrosMin}–{riegoPreview.litrosMax} L ·{" "}
                   {riegoPreview.litros} L = {riegoPreview.baldes} baldes de 10 L
                   {riegoPreview.horasGoteo !== null ? ` = ${riegoPreview.horasGoteo} h de goteo` : ""} ·{" "}
-                  Etapa: {riegoPreview.etapa} ({riegoPreview.fuente === "observacion" ? "lo que ves" : "calendario"}).
+                  Etapa: {riegoPreview.etapa} ({riegoPreview.fuente === "observacion" ? "lo que ves" : "calendario"})
+                  {riegoPreview.aproximada ? " · aproximada" : ""}.
                 </p>
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Completa especie y datos para ver la dosis estimada.
+                {baseKey !== especie ? "Cargando base de riego…" : "Completa especie y datos para ver la dosis estimada."}
               </p>
             )}
             <Button type="button" className="min-h-11 w-full" onClick={guardar} disabled={pending}>

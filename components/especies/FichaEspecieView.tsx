@@ -13,6 +13,8 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
 import { type FichaEspecie, type Especie, getFenologia, getConsejos, ZONAS, getZonaIdDeComuna } from "@/lib/agronomy";
+import { zonaRiegoDeZonaId, type SueloId } from "@/lib/riego/datos";
+import { getRiegoBase, type RiegoBasePayload } from "@/lib/riego/actions";
 import { createClient } from "@/lib/supabase/client";
 
 type TabId = "calendario" | "riego" | "nutricion" | "sanidad" | "poda" | "cosecha" | "fenologia" | "consejos" | "info";
@@ -29,20 +31,9 @@ const TABS: { id: TabId; l: string; icon: typeof CalendarDays; desc: string }[] 
   { id: "info", l: "Info", icon: Info, desc: "Ficha" },
 ];
 
-function CurvaDemandaHidrica({ riego, especieNombre }: { riego: FichaEspecie["riego"]; especieNombre: string }) {
-  const data = useMemo(() => {
-    return riego.map((r) => {
-      const m = r.vol.match(/(\d+)\s*[-–]\s*(\d+)/);
-      const low = m ? parseInt(m[1], 10) : 5;
-      const high = m ? parseInt(m[2], 10) : low + 5;
-      const mid = Math.round((low + high) / 2);
-      // Normaliza etiquetas cortas para X
-      const short = r.etapa.split(" ")[0].slice(0, 8);
-      return { etapa: r.etapa, short, litros: mid, rango: r.vol, freq: r.freq, senal: r.senal };
-    });
-  }, [riego]);
-
-  const config = { litros: { label: "Litros/semana", color: "var(--primary)" } } as const;
+function CurvaDemandaHidrica({ puntos, especieNombre }: { puntos: { mes: string; etapa: string; litros: number; detalle: string }[]; especieNombre: string }) {
+  const config = { litros: { label: "Litros por riego", color: "var(--primary)" } } as const;
+  const max = Math.max(10, ...puntos.map((p) => p.litros));
 
   return (
     <Card className="overflow-hidden rounded-2xl border-primary/20 shadow-sm">
@@ -51,29 +42,19 @@ function CurvaDemandaHidrica({ riego, especieNombre }: { riego: FichaEspecie["ri
           <Badge className="gap-1 rounded-full"><Droplets className="size-3" /> Curva de demanda hídrica</Badge>
           <span className="font-mono text-xs text-muted-foreground">{especieNombre}</span>
         </div>
-        <CardTitle className="text-base leading-tight">Litros por árbol por semana — fenología del cultivo</CardTitle>
-        <CardDescription className="text-xs">Curva sigmoide típica: bajo en receso, pico en engorde final. Basado en ficha técnica de riego.</CardDescription>
+        <CardTitle className="text-base leading-tight">Litros por árbol por riego — Base GARDENFOOD mes a mes</CardTitle>
+        <CardDescription className="text-xs">Valores de la Base de Datos Técnica, ajustados a tu suelo. En reposo casi no pide agua; el pico está en crecimiento y maduración.</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
         <ChartContainer config={config} className="h-[280px] w-full">
-          <LineChart data={data} margin={{ left: 12, right: 24, top: 24, bottom: 8 }}>
+          <LineChart data={puntos} margin={{ left: 12, right: 24, top: 24, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="short" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} interval={0} />
-            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} domain={[0, 110]} ticks={[0, 5, 20, 30, 45, 85, 100, 110]} label={{ value: "Litros por árbol por semana", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "var(--muted-foreground)" } }} />
+            <XAxis dataKey="mes" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} interval={0} />
+            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} domain={[0, Math.ceil(max * 1.15)]} label={{ value: "Litros por árbol por riego", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "var(--muted-foreground)" } }} />
             <ChartTooltip content={<ChartTooltipContent labelKey="etapa" />} />
             <Line type="monotone" dataKey="litros" stroke="var(--primary)" strokeWidth={3} dot={{ r: 6, fill: "white", stroke: "var(--primary)", strokeWidth: 2 }} activeDot={{ r: 7 }} />
           </LineChart>
         </ChartContainer>
-        <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-7">
-          {data.map((d) => (
-            <div key={d.etapa} className="flex flex-col items-center gap-1 rounded-xl border bg-muted/20 px-2 py-2 text-center">
-              <span className="text-[11px] font-semibold leading-none">{d.etapa}</span>
-              <span className="font-mono text-xs font-medium text-primary">{d.rango}</span>
-              <span className="text-[11px] text-muted-foreground">{d.freq}</span>
-            </div>
-          ))}
-        </div>
-        <p className="mt-2 text-center font-mono text-[11px] uppercase tracking-wide text-muted-foreground">Fenología del cultivo — como en tu imagen de duraznero/nectarín</p>
       </CardContent>
     </Card>
   );
@@ -162,32 +143,112 @@ function TabCalendario({ cal }: { cal: FichaEspecie["cal"] }) {
   );
 }
 
-function TabRiego({ riego, especieNombre }: { riego: FichaEspecie["riego"]; especieNombre: string }) {
-  const mesActualAbbr = new Date().toLocaleDateString("es-CL", { month: "short" }).replace(".", "").toLowerCase();
-  const isActive = (meses: string) => meses.toLowerCase().includes(mesActualAbbr.slice(0,3)) || meses.toLowerCase().includes(new Date().toLocaleDateString("es-CL",{month:"long"}).toLowerCase().slice(0,3));
+const MESES_LARGOS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"] as const;
+
+function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; especieNombre: string; sueloId: SueloId | null; zonaId: number | null }) {
+  const [base, setBase] = useState<RiegoBasePayload | null>(null);
+  const [baseKey, setBaseKey] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+  const mesActual = new Date().getMonth() + 1;
+
+  useEffect(() => {
+    let active = true;
+    getRiegoBase(dbKey)
+      .then((b) => {
+        if (!active) return;
+        if (!b) setError(true);
+        else {
+          setBase(b);
+          setBaseKey(dbKey);
+        }
+      })
+      .catch(() => {
+        if (active) setError(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [dbKey]);
+
+  const cargando = baseKey !== dbKey;
+
+  const suelo = base?.suelos.find((t) => t.clave === (sueloId ?? "M"));
+  const fv = suelo?.factor ?? 1;
+  const zonaClave = zonaRiegoDeZonaId(zonaId);
+  const zonaRiego = base?.zonas.find((z) => z.clave === zonaClave);
+  const fc = zonaRiego?.factorClima ?? 1;
+  // La zona ajusta la frecuencia (días entre riegos), igual que la guía.
+  const factorDias = fv / fc;
+
+  const filas = useMemo(() => {
+    if (!base) return [];
+    return base.mensual.map((m) => {
+      const lMin = Math.round(m.litrosMin * fv);
+      const lMax = Math.round(m.litrosMax * fv);
+      const dMin = Math.max(1, Math.round(m.diasMin * factorDias));
+      const dMax = Math.max(1, Math.round(m.diasMax * factorDias));
+      return {
+        ...m,
+        lMin,
+        lMax,
+        lRec: Math.round((lMin + lMax) / 2),
+        dMin,
+        dMax,
+      };
+    });
+  }, [base, fv, factorDias]);
+
+  if (error) {
+    return <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">No se pudo cargar la base de riego de esta especie. Revisa tu conexión e intenta de nuevo.</p>;
+  }
+  if (!base || cargando) {
+    return <p className="text-sm text-muted-foreground">Cargando base de riego…</p>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <CurvaDemandaHidrica riego={riego} especieNombre={especieNombre} />
+      {sueloId && suelo ? (
+        <div className="flex flex-col gap-1 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
+          <span className="inline-flex items-center gap-1.5 font-semibold"><Droplets className="size-4 text-primary" /> Ajustado a tu suelo: {suelo.nombre} (×{String(fv).replace(".", ",")})</span>
+          <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-1 rounded-2xl border border-dashed px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
+          <span className="font-medium">Valores base en suelo franco.</span>
+          <span className="text-xs text-muted-foreground"><Link href="/perfil" className="underline underline-offset-2">Define tu tipo de suelo en tu perfil</Link> y estos litros y frecuencias se recalculan solos.</span>
+        </div>
+      )}
+      <CurvaDemandaHidrica
+        especieNombre={especieNombre}
+        puntos={filas.map((f) => ({
+          mes: MESES_LARGOS[f.mes - 1].slice(0, 3),
+          etapa: `${MESES_LARGOS[f.mes - 1]} · ${f.etapa}`,
+          litros: f.lRec,
+          detalle: `${f.lMin}–${f.lMax} L cada ${f.dMin}–${f.dMax} días`,
+        }))}
+      />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {riego.map((r, i) => {
-        const active = isActive(r.meses);
+      {filas.map((f) => {
+        const active = f.mes === mesActual;
+        const baseVol = `${f.litrosMin}–${f.litrosMax} L`;
+        const volAjustado = `${f.lMin}–${f.lMax} L`;
+        const baseFreq = f.diasMin === f.diasMax ? `Cada ${f.diasMin} días` : `Cada ${f.diasMin}–${f.diasMax} días`;
+        const freqAjustada = f.dMin === f.dMax ? `Cada ${f.dMin} días` : `Cada ${f.dMin}–${f.dMax} días`;
         return (
-          <Card key={i} className={cn("flex flex-col rounded-2xl transition-shadow hover:shadow-sm", active && "border-primary/40 shadow-sm ring-1 ring-primary/10")}>
+          <Card key={f.mes} className={cn("flex flex-col rounded-2xl transition-shadow hover:shadow-sm", active && "border-primary/40 shadow-sm ring-1 ring-primary/10")}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
-                <Badge variant={active ? "default" : "secondary"} className="rounded-full text-[11px]">{r.etapa}</Badge>
-                {active && <Badge className="gap-1 rounded-full text-[10px]"><span className="size-1.5 rounded-full bg-white animate-pulse" /> Activo este mes</Badge>}
+                <Badge variant={active ? "default" : "secondary"} className="rounded-full text-[11px]">{f.etapa}</Badge>
+                {active && <Badge className="gap-1 rounded-full text-[10px]"><span className="size-1.5 rounded-full bg-white animate-pulse" /> Este mes</Badge>}
               </div>
-              <CardTitle className="text-sm">{r.meses}</CardTitle>
-              <CardDescription className="text-xs">{r.freq} · {r.vol}</CardDescription>
+              <CardTitle className="text-sm">{MESES_LARGOS[f.mes - 1]}</CardTitle>
+              <CardDescription className="text-xs">{freqAjustada} · {volAjustado}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col gap-2 pt-0">
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-lg bg-muted/50 px-2 py-1.5"><span className="text-muted-foreground">Frecuencia</span><div className="font-medium">{r.freq}</div></div>
-                <div className="rounded-lg bg-muted/50 px-2 py-1.5"><span className="text-muted-foreground">Volumen</span><div className="font-medium">{r.vol}</div></div>
-                <div className="col-span-2 rounded-lg bg-muted/30 px-2 py-1.5"><span className="text-muted-foreground">Señal</span><div className="text-sm">{r.senal}</div></div>
+                <div className="rounded-lg bg-muted/50 px-2 py-1.5"><span className="text-muted-foreground">Frecuencia</span><div className="font-medium">{freqAjustada}</div>{freqAjustada !== baseFreq ? <div className="text-muted-foreground">Base: {baseFreq}</div> : null}</div>
+                <div className="rounded-lg bg-muted/50 px-2 py-1.5"><span className="text-muted-foreground">Volumen</span><div className="font-medium">{volAjustado}</div>{volAjustado !== baseVol ? <div className="text-muted-foreground">Base: {baseVol}</div> : null}</div>
               </div>
-              <p className="mt-auto rounded-xl bg-sky-500/10 px-3 py-2 text-xs leading-relaxed text-sky-900 dark:text-sky-100">{r.tip}</p>
             </CardContent>
           </Card>
         );
@@ -485,13 +546,16 @@ export function FichaEspecieView({
   locked?: boolean;
 }) {
   const [zonaId, setZonaId] = useState<number | null>(null);
+  const [sueloId, setSueloId] = useState<SueloId | null>(null);
   const ref = useTrackedView<HTMLDivElement>({ name: "VIEW_FICHA", especieId: especie.slug });
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) return;
-      supabase.from("perfiles").select("comuna").eq("id", data.user.id).maybeSingle().then(r => {
+      supabase.from("perfiles").select("comuna, tipo_suelo").eq("id", data.user.id).maybeSingle().then(r => {
         setZonaId(getZonaIdDeComuna((r.data?.comuna as string | null) ?? undefined) ?? 7);
+        const ts = r.data?.tipo_suelo as string | null;
+        if (ts === "G" || ts === "MG" || ts === "M" || ts === "F") setSueloId(ts);
       });
     });
   }, []);
@@ -546,7 +610,7 @@ export function FichaEspecieView({
             </TabsList>
 
             <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
-            <TabsContent value="riego"><TabRiego riego={ficha.riego} especieNombre={especie.nombre} /></TabsContent>
+            <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaId={zonaId} /></TabsContent>
             <TabsContent value="nutricion"><TabNutricion fert={ficha.fert} /></TabsContent>
             <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
             <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
