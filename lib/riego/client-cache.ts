@@ -1,6 +1,15 @@
 "use client";
 
-import { getRiegoBase, type RiegoBasePayload } from "./actions";
+import { getRiegoBase, getRiegoTablas, type RiegoBasePayload } from "./actions";
+
+type Tablas = Awaited<ReturnType<typeof getRiegoTablas>>;
+let tablasPedido: Promise<Tablas> | null = null;
+
+/** Tablas compartidas (suelos, zonas, edades, niveles) una sola vez por sesión. */
+export function obtenerRiegoTablas(): Promise<Tablas> {
+  if (!tablasPedido) tablasPedido = getRiegoTablas();
+  return tablasPedido;
+}
 
 /**
  * Memo de sesión para la base de riego: la primera ficha/diálogo del día

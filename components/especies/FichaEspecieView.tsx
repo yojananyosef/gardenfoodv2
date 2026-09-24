@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Droplets, Leaf, Bug, Scissors, CalendarDays, Sprout, Citrus, Info, Lightbulb, Flower2, MapPinned, ChevronDown, ChevronUp, Eye, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { useTrackedView } from "@/hooks/useTrackedView";
@@ -44,7 +52,7 @@ function CurvaDemandaHidrica({ puntos, especieNombre }: { puntos: { mes: string;
           <span className="font-mono text-xs text-muted-foreground">{especieNombre}</span>
         </div>
         <CardTitle className="text-base leading-tight">Litros por árbol por riego — Base GARDENFOOD mes a mes</CardTitle>
-        <CardDescription className="text-xs">Valores de la Base de Datos Técnica, ajustados a tu suelo. En reposo casi no pide agua; el pico está en crecimiento y maduración.</CardDescription>
+        <CardDescription className="text-xs">Valores de la Base de Datos Técnica, ajustados a tu suelo y a la edad. En reposo casi no pide agua; el pico está en crecimiento y maduración.</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
         <ChartContainer config={config} className="h-[280px] w-full">
@@ -173,31 +181,34 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
 
   const cargando = baseKey !== dbKey;
 
+  // Edad estándar: adulto (factor 1,0). El usuario la cambia y todo se recalcula.
+  const [edadN, setEdadN] = useState<number>(4);
   const suelo = base?.suelos.find((t) => t.clave === (sueloId ?? "M"));
   const fv = suelo?.factor ?? 1;
+  const edad = base?.edades.find((e) => e.n === edadN);
+  const fLitros = edad?.factorLitros ?? 1;
+  const fDiasEdad = edad?.factorDias ?? 1;
   const zonaClave = zonaRiegoDeZonaId(zonaId);
   const zonaRiego = base?.zonas.find((z) => z.clave === zonaClave);
   const fc = zonaRiego?.factorClima ?? 1;
-  // La zona ajusta la frecuencia (días entre riegos), igual que la guía.
-  const factorDias = fv / fc;
+  // La zona y la edad ajustan la frecuencia (días entre riegos), igual que la guía.
+  const factorDias = (fv * fDiasEdad) / fc;
 
-  const filas = useMemo(() => {
-    if (!base) return [];
-    return base.mensual.map((m) => {
-      const lMin = Math.round(m.litrosMin * fv);
-      const lMax = Math.round(m.litrosMax * fv);
-      const dMin = Math.max(1, Math.round(m.diasMin * factorDias));
-      const dMax = Math.max(1, Math.round(m.diasMax * factorDias));
-      return {
-        ...m,
-        lMin,
-        lMax,
-        lRec: Math.round((lMin + lMax) / 2),
-        dMin,
-        dMax,
-      };
-    });
-  }, [base, fv, factorDias]);
+  // 12 filas: cálculo directo, el compilador de React lo memoiza solo.
+  const filas = (base?.mensual ?? []).map((m) => {
+    const lMin = Math.round(m.litrosMin * fv * fLitros);
+    const lMax = Math.round(m.litrosMax * fv * fLitros);
+    const dMin = Math.max(1, Math.round(m.diasMin * factorDias));
+    const dMax = Math.max(1, Math.round(m.diasMax * factorDias));
+    return {
+      ...m,
+      lMin,
+      lMax,
+      lRec: Math.round((lMin + lMax) / 2),
+      dMin,
+      dMax,
+    };
+  });
 
   if (error) {
     return <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">No se pudo cargar la base de riego de esta especie. Revisa tu conexión e intenta de nuevo.</p>;
@@ -208,9 +219,29 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 rounded-2xl border bg-card px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
+        <div className="flex flex-1 flex-col gap-1">
+          <Label htmlFor="ficha-edad">Edad del árbol</Label>
+          <Select value={String(edadN)} onValueChange={(v) => setEdadN(Number(v) || 4)}>
+            <SelectTrigger id="ficha-edad" className="min-h-11 w-full sm:max-w-72">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(base?.edades ?? []).map((e) => (
+                <SelectItem key={e.n} value={String(e.n)}>
+                  {e.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Coeficiente de la guía: 30 % recién plantado · 55 % joven · 80 % inicial · 100 % adulto.
+          </p>
+        </div>
+      </div>
       {sueloId && suelo ? (
         <div className="flex flex-col gap-1 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
-          <span className="inline-flex items-center gap-1.5 font-semibold"><Droplets className="size-4 text-primary" /> Ajustado a tu suelo: {suelo.nombre} (×{String(fv).replace(".", ",")})</span>
+          <span className="inline-flex items-center gap-1.5 font-semibold"><Droplets className="size-4 text-primary" /> Ajustado a tu suelo: {suelo.nombre} (×{String(fv).replace(".", ",")}) · edad {edad?.nombre.toLowerCase() ?? "adulto"} (×{String(fLitros).replace(".", ",")})</span>
           <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
         </div>
       ) : (
@@ -549,16 +580,34 @@ export function FichaEspecieView({
   const [zonaId, setZonaId] = useState<number | null>(null);
   const [sueloId, setSueloId] = useState<SueloId | null>(null);
   const ref = useTrackedView<HTMLDivElement>({ name: "VIEW_FICHA", especieId: especie.slug });
+  // El perfil se re-lee al montar Y al volver a la pestaña/ventana: si el
+  // usuario cambia su suelo en /perfil y regresa con "atrás", el componente
+  // puede seguir montado y el suelo viejo quedaría pegado.
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) return;
-      supabase.from("perfiles").select("comuna, tipo_suelo").eq("id", data.user.id).maybeSingle().then(r => {
-        setZonaId(getZonaIdDeComuna((r.data?.comuna as string | null) ?? undefined) ?? 7);
-        const ts = r.data?.tipo_suelo as string | null;
-        if (ts === "G" || ts === "MG" || ts === "M" || ts === "F") setSueloId(ts);
+    let active = true;
+    const cargarPerfil = () => {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data }) => {
+        if (!data.user || !active) return;
+        supabase.from("perfiles").select("comuna, tipo_suelo").eq("id", data.user.id).maybeSingle().then(r => {
+          if (!active) return;
+          setZonaId(getZonaIdDeComuna((r.data?.comuna as string | null) ?? undefined) ?? 7);
+          const ts = r.data?.tipo_suelo as string | null;
+          setSueloId(ts === "G" || ts === "MG" || ts === "M" || ts === "F" ? ts : null);
+        });
       });
-    });
+    };
+    cargarPerfil();
+    const alVolverVisible = () => {
+      if (document.visibilityState === "visible") cargarPerfil();
+    };
+    window.addEventListener("focus", cargarPerfil);
+    document.addEventListener("visibilitychange", alVolverVisible);
+    return () => {
+      active = false;
+      window.removeEventListener("focus", cargarPerfil);
+      document.removeEventListener("visibilitychange", alVolverVisible);
+    };
   }, []);
 
   return (
