@@ -250,6 +250,10 @@ const ACTUALIZAR_ARBOL = z.object({
   huertoId: z.string().uuid().nullable().optional(),
   posX: z.number().min(0).max(1).optional(),
   posY: z.number().min(0).max(1).optional(),
+  edadClase: z.enum(["recien", "joven", "inicial", "adulto"]).nullable().optional(),
+  copaM: z.number().min(0.2).max(12).nullable().optional(),
+  metodoRiego: z.enum(["balde", "manguera", "goteo"]).nullable().optional(),
+  caudalLH: z.number().min(0).max(500).nullable().optional(),
 });
 
 export async function actualizarArbol(
@@ -318,6 +322,10 @@ export async function actualizarArbol(
     patch.pos_x = Math.max(0, Math.min(1, parsed.posX));
   if (parsed.posY !== undefined)
     patch.pos_y = Math.max(0, Math.min(1, parsed.posY));
+  if (parsed.edadClase !== undefined) patch.edad_clase = parsed.edadClase;
+  if (parsed.copaM !== undefined) patch.copa_m = parsed.copaM;
+  if (parsed.metodoRiego !== undefined) patch.metodo_riego = parsed.metodoRiego;
+  if (parsed.caudalLH !== undefined) patch.caudal_l_h = parsed.caudalLH;
   if (parsed.huertoId !== undefined) {
     patch.huerto_id = parsed.huertoId;
     if (parsed.huertoId === null) {

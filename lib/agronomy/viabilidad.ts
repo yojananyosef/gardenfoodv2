@@ -446,7 +446,7 @@ export const VIABILIDAD: Record<string, Record<number, ViabilidadEntry>> = {
     17: { v: "si", razon: "Viable" },
     18: { v: "si", razon: "Viable" },
     19: { v: "no", razon: "Lluvia excesiva (1800 mm) — olivo necesita verano seco" },
-    20: { v: "si", razon: "Viable" }
+    20: { v: "no", razon: "Clima demasiado frío y lluvioso (Osorno-Aysén-Magallanes) — el olivo necesita verano seco y cálido" }
   },
   "Frutilla": {
     1: { v: "riesgo", razon: "Calor extremo; requiere sombra parcial y riego intensivo" },

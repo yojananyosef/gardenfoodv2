@@ -163,6 +163,9 @@ export interface Cultivo {
   createdAt: string;
 }
 
+export type EdadClaseArbol = "recien" | "joven" | "inicial" | "adulto";
+export type MetodoRiegoArbol = "balde" | "manguera" | "goteo";
+
 export interface Arbol {
   id: string;
   especie: string;
@@ -173,6 +176,10 @@ export interface Arbol {
   posX: number | null;
   posY: number | null;
   createdAt: string;
+  edadClase?: EdadClaseArbol | null;
+  copaM?: number | null;
+  metodoRiego?: MetodoRiegoArbol | null;
+  caudalLH?: number | null;
 }
 
 export interface HuertoResumen {
