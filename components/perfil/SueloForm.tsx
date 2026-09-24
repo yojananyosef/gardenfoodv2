@@ -10,6 +10,7 @@ import { actualizarSuelo } from "@/lib/auth/actions";
 import { PASOS_CINTA, TIPOS_SUELO, type SueloId } from "@/lib/riego/datos";
 import { obtenerRiegoTablas } from "@/lib/riego/client-cache";
 import type { RiegoSueloRow } from "@/lib/riego/actions";
+import { IlustracionCinta, IlustracionPaso } from "./IlustracionesSuelo";
 import { cn } from "@/lib/utils";
 
 const SUELO_COLOR: Record<SueloId, string> = {
@@ -71,6 +72,11 @@ function TarjetaSuelo({
       )}
     >
       <span className="block h-2.5 w-full" style={{ backgroundColor: SUELO_COLOR[suelo.id] }} aria-hidden />
+      {mostrarManejo ? (
+        <span className="block bg-muted/40 px-2 pt-1">
+          <IlustracionCinta suelo={suelo.id} />
+        </span>
+      ) : null}
       <span className="flex flex-col gap-1.5 p-3">
         <span className="flex items-center justify-between gap-2">
           <span
@@ -212,19 +218,24 @@ export function SueloForm() {
                   ))}
                 </div>
               </div>
-              <div className="flex gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4">
-                <span
-                  className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-extrabold text-primary-foreground"
-                  aria-hidden
-                >
-                  {paso + 1}
-                </span>
-                <span>
-                  <span className="block text-base font-bold leading-tight">{pasoActual.titulo}</span>
-                  <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
-                    {pasoActual.detalle}
+              <div className="overflow-hidden rounded-2xl border border-primary/25 bg-primary/5">
+                <div className="bg-muted/40 px-4 pt-2">
+                  <IlustracionPaso paso={paso} />
+                </div>
+                <div className="flex gap-3 p-4 pt-2">
+                  <span
+                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-extrabold text-primary-foreground"
+                    aria-hidden
+                  >
+                    {paso + 1}
                   </span>
-                </span>
+                  <span>
+                    <span className="block text-base font-bold leading-tight">{pasoActual.titulo}</span>
+                    <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                      {pasoActual.detalle}
+                    </span>
+                  </span>
+                </div>
               </div>
               <div className="flex gap-2">
                 <Button
