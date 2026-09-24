@@ -79,27 +79,17 @@ function PasoAmasar() {
 function PasoCinta() {
   return (
     <g>
-      {/* Índice: dedo horizontal abajo, con uña en la punta */}
-      <rect x={8} y={56} width={88} height={22} rx={11} fill="#E8C39E" />
-      <ellipse cx={86} cy={62} rx={7} ry={4.5} fill="#F9E8D2" />
-      {/* Pulgar: baja en diagonal presionando sobre la cinta, con uña */}
-      <g transform="rotate(28 52 40)">
-        <rect x={10} y={28} width={72} height={22} rx={11} fill="#D9A97E" />
-        <ellipse cx={72} cy={34} rx={7} ry={4.5} fill="#F9E8D2" />
-      </g>
-      {/* Flecha del empuje suave hacia abajo */}
-      <line x1={52} y1={10} x2={62} y2={26} stroke="#525252" strokeWidth={2} strokeLinecap="round" />
-      <polygon points="64,30 54,28 59,38" fill="#525252" />
+      {/* Pulgar arriba, más gordito, con uña en la punta */}
+      <rect x={16} y={34} width={66} height={24} rx={12} fill="#E8C39E" />
+      <ellipse cx={70} cy={42} rx={7} ry={4.5} fill="#F9E8D2" />
+      {/* Índice abajo, con uña en la punta */}
+      <rect x={18} y={72} width={62} height={20} rx={10} fill="#D9A97E" />
+      <ellipse cx={70} cy={78} rx={7} ry={4} fill="#F9E8D2" />
       {/* Cinta de tierra saliendo entre los dos dedos */}
-      <rect x={92} y={64} width={90} height={14} rx={7} fill="#8A5A33" />
-      <rect x={92} y={64} width={90} height={5.5} rx={2.75} fill="#BE8A50" opacity={0.9} />
-      {/* Etiquetas para no adivinar */}
-      <text x={22} y={16} fontSize={9.5} fontWeight={700} fill="#57534e">pulgar</text>
-      <line x1={38} y1={19} x2={48} y2={32} stroke="#a8a29e" strokeWidth={1} />
-      <text x={10} y={104} fontSize={9.5} fontWeight={700} fill="#57534e">índice</text>
-      <line x1={30} y1={100} x2={44} y2={80} stroke="#a8a29e" strokeWidth={1} />
-      <text x={128} y={104} fontSize={9.5} fontWeight={700} fill="#57534e">cinta</text>
-      <line x1={136} y1={100} x2={136} y2={82} stroke="#a8a29e" strokeWidth={1} />
+      <rect x={74} y={53} width={108} height={14} rx={7} fill="#8A5A33" />
+      <rect x={74} y={53} width={108} height={5} rx={2.5} fill="#BE8A50" opacity={0.9} />
+      <line x1={88} y1={90} x2={88} y2={102} stroke="#525252" strokeWidth={2} />
+      <line x1={168} y1={90} x2={168} y2={102} stroke="#525252" strokeWidth={2} />
     </g>
   );
 }
