@@ -184,6 +184,17 @@
   }
 }
 
+/* Oculta la barra de scroll sin sacar el scroll: para carruseles táctiles
+   (pestañas de la ficha) donde la barra ocupa alto y empuja el layout.
+   El degradado de borde da la pista de que hay más contenido. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Row clicable: para filas/listas que navegan. Tinta de fondo + borde,
    sin levante (en listas el translate se siente nervioso). */
 @utility row-click {

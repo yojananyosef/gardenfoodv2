@@ -92,7 +92,12 @@ function TarjetaSuelo({
           ) : null}
         </span>
         <span className="text-sm font-bold leading-tight">{suelo.nombre}</span>
-        <span className="text-xs text-muted-foreground">{suelo.tecnico}</span>
+        {/* El seed 0032 copió `nombre` en `tecnico`, así que en BD vienen
+            iguales y la tarjeta repetía el mismo texto dos veces. Se omite
+            la línea cuando coinciden; el fix de datos va en 0033. */}
+        {suelo.tecnico && suelo.tecnico !== suelo.nombre ? (
+          <span className="text-xs text-muted-foreground">{suelo.tecnico}</span>
+        ) : null}
         <span className="text-xs leading-relaxed">{suelo.sensacion}</span>
         {mostrarManejo && suelo.manejo ? (
           <span className="rounded-lg bg-muted/60 px-2 py-1.5 text-xs leading-relaxed text-muted-foreground">

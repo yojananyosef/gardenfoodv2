@@ -22,7 +22,10 @@ export function BottomNav({ esAdmin }: { esAdmin?: boolean }) {
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed inset-x-0 bottom-0 z-20 border-t bg-background/90 backdrop-blur md:hidden"
+      /* Sube a lg (1024) y no md (768): entre 768 y 1024 la nav de links de
+         arriba ya no se muestra, así que la inferior tiene que seguir
+         presente o ese rango se queda sin navegación. */
+      className="fixed inset-x-0 bottom-0 z-20 border-t bg-background/90 backdrop-blur lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div

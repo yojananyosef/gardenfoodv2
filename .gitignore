@@ -44,3 +44,6 @@ supabase/.temp/
 next-env.d.ts
 testsprite_tests/tmp/
 testsprite_tests/tmp/config.json
+
+# playwright mcp: artefactos de sesión (console-*.log, page-*.yml)
+.playwright-mcp/

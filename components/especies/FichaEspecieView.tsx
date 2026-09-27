@@ -55,13 +55,19 @@ function CurvaDemandaHidrica({ puntos, especieNombre }: { puntos: { mes: string;
         <CardDescription className="text-xs">Valores de la Base de Datos Técnica, ajustados a tu suelo y a la edad. En reposo casi no pide agua; el pico está en crecimiento y maduración.</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
-        <ChartContainer config={config} className="h-[280px] w-full">
-          <LineChart data={puntos} margin={{ left: 12, right: 24, top: 24, bottom: 8 }}>
+        {/* Sin label rotado en el eje Y: el CardTitle ya dice "Litros por árbol
+            por riego" y en móvil ese texto roba ~100 px de ancho útil y
+            empuja los 12 meses del eje X a solaparse. */}
+        <ChartContainer config={config} className="h-[240px] w-full sm:h-[280px]">
+          <LineChart data={puntos} margin={{ left: 4, right: 12, top: 24, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="mes" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} interval={0} />
-            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} domain={[0, Math.ceil(max * 1.15)]} label={{ value: "Litros por árbol por riego", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "var(--muted-foreground)" } }} />
+            {/* minTickGap + preserveStartEnd: Recharts descarta meses si no
+                caben. Con interval={0} los 12 se forzaban siempre y en móvil
+                (390 px) se pisaban entre sí. */}
+            <XAxis dataKey="mes" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={6} />
+            <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 10 }} width={34} domain={[0, Math.ceil(max * 1.15)]} />
             <ChartTooltip content={<ChartTooltipContent labelKey="etapa" />} />
-            <Line type="monotone" dataKey="litros" stroke="var(--primary)" strokeWidth={3} dot={{ r: 6, fill: "white", stroke: "var(--primary)", strokeWidth: 2 }} activeDot={{ r: 7 }} />
+            <Line type="monotone" dataKey="litros" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4, fill: "white", stroke: "var(--primary)", strokeWidth: 2 }} activeDot={{ r: 6 }} />
           </LineChart>
         </ChartContainer>
       </CardContent>
@@ -183,6 +189,8 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
 
   // Edad estándar: adulto (factor 1,0). El usuario la cambia y todo se recalcula.
   const [edadN, setEdadN] = useState<number>(4);
+  // Los 12 meses no salen de golpe: primero el actual y el siguiente.
+  const [showAll, setShowAll] = useState(false);
   const suelo = base?.suelos.find((t) => t.clave === (sueloId ?? "M"));
   const fv = suelo?.factor ?? 1;
   const edad = base?.edades.find((e) => e.n === edadN);
@@ -217,39 +225,18 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
     return <p className="text-sm text-muted-foreground">Cargando base de riego…</p>;
   }
 
+  // Revelado progresivo de los 12 meses: por defecto el actual y los dos
+  // siguientes (cubre regar hoy y el ciclo corto que viene). "Ver los otros
+  // 9" abre el resto. Mismo patrón que Calendario y Nutrición.
+  const destacados = filas.filter((f) => {
+    const offset = (f.mes - mesActual + 12) % 12;
+    return offset < 3;
+  });
+  const resto = filas.filter((f) => !destacados.includes(f));
+  const visibles = showAll ? [...destacados, ...resto] : destacados;
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 rounded-2xl border bg-card px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
-        <div className="flex flex-1 flex-col gap-1">
-          <Label htmlFor="ficha-edad">Edad del árbol</Label>
-          <Select value={String(edadN)} onValueChange={(v) => setEdadN(Number(v) || 4)}>
-            <SelectTrigger id="ficha-edad" className="min-h-11 w-full sm:max-w-72">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {(base?.edades ?? []).map((e) => (
-                <SelectItem key={e.n} value={String(e.n)}>
-                  {e.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <p className="text-xs text-muted-foreground">
-            Coeficiente de la guía: 30 % recién plantado · 55 % joven · 80 % inicial · 100 % adulto.
-          </p>
-        </div>
-      </div>
-      {sueloId && suelo ? (
-        <div className="flex flex-col gap-1 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
-          <span className="inline-flex items-center gap-1.5 font-semibold"><Droplets className="size-4 text-primary" /> Ajustado a tu suelo: {suelo.nombre} (×{String(fv).replace(".", ",")}) · edad {edad?.nombre.toLowerCase() ?? "adulto"} (×{String(fLitros).replace(".", ",")})</span>
-          <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-1 rounded-2xl border border-dashed border-amber-500/50 bg-amber-500/10 px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3">
-          <span className="font-medium">Suelo no definido — valores base en suelo franco (referencia de la guía).</span>
-          <span className="text-xs text-muted-foreground"><Link href="/perfil" className="underline underline-offset-2">Define tu tipo de suelo en tu perfil</Link> y estos litros y frecuencias se recalculan solos.</span>
-        </div>
-      )}
       <CurvaDemandaHidrica
         especieNombre={especieNombre}
         puntos={filas.map((f) => ({
@@ -259,8 +246,38 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
           detalle: `${f.lMin}–${f.lMax} L cada ${f.dMin}–${f.dMax} días`,
         }))}
       />
+      <div className="flex flex-col gap-4 rounded-2xl border bg-card px-4 py-3 sm:flex-row sm:items-start sm:gap-4">
+        <div className="flex flex-1 flex-col gap-1">
+          <Label htmlFor="ficha-edad">Edad del árbol</Label>
+          <Select value={String(edadN)} onValueChange={(v) => setEdadN(Number(v) || 4)}>
+            <SelectTrigger id="ficha-edad" className="min-h-11 w-full sm:max-w-72">
+              {/* Sin hijos, Base UI cae al valor crudo y el trigger pintaba
+                  "4" en vez del nombre. Pasándole el nombre a propósito. */}
+              <SelectValue>{edad?.nombre ?? "Elige la edad"}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {(base?.edades ?? []).map((e) => (
+                <SelectItem key={e.n} value={String(e.n)}>
+                  {e.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {sueloId && suelo ? (
+          <div className="flex flex-1 flex-col gap-1 text-sm sm:border-l sm:pl-4">
+            <span className="inline-flex items-start gap-1.5 font-semibold"><Droplets className="mt-0.5 size-4 shrink-0 text-primary" /> Ajustado a tu suelo: {suelo.nombre} (×{String(fv).replace(".", ",")}) · {edad?.nombre.toLowerCase() ?? "adulto"} (×{String(fLitros).replace(".", ",")})</span>
+            <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
+          </div>
+        ) : (
+          <div className="flex flex-1 flex-col gap-1 text-sm sm:border-l sm:pl-4">
+            <span className="font-medium">Suelo no definido — valores base en suelo franco (referencia de la guía).</span>
+            <span className="text-xs text-muted-foreground"><Link href="/perfil" className="underline underline-offset-2">Define tu tipo de suelo en tu perfil</Link> y estos litros y frecuencias se recalculan solos.</span>
+          </div>
+        )}
+      </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {filas.map((f) => {
+      {visibles.map((f) => {
         const active = f.mes === mesActual;
         const baseVol = `${f.litrosMin}–${f.litrosMax} L`;
         const volAjustado = `${f.lMin}–${f.lMax} L`;
@@ -269,7 +286,7 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
         return (
           <Card key={f.mes} className={cn("flex flex-col rounded-2xl transition-shadow hover:shadow-sm", active && "border-primary/40 shadow-sm ring-1 ring-primary/10")}>
             <CardHeader className="pb-2">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <Badge variant={active ? "default" : "secondary"} className="rounded-full text-[11px]">{f.etapa}</Badge>
                 {active && <Badge className="gap-1 rounded-full text-[10px]"><span className="size-1.5 rounded-full bg-white animate-pulse" /> Este mes</Badge>}
               </div>
@@ -277,15 +294,32 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
               <CardDescription className="text-xs">{freqAjustada} · {volAjustado}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col gap-2 pt-0">
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-lg bg-muted/50 px-2 py-1.5"><span className="text-muted-foreground">Frecuencia</span><div className="font-medium">{freqAjustada}</div>{freqAjustada !== baseFreq ? <div className="text-muted-foreground">Base: {baseFreq}</div> : null}</div>
-                <div className="rounded-lg bg-muted/50 px-2 py-1.5"><span className="text-muted-foreground">Volumen</span><div className="font-medium">{volAjustado}</div>{volAjustado !== baseVol ? <div className="text-muted-foreground">Base: {baseVol}</div> : null}</div>
-              </div>
+              {/* 2 columnas en vez de 1 también en móvil: a media card
+                  (≈150 px) "Frecuencia" + "Base: ..." se partía en 3 líneas y
+                  la card quedaba altísima. A 2 columnas cabe en 2 líneas. */}
+              <dl className="grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-lg bg-muted/50 px-2 py-1.5">
+                  <dt className="text-muted-foreground">Frecuencia</dt>
+                  <dd className="font-medium leading-snug">{freqAjustada}</dd>
+                  {freqAjustada !== baseFreq ? <dd className="text-muted-foreground">Base: {baseFreq}</dd> : null}
+                </div>
+                <div className="rounded-lg bg-muted/50 px-2 py-1.5">
+                  <dt className="text-muted-foreground">Volumen</dt>
+                  <dd className="font-medium leading-snug">{volAjustado}</dd>
+                  {volAjustado !== baseVol ? <dd className="text-muted-foreground">Base: {baseVol}</dd> : null}
+                </div>
+              </dl>
             </CardContent>
           </Card>
         );
       })}
       </div>
+      {/* Revelado progresivo: los 12 meses no de golpe, solo si lo pide. */}
+      {!showAll && (
+        <Button variant="outline" className="w-full rounded-xl" onClick={() => setShowAll(true)}>
+          Ver los otros {resto.length} meses <ChevronDown data-icon="inline-end" />
+        </Button>
+      )}
     </div>
   );
 }
@@ -611,7 +645,11 @@ export function FichaEspecieView({
   }, []);
 
   return (
-    <div ref={ref} className="flex flex-col gap-5">
+    <div ref={ref} className="flex min-w-0 flex-col gap-5">
+      {/* min-w-0 en toda la cadena: dentro de un dialog (grid item) los hijos
+          de flex/grid vienen con min-width auto, así que el ancho mínimo del
+          carrusel de pestañas se propagaba hacia arriba y el dialog terminaba
+          con scroll horizontal en vez de dejar que el carrusel scrollee. */}
       {/* Hero bento */}
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="relative h-64 w-full overflow-hidden rounded-2xl bg-muted lg:col-span-8 lg:h-72">
@@ -650,14 +688,26 @@ export function FichaEspecieView({
 
       {(() => {
         const tabs = (
-          <Tabs defaultValue="calendario" className="w-full gap-4">
-            <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1">
-              {TABS.map((t) => (
-                <TabsTrigger key={t.id} value={t.id} className="gap-1.5 whitespace-nowrap">
-                  <t.icon className="size-4" /> {t.l}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <Tabs defaultValue="calendario" className="w-full min-w-0 gap-4">
+            {/* 9 pestañas no caben en 390 px: carrusel táctil con scroll
+                oculto y degradados de borde que avisan que hay más. */}
+            <div className="relative min-w-0">
+              <TabsList className="scrollbar-none w-full justify-start overflow-x-auto rounded-xl bg-muted p-1">
+                {TABS.map((t) => (
+                  <TabsTrigger key={t.id} value={t.id} className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <t.icon className="size-4" /> {t.l}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-background to-transparent sm:hidden"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent sm:hidden"
+              />
+            </div>
 
             <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
             <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaId={zonaId} /></TabsContent>
