@@ -102,7 +102,7 @@ export function WorkbenchModular({
           </div>
         ) : null}
       </div>
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-5 sm:p-6">
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="gap-4">
           <div className="flex flex-nowrap items-center gap-2">
             <TabsList className="min-w-0 flex-1 justify-start overflow-x-auto rounded-xl bg-muted p-1 [scrollbar-width:none] sm:overflow-visible [&::-webkit-scrollbar]:hidden">

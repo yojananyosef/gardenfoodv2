@@ -18,7 +18,9 @@ export const TERRENO_MAX_POSICIONES_ANILLO = 500;
 export const CENTRO_DEFAULT = { lat: -35.6751, lng: -71.543 };
 export const ZOOM_DEFAULT = 5;
 export const ZOOM_UBICACION = 18;
-export const MAPA_MAX_ZOOM = 19;
+// 20 = overzoom permitido: Esri rara vez pasa de 18-19 nativo, pero Leaflet
+// reescala el último nivel y así se pueden dibujar parcelas chicas (ej. Rapel).
+export const MAPA_MAX_ZOOM = 20;
 
 const RADIO_TIERRA_M = 6371008.8;
 

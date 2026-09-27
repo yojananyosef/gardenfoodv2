@@ -298,6 +298,24 @@ export function TerrenoMap({
         // Controles en español: Geoman trae traducción "es" (Dibujar
         // Polígono, Editar/Eliminar Capas, Finalizar/Cancelar…).
         map.pm.setLang("es");
+        // Sin snap: el "auto-enganche" a esquinas de huertos cercanos hacía
+        // saltar el cursor al dibujar parcelas chicas. Se desactiva el imán
+        // global y se exige polígono simple para dibujos precisos.
+        try {
+          (
+            map.pm as unknown as {
+              setGlobalOptions?: (o: Record<string, unknown>) => void;
+            }
+          ).setGlobalOptions?.({
+            snappable: false,
+            snapDistance: 0,
+            allowSelfIntersection: false,
+            finishOn: "dblclick",
+            markerEditable: true,
+          });
+        } catch {
+          // Versiones de Geoman sin setGlobalOptions: se sigue sin snap por defecto en draw.
+        }
         map.pm.addControls({
           position: "topleft",
           drawMarker: false,
@@ -402,8 +420,9 @@ export function TerrenoMap({
         // Zoom nativo dinámico: consulta el tilemap de Esri para el tile
         // central y fija maxNativeZoom al nivel realmente disponible, para
         // que Leaflet reescale el último nivel existente en lugar de mostrar
-        // tiles "Map data not yet available". Tope en 18: el nivel 19 de Esri
-        // no es uniforme y un falso positivo deja tiles 404 (fondo blanco).
+        // tiles "Map data not yet available". Se prueba hasta 19 (MAPA_MAX_ZOOM
+        // 20 = overzoom para parcelas chicas como Rapel); un falso positivo
+        // solo deja un nivel reescalado, no fondo blanco (blankTile=false).
         // Persiste en sessionStorage: al volver a la página no se re-consulta.
         const zoomNativoCache = new Map<string, number>();
         try {
@@ -435,7 +454,7 @@ export function TerrenoMap({
           ajustandoZoom = true;
           try {
             const centro = map.getCenter();
-            for (const nivel of [MAPA_MAX_ZOOM - 1, ZOOM_NATIVO_MIN]) {
+            for (const nivel of [MAPA_MAX_ZOOM - 1, MAPA_MAX_ZOOM - 2, ZOOM_NATIVO_MIN]) {
               const { x, y } = tileDeCentro(centro.lat, centro.lng, nivel);
               const clave = `${x}_${y}_${nivel}`;
               let disponible = zoomNativoCache.get(clave);
@@ -572,8 +591,27 @@ export function TerrenoMap({
               anillo.length >= 3 &&
               puntoEnPoligono(punto, anilloComoCoordenadas(anillo)[0])
             ) {
+              // Marcador optimista: el árbol aparece al instante mientras el
+              // server action guarda (ese roundtrip es el "par de segundos").
+              // El marcador real llega por props; el temporal se retira igual.
+              let temporal: Leaflet.CircleMarker | null = null;
+              try {
+                temporal = L.circleMarker([punto.lat, punto.lng], {
+                  radius: 7,
+                  color: "#ffffff",
+                  weight: 2,
+                  fillColor: "#22c55e",
+                  fillOpacity: 0.9,
+                }).addTo(map);
+              } catch {
+                temporal = null;
+              }
               void (async () => {
-                await onMarcarArbolRef.current(huertoId, punto.lat, punto.lng);
+                try {
+                  await onMarcarArbolRef.current(huertoId, punto.lat, punto.lng);
+                } finally {
+                  if (temporal) map.removeLayer(temporal);
+                }
               })();
               return;
             }
@@ -815,10 +853,39 @@ export function TerrenoMap({
   /** Más de esto se considera señal débil: se avisa en vez de callar. */
   const UMBRAL_PRECISION_M = 100;
 
-  /** Guía paso a paso para quien bloqueó el permiso sin darse cuenta
-   *  (lenguaje simple: sirve para un niño o un anciano). */
-  const GUIA_UBICACION_BLOQUEADA =
-    "La ubicación está bloqueada en tu navegador. Actívala así: 1) toca el candado junto a la dirección de esta página, 2) toca Ubicación y elige Permitir, 3) pulsa de nuevo el botón de ubicación del mapa.";
+  /** Detección simple sin dependencias: Safari/iOS no trae Permissions API
+   *  fiable y no tiene "candado" (usa botón aA / Ajustes del sistema). */
+  function esIOS(): boolean {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    const platform = (navigator as Navigator & { userAgentData?: { platform?: string } })
+      ?.userAgentData?.platform
+      ?? (navigator as Navigator & { platform?: string })?.platform
+      ?? "";
+    return (
+      /iPad|iPhone|iPod/.test(ua) ||
+      (ua.includes("Mac") && "ontouchend" in document) ||
+      /iPad|iPhone|iPod/.test(platform)
+    );
+  }
+  function esSafari(): boolean {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    return /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua);
+  }
+  /** Guía paso a paso según navegador (lenguaje simple).
+   *  Chrome/Android habla de "candado"; Safari iOS/Mac usa botón aA y
+   *  Ajustes → Privacidad → Localización, donde el bloqueo suele ser a
+   *  nivel de sistema y el navegador ni siquiera pregunta. */
+  function guiaUbicacionBloqueada(): string {
+    if (esIOS()) {
+      return "La ubicación está bloqueada. Actívala así en iPhone/iPad: 1) abre Ajustes → Privacidad y seguridad → Localización y actívala, 2) en la lista busca Safari (o tu navegador) y elige «Al usar la app», 3) vuelve aquí, toca el botón aA junto a la dirección, abre «Configuración del sitio web» y permite Ubicación, 4) pulsa de nuevo el botón de ubicación del mapa. Si igual no pregunta, escribe tu comuna en el perfil: el huerto funciona igual sin GPS.";
+    }
+    if (esSafari()) {
+      return "La ubicación está bloqueada en Safari. Actívala así: 1) toca el botón aA junto a la dirección → «Configuración del sitio web» → Ubicación → Permitir, 2) en Mac revisa además Ajustes del Sistema → Privacidad y seguridad → Localización, 3) recarga y pulsa de nuevo el botón de ubicación del mapa.";
+    }
+    return "La ubicación está bloqueada en tu navegador. Actívala así: 1) toca el candado junto a la dirección de esta página, 2) toca Ubicación y elige Permitir, 3) pulsa de nuevo el botón de ubicación del mapa.";
+  }
 
   const [infoUbicacion, setInfoUbicacion] = useState<string | null>(null);
 
@@ -858,7 +925,7 @@ export function TerrenoMap({
     }
     const code = (err as GeolocationPositionError | undefined)?.code;
     if (code === 1) {
-      return GUIA_UBICACION_BLOQUEADA;
+      return guiaUbicacionBloqueada();
     }
     if (code === 2) return "Ubicación no disponible en este dispositivo.";
     if (code === 3) {
@@ -934,7 +1001,7 @@ export function TerrenoMap({
       if (!vigente()) return;
       if (permiso === "denied") {
         setPrecisionM(null);
-        setUbicacionError(GUIA_UBICACION_BLOQUEADA);
+        setUbicacionError(guiaUbicacionBloqueada());
         return;
       }
       if (permiso === "prompt") {

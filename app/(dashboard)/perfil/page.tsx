@@ -9,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { ConsentPreferences } from "@/components/cmp/ConsentPreferences";
 import { UbicacionForm } from "@/components/perfil/UbicacionForm";
+import { SueloForm } from "@/components/perfil/SueloForm";
 import { eliminarMiCuenta } from "@/lib/privacy/actions";
 import { clearLocalConsent } from "@/lib/consent/token";
 import { getDeviceId } from "@/lib/telemetry/device";
@@ -54,6 +55,14 @@ export default function PerfilPage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">Tu tipo de suelo</p>
+            <p className="text-xs text-muted-foreground">
+              Se mide una sola vez por terreno con el test de la cinta y se
+              aplica a todos tus riegos (litros y frecuencia).
+            </p>
+            <SueloForm />
+          </div>
+          <div className="flex flex-col gap-2 border-t pt-4">
             <p className="text-sm font-medium">Tu comuna</p>
             <p className="text-xs text-muted-foreground">
               Usamos tu comuna para calcular alertas agroclimáticas y

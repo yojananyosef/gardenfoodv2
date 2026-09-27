@@ -33,9 +33,11 @@ function GuestNav() {
       <Link href="/calculadoras" className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden" aria-label="Calculadoras">
         <Calculator className="size-4" />
       </Link>
-      <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/login" />}>
+      {/* En móvil el texto estorba: la marca + 4 acciones no caben en 390 px
+          y la barra entera empujaba el documento 3 px hacia los lados. */}
+      <Button variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href="/login" />} aria-label="Entrar">
         <LogIn data-icon="inline-start" />
-        Entrar
+        <span className="hidden sm:inline">Entrar</span>
       </Button>
       <Button size="sm" className="h-8 rounded-lg px-3" render={<Link href="/registro" />}>
         Registrarme
@@ -47,7 +49,12 @@ function GuestNav() {
 function UserNav({ esAdmin }: { esAdmin?: boolean }) {
   return (
     <nav className="flex items-center gap-1 sm:gap-3">
-      <div className="hidden items-center gap-1 text-sm md:flex">
+      {/* Los 5 links + Admin + Perfil + salir necesitan ~760 px con la marca.
+          Con md: (768) no cabían: a 768 y 820 el nav se salía del viewport,
+          Perfil y "salir" quedaban cortados y la página scrolleaba en
+          horizontal. Por eso la nav de links arranca en lg (1024), que es
+          justo donde el cálculo alcanza. */}
+      <div className="hidden items-center gap-1 text-sm lg:flex">
         {LINKS_USUARIO.map(({ href, label }) => (
           <Button key={href} variant="ghost" size="sm" className="h-8 rounded-lg" render={<Link href={href} />}>
             {label}
@@ -77,7 +84,7 @@ export async function TopBar({ esAdmin }: { esAdmin?: boolean }) {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-8">
         <Link href="/" className="inline-flex items-center gap-2.5">
           <BrandMark />
           <span className="font-heading text-[15px] font-semibold tracking-tight">GardenFood</span>

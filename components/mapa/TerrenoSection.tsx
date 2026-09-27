@@ -493,6 +493,10 @@ export function TerrenoSection({
       posX: result.arbol.posX,
       posY: result.arbol.posY,
       createdAt: new Date().toISOString(),
+      edadClase: null,
+      copaM: null,
+      metodoRiego: null,
+      caudalLH: null,
     };
     setArboles((prev) => [...prev, nuevo]);
     router.refresh();

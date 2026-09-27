@@ -6869,7 +6869,7 @@ export const FICHAS: Record<string, FichaEspecie> = {
       "Polinización": "Mayormente alógama: necesita polinizador. Arbequina es autofértil.",
       "Variedades recomendadas": "Arbequina (aceite, porte bajo), Picual (aceite), Barnea (doble uso), Sevillana (mesa)",
       "Tamaño adulto": "5 – 10 metros",
-      "Zonas recomendadas": "2-19 SÍ (1 RIESGO; 20 SÍ)",
+      "Zonas recomendadas": "2-18 SÍ (1 RIESGO; 19-20 NO)",
       "Observaciones": "Uno de los frutales más tolerantes a sequía y suelos pobres: ideal para xerojardinería."
     },
     riego: [

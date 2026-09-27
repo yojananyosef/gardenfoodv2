@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown, Trash2 } from "lucide-react";
@@ -21,15 +22,32 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
-import { getEspeciePorDbKey } from "@/lib/agronomy";
+import { buscarComuna, getEspeciePorDbKey } from "@/lib/agronomy";
+import { calcularRiego } from "@/lib/riego/calc";
+import { obtenerRiegoBase } from "@/lib/riego/client-cache";
+import type { RiegoBasePayload } from "@/lib/riego/actions";
 import { cn } from "@/lib/utils";
-import type { Arbol } from "@/types";
+import type { Arbol, EdadClaseArbol, MetodoRiegoArbol } from "@/types";
 
 export type OpcionEspecie = { dbKey: string; nombre: string };
 
 export function nombreArbol(especie: string): string {
   return getEspeciePorDbKey(especie)?.nombre ?? especie;
 }
+
+/** Tabla C del Excel (1 recién plantado … 4 adulto) ↔ columna edad_clase. */
+const EDAD_N_A_CLASE: Record<number, EdadClaseArbol> = {
+  1: "recien",
+  2: "joven",
+  3: "inicial",
+  4: "adulto",
+};
+const EDAD_CLASE_A_N: Record<string, number> = {
+  recien: 1,
+  joven: 2,
+  inicial: 3,
+  adulto: 4,
+};
 
 export function EditarArbolDialog({
   arbol,
@@ -48,25 +66,138 @@ export function EditarArbolDialog({
   const [especie, setEspecie] = useState(arbol.especie);
   const [fecha, setFecha] = useState(arbol.fechaPlantacion ?? "");
   const [observaciones, setObservaciones] = useState(arbol.observaciones ?? "");
+  const [edadN, setEdadN] = useState<string>(
+    arbol.edadClase ? String(EDAD_CLASE_A_N[arbol.edadClase] ?? 4) : "",
+  );
+  const [copaM, setCopaM] = useState(arbol.copaM != null ? String(arbol.copaM) : "");
+  const [metodoRiego, setMetodoRiego] = useState<MetodoRiegoArbol | "">(
+    (arbol.metodoRiego as MetodoRiegoArbol | undefined) ?? "",
+  );
+  const [caudalLH, setCaudalLH] = useState(arbol.caudalLH != null ? String(arbol.caudalLH) : "");
+  const [humedad, setHumedad] = useState("2");
+  const [etapaCodigo, setEtapaCodigo] = useState("");
+  const [sueloPerfil, setSueloPerfil] = useState<string | null>(null);
+  const [zonaPerfil, setZonaPerfil] = useState<number | null>(null);
+  const [base, setBase] = useState<RiegoBasePayload | null>(null);
   const [pending, startTransition] = useTransition();
   // Los detalles parten expandidos solo si el árbol ya tiene datos.
   const [detallesAbiertos, setDetallesAbiertos] = useState(
-    Boolean(arbol.fechaPlantacion || arbol.observaciones),
+    Boolean(
+      arbol.fechaPlantacion ||
+        arbol.observaciones ||
+        arbol.edadClase ||
+        arbol.copaM ||
+        arbol.metodoRiego,
+    ),
   );
+
+  // Suelo + zona del perfil para previsualizar el riego con los datos del usuario.
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const supabase = (await import("@/lib/supabase/client")).createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data } = await supabase
+          .from("perfiles")
+          .select("tipo_suelo, comuna")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (!active) return;
+        if (data?.tipo_suelo) setSueloPerfil(data.tipo_suelo as string);
+        if (data?.comuna) {
+          const match = buscarComuna(data.comuna as string);
+          if (match) setZonaPerfil(match.zonaId);
+        }
+      } catch {
+        // Sin perfil: la vista previa usa valores de referencia.
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Base GARDENFOOD de la especie (Postgres, seed literal del Excel).
+  const [baseKey, setBaseKey] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    obtenerRiegoBase(especie)
+      .then((b) => {
+        if (!active) return;
+        setBase(b);
+        setBaseKey(especie);
+      })
+      .catch(() => {
+        if (!active) return;
+        setBase(null);
+        setBaseKey(especie);
+      });
+    return () => {
+      active = false;
+    };
+  }, [especie]);
+
+  const riegoPreview = useMemo(() => {
+    if (!base) return null;
+    const copaNum = copaM.trim() ? Number(copaM) : null;
+    const caudalNum = caudalLH.trim() ? Number(caudalLH) : null;
+    return calcularRiego(
+      {
+        dbKey: especie,
+        mes: new Date().getMonth() + 1,
+        zonaId: zonaPerfil,
+        suelo: (sueloPerfil as "G" | "MG" | "M" | "F" | null) ?? null,
+        edadN: edadN ? Number(edadN) : null,
+        copaM: copaNum !== null && Number.isFinite(copaNum) ? copaNum : null,
+        humedad: Number(humedad) || 2,
+        etapaCodigo: etapaCodigo || null,
+        caudalLH: caudalNum !== null && Number.isFinite(caudalNum) ? caudalNum : null,
+      },
+      base,
+    );
+  }, [base, especie, zonaPerfil, sueloPerfil, edadN, copaM, humedad, etapaCodigo, caudalLH]);
 
   function guardar() {
     startTransition(async () => {
+      const copaNum = copaM.trim() ? Number(copaM) : null;
+      const caudalNum = caudalLH.trim() ? Number(caudalLH) : null;
+      if (copaNum !== null && (!Number.isFinite(copaNum) || copaNum < 0.2 || copaNum > 12)) {
+        toast.error("La copa debe estar entre 0,2 y 12 m.");
+        return;
+      }
+      if (caudalNum !== null && (!Number.isFinite(caudalNum) || caudalNum < 0 || caudalNum > 500)) {
+        toast.error("El caudal debe estar entre 0 y 500 L/h.");
+        return;
+      }
+      const clase = edadN ? (EDAD_N_A_CLASE[Number(edadN)] ?? null) : null;
       const result = await actualizarArbol(arbol.id, {
         especie,
         fechaPlantacion: fecha ? fecha : null,
         observaciones: observaciones.trim() ? observaciones.trim() : null,
+        edadClase: clase,
+        copaM: copaNum,
+        metodoRiego: metodoRiego ? metodoRiego : null,
+        caudalLH: caudalNum,
       });
       if (result.error) {
         toast.error(result.error);
         return;
       }
       toast.success("Árbol actualizado.");
-      onActualizado?.({ ...arbol, especie, fechaPlantacion: fecha ? fecha : null, observaciones: observaciones.trim() ? observaciones.trim() : null });
+      onActualizado?.({
+        ...arbol,
+        especie,
+        fechaPlantacion: fecha ? fecha : null,
+        observaciones: observaciones.trim() ? observaciones.trim() : null,
+        edadClase: clase,
+        copaM: copaNum,
+        metodoRiego: (metodoRiego as MetodoRiegoArbol) || null,
+        caudalLH: caudalNum,
+      });
       onCerrar();
       router.refresh();
     });
@@ -89,8 +220,10 @@ export function EditarArbolDialog({
     });
   }
 
+  const copaRef = base?.especie?.copaRefM ?? 2;
+
   return (
-    <DialogContent className="max-w-md">
+    <DialogContent className="max-h-[88vh] w-[min(96vw,42rem)] overflow-y-auto sm:max-w-[42rem]">
       <DialogTitle className="text-lg font-semibold">
         {nombreArbol(arbol.especie)}
       </DialogTitle>
@@ -155,6 +288,138 @@ export function EditarArbolDialog({
                 className="min-h-11"
               />
             </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="plano-edad">Edad del árbol</Label>
+                <Select value={edadN || undefined} onValueChange={(v) => setEdadN(v ?? "")}>
+                  <SelectTrigger id="plano-edad" className="min-h-11 w-full">
+                    <SelectValue placeholder="Elige la edad…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(base?.edades ?? []).map((e) => (
+                      <SelectItem key={e.n} value={String(e.n)}>
+                        {e.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Coeficiente de la guía: 30 % recién plantado, 55 % joven, 80 % inicial, 100 % adulto.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="plano-copa">Ancho de la copa (m)</Label>
+                <Input
+                  id="plano-copa"
+                  type="number"
+                  min={0.2}
+                  max={12}
+                  step={0.1}
+                  inputMode="decimal"
+                  placeholder={String(copaRef)}
+                  value={copaM}
+                  onChange={(e) => setCopaM(e.target.value)}
+                  className="min-h-11"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Sombra al mediodía, de punta a punta. Referencia de la guía: {copaRef} m.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="plano-metodo">Método de riego</Label>
+                <Select
+                  value={metodoRiego || undefined}
+                  onValueChange={(v) => setMetodoRiego((v as MetodoRiegoArbol) ?? "")}
+                >
+                  <SelectTrigger id="plano-metodo" className="min-h-11 w-full">
+                    <SelectValue placeholder="Balde, manguera o goteo…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="balde">Baldes (10 L c/u)</SelectItem>
+                    <SelectItem value="manguera">Manguera</SelectItem>
+                    <SelectItem value="goteo">Goteo / cintas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="plano-caudal">Caudal (L/h por árbol)</Label>
+                <Input
+                  id="plano-caudal"
+                  type="number"
+                  min={0}
+                  max={500}
+                  step={1}
+                  inputMode="numeric"
+                  placeholder="4 goteros de 4 L/h = 16"
+                  value={caudalLH}
+                  onChange={(e) => setCaudalLH(e.target.value)}
+                  className="min-h-11"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="plano-humedad">¿Cómo está la tierra hoy?</Label>
+                <Select value={humedad} onValueChange={(v) => setHumedad(v ?? "2")}>
+                  <SelectTrigger id="plano-humedad" className="min-h-11 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(base?.niveles ?? []).map((n) => (
+                      <SelectItem key={n.nivel} value={String(n.nivel)}>
+                        {n.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="plano-etapa">¿Qué ves hoy en el árbol?</Label>
+                <Select value={etapaCodigo || "__cal"} onValueChange={(v) => setEtapaCodigo(!v || v === "__cal" ? "" : v)}>
+                  <SelectTrigger id="plano-etapa" className="min-h-11 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__cal">Que lo decida el calendario</SelectItem>
+                    {(base?.etapas ?? []).map((e) => (
+                      <SelectItem key={e.codigo} value={e.codigo}>
+                        {e.etapaPrograma}{e.coincideExacta ? "" : " (aprox.)"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            {!sueloPerfil ? (
+              <Link
+                href="/perfil"
+                className="rounded-xl border border-dashed border-amber-500/50 bg-amber-500/10 px-3 py-2 text-xs font-medium leading-relaxed text-amber-900 hover:bg-amber-500/20 dark:text-amber-100"
+              >
+                Suelo no definido — cálculo con franco (referencia de la guía). Define tu suelo en tu perfil y los litros se recalculan solos.
+              </Link>
+            ) : null}
+            {riegoPreview ? (
+              <div className="rounded-xl border bg-muted/30 p-3" aria-live="polite">
+                <p className="text-sm font-semibold">
+                  {riegoPreview.regarHoy
+                    ? `${riegoPreview.litros} L por árbol · vuelve en ${riegoPreview.cadaDias} ${riegoPreview.cadaDias === 1 ? "día" : "días"}`
+                    : "Hoy no riegue: la tierra aún tiene agua"}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Rango {riegoPreview.litrosMin}–{riegoPreview.litrosMax} L ·{" "}
+                  {riegoPreview.litros} L = {riegoPreview.baldes} baldes de 10 L
+                  {riegoPreview.horasGoteo !== null ? ` = ${riegoPreview.horasGoteo} h de goteo` : ""} ·{" "}
+                  Etapa: {riegoPreview.etapa} ({riegoPreview.fuente === "observacion" ? "lo que ves" : "calendario"})
+                  {riegoPreview.aproximada ? " · aproximada" : ""}.
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {baseKey !== especie ? "Cargando base de riego…" : "Completa especie y datos para ver la dosis estimada."}
+              </p>
+            )}
             <Button type="button" className="min-h-11 w-full" onClick={guardar} disabled={pending}>
               {pending ? "Guardando…" : "Guardar cambios"}
             </Button>

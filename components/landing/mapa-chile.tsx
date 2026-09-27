@@ -23,6 +23,8 @@ type Banda = {
   zonas: number[];
   fill: string;
   hover: string;
+  /** Sin tooltip ni highlight: la banda se muestra pero no reacciona al cursor. */
+  sinTooltip?: boolean;
 };
 
 const BANDAS: Banda[] = [
@@ -31,7 +33,7 @@ const BANDAS: Banda[] = [
   { id: "centro", nombre: "Centro", clima: "Mediterráneo · estaciones marcadas", zonas: [5, 6, 7, 8, 9], fill: "rgba(16,185,129,0.20)", hover: "rgba(16,185,129,0.55)" },
   { id: "centro-sur", nombre: "Centro-Sur", clima: "Mediterráneo húmedo · veranos secos", zonas: [10, 11, 12, 13, 14], fill: "rgba(20,184,166,0.20)", hover: "rgba(20,184,166,0.55)" },
   { id: "sur", nombre: "Sur", clima: "Templado lluvioso · presión de hongos", zonas: [15, 16, 17, 18, 19], fill: "rgba(56,189,248,0.20)", hover: "rgba(56,189,248,0.55)" },
-  { id: "austral", nombre: "Zona Austral", clima: "Frío, lluvia y viento · solo especies rústicas", zonas: [20], fill: "rgba(100,116,139,0.22)", hover: "rgba(100,116,139,0.6)" },
+  { id: "austral", nombre: "Zona Austral", clima: "Frío, lluvia y viento · casi nada frutal se da fácil aquí", zonas: [20], fill: "rgba(100,116,139,0.22)", hover: "rgba(100,116,139,0.22)", sinTooltip: true },
 ];
 
 function facilesDe(banda: Banda): string[] {
@@ -53,6 +55,12 @@ export function MapaChile() {
   );
 
   function mover(e: React.MouseEvent<SVGPathElement>, bandaId: string) {
+    // La zona austral no muestra tooltip: el olivo/aceituna no va ahí
+    // y ninguna especie "fácil" es viable en la zona 20.
+    if (BANDAS.find((b) => b.id === bandaId)?.sinTooltip) {
+      salir();
+      return;
+    }
     const rect = contenedor.current?.getBoundingClientRect();
     if (!rect) return;
     setHoverId(bandaId);
@@ -95,7 +103,11 @@ export function MapaChile() {
             fill={b.id === hoverId ? b.hover : b.fill}
             stroke="currentColor"
             strokeWidth={0.6}
-            className="cursor-pointer text-foreground/25 transition-[fill] duration-150"
+            className={
+              b.sinTooltip
+                ? "text-foreground/25"
+                : "cursor-pointer text-foreground/25 transition-[fill] duration-150"
+            }
             onMouseMove={(e) => mover(e, b.id)}
             onClick={(e) => mover(e, b.id)}
             onMouseLeave={salir}

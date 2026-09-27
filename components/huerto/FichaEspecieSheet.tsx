@@ -14,7 +14,7 @@ function ContenidoFicha({ dbKey }: { dbKey: string }) {
   }
   // En /huerto el usuario está autenticado: contenido completo, sin lock.
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex min-w-0 flex-col gap-3">
       <FichaEspecieView especie={especie} ficha={ficha} locked={false} />
       <Link
         href={urlFichaEspecie(dbKey)}
