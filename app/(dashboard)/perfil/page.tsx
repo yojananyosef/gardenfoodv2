@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ConsentPreferences } from "@/components/cmp/ConsentPreferences";
 import { UbicacionForm } from "@/components/perfil/UbicacionForm";
 import { SueloForm } from "@/components/perfil/SueloForm";
+import { ThemeSelector } from "@/components/perfil/ThemeSelector";
 import { eliminarMiCuenta } from "@/lib/privacy/actions";
 import { clearLocalConsent } from "@/lib/consent/token";
 import { getDeviceId } from "@/lib/telemetry/device";
@@ -69,6 +70,16 @@ export default function PerfilPage() {
               recomendaciones de cultivo.
             </p>
             <UbicacionForm />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4">
+            <div>
+              <p className="text-sm font-medium">Modo claro u oscuro</p>
+              <p className="text-xs text-muted-foreground">
+                El oscuro está pensado para revisar la ficha de noche. Se
+                guarda en este dispositivo y no cambia nada de tus datos.
+              </p>
+            </div>
+            <ThemeSelector />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4">
             <div>

@@ -37,6 +37,12 @@
   --color-primary: var(--primary);
   --color-cosecha: var(--cosecha);
   --color-cosecha-ink: var(--cosecha-ink);
+  --color-momento-0: var(--momento-0);
+  --color-momento-1: var(--momento-1);
+  --color-momento-2: var(--momento-2);
+  --color-momento-0-ink: var(--momento-0-ink);
+  --color-momento-1-ink: var(--momento-1-ink);
+  --color-momento-2-ink: var(--momento-2-ink);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -76,6 +82,25 @@
   --cosecha: oklch(0.58 0.12 45);
   /* Terracota tinta: la misma familia, oscurecida para texto pequeño (6.4:1). */
   --cosecha-ink: oklch(0.48 0.11 45);
+  /* ── Los 3 momentos del año (ficha de especie · tab Nutrición) ──────────
+     Paleta Gardenfood, no la del prototipo: verde de marca + el oro cálido
+     del papel + la familia terracota de --cosecha. Se eligieron así, y no
+     --chart-1..3, porque los círculos y las cabeceras llevan texto BLANCO
+     encima y --chart-2 (ámbar) solo da 2,49:1 contra blanco.
+
+     Contraste verificado contra blanco (WCAG, texto normal ≥ 4,5:1):
+       momento-0 #976700 → 4,93:1   momento-1 #2f5c28 → 7,79:1
+       momento-2 #9a4729 → 6,33:1
+     El orden importa: los momentos 0 y 1 SÍ comparten el mes de traspaso,
+     así que van en tonos muy distintos (oro vs verde). Los dos cálidos
+     (0 oro y 2 terracota) nunca quedan adyacentes en el calendario.
+     Los `-ink` son para texto pequeño sobre papel: 7,3–9,4:1. */
+  --momento-0: oklch(0.55 0.12 78);
+  --momento-1: oklch(0.43 0.095 141);
+  --momento-2: oklch(0.5 0.12 40);
+  --momento-0-ink: oklch(0.38 0.11 78);
+  --momento-1-ink: oklch(0.43 0.095 141);
+  --momento-2-ink: oklch(0.42 0.12 38);
   /* Sombra tinta sólida (print) para .card-tinta, sin blur lodoso. */
   --tinta-shadow: oklch(0.82 0.03 90);
   --chart-1: oklch(0.43 0.095 141);
@@ -120,6 +145,16 @@
   --chart-5: oklch(0.55 0.07 250);
   --cosecha: oklch(0.72 0.1 45);
   --cosecha-ink: oklch(0.78 0.09 50);
+  /* Los rellenos de los momentos NO se aclaran en oscuro: llevan texto
+     blanco encima y en claro ya están justos (4,9–7,8:1); aclararlos los
+     deja entre 2,5 y 3,8:1. Sobre el card oscuro (L 0,23) un relleno de
+     L 0,43–0,55 se separa de sobra. Solo sube la tinta. */
+  --momento-0: oklch(0.55 0.12 78);
+  --momento-1: oklch(0.43 0.095 141);
+  --momento-2: oklch(0.5 0.12 40);
+  --momento-0-ink: oklch(0.8 0.11 82);
+  --momento-1-ink: oklch(0.78 0.09 141);
+  --momento-2-ink: oklch(0.78 0.1 45);
   --tinta-shadow: oklch(0.13 0.02 150);
   --sidebar: oklch(0.21 0.03 150);
   --sidebar-foreground: oklch(0.94 0.02 100);

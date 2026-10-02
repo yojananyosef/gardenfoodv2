@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { ConsentBanner } from "@/components/cmp/ConsentBanner";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -92,8 +93,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // dinámico — trade-off documentado en el design del change add-lpdp-compliance.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
+    // suppressHydrationWarning: next-themes inyecta un script que fija la
+    // clase `dark` en <html> ANTES de hidratar, así que el servidor y el
+    // cliente nunca coinciden en ese atributo. Es el patrón documentado.
     <html
       lang="es"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -102,7 +107,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+          // El script anti-parpadeo de next-themes es inline y la CSP de
+          // proxy.ts no tiene 'unsafe-inline' (solo nonce + strict-dynamic),
+          // así que sin esto el navegador lo bloquea: el tema se aplicaba
+          // recién después de hidratar y quien tuviera oscuro veía un fogonazo
+          // de claro en cada carga.
+          nonce={nonce}
+        >
+          {children}
+        </ThemeProvider>
         <ConsentBanner />
         <ServiceWorkerRegister />
       </body>

@@ -52,29 +52,32 @@ import {
 } from "@/lib/agronomy/fertilizacion";
 
 /**
- * Un color por momento. Clases LITERALES de Tailwind a propósito: si se
- * armaran con interpolación el scanner de Tailwind v4 no las encuentra y las
- * círculos del calendario salen sin pintar.
- *   0 despierta → lima · 1 engorda → verde de marca · 2 se recupera → morado
+ * Un color por momento, tomado de los tokens --momento-* de globals.css.
+ * Token y no color literal a propósito: así la paleta es la de Gardenfood
+ * (verde de marca + oro del papel + terracota) y no la del prototipo, y
+ * sobre todo cambia sola con el modo oscuro — con `bg-lime-500` /
+ * `bg-purple-600` escritos a mano el calendario se quedaba en claro.
+ * Clases literales de Tailwind, nunca interpoladas: el scanner v4 no las ve.
+ *   0 despierta → oro · 1 engorda → verde de marca · 2 se recupera → terracota
  */
 const TEMA_MOMENTO = [
   {
-    punto: "bg-lime-500",
-    anillo: "ring-lime-500/30",
-    barra: "bg-lime-500",
-    tinta: "text-lime-700 dark:text-lime-400",
+    punto: "bg-momento-0",
+    anillo: "ring-momento-0/30",
+    barra: "bg-momento-0",
+    tinta: "text-momento-0-ink",
   },
   {
-    punto: "bg-primary",
-    anillo: "ring-primary/30",
-    barra: "bg-primary",
-    tinta: "text-primary",
+    punto: "bg-momento-1",
+    anillo: "ring-momento-1/30",
+    barra: "bg-momento-1",
+    tinta: "text-momento-1-ink",
   },
   {
-    punto: "bg-purple-600",
-    anillo: "ring-purple-600/30",
-    barra: "bg-purple-600",
-    tinta: "text-purple-700 dark:text-purple-400",
+    punto: "bg-momento-2",
+    anillo: "ring-momento-2/30",
+    barra: "bg-momento-2",
+    tinta: "text-momento-2-ink",
   },
 ] as const;
 
