@@ -180,6 +180,233 @@ function formatoFraccion(n: number): string {
   return `${parteEntera}${simbolos[fraccion] ?? ""}`;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   MATERIAL VISUAL DE LA FICHA — «los 3 momentos» del año.
+
+   Traduce el programa del xlsx a las dos piezas que hacen que la tab
+   se lea sin conocimiento técnico:
+     1. un calendario de 12 meses coloreado por momento (cuándo le toca)
+     2. la dosis en cucharadas/tazas dibujadas, no en gramos/crudos
+   Todo es puro y sin efectos: se testea en tests/fertilizacion.test.ts.
+   ══════════════════════════════════════════════════════════════════ */
+
+export const MESES_GUIA = [
+  "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+] as const;
+
+const MES_GUIA_NUM = new Map<string, number>(MESES_GUIA.map((m, i) => [m.toLowerCase(), i + 1]));
+
+/**
+ * «Jul, Ago» → [7, 8]. El xlsx enumera los meses con abreviatura de 3
+ * letras separada por comas, y la ventana puede dar la vuelta al año
+ * («Nov, Dic, Ene, Feb»): se queda con los números de mes y el orden
+ * del calendario lo resuelve el consumidor.
+ */
+export function mesesDeGuia(meses: string | null | undefined): number[] {
+  if (!meses) return [];
+  const out: number[] = [];
+  for (const parte of meses.split(",")) {
+    const n = MES_GUIA_NUM.get(parte.trim().slice(0, 3).toLowerCase());
+    if (n && !out.includes(n)) out.push(n);
+  }
+  return out;
+}
+
+/** Copy en lenguaje llano de cada momento, en el orden del año. */
+export const PROPOSITOS_MOMENTO = [
+  "Brota y arma hoja nueva: paga las ramas y las hojas que viene a hacer.",
+  "La fruta crece y se endulza. Es el momento que más pide.",
+  "Terminó la cosecha: repone lo que el árbol gastó para volver el año que viene.",
+] as const;
+
+export const REPOSO_MOMENTO =
+  "En estos meses no se le echa nada. El árbol descansa y la tierra guarda lo que le diste.";
+
+export interface ProductoGuia {
+  nutriente: string;
+  producto: string | null;
+  /** Gramos por aplicación para un árbol ADULTO (la base de la guía). */
+  gramos: number;
+  veces: number;
+}
+
+export interface MomentoGuia {
+  orden: 0 | 1 | 2;
+  titulo: string;
+  proposito: string;
+  /** Meses (1-12) que cubre este momento. */
+  meses: number[];
+  /** «Jul · Ago», para el encabezado del bloque. */
+  mesesTexto: string;
+  veces: number;
+  cadaDias: number;
+  productos: ProductoGuia[];
+}
+
+export interface GuiaRegional {
+  region: string;
+  metodo: "suelo" | "goteo";
+  momentos: MomentoGuia[];
+  /**
+   * Mes (1-12) → momento principal que le toca, o null si ese mes no se
+   * abona. Cuando dos momentos se pisan (el mes de traspaso, p. ej. Sep
+   * es el último de «despierta» y el primero de «engorda»), gana el
+   * primero: el calendario se pinta con un color y el traspaso queda
+   * anotado aparte para no mentir.
+   */
+  calendario: (0 | 1 | 2 | null)[];
+  /** Meses en que el abono cambia de momento. */
+  traspasos: number[];
+  /** Aplicaciones al año en total (suma de `veces` de los momentos). */
+  totalAplicaciones: number;
+  /** La guía marca esta especie como no viable en la región. */
+  seCultiva: boolean;
+  /** Aviso del xlsx para esta especie en esta región (heladas, pH, K:Ca…). */
+  nota: string | null;
+}
+
+function momentosVisibles(programa: ProgramaFertilizacion[]): MomentoGuia[] {
+  return programa.map((p) => ({
+    orden: p.orden as 0 | 1 | 2,
+    titulo: p.momento,
+    proposito: PROPOSITOS_MOMENTO[p.orden] ?? "",
+    meses: mesesDeGuia(p.meses),
+    mesesTexto: p.meses,
+    veces: p.veces,
+    cadaDias: p.cada_dias,
+    productos: p.detalle
+      .filter((d) => (d.gramos_cada_vez ?? 0) > 0)
+      .map((d) => ({
+        nutriente: d.nutriente,
+        producto: d.producto,
+        gramos: d.gramos_cada_vez as number,
+        veces: d.veces,
+      })),
+  }));
+}
+
+/**
+ * Programa de una especie translated a las piezas visuales del calendario.
+ * null = la guía no cubre esta especie en esta región.
+ */
+export function guiaRegional(
+  especie: string,
+  regionGuia: string,
+  metodo: "suelo" | "goteo",
+): GuiaRegional | null {
+  const programa = programaDeEspecie(especie, regionGuia, metodo);
+  if (!programa.length) return null;
+
+  const momentos = momentosVisibles(programa);
+  const calendario: (0 | 1 | 2 | null)[] = Array.from({ length: 12 }, () => null);
+  const traspasos: number[] = [];
+
+  for (const m of momentos) {
+    for (const mes of m.meses) {
+      const previo = calendario[mes - 1];
+      if (previo === null) calendario[mes - 1] = m.orden;
+      else if (previo !== m.orden && !traspasos.includes(mes)) traspasos.push(mes);
+    }
+  }
+
+  const feno = fenologiaPorEspecie(especie).find((f) => f.region_guia === regionGuia);
+
+  return {
+    region: regionGuia,
+    metodo,
+    momentos,
+    calendario,
+    traspasos: traspasos.sort((a, b) => a - b),
+    totalAplicaciones: momentos.reduce((acc, m) => acc + m.veces, 0),
+    seCultiva: feno?.se_cultiva ?? true,
+    nota: feno?.nota ?? null,
+  };
+}
+
+/* ── La dosis dibujada: cucharadas y tazas en vez de gramos ──────── */
+
+export type UnidadCasera = "pizca" | "cuchara" | "taza" | "pesa";
+
+export interface MedidaCasera {
+  /** Qué ilustración dibujar. */
+  unidad: UnidadCasera;
+  /** Cuchadas o tazas a dibujar (admite 0,5 para la media). */
+  valor: number;
+  /** Texto llano para el usuario. */
+  texto: string;
+}
+
+/** 16 cucharadas soperas llenan una taza de té. */
+export const CUCHARADAS_POR_TAZA = 16;
+
+/**
+ * Misma cuenta que gramosACaseras() pero devolviendo la medida estructurada
+ * para poder DIBUJARLA (el prototipo del socio dibuja las cucharadas en vez
+ * de escribirlas). El texto usa el vocabulario del prototipo —«pizca»,
+ * «cucharadas soperas», «tazas de té»— que es más didáctico que el de
+ * gramosACaseras(), que se queda en el módulo del dashboard por compatibilidad.
+ */
+export function medidaCasera(gramos: number | null, producto: string | null): MedidaCasera {
+  const g = gramos ?? 0;
+  if (g <= 0) return { unidad: "pesa", valor: 0, texto: "—" };
+
+  const fertilizante =
+    producto && producto !== "—" ? FERTILIZANTE_POR_PRODUCTO.get(producto.toLowerCase()) : undefined;
+  const gramosCucharada = fertilizante?.gramos_cucharada ?? GRAMOS_CUCHARADA_DEFAULT;
+  const n = g / gramosCucharada;
+
+  if (n < 0.4) return { unidad: "pizca", valor: 0.5, texto: "una pizca" };
+  if (n < 0.8) return { unidad: "cuchara", valor: 0.5, texto: "media cucharada" };
+
+  if (n <= 10) {
+    const v = n < 4 ? Math.round(n * 2) / 2 : Math.round(n);
+    return {
+      unidad: "cuchara",
+      valor: v,
+      texto: v === 1 ? "1 cucharada sopera" : `${String(v).replace(".", ",")} cucharadas soperas`,
+    };
+  }
+
+  const tazas = n / CUCHARADAS_POR_TAZA;
+  if (tazas > 8) return { unidad: "pesa", valor: 0, texto: "pésalo en una pesa" };
+  const v = tazas < 4 ? Math.round(tazas * 2) / 2 : Math.round(tazas);
+  return {
+    unidad: "taza",
+    valor: v,
+    texto: v === 1 ? "1 taza de té" : `${String(v).replace(".", ",")} tazas de té`,
+  };
+}
+
+/** «388 g» · «1,2 kilos», para el texto que acompaña a las dasar. */
+export function textoGramos(gramos: number): string {
+  if (gramos >= 1000) return `${(gramos / 1000).toFixed(1).replace(".", ",")} kilos`;
+  return `${Math.round(gramos)} gramos`;
+}
+
+/* ── Ajustes de edad para el visual ───────────────────────────────── */
+
+export interface RangoEdadGuia {
+  id: RangoEdad;
+  nombre: string;
+  desc: string;
+}
+
+/** Las tres edades del paso «¿Qué tan grande está?» del prototipo. */
+export const EDADES_GUIA: RangoEdadGuia[] = [
+  { id: "recien", nombre: "Chico", desc: "Recién plantado, 1 o 2 años" },
+  { id: "formacion", nombre: "Mediano", desc: "Ya creció, 3 o 4 años" },
+  { id: "adulto", nombre: "Grande", desc: "Da fruta, 5 años o más" },
+];
+
+/** Modo de riego, en el vocabulario del prototipo. */
+export const METODOS_GUIA = [
+  { id: "suelo", nombre: "Con manguera", desc: "Le echas el agua al pie" },
+  { id: "goteo", nombre: "Por goteo", desc: "Tienes mangueras con goteros" },
+] as const;
+
+export type MetodoGuia = (typeof METODOS_GUIA)[number]["id"];
+
 /* Mapeo región administrativa (perfil) → región de la guía (xlsx). */
 const REGION_GUIA = [
   { guia: "Norte (Atacama-Coquimbo)", claves: ["Atacama", "Coquimbo", "Arica", "Tarapacá", "Antofagasta"] },

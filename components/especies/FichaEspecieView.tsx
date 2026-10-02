@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { NutricionGuia } from "@/components/especies/NutricionGuia";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
 import { type FichaEspecie, type Especie, getFenologia, getConsejos, ZONAS, getZonaIdDeComuna } from "@/lib/agronomy";
@@ -319,65 +320,6 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
         <Button variant="outline" className="w-full rounded-xl" onClick={() => setShowAll(true)}>
           Ver los otros {resto.length} meses <ChevronDown data-icon="inline-end" />
         </Button>
-      )}
-    </div>
-  );
-}
-
-function TabNutricion({ fert }: { fert: FichaEspecie["fert"] }) {
-  const mesActualIdx = new Date().getMonth();
-  const mesesCortos = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-  const mesAbbr = mesesCortos[mesActualIdx];
-  const [showAll, setShowAll] = useState(false);
-  const actualRows = fert.filter(f => f.mes.toLowerCase().includes(mesAbbr));
-  const resto = fert.filter(f => !f.mes.toLowerCase().includes(mesAbbr));
-  const destacados = actualRows.length ? actualRows : fert.slice(0,2);
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="grid gap-3 sm:grid-cols-2">
-        {destacados.map((f, i) => (
-          <Card key={i} className="rounded-2xl border-primary/20 bg-card shadow-sm">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <Badge className="rounded-full">{f.mes}</Badge>
-                <span className="text-xs text-muted-foreground">{f.fase}</span>
-                {i===0 && <Badge variant="outline" className="ml-auto gap-1 rounded-full border-emerald-200 bg-emerald-50 text-emerald-700"><span className="size-1.5 rounded-full bg-emerald-500" /> Este mes</Badge>}
-              </div>
-              <CardTitle className="text-base">{f.prod}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2 text-sm">
-              <div className="flex justify-between gap-4"><span className="text-muted-foreground">Dosis</span><span className="font-medium">{f.dosis}</span></div>
-              <div className="flex justify-between gap-4"><span className="text-muted-foreground">Dónde</span><span className="font-medium">{f.donde}</span></div>
-              <p className="rounded-xl bg-muted px-3 py-2 text-xs leading-relaxed text-muted-foreground">{f.porque}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      {!actualRows.length && (
-        <p className="rounded-xl border-dashed bg-muted/20 px-4 py-3 text-center text-sm text-muted-foreground">Este mes no hay fertilización programada — buen momento para compost basal.</p>
-      )}
-      {!showAll ? (
-        <Button variant="outline" className="w-full rounded-xl" onClick={() => setShowAll(true)}>
-          Ver nutrición de otros meses ({resto.length}) <ChevronDown data-icon="inline-end" />
-        </Button>
-      ) : (
-        <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {resto.map((f, i) => (
-              <div key={i} className="rounded-xl border bg-card p-4 shadow-sm">
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-sm font-semibold">{f.mes}</span>
-                  <span className="text-xs text-muted-foreground">{f.fase}</span>
-                </div>
-                <p className="mt-1 text-sm font-medium">{f.prod}</p>
-                <p className="text-xs text-muted-foreground">{f.dosis} · {f.donde}</p>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{f.porque}</p>
-              </div>
-            ))}
-          </div>
-          <Button variant="ghost" className="w-full rounded-xl" onClick={() => setShowAll(false)}>Mostrar solo mes actual <ChevronUp data-icon="inline-end" /></Button>
-        </>
       )}
     </div>
   );
@@ -711,7 +653,7 @@ export function FichaEspecieView({
 
             <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
             <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaId={zonaId} /></TabsContent>
-            <TabsContent value="nutricion"><TabNutricion fert={ficha.fert} /></TabsContent>
+            <TabsContent value="nutricion"><NutricionGuia dbKey={especie.dbKey} especieNombre={especie.nombre} zonaId={zonaId} /></TabsContent>
             <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
             <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
             <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
