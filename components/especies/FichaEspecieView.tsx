@@ -603,11 +603,15 @@ export function FichaEspecieView({
               <h2 className="font-heading text-2xl font-semibold drop-shadow">{especie.nombre}</h2>
               <p className="font-mono text-xs italic opacity-90">{ficha.nc}</p>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                <Badge className="rounded-full bg-white/90 text-foreground hover:bg-white">{especie.grupo}</Badge>
+                {/* Sobre la foto: en claro van blancos con tinta negra; en
+                    oscuro el blanco se invierte a negro translúcido. Con
+                    `text-foreground` no funcionaba, porque ese token es casi
+                    blanco en dark y quedaba texto blanco sobre blanco. */}
+                <Badge className="rounded-full bg-white/90 text-black hover:bg-white dark:bg-black/55 dark:text-white dark:hover:bg-black/65">{especie.grupo}</Badge>
                 <Badge variant="secondary" className="rounded-full bg-white/20 text-white border-white/20">{especie.dificultad}</Badge>
               </div>
             </div>
-            <Badge variant="secondary" className="hidden shrink-0 rounded-full bg-white text-foreground sm:inline-flex">Ficha completa</Badge>
+            <Badge variant="secondary" className="hidden shrink-0 rounded-full bg-white text-black sm:inline-flex dark:bg-black/55 dark:text-white">Ficha completa</Badge>
           </div>
         </div>
         <Card className="flex flex-col rounded-2xl lg:col-span-4">

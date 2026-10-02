@@ -159,7 +159,28 @@ function CalendarioMeses({
                   aria-label={nombreDe(mes)}
                   role="img"
                 >
-                  {orden !== null && (
+                  {orden === null ? (
+                    /* Sin figura, el círculo vacío se leía como un disco
+                       roto en vez de "aquí no se hace nada". Se probó una
+                       luna primero, pero en el contexto de un huerto dice
+                       "noche", no "descanso del cultivo"; el Zzz calza con
+                       el copy de REPOSO_MOMENTO («el árbol descansa») y se
+                       sigue leyendo a 48 px, que es el ancho real del
+                       círculo en móvil. SVG <text> para que herede la fuente
+                       de la app en vez de depender de un archivo de letras. */
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="24"
+                      height="24"
+                      fill="currentColor"
+                      aria-hidden
+                      className="text-muted-foreground/70"
+                    >
+                      <text x="1.5" y="19" fontSize="13" fontWeight="800">Z</text>
+                      <text x="11" y="13.5" fontSize="10" fontWeight="800">z</text>
+                      <text x="18" y="9.5" fontSize="8" fontWeight="800">z</text>
+                    </svg>
+                  ) : (
                     <>
                       <span className="text-lg font-bold leading-none text-white">{porMes}</span>
                       <span className="text-[10px] font-semibold leading-tight text-white/90">
@@ -223,10 +244,17 @@ function FilaProducto({
   esBase: boolean;
 }) {
   const ajustado = gramos * factorEdad;
+  const esFrase = medida.unidad === "pesa" || medida.valor < 1;
 
   return (
-    <div className="flex flex-wrap items-center gap-3 border-b border-border py-3 last:border-b-0">
-      <div className="min-w-0 flex-1 basis-40">
+    /* Sin flex-wrap y con la medida en columna de ancho FIJO: antes la fila
+       era wrap, así que según cuántos íconos cupieran las horas caían al
+       costado o se bajaban, y dentro de una misma card unas quedaban al
+       costado y otras abajo. Ahora el texto se encoge (min-w-0 flex-1) y la
+       medida siempre ocupa la misma columna: los números quedan alineados
+       verticalmente y se comparan de un vistazo. */
+    <div className="flex items-start gap-3 border-b border-border py-3 last:border-b-0">
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold leading-tight">{producto ?? nombre}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {textoGramos(ajustado)} cada vez
@@ -246,22 +274,28 @@ function FilaProducto({
         )}
       </div>
 
-      <div className="flex items-center gap-2">
+      {/* Número arriba, unidad debajo y el dibujo debajo de los dos: en una
+          sola columna el bloque no necesita ancho variable, así que los
+          íconos se reparten en dos filas cuando son muchos en vez de
+          empujar la medida hacia abajo. */}
+      <div className="flex w-[118px] shrink-0 flex-col items-start gap-1">
+        {esFrase ? (
+          <p className={cn("text-sm font-bold leading-tight", tema.tinta)}>{medida.texto}</p>
+        ) : (
+          <>
+            <p className={cn("text-xl font-bold leading-none", tema.tinta)}>
+              {String(medida.valor).replace(".", ",")}
+            </p>
+            <p className="text-[11px] leading-tight text-muted-foreground">{medida.unidadTexto}</p>
+          </>
+        )}
         <div
           className={cn(
-            "flex items-center gap-0.5 rounded-xl bg-muted/60 px-2.5 py-2 text-muted-foreground",
+            "flex w-full flex-wrap items-center gap-0.5 rounded-xl bg-muted/60 px-1.5 py-1.5 text-muted-foreground",
             tema.tinta,
           )}
         >
           <CaserasVisual medida={medida} />
-        </div>
-        <div className="min-w-0">
-          <p className={cn("text-xl font-bold leading-none", tema.tinta)}>
-            {medida.unidad === "pesa"
-              ? textoGramos(ajustado).split(" ")[0]
-              : String(medida.valor).replace(".", ",")}
-          </p>
-          <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{medida.texto}</p>
         </div>
       </div>
     </div>

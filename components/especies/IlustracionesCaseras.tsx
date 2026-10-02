@@ -14,10 +14,13 @@
 import type { MedidaCasera } from "@/lib/agronomy/fertilizacion";
 import { cn } from "@/lib/utils";
 
-/* Cuántas se dibujan como máximo antes de resumir con «×N». Pasado ese punto
-   el dibujo es un muro de iconos y deja de comunicar la cantidad. */
-const MAX_CUCHARAS = 6;
-const MAX_TAZAS = 5;
+/* Cuántas se dibujan antes de resumir con «+N».
+   El tope posible de la guía son 10 cucharadas (medidaCasera corta en 10), así
+   que con MAX_CUCHARAS = 10 el resumen NUNCA aparece para cucharadas: antes el
+   tope era 6 y salía «+N» en el 6% de las dosis (145 de 2406). La taza sí
+   puede llegar a 8 y es mucho más ancha, así que ahí se resume antes. */
+const MAX_CUCHARAS = 10;
+const MAX_TAZAS = 6;
 
 function CucharaLlena({ className }: { className?: string }) {
   return (
@@ -51,15 +54,52 @@ function Taza({ className }: { className?: string }) {
 }
 
 /**
- * «+3» para cuando la cantidad excede lo que se dibuja. Se usa «+» y no «×»
- * a propósito: con «×» al lado de seis cucharadas el uno parece un factor
- * («7 × 1») en vez de «una cucharada más».
+ * «+1» para cuando la cantidad excede lo que se dibuja. El número va SIN
+ * redondear (nunca Math.round): con «6,5» y tope 6 el redondeo producía «+1»
+ * y el dibujo sumaba 7 mientras el texto decía 6,5. Con la resta exacta no
+ * hay forma de que el dibujo sobre más de lo que dice el número.
  */
 function Sobras({ n }: { n: number }) {
   return (
     <span className="shrink-0 text-sm font-bold text-muted-foreground">
       +{String(n).replace(".", ",")}
     </span>
+  );
+}
+
+type Icono = (p: { className?: string }) => React.ReactElement | null;
+
+/**
+ * Dibuja `valor` fullness-icons, sin pasarse ni quedarse corto.
+ * Invariante: las fullness-icons dibujadas + lo del badge = `valor` exacto.
+ */
+function Secuencia({
+  valor,
+  max,
+  Lleno,
+  Media,
+  className,
+}: {
+  valor: number;
+  max: number;
+  Lleno: Icono;
+  Media: Icono;
+  className?: string;
+}) {
+  const enteras = Math.min(max, Math.floor(valor));
+  const resto = valor - enteras;
+  const excedente = Math.max(0, valor - max);
+
+  return (
+    <>
+      {Array.from({ length: enteras }, (_, i) => (
+        <Lleno key={i} className={className} />
+      ))}
+      {/* Media solo si el resto cabe antes del tope: si no, su lugar lo ocupa
+          el badge, que ya lleva la cuenta. */}
+      {resto > 0 && resto < 1 && enteras < max && <Media className={className} />}
+      {excedente > 0 && <Sobras n={excedente} />}
+    </>
   );
 }
 
@@ -81,30 +121,16 @@ export function CaserasVisual({
   }
 
   if (medida.unidad === "cuchara") {
-    const enteras = Math.min(MAX_CUCHARAS, Math.floor(medida.valor));
-    const sobra = Math.round((medida.valor - enteras) * 10) / 10;
-    const dibujaMedia = sobra > 0 && enteras < MAX_CUCHARAS;
-    return (
-      <>
-        {Array.from({ length: enteras }, (_, i) => (
-          <CucharaLlena key={i} className={className} />
-        ))}
-        {dibujaMedia && <CucharaMedia className={className} />}
-        {medida.valor > MAX_CUCHARAS && <Sobras n={Math.round(medida.valor - MAX_CUCHARAS)} />}
-      </>
-    );
+    return <Secuencia valor={medida.valor} max={MAX_CUCHARAS} Lleno={CucharaLlena} Media={CucharaMedia} className={className} />;
   }
 
-  const enteras = Math.min(MAX_TAZAS, Math.floor(medida.valor));
-  const sobra = Math.round((medida.valor - enteras) * 10) / 10;
-  const dibujaMedia = sobra > 0 && enteras < MAX_TAZAS;
   return (
-    <>
-      {Array.from({ length: enteras }, (_, i) => (
-        <Taza key={i} className={className} />
-      ))}
-      {dibujaMedia && <Taza key="media" className={cn("opacity-45", className)} />}
-      {medida.valor > MAX_TAZAS && <Sobras n={Math.round(medida.valor - MAX_TAZAS)} />}
-    </>
+    <Secuencia
+      valor={medida.valor}
+      max={MAX_TAZAS}
+      Lleno={Taza}
+      Media={(p) => <Taza {...p} className={cn("opacity-45", p.className)} />}
+      className={className}
+    />
   );
 }

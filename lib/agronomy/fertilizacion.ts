@@ -333,8 +333,14 @@ export interface MedidaCasera {
   unidad: UnidadCasera;
   /** Cuchadas o tazas a dibujar (admite 0,5 para la media). */
   valor: number;
-  /** Texto llano para el usuario. */
+  /** Frase completa: «3,5 cucharadas soperas». Para lector de pantalla. */
   texto: string;
+  /**
+   * Solo la unidad, SIN el número: «cuchadas soperas». La ficha pinta el
+   * número aparte y grande, así que usar `texto` ahí lo dejaba duplicado
+   * («3,5» y debajo «3,5 cucharadas soperas»).
+   */
+  unidadTexto: string;
 }
 
 /** 16 cucharadas soperas llenan una taza de té. */
@@ -349,15 +355,19 @@ export const CUCHARADAS_POR_TAZA = 16;
  */
 export function medidaCasera(gramos: number | null, producto: string | null): MedidaCasera {
   const g = gramos ?? 0;
-  if (g <= 0) return { unidad: "pesa", valor: 0, texto: "—" };
+  if (g <= 0) return { unidad: "pesa", valor: 0, texto: "—", unidadTexto: "" };
 
   const fertilizante =
     producto && producto !== "—" ? FERTILIZANTE_POR_PRODUCTO.get(producto.toLowerCase()) : undefined;
   const gramosCucharada = fertilizante?.gramos_cucharada ?? GRAMOS_CUCHARADA_DEFAULT;
   const n = g / gramosCucharada;
 
-  if (n < 0.4) return { unidad: "pizca", valor: 0.5, texto: "una pizca" };
-  if (n < 0.8) return { unidad: "cuchara", valor: 0.5, texto: "media cucharada" };
+  if (n < 0.4) {
+    return { unidad: "pizca", valor: 0.5, texto: "una pizca", unidadTexto: "una pizca" };
+  }
+  if (n < 0.8) {
+    return { unidad: "cuchara", valor: 0.5, texto: "media cucharada", unidadTexto: "media cucharada" };
+  }
 
   if (n <= 10) {
     const v = n < 4 ? Math.round(n * 2) / 2 : Math.round(n);
@@ -365,16 +375,20 @@ export function medidaCasera(gramos: number | null, producto: string | null): Me
       unidad: "cuchara",
       valor: v,
       texto: v === 1 ? "1 cucharada sopera" : `${String(v).replace(".", ",")} cucharadas soperas`,
+      unidadTexto: v === 1 ? "cucharada sopera" : "cucharadas soperas",
     };
   }
 
   const tazas = n / CUCHARADAS_POR_TAZA;
-  if (tazas > 8) return { unidad: "pesa", valor: 0, texto: "pésalo en una pesa" };
+  if (tazas > 8) {
+    return { unidad: "pesa", valor: 0, texto: "pésalo en una pesa", unidadTexto: "pésalo en una pesa" };
+  }
   const v = tazas < 4 ? Math.round(tazas * 2) / 2 : Math.round(tazas);
   return {
     unidad: "taza",
     valor: v,
     texto: v === 1 ? "1 taza de té" : `${String(v).replace(".", ",")} tazas de té`,
+    unidadTexto: v === 1 ? "taza de té" : "tazas de té",
   };
 }
 

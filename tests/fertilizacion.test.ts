@@ -220,6 +220,44 @@ describe("material visual: la dosis dibujada", () => {
     expect(medidaCasera(0, "Urea").texto).toBe("—");
   });
 
+  it("unidadTexto NO repite la cantidad (la ficha la pinta aparte)", () => {
+    // La ficha muestra «3,5» en grande y abajo la unidad. Si unidadTexto
+    // viniera con el número, se vería «3,5» dos veces.
+    for (const g of [4, 6, 11, 33, 176, 388.6, 80.7]) {
+      const m = medidaCasera(g, "Urea");
+      expect(m.unidadTexto, `unidadTexto=${m.unidadTexto}`).not.toMatch(/\d/);
+      // Solo cuando la unidad NO lleva la fracción escrita («media
+      // cucharada» ya dice la cantidad): ahí quitar la unidad al texto
+      // completo debe dejar justo el número que la ficha pinta en grande.
+      if ((m.unidad === "cuchara" || m.unidad === "taza") && Number.isInteger(m.valor)) {
+        const numero = m.texto.replace(m.unidadTexto, "").trim();
+        expect(numero).toBe(String(m.valor).replace(".", ","));
+      }
+    }
+  });
+
+  it("las medias y las pizcas se pintan como frase, no como número", () => {
+    // «0,5» + «media cucharada» se lee mal: la fracción ya está en la unidad.
+    // La ficha cae en medida.texto cuando valor < 1 o cuando hay que pesar.
+    const media = medidaCasera(6, "Urea");
+    expect(media.valor).toBe(0.5);
+    expect(media.unidad).toBe("cuchara");
+    expect(media.texto).toBe("media cucharada");
+
+    const pizca = medidaCasera(4, "Urea");
+    expect(pizca.valor).toBeLessThan(1);
+    expect(pizca.texto).toBe("una pizca");
+  });
+
+  it("unidadTexto concuerda en singular y plural", () => {
+    expect(medidaCasera(11, "Urea").unidadTexto).toBe("cucharada sopera");
+    expect(medidaCasera(33, "Urea").unidadTexto).toBe("cucharadas soperas");
+    expect(medidaCasera(176, "Urea").unidadTexto).toBe("taza de té");
+    expect(medidaCasera(352, "Urea").unidadTexto).toBe("tazas de té");
+    expect(medidaCasera(6, "Urea").unidadTexto).toBe("media cucharada");
+    expect(medidaCasera(8000, "Urea").unidadTexto).toBe("pésalo en una pesa");
+  });
+
   it("textoGramos pasa a kilos recién sobre el kilo", () => {
     expect(textoGramos(388.6)).toBe("389 gramos");
     expect(textoGramos(1000)).toBe("1,0 kilos");
