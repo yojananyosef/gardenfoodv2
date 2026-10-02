@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "marca": "node scripts/generate-marca.mjs && node scripts/patch-og-marca.mjs && node scripts/check-marca.mjs",
+    "marca:check": "node scripts/check-marca.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
