@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
+import { mesEnChile } from "@/lib/climate/alertas";
 import { buscarComuna, getEspeciePorDbKey } from "@/lib/agronomy";
 import { calcularRiego } from "@/lib/riego/calc";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
@@ -148,7 +149,7 @@ export function EditarArbolDialog({
     return calcularRiego(
       {
         dbKey: especie,
-        mes: new Date().getMonth() + 1,
+        mes: mesEnChile(),
         zonaId: zonaPerfil,
         suelo: (sueloPerfil as "G" | "MG" | "M" | "F" | null) ?? null,
         edadN: edadN ? Number(edadN) : null,

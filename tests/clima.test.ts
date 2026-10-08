@@ -7,6 +7,9 @@ import {
   alertasDesdePronostico,
   alertasEstaticas,
   fechaCorta,
+  fechaLargaChile,
+  hoyLocal,
+  mesEnChile,
   resolverClima,
   resumenAlertas,
   severidadCalor,
@@ -438,6 +441,85 @@ describe("riego a partir de la evapotranspiración", () => {
     ]);
     const top = diasDeRiego(dias);
     expect(top.map((d) => d.fecha)).toEqual(["2026-10-08", "2026-10-09"]);
+  });
+});
+
+describe("fecha en hora de Chile, no del servidor", () => {
+  /**
+   * Este bloque existe por un bug que solo se veía en producción.
+   *
+   * `hoyLocal()` usaba `getMonth()`/`getDate()`, que dan la hora del proceso. En
+   * local el TZ de la máquina es America/Santiago y funcionaba; en Vercel, que
+   * corre en UTC, devolvía el día siguiente desde las 21:00 hora chilena. El
+   * pronóstico marcaba «Hoy» en el día que venía y las tareas del «hoy» eran
+   * las de mañana.
+   *
+   * Estos tests simulan el servidor en UTC con una fecha donde Chile y UTC están
+   * en días distintos, que es exactamente la franja de 21:00 a 24:00.
+   */
+
+  // 01:40 UTC del jueves 8 → en Chile (UTC−3) todavía es miércoles 7.
+  const UTC_JUEVES_8 = new Date("2026-10-08T01:40:00Z");
+
+  it("el mismo instante da días distintos según quién pregunta", () => {
+    // Documenta el bug: con el proceso en UTC (como Vercel), el método local
+    // da 8. Hay que forzar el TZ para reproducirlo, porque en esta máquina el
+    // TZ es America/Santiago y el método local da 7 — que es justamente por
+    // lo que el bug nunca se vio en local.
+    const original = process.env.TZ;
+    try {
+      process.env.TZ = "UTC";
+      expect(UTC_JUEVES_8.getDate()).toBe(8);
+    } finally {
+      if (original === undefined) delete process.env.TZ;
+      else process.env.TZ = original;
+    }
+    // Y la respuesta correcta para Chile es 7, sin importar el TZ.
+    expect(hoyLocal(UTC_JUEVES_8)).toBe("2026-10-07");
+  });
+
+  it("no depende del TZ del proceso", () => {
+    const original = process.env.TZ;
+    try {
+      for (const tz of ["UTC", "America/Santiago", "America/New_York", "Asia/Tokyo"]) {
+        process.env.TZ = tz;
+        expect(hoyLocal(UTC_JUEVES_8), `con TZ=${tz}`).toBe("2026-10-07");
+      }
+    } finally {
+      if (original === undefined) delete process.env.TZ;
+      else process.env.TZ = original;
+    }
+  });
+
+  it("resuelve la frontera de medianoche en ambas direcciones", () => {
+    // 00:30 UTC del jueves → miércoles 7 en Chile.
+    expect(hoyLocal(new Date("2026-10-08T00:30:00Z"))).toBe("2026-10-07");
+    // 23:30 UTC del miércoles → miércoles 7 todavía (23:30 − 3 = 20:30).
+    expect(hoyLocal(new Date("2026-10-07T23:30:00Z"))).toBe("2026-10-07");
+    // 04:00 UTC del jueves → 01:00 del jueves 8 ya en Chile.
+    expect(hoyLocal(new Date("2026-10-08T04:00:00Z"))).toBe("2026-10-08");
+  });
+
+  it("cruza el cambio de año y de mes, con horario de verano incluido", () => {
+    // Chile cambia el offset: CLST (UTC−3) en verano del hemisferio sur y CLT
+    // (UTC−4) en invierno. Un número fijo de horas habría fallado en uno de los
+    // dos; `Intl` con la zona lo resuelve.
+    // 02:00 UTC del 1 de enero → 23:00 del 31 de diciembre en Chile.
+    expect(hoyLocal(new Date("2027-01-01T02:00:00Z"))).toBe("2026-12-31");
+    // 03:00 UTC del 1 de julio → 23:00 del 30 de junio (invierno, UTC−4).
+    expect(hoyLocal(new Date("2026-07-01T03:00:00Z"))).toBe("2026-06-30");
+  });
+
+  it("el mes también es el de Chile", () => {
+    // 01:40 UTC del 1 de marzo → 22:40 del 28 de febrero en Chile.
+    expect(mesEnChile(new Date("2027-03-01T01:40:00Z"))).toBe(2);
+    expect(mesEnChile(new Date("2026-10-08T01:40:00Z"))).toBe(10);
+  });
+
+  it("la fecha larga dice miércoles, no jueves", () => {
+    // El síntoma que reportó el usuario.
+    expect(fechaLargaChile(UTC_JUEVES_8)).toMatch(/miércoles/i);
+    expect(fechaLargaChile(UTC_JUEVES_8)).toMatch(/7/);
   });
 });
 

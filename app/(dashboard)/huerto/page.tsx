@@ -44,15 +44,21 @@ import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { AhoraClima } from "@/components/huerto/AhoraClima";
 import { GraficoTemperatura } from "@/components/huerto/GraficoTemperatura";
 import { BloqueRiego } from "@/components/huerto/BloqueRiego";
-import { resumenAlertas } from "@/lib/climate/alertas";
+import { fechaLargaChile, hoyLocal, resumenAlertas } from "@/lib/climate/alertas";
 import { riegoDeSemana } from "@/lib/climate/riego";
 import { ATRIBUCION, climaDePerfil } from "@/lib/climate/open-meteo";
 
+/**
+ * Fecha de hoy para consultar las tareas del día.
+ *
+ * Delega en `hoyLocal()`, que usa `Intl` con `timeZone: America/Santiago`. La
+ * versión anterior armaba la fecha con `getMonth()`/`getDate()`, que dan la
+ * hora del proceso: en local (TZ = America/Santiago) funcionaba, y en Vercel
+ * (UTC) devolvía el día siguiente desde las 21:00 hora chilena. Con eso, las
+ * tareas del "hoy" eran las de mañana.
+ */
 function hoyISO(): string {
-  const now = new Date();
-  const mes = String(now.getMonth() + 1).padStart(2, "0");
-  const dia = String(now.getDate()).padStart(2, "0");
-  return `${now.getFullYear()}-${mes}-${dia}`;
+  return hoyLocal();
 }
 
 export default async function HuertoPage() {
@@ -412,7 +418,11 @@ export default async function HuertoPage() {
                     <div className="flex flex-col">
                       <CardTitle className="text-base">Tareas de hoy</CardTitle>
                       <CardDescription className="text-xs capitalize">
-                        {new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}
+                        {/* Con `timeZone` explícito. Sin él, `toLocaleDateString`
+                            usa el TZ del servidor (UTC en Vercel) y desde las
+                            21:00 Chilean el título decía «Jueves 8» cuando en
+                            Chile todavía era miércoles 7. */}
+                        {fechaLargaChile()}
                       </CardDescription>
                     </div>
                   </div>

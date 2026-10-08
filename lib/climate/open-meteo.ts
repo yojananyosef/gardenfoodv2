@@ -2,6 +2,7 @@ import { resolverZonaDeComuna, getZonaDeComuna } from "@/lib/agronomy";
 import { puntoDeConsulta } from "@/lib/agronomy/centroides";
 import {
   hoyLocal,
+  mesEnChile,
   resolverClima,
   umbralHelada,
   type Ahora,
@@ -264,7 +265,9 @@ export async function climaDePerfil(
   if (!zona) return null;
 
   const clima = await pronosticoDeComuna(comuna, zonaId);
-  const mes = new Date().getMonth() + 1;
+  // Mes en hora de Chile. `getMonth()` daba el mes del servidor, que en Vercel
+  // (UTC) es el mes siguiente cuando Chile todavía está en el anterior.
+  const mes = mesEnChile();
   const resuelto = resolverClima(clima?.pronostico ?? null, zona, mes);
 
   return {

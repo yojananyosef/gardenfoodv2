@@ -116,18 +116,60 @@ export function fechaCorta(fecha: string): string {
   return `${NOMBRES_DIA[diaSemanaDe(fecha)]} ${Number(dia[3])}`;
 }
 
+/** Zona horaria de todo el país. Chile continental no usa DST. */
+export const TZ_CHILE = "America/Santiago";
+
 /**
- * Hoy en la zona del usuario, en formato `YYYY-MM-DD`.
+ * Fecha de Chile en formato `YYYY-MM-DD`.
  *
- * `toISOString()` devuelve la fecha en UTC, y en Chile (UTC−3/−4) después de
- * las 21:00 ya es el día siguiente: el pronóstico marcaba «Hoy» en el día que
- * viene. Se arma con la hora local por eso.
+ * NI `toISOString()` NI `getDate()`.
+ *
+ * - `toISOString()` devuelve UTC: en Chile (UTC−3/−4) después de las 21:00 ya es
+ *   el día siguiente, y el pronóstico marcaba «Hoy» en el día que viene.
+ * - `getDate()`/`getMonth()` dan la hora **del proceso**. Sirve en local, donde
+ *   el TZ de la máquina es America/Santiago, y falla en Vercel, que corre en
+ *   UTC: ahí `getDate()` devuelve el jueves 8 cuando en Chile todavía es
+ *   miércoles 7. El bug no se reproduce en local y aparece en producción a
+ *   partir de las 21:00 hora chilena.
+ *
+ * `Intl` con `timeZone` explícito es la única forma que no depende de dónde
+ * corra el código: en mi máquina, en Vercel y en el navegador del usuario da lo
+ * mismo. Chile continental no aplica horario de verano, pero la zona incluye la
+ * hora de verano de las islas, así que `America/Santiago` cubre el país.
  */
-export function hoyLocal(): string {
-  const ahora = new Date();
-  const mes = String(ahora.getMonth() + 1).padStart(2, "0");
-  const dia = String(ahora.getDate()).padStart(2, "0");
-  return `${ahora.getFullYear()}-${mes}-${dia}`;
+export function hoyLocal(fecha: Date = new Date()): string {
+  // `en-CA` rinde `AAAA-MM-DD`, que es justo el formato que necesitamos.
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ_CHILE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(fecha);
+}
+
+/**
+ * Mes (1-12) en Chile.
+ *
+ * Mismo problema que `hoyLocal()`: `getMonth()` da el mes del servidor, y en
+ * la frontera de un cambio de mes eso elige el mes equivocado — el respaldo
+ * estático decide con este número qué alerta mostrar.
+ */
+export function mesEnChile(fecha: Date = new Date()): number {
+  const partes = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ_CHILE,
+    month: "numeric",
+  }).format(fecha);
+  return Number(partes);
+}
+
+/** Fecha larga en español, ya en hora de Chile. */
+export function fechaLargaChile(fecha: Date = new Date()): string {
+  return new Intl.DateTimeFormat("es-CL", {
+    timeZone: TZ_CHILE,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(fecha);
 }
 
 const conDecimal = (n: number) => n.toFixed(1).replace(".", ",");
