@@ -7,19 +7,14 @@ import {
   ArrowRight,
   CheckCircle2,
   Sun,
-  Droplets,
-  CloudRain,
-  ThermometerSun,
   Sparkles,
   Compass,
-  LayoutGrid,
   ListTodo,
   Thermometer,
 } from "lucide-react";
 
 import { NativeAdSlot } from "@/components/ads/NativeAdSlot";
 import { SponsoredBanner } from "@/components/ads/SponsoredBanner";
-import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
 import { WorkbenchModular } from "@/components/huerto/WorkbenchModular";
 import { PlanoHuerto } from "@/components/huerto/PlanoHuerto";
 import { TerrenoSection } from "@/components/mapa/TerrenoSection";
@@ -34,19 +29,24 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TareasDonut, AlertasBar } from "@/components/huerto/HuertoCharts";
+import { TareasDonut } from "@/components/huerto/HuertoCharts";
 import { getActiveSponsorships } from "@/lib/ads/sponsorships";
 import {
   ESPECIES,
-  MESES,
-  getEspeciePorDbKey,
   getEspeciesPorZona,
   getZonaIdDeComuna,
 } from "@/lib/agronomy";
-import { climateAlertsProvider } from "@/lib/climate";
 import { getArboles, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
 import { getZonaDeComuna } from "@/lib/agronomy";
 import { createClient } from "@/lib/supabase/server";
+import { TiraPronostico } from "@/components/huerto/TiraPronostico";
+import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
+import { AhoraClima } from "@/components/huerto/AhoraClima";
+import { GraficoTemperatura } from "@/components/huerto/GraficoTemperatura";
+import { BloqueRiego } from "@/components/huerto/BloqueRiego";
+import { resumenAlertas } from "@/lib/climate/alertas";
+import { riegoDeSemana } from "@/lib/climate/riego";
+import { ATRIBUCION, climaDePerfil } from "@/lib/climate/open-meteo";
 
 function hoyISO(): string {
   const now = new Date();
@@ -71,28 +71,17 @@ export default async function HuertoPage() {
   ]);
 
   const zona = getZonaDeComuna(perfil?.comuna);
-  const mesActual = new Date().getMonth();
-  const alertas = zona ? climateAlertsProvider.getAlertas(zona, mesActual + 1) : [];
+  // Pronóstico real por la comuna del perfil, con el perfil de zona como
+  // respaldo. `climaDePerfil` ya resuelve la cadena entera, así que esta
+  // pantalla no necesita saber de respaldos.
+  const clima = await climaDePerfil(perfil?.comuna);
+  const alertas = clima?.alertas ?? [];
 
   const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
   const recom = getEspeciesPorZona(zonaId);
   // Segunda línea del card Cultivos: aporta valor sin repetir el conteo
   // del título (N especies · M árboles) ni el «en plano» ya eliminado.
   const superficieTotal = huertos.reduce((acc, h) => acc + (h.superficieM2 ?? 0), 0);
-  const especieTop = (() => {
-    if (arboles.length === 0) return null;
-    const conteo = new Map<string, number>();
-    for (const a of arboles) conteo.set(a.especie, (conteo.get(a.especie) ?? 0) + 1);
-    let top: { especie: string; total: number } | null = null;
-    for (const [especie, total] of conteo) {
-      if (!top || total > top.total) top = { especie, total };
-    }
-    if (!top) return null;
-    return {
-      nombre: getEspeciePorDbKey(top.especie)?.nombre ?? top.especie,
-      total: top.total,
-    };
-  })();
   // Vista única: el mapa es lo principal; el vacío se mide por árboles + huertos.
   const esHuertoVacio = arboles.length === 0 && huertos.length === 0;
   const nombre = (user.user_metadata as Record<string, unknown>)?.["nombre"] as string | undefined;
@@ -103,12 +92,24 @@ export default async function HuertoPage() {
     { name: "En proceso", value: tareas.filter((t) => t.estado === "en_proceso").length, fill: "var(--chart-2)" },
     { name: "Completada", value: tareas.filter((t) => t.estado === "completada").length, fill: "var(--primary)" },
   ].filter((d) => d.value > 0);
-  const alertasChartData = (() => {
-    const map = new Map<string, number>();
-    for (const a of alertas) map.set(a.tipo, (map.get(a.tipo) ?? 0) + 1);
-    const colors: Record<string, string> = { helada: "var(--chart-4)", sequia: "var(--chart-2)", lluvia: "var(--chart-3)", calor: "var(--destructive)" };
-    return Array.from(map.entries()).map(([tipo, count]) => ({ tipo, count, fill: colors[tipo] ?? "var(--primary)" }));
-  })();
+  /* El número del badge, en palabras. Antes era el total pelado —un «5» al
+     lado de un gráfico que decía lo mismo— y no contaba días distintos, así
+     que una helada y lluvia el mismo día contaban dos. */
+  const resumenAvisos = resumenAlertas(alertas);
+
+  /* Déficit hídrico por día. Sale del ET₀ de la misma respuesta del pronóstico,
+     sin llamada extra. Vacío si no hay pronóstico. */
+  const diasRiego = clima?.pronostico?.dias?.length
+    ? riegoDeSemana(clima.pronostico.dias)
+    : [];
+
+  /* Tareas que todavía exigen una acción. Se cuenta solo lo pendiente y lo que
+     está en proceso: una tarea completada no es «algo que mostrar», y mandarle
+     al usuario a una tab con cinco tareas ya hechas lo haría pensar que tiene
+     trabajo pendiente. */
+  const tareasPendientes = tareas.filter(
+    (t) => t.estado === "pendiente" || t.estado === "en_proceso",
+  ).length;
 
   // Vista única modular: el asistente vive como modal «Abrir asistente»
   // (guía opcional sin cambiar de vista). Retoma donde quedó pendiente.
@@ -137,7 +138,8 @@ export default async function HuertoPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Header + stats — zona se lee una sola vez arriba */}
+      {/* Header + stats — zona se lee una sola vez arriba. Va después del lienzo
+          porque el saludo no compite con el mapa: es contexto, no la acción. */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-2">
@@ -145,160 +147,124 @@ export default async function HuertoPage() {
               <Badge
                 variant="outline"
                 className="w-fit gap-1.5 rounded-full bg-card"
-                title={perfil?.comuna ?? undefined}
+                title={perfil?.comuna ? `${perfil.comuna} · editar comuna` : undefined}
+                render={<Link href="/perfil" />}
               >
                 <MapPinned className="size-3" />
                 {zona.nombre}
               </Badge>
             ) : (
-              <Badge variant="outline" className="w-fit rounded-full">Configura tu comuna</Badge>
+              <Badge variant="outline" className="w-fit rounded-full" render={<Link href="/perfil" />}>
+                Configura tu comuna
+              </Badge>
             )}
             <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-[1.9rem]">
               {nombreCorto ? `Hola, ${nombreCorto} —` : "Mi huerto"}
               <span className="text-muted-foreground"> {esHuertoVacio ? "empieza aquí" : "al día"}</span>
             </h1>
-            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {zona
-                ? "Calendario fenológico y alertas de tu zona."
-                : "Actualiza tu comuna en tu perfil para recomendaciones a la medida."}
-            </p>
+            {/* El subtítulo desapareció cuando hay zona. «Calendario fenológico y
+                alertas de tu zona» no le decía nada nuevo al usuario que ya
+                ve el chip con su zona arriba y tiene el mapa en pantalla, y
+                empujaba el mapa hacia abajo. El caso sin zona sí se mantiene,
+                porque ahí es una instrucción accionable, no decoración. */}
+            {!zona ? (
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Actualiza tu comuna en tu perfil para recomendaciones a la medida.
+              </p>
+            ) : null}
           </div>
         </div>
 
-        {/* Bento stats */}
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Card className="overflow-hidden rounded-2xl">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardDescription className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide">
-                  <Sprout className="size-3.5" /> Cultivos
-                </CardDescription>
-                <Badge variant={arboles.length > 0 ? "default" : "outline"} className="rounded-full px-1.5 py-0 text-[10px]">
-                  {arboles.length > 0 ? "activo" : "vacío"}
-                </Badge>
-              </div>
-              <CardTitle className="font-heading flex items-baseline gap-2 text-3xl">
-                {new Set(arboles.map((a) => a.especie)).size}
-                <span className="text-sm font-normal text-muted-foreground">
-                  especies · {arboles.length} árboles
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <MapPinned className="size-3" />
-                  {huertos.length === 0
-                    ? "sin terreno dibujado"
-                    : `${huertos.length} ${huertos.length === 1 ? "huerto" : "huertos"} · ${Math.round(superficieTotal)} m²`}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Sprout className="size-3" />
-                  {especieTop ? `${especieTop.nombre} ×${especieTop.total} lidera` : "agrega tu primer cultivo"}
-                </span>
-              </div>
-            </CardContent>
-            <div className="mt-auto h-1 w-full bg-primary" aria-hidden />
-          </Card>
+        {/* UN solo bento, con las tres cifras que importan.
+            Eran tres cards: Cultivos, Hoy y (antes) una de tareas. Entotal
+            mostraban cinco números antes de llegar al mapa, y dos de ellos
+            decían lo mismo —«5 especies · 26 árboles» en Cultivos y «27 en el
+            mapa» en el lienzo—, así que la pantalla arrancaba con un conteo
+            repetido en vez de con algo accionable.
 
-          {/* Hoy: tareas + clima en un solo card, sin repetir zona */}
-          <Card className="overflow-hidden rounded-2xl sm:col-span-2">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between gap-2">
-                <CardDescription className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide">
-                  <CheckCircle2 className="size-3.5" /> Hoy
-                </CardDescription>
-                <Badge variant={tareas.length > 0 ? "secondary" : "outline"} className="rounded-full px-1.5 py-0 text-[10px]">
-                  {tareas.length} pendientes
-                  {alertas.length > 0 ? ` · ${alertas.length} alerta${alertas.length > 1 ? "s" : ""}` : ""}
-                </Badge>
-              </div>
-              <CardTitle className="font-heading flex flex-wrap items-baseline gap-x-4 gap-y-1 text-3xl">
-                <span className="flex items-baseline gap-2">
-                  {tareas.length}
-                  <span className="text-sm font-normal text-muted-foreground">tareas</span>
-                </span>
-                <span className="flex items-center gap-1.5 text-sm font-normal text-muted-foreground">
-                  {alertas.length > 0 ? <AlertTriangle className="size-3.5" /> : <Sun className="size-3.5" />}
-                  {alertas.length === 0 ? "sin avisos" : `${alertas.length} aviso${alertas.length > 1 ? "s" : ""}`}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5 capitalize">
-                  <CalendarDays className="size-3" /> {new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  {alertas.length > 0 ? <ThermometerSun className="size-3" /> : <Sun className="size-3" />}
-                  {alertas.length === 0 ? "sin heladas ni sequía crítica" : "revisa el tab Clima"}
-                </span>
-              </div>
-            </CardContent>
-            <div className="mt-auto h-1 w-full bg-chart-3" aria-hidden />
-          </Card>
-        </div>
+            Los tres datos que quedan son los que cambian una decisión hoy:
+            cuántas tareas te tocan, si hay avisos de clima, y cuántos árboles
+            tienes. Cultivos es además el enlace al índice de especies, que es
+            el camino corto a los árboles (antes había que buscarlos dentro del
+            mapa). El `render` del Card hace que toda la superficie sea el
+            target, sin anidar un botón dentro de otro. */}
+        <Card
+          className="group cursor-pointer overflow-hidden rounded-2xl transition-colors hover:border-primary/40 focus-visible:border-ring"
+          render={<Link href="/especie/especies" />}
+          aria-label={`${tareas.length} tareas hoy, ${alertas.length} ${alertas.length === 1 ? "aviso" : "avisos"}, ${arboles.length} árboles. Ver todas las especies`}
+        >
+          <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <div className="flex items-baseline gap-2">
+              <span className="font-heading text-2xl font-semibold tabular-nums">{tareas.length}</span>
+              <span className="text-sm text-muted-foreground">
+                {tareas.length === 1 ? "tarea" : "tareas"} para hoy
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-2">
+              <span className="font-heading text-2xl font-semibold tabular-nums">{alertas.length}</span>
+              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                {alertas.length === 0 ? (
+                  <Sun className="size-3.5" />
+                ) : (
+                  <AlertTriangle className="size-3.5 text-destructive" />
+                )}
+                {alertas.length === 0 ? "sin avisos de clima" : alertas.length === 1 ? "aviso de clima" : "avisos de clima"}
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-2">
+              <span className="font-heading text-2xl font-semibold tabular-nums">{arboles.length}</span>
+              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Sprout className="size-3.5" />
+                {arboles.length === 1 ? "árbol" : "árboles"}
+              </span>
+            </div>
+
+            <span className="ml-auto flex items-center gap-1.5 text-sm text-muted-foreground">
+              {huertos.length === 0
+                ? "sin terreno dibujado"
+                : `${huertos.length} ${huertos.length === 1 ? "huerto" : "huertos"} · ${Math.round(superficieTotal).toLocaleString("es-CL")} m²`}
+              <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Recomendadas — hero bento (outside tabs, always visible but compact) */}
-      <Card className="overflow-hidden rounded-2xl border-primary/20 shadow-sm">
-        <CardHeader className="gap-3">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <Badge className="gap-1 rounded-full">
-                  <Sparkles className="size-3" /> Recomendadas para tu zona
-                </Badge>
-              </div>
-              <CardTitle className="text-lg leading-tight">
-                {perfil?.comuna ? `Qué plantar en ${perfil.comuna}` : "Configura tu comuna"}
-              </CardTitle>
-              <CardDescription className="max-w-prose text-[13px] leading-relaxed">
-                {zona
-                  ? `${recom.si.length} recomendadas · ${recom.riesgo.length} con riesgo · ${recom.no.length} no recomendadas.`
-                  : "Configura tu comuna para ver qué puedes cultivar con éxito."}
-              </CardDescription>
-            </div>
-            <div className="hidden items-center gap-1.5 rounded-full border bg-card px-2.5 py-1.5 shadow-sm sm:flex">
-              <span className="size-2 rounded-full bg-primary" />
-              <span className="text-xs font-medium">{recom.si.length} óptimas</span>
-              <Separator orientation="vertical" className="mx-1 h-3" />
-              <span className="size-2 rounded-full bg-cosecha" />
-              <span className="text-xs font-medium">{recom.riesgo.length} riesgo</span>
-              <Separator orientation="vertical" className="mx-1 h-3" />
-              <span className="size-2 rounded-full bg-muted-foreground" />
-              <span className="text-xs font-medium">{recom.no.length} evitar</span>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button className="rounded-lg" render={<Link href="/recomendadas" />}>
-            <Compass data-icon="inline-start" />
-            Ver recomendadas
-            <ArrowRight data-icon="inline-end" />
-          </Button>
-          <p className="text-xs text-muted-foreground">Filtrado por tu comuna · Datos de viabilidad real.</p>
-        </CardContent>
-      </Card>
+      {/* LIENZO.
+          Va después del saludo y del bento, no antes. La primera versión de
+          este change lo puso arriba de todo, y el resultado era un mapa sin
+          contexto: ni el nombre de la zona, ni un saludo, ni un «tienes 5 tareas
+          hoy». El change pedía que el mapa dejara de estar escondido detrás de
+          una tab, que era el problema real — no que fuera la primera cosa de la
+          pantalla. */}
+      <WorkbenchModular
+        huertos={huertos}
+        arboles={arboles}
+        asistente={
+          <AsistenteFlotante
+            pasos={pasos}
+            pasoInicial={pasoInicial}
+            marcarCompletado={asistentePendiente}
+            onCompletar={marcarAsistenteCompletado}
+            skipCompletado={!asistentePendiente}
+          />
+        }
+      />
 
-      {/* TABS (el asistente vive junto a las tabs del lienzo, su contexto) */}
-      <Tabs defaultValue="huerto" className="w-full gap-4">
+      {/* TABS de información. La tab «Mi huerto» se fue con el mapa: el lienzo
+          ya no está detrás de una tab, así que no hay nada que la haga necesaria.
+
+          La tab por defecto es la que TIENE algo que mostrar, no una fija. Con
+          cero tareas, «Tareas» abría en un «Día libre en el huerto» y el usuario
+          concluía que la app estaba vacía; con tareas pendientes, mandarlo a
+          Clima escondería justo lo que hay que hacer, que es lo que el clima
+          sugiere. El calendario todavía no está implementado, así que el estado
+          vacío de tareas es el caso común y no conviene que sea la puerta de
+          entrada. */}
+      <Tabs defaultValue={tareasPendientes > 0 ? "tareas" : "clima"} className="w-full gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <TabsList className="w-full justify-start overflow-x-auto rounded-xl bg-muted p-1 [scrollbar-width:none] sm:w-fit [&::-webkit-scrollbar]:hidden">
-            <TabsTrigger value="huerto" className="gap-1.5 rounded-lg data-[state=active]:shadow-sm">
-              <LayoutGrid className="size-4" />
-              Mi huerto
-              <Badge variant="secondary" className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
-                {arboles.length}
-              </Badge>
-            </TabsTrigger>
-            <TabsTrigger value="tareas" className="gap-1.5 rounded-lg">
-              <ListTodo className="size-4" />
-              Tareas
-              <Badge variant={tareas.length > 0 ? "default" : "outline"} className="ml-1 rounded-full px-1.5 py-0 text-[10px]">
-                {tareas.length}
-              </Badge>
-            </TabsTrigger>
             <TabsTrigger value="clima" className="gap-1.5 rounded-lg">
               <Thermometer className="size-4" />
               Clima
@@ -306,33 +272,133 @@ export default async function HuertoPage() {
                 {alertas.length}
               </Badge>
             </TabsTrigger>
+            <TabsTrigger value="tareas" className="gap-1.5 rounded-lg">
+              <ListTodo className="size-4" />
+              Tareas
+              {/* El badge cuenta lo PENDIENTE, como hace la decisión de la tab
+                  por defecto. Contaba `tareas.length`, que incluía las
+                  completadas: marcaba «5» con cinco tareas ya hechas y la tab se
+                  abría igual, así que el número no significaba nada. */}
+              <Badge
+                variant={tareasPendientes > 0 ? "default" : "outline"}
+                className="ml-1 rounded-full px-1.5 py-0 text-[10px]"
+              >
+                {tareasPendientes}
+              </Badge>
+            </TabsTrigger>
           </TabsList>
         </div>
 
-        {/* Lienzo a ancho completo (el mapa es lo principal) */}
-        <TabsContent value="huerto" className="mt-2 flex flex-col gap-4">
-              <WorkbenchModular
-                huertos={huertos}
-                arboles={arboles}
-                asistente={
-                  <AsistenteFlotante
-                    pasos={pasos}
-                    pasoInicial={pasoInicial}
-                    marcarCompletado={asistentePendiente}
-                    onCompletar={marcarAsistenteCompletado}
-                    skipCompletado={!asistentePendiente}
-                  />
-                }
-              />
-          {sponsorships.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {sponsorships.slice(0, 2).map((s) => (
-                <NativeAdSlot key={s.id} sponsorship={s} />
-              ))}
-            </div>
-          ) : null}
-        </TabsContent>
+        {/* Los banners del plan bajaron acá: con el mapa arriba de todo, uno
+            entre el mapa y las tabs empujaba el contenido real fuera de la
+            pantalla. */}
+        {sponsorships.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {sponsorships.slice(0, 2).map((s) => (
+              <NativeAdSlot key={s.id} sponsorship={s} />
+            ))}
+          </div>
+        ) : null}
 
+        {/* CLIMA — bento */}
+        <TabsContent value="clima" className="mt-2">
+          <div className="grid gap-4">
+            <Card className="rounded-2xl shadow-sm">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3">
+                    <span className="hidden size-9 items-center justify-center rounded-xl bg-cosecha/10 text-cosecha-ink sm:inline-flex">
+                      <AlertTriangle className="size-4" />
+                    </span>
+                    <div className="flex flex-col gap-1">
+                      <CardTitle className="text-base">
+                        Próximos 7 días — {clima?.zonaNombre ?? "sin zona"}
+                      </CardTitle>
+                      {/* El rótulo dice de dónde vienen los números. Antes decía
+                          «Datos agroclimáticos», que sugería una datasource en
+                          vivo cuando era un literal estático por zona. */}
+                      <CardDescription className="text-xs">
+                        {clima?.fuente === "pronostico"
+                          ? clima.sinComuna
+                            ? `Sin comuna en tu perfil: pron\u00f3stico del centro de ${clima.zonaNombre}`
+                            : `Pron\u00f3stico para ${perfil?.comuna ?? "tu comuna"}${clima.puntoAproximado ? " (aprox. por zona)" : ""}`
+                          : "Sin pron\u00f3stico disponible: promedios de la zona, no pron\u00f3stico"}
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge variant={alertas.length > 0 ? "destructive" : "outline"} className="rounded-full">
+                    {resumenAvisos}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-5">
+                {/* «Ahora» arriba, como en una app de clima. Antes la pantalla
+                    empezaba con siete celdas iguales y no había respuesta a
+                    «¿qué tiempo hace ahora?». */}
+                {clima?.pronostico?.actual ? (
+                  <AhoraClima
+                    actual={clima.pronostico.actual}
+                    hoy={clima.pronostico.dias[0]}
+                  />
+                ) : null}
+
+                {/* La curva por hora. Solo aparece si el hourly vino; si no, la
+                    tira de 7 días sigue dando la semana. */}
+                {clima?.pronostico?.horas?.length ? (
+                  <GraficoTemperatura
+                    horas={clima.pronostico.horas}
+                    umbral={clima.umbralHelada}
+                  />
+                ) : null}
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Los próximos 7 días
+                  </span>
+                  <TiraPronostico dias={clima?.pronostico?.dias ?? []} />
+                </div>
+
+                {/* Riego en mm. Es lo que un pronóstico general no dice, y la
+                    app ya tiene guías de riego por especie y zona. */}
+                {diasRiego.length ? (
+                  <BloqueRiego dias={diasRiego} />
+                ) : null}
+
+                {alertas.length === 0 ? (
+                  <Alert className="rounded-xl border-dashed bg-muted/20">
+                    <Sun aria-hidden />
+                    <AlertTitle>Nada que alertar en los próximos días</AlertTitle>
+                    <AlertDescription>
+                      {clima?.fuente === "pronostico"
+                        ? "Ningún día del pronóstico llega a los umbrales de helada, lluvia o calor. Buen momento para riego y poda."
+                        : "Sin pronóstico y sin alerta estacional para tu zona este mes."}
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <AlertasClimaticas alertas={alertas} />
+                )}
+
+                {/* Atribución obligatoria. Los datos de Open-Meteo son CC BY 4.0 y
+                    la licencia exige crédito visible: una pantalla de clima sin
+                    esto es un incumplimiento, por bien que funcione. */}
+                {clima?.fuente === "pronostico" ? (
+                  <p className="border-t pt-2.5 text-[11px] text-muted-foreground/70">
+                    Pronóstico y evapotranspiración:{" "}
+                    <a
+                      href="https://open-meteo.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-2 hover:text-muted-foreground"
+                    >
+                      {ATRIBUCION}
+                    </a>
+                    {clima.puntoAproximado ? " · punto aproximado por zona" : ""}
+                  </p>
+                ) : null}
+                </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
         {/* TAREAS — bento split */}
         <TabsContent value="tareas" className="mt-2">
           <div className="grid gap-4 lg:grid-cols-12">
@@ -350,20 +416,33 @@ export default async function HuertoPage() {
                       </CardDescription>
                     </div>
                   </div>
-                  <Badge variant={tareas.length > 0 ? "default" : "secondary"} className="rounded-full">
-                    {tareas.length} {tareas.length === 1 ? "tarea" : "tareas"}
+                  <Badge
+                    variant={tareasPendientes > 0 ? "default" : "secondary"}
+                    className="rounded-full"
+                  >
+                    {tareasPendientes} {tareasPendientes === 1 ? "pendiente" : "pendientes"}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                {tareas.length === 0 ? (
+                {/* Se decide por lo PENDIENTE, no por el total. Con cinco tareas
+                    completadas y ninguna pendiente, la versión anterior pintaba
+                    la lista de cinco cosas ya hechas bajo un «5 tareas» que
+                    parecía trabajo por hacer. */}
+                {tareasPendientes === 0 ? (
                   <Empty className="border-dashed py-10">
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
                         <Sun className="size-4" />
                       </EmptyMedia>
-                      <EmptyTitle className="text-sm">Día libre en el huerto</EmptyTitle>
-                      <EmptyDescription className="text-xs">No hay tareas hoy. Ideal para revisar riego o planificar.</EmptyDescription>
+                      <EmptyTitle className="text-sm">
+                        {tareas.length > 0 ? "Todo al día" : "Día libre en el huerto"}
+                      </EmptyTitle>
+                      <EmptyDescription className="text-xs">
+                        {tareas.length > 0
+                          ? `Completaste las ${tareas.length} tareas de hoy. Mañana se generan las nuevas.`
+                          : "No hay tareas hoy. Ideal para revisar riego o planificar."}
+                      </EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
                       <div className="flex flex-wrap items-center justify-center gap-2">
@@ -437,102 +516,59 @@ export default async function HuertoPage() {
           </div>
         </TabsContent>
 
-        {/* CLIMA — bento */}
-        <TabsContent value="clima" className="mt-2">
-          <div className="grid gap-4 lg:grid-cols-12">
-            <Card className="rounded-2xl shadow-sm lg:col-span-8">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex gap-3">
-                    <span className="hidden size-9 items-center justify-center rounded-xl bg-cosecha/10 text-cosecha-ink sm:inline-flex">
-                      <AlertTriangle className="size-4" />
-                    </span>
-                    <div className="flex flex-col gap-1">
-                      <CardTitle className="text-base">Alertas estacionales — {MESES[mesActual]}</CardTitle>
-                      <CardDescription className="text-xs">Zona {zona?.nombre ?? "sin zona"} · Datos agroclimáticos</CardDescription>
-                    </div>
-                  </div>
-                  <Badge variant={alertas.length > 0 ? "destructive" : "outline"} className="rounded-full">
-                    {alertas.length > 0 ? `${alertas.length} activas` : "sin alertas"}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4">
-                {alertas.length === 0 ? (
-                  <Alert className="rounded-xl border-dashed bg-muted/20">
-                    <Sun aria-hidden />
-                    <AlertTitle>Sin alertas destacadas</AlertTitle>
-                    <AlertDescription>Buen mes para riego y poda según tu calendario. Sin heladas ni sequía crítica.</AlertDescription>
-                  </Alert>
-                ) : (
-                  <AlertasClimaticas alertas={alertas} />
-                )}
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-muted-foreground">
-                    <Droplets className="size-3" /> Riego
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-muted-foreground">
-                    <ThermometerSun className="size-3" /> Helada
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-muted-foreground">
-                    <CloudRain className="size-3" /> Lluvia
-                  </span>
-                </div>
-                <AlertasBar data={alertasChartData} />
-              </CardContent>
-            </Card>
+      </Tabs>
 
-            <div className="flex flex-col gap-4 lg:col-span-4">
-              <Card className="rounded-2xl border-primary/20 bg-card shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-sm">
-                    <MapPinned className="size-4 text-primary" /> Tu zona
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3 text-sm">
-                  <div className="rounded-xl bg-muted/50 p-3">
-                    <p className="font-medium">{zona ? zona.nombre : "Sin zona asignada"}</p>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                      {zona ? `${perfil?.comuna ?? "—"} · ${MESES[mesActual]} · ${alertas.length} alerta(s)` : "Actualiza tu comuna en perfil."}
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm" className="w-full rounded-full" render={<Link href="/perfil" />}>
-                    Editar comuna <ArrowRight data-icon="inline-end" />
-                  </Button>
-                  <Separator />
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <Compass className="size-3" /> Recomendadas
-                    </span>
-                    <span>
-                      {recom.si.length} óptimas / {recom.no.length} evitar
-                    </span>
-                  </div>
-                  <Button size="sm" className="w-full rounded-full" render={<Link href="/recomendadas" />}>
-                    Ver recomendadas <ArrowRight data-icon="inline-end" />
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Alert className="rounded-2xl border-dashed bg-muted/20">
-                <Compass aria-hidden />
-                <AlertTitle className="text-sm">¿Quieres afinar tu huerto?</AlertTitle>
-                <AlertDescription className="text-xs">
-                  Explora{" "}
-                  <Link href="/explorar" className="font-medium text-primary underline-offset-4 hover:underline">
-                    el catálogo completo
-                  </Link>{" "}
-                  o{" "}
-                  <Link href="/calculadoras" className="font-medium text-primary underline-offset-4 hover:underline">
-                    calculadoras
-                  </Link>
-                  .
-                </AlertDescription>
-              </Alert>
+      {/* Recomendadas — ahora al FINAL de la pantalla.
+          Estaban entre el bento de hoy y las tabs, o sea antes de que el
+          usuario llegara a su huerto y a sus tareas. Y es la tercera lectura de
+          los mismos datos de zona que ya aparecían en el chip del header, en el
+          título de Clima y en la propia card. Plantar algo nuevo es una
+          decisión de la próxima temporada, no lo primero que se hace un
+          miércoles; el huerto que ya existe va primero. */}
+      <Card className="overflow-hidden rounded-2xl border-primary/20 shadow-sm">
+        <CardHeader className="gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <Badge className="gap-1 rounded-full">
+                  <Sparkles className="size-3" /> Recomendadas para tu zona
+                </Badge>
+              </div>
+              <CardTitle className="text-lg leading-tight">
+                {perfil?.comuna ? `Qué plantar en ${perfil.comuna}` : "Configura tu comuna"}
+              </CardTitle>
+              <CardDescription className="max-w-prose text-[13px] leading-relaxed">
+                {zona
+                  ? `${recom.si.length} recomendadas · ${recom.riesgo.length} con riesgo · ${recom.no.length} no recomendadas.`
+                  : "Configura tu comuna para ver qué puedes cultivar con éxito."}
+              </CardDescription>
+            </div>
+            <div className="hidden items-center gap-1.5 rounded-full border bg-card px-2.5 py-1.5 shadow-sm sm:flex">
+              <span className="size-2 rounded-full bg-primary" />
+              <span className="text-xs font-medium">{recom.si.length} óptimas</span>
+              <Separator orientation="vertical" className="mx-1 h-3" />
+              <span className="size-2 rounded-full bg-cosecha" />
+              <span className="text-xs font-medium">{recom.riesgo.length} riesgo</span>
+              <Separator orientation="vertical" className="mx-1 h-3" />
+              <span className="size-2 rounded-full bg-muted-foreground" />
+              <span className="text-xs font-medium">{recom.no.length} evitar</span>
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Button className="rounded-lg" render={<Link href="/recomendadas" />}>
+            <Compass data-icon="inline-start" />
+            Ver recomendadas
+            <ArrowRight data-icon="inline-end" />
+          </Button>
+          {/* «Filtrado por tu comuna · Datos de viabilidad real» iba acá. No lo
+              replace nada: el título de la card ya dice «Qué plantar en
+              {comuna}» y los tres contadores de arriba, en la misma tarjeta,
+              dicen de qué estamos hablando. Era una cuarta forma de decir lo
+              mismo. La afirmación sobre la calidad del dato tampoco era del
+              usuario: si hay que ser más preciso, el sitio no es este pie. */}
+        </CardContent>
+      </Card>
 
       {/* Sponsorships secundarias */}
       {sponsorships.length > 1 ? (

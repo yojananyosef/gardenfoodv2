@@ -6,13 +6,6 @@ import { toast } from "sonner";
 import { Check, ChevronLeft, ChevronRight, Maximize, MousePointerClick, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Dialog } from "@/components/ui/dialog";
 import { TerrenoMap, type HuertoMapa, type TerrenoMapHandle } from "@/components/mapa/TerrenoMap";
 import { EditarArbolDialog } from "@/components/huerto/EditarArbolDialog";
@@ -196,7 +189,8 @@ export function TerrenoSection({
   huertosIniciales,
   arbolesIniciales,
   especieAgregar,
-  onEspecieAgregarChange,
+  plantando,
+  onPlantarChange,
 }: {
   alto?: number;
   /** Huerto activo global (lo controla el Workbench junto a los tabs). */
@@ -205,10 +199,14 @@ export function TerrenoSection({
   /** Datos ya cargados en servidor (/huerto): evitan refetchear huertos+árboles en cliente. */
   huertosIniciales?: { id: string; nombre: string; superficieM2: number; feature: HuertoItem["feature"] | null }[];
   arbolesIniciales?: Arbol[];
-  /** Modo agregar global (lo controla el header del lienzo): null = apagado,
-   *  dbKey = agregando esa especie. */
+  /** Especie seleccionada para plantar. `null` = ninguna elegida. */
   especieAgregar?: string | null;
-  onEspecieAgregarChange?: (especie: string | null) => void;
+  /** Si se está en modo plantando. Es un estado APARTE de la especie: elegir
+   *  una especie no tiene que encender el modo, y apagar el modo no tiene que
+   *  borrar la elección. Antes iban juntos en un solo valor y por eso elegir
+   *  especie no hacía nada visible hasta que se apretaba «Agregar árboles». */
+  plantando?: boolean;
+  onPlantarChange?: (plantando: boolean) => void;
 }) {
   const router = useRouter();
   const [huertos, setHuertos] = useState<HuertoItem[]>(() =>
@@ -225,10 +223,12 @@ export function TerrenoSection({
   const [limiteArboles, setLimiteArboles] = useState<number | null>(null);
   // Controlado por el header del lienzo cuando se pasan las props; si no,
   // funciona standalone (asistente y otros usos).
-  const controlado = onEspecieAgregarChange !== undefined;
+  // Controlado por el header del lienzo cuando se pasan las props; si no,
+  // funciona standalone (asistente y otros usos).
+  const controlado = onPlantarChange !== undefined;
   const [modoMarcaInterno, setModoMarcaInterno] = useState(false);
   const [especieActivaInterna, setEspecieActivaInterna] = useState<string | null>(null);
-  const modoMarca = controlado ? especieAgregar != null : modoMarcaInterno;
+  const modoMarca = controlado ? (plantando ?? false) : modoMarcaInterno;
   const especieActiva = controlado ? (especieAgregar ?? null) : especieActivaInterna;
   const mapaRef = useRef<TerrenoMapHandle>(null);
   const [renombrandoId, setRenombrandoId] = useState<string | null>(null);
@@ -433,33 +433,22 @@ export function TerrenoSection({
     );
   }
 
-  function cerrarModoMarca() {
-    if (controlado) {
-      onEspecieAgregarChange?.(null);
-    } else {
-      setModoMarcaInterno(false);
-    }
-  }
-
-  function cambiarEspecie(dbKey: string | null) {
-    if (controlado) {
-      onEspecieAgregarChange?.(dbKey);
-    } else {
-      setEspecieActivaInterna(dbKey);
-    }
-  }
-
+  /**
+   * Solo se usa en modo standalone (mini-mapa del asistente). Cuando el lienzo
+   * controla el estado, el «Listo» vive en su header (`WorkbenchModular`) y este
+   * componente pinta únicamente el aviso: tener los dos producía dos botones
+   * «Listo» y dos contadores haciendo lo mismo.
+   *
+   * Apagar el modo NO borra la especie elegida, para poder plantar varios
+   * árboles seguidos sin re-elegirla.
+   */
   function alternarModoMarca() {
     if (!modoMarca && !puedeMarcar) {
       mensajeUpsellArboles();
       return;
     }
     if (controlado) {
-      if (modoMarca) {
-        onEspecieAgregarChange?.(null);
-      } else if (especies.length > 0) {
-        onEspecieAgregarChange?.(especieActiva ?? especies[0]?.dbKey ?? null);
-      }
+      onPlantarChange?.(!modoMarca);
     } else {
       setModoMarcaInterno((v) => !v);
     }
@@ -560,41 +549,26 @@ export function TerrenoSection({
 
   return (
     <div className="flex flex-col gap-3">
-      {modoMarca ? (
-        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto rounded-lg border bg-primary/5 p-2">
+      {/* Sin barra de aviso acá. Cuando el lienzo controla el estado, la
+          instrucción «toca tu terreno para plantar» la muestra su header, junto
+          al selector de especie y al contador, en un solo bloque: repetirla acá
+          producía dos «Listo», dos contadores y dos instrucción para un mismo
+          estado. Este bloque queda solo para el uso standalone (mini-mapa del
+          asistente), donde no hay header que la ponga. */}
+      {!controlado && modoMarca ? (
+        <div className="flex flex-nowrap items-center gap-2 rounded-lg border bg-primary/5 p-2">
           <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium">
-            <MousePointerClick className="size-4 text-primary" /> <span className="hidden sm:inline">Agregando — toca tu terreno</span><span className="sm:hidden">Agregando</span>
+            <MousePointerClick className="size-4 text-primary" /> <span className="hidden sm:inline">Toca tu terreno para plantar</span><span className="sm:hidden">Toca el terreno</span>
           </span>
-          <Select
-            value={especieActiva ?? undefined}
-            onValueChange={(value) => cambiarEspecie(value ?? null)}
-          >
-            <SelectTrigger className="w-32 min-h-9 shrink-0 sm:w-48" aria-label="Especie activa para agregar">
-              <SelectValue>
-                {(value: string | null) =>
-                  especies.find((e) => e.dbKey === value)?.nombre ?? "Elige especie…"
-                }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="max-h-72">
-              {especies.map((e) => (
-                <SelectItem key={e.dbKey} value={e.dbKey}>
-                  {e.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <span className="shrink-0 font-mono text-xs text-muted-foreground">
             {arboles.length} en el mapa
           </span>
-          {/* Salida cercana al selector; el header del lienzo tiene el Listo
-              principal. Ambos cierran lo mismo. */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             className="ml-auto min-h-8 shrink-0"
-            onClick={cerrarModoMarca}
+            onClick={alternarModoMarca}
           >
             <X className="size-4" /> Listo
           </Button>

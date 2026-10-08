@@ -4,6 +4,7 @@ import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "reac
 import type * as Leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   CENTRO_DEFAULT,
@@ -1156,13 +1157,41 @@ export function TerrenoMap({
           Activa el ícono de polígono y toca las esquinas de tu terreno.
         </p>
       ) : null}
-      <p className="text-[11px] text-muted-foreground">
-        Dibuja cada huerto con el ícono de polígono; puedes tener varios. Edita
-        vértices o borra con las herramientas del mapa; con «Agregar árboles»
-        activo, toca cada árbol que veas en el satélite para contarlo. Vista
-        Satélite (Esri) ajusta el zoom a la imagen disponible; Sentinel-2 cubre
-        todo el mundo.
-      </p>
+
+      {/* Ayuda plegada. Este párrafo eran cuatro frases siempre visibles —
+          cómo dibujar, cómo editar, cómo plantar, y de dónde sale la imagen —
+          y competían con el mapa por la atención. Peor: la parte de plantar
+          contradecía al barra de plantado del header («toca cada árbol que
+          veas en el satélite» contra «toca tu terreno para plantar»), así que
+          el usuario recibía dos instrucciones incompatibles a la vez.
+
+          Ahora es un botón «Cómo funciona» que abre el detalle. El texto se
+          divide por temas porque las respuestas son distintas: dibujar el
+          huerto, editarlo, o cargar la imagen. */}
+      <details className="text-[11px]">
+        <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
+          <ChevronRight className="size-3 transition-transform" />
+          Cómo funciona
+        </summary>
+        <div className="mt-1.5 flex flex-col gap-1 leading-relaxed text-muted-foreground">
+          <p>
+            <span className="font-medium text-foreground">Dibujar el huerto:</span>{" "}
+            activa el ícono de polígono y toca las esquinas de tu terreno.
+            Puedes tener varios huertos.
+          </p>
+          <p>
+            <span className="font-medium text-foreground">Editar o borrar:</span>{" "}
+            con las herramientas del mapa arrastras vértices o eliminas el
+            huerto. Con «Agregar árboles» activo, tocar un árbol en el satélite
+            lo cuenta.
+          </p>
+          <p>
+            <span className="font-medium text-foreground">La imagen:</span> la
+            vista Satélite (Esri) ajusta el zoom a la imagen disponible;
+            Sentinel-2 cubre todo el mundo con menos detalle.
+          </p>
+        </div>
+      </details>
     </div>
   );
 }

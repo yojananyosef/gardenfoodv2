@@ -5,16 +5,34 @@ import { cn } from "@/lib/utils"
 function Card({
   className,
   size = "default",
+  render,
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & {
+  size?: "default" | "sm"
+  /**
+   * Permite que la card sea otro elemento, típicamente un `<Link>`.
+   *
+   * Hace falta porque `Card` es un `div` sin `render`: no hay forma de convertir
+   * la card entera en enlace sin anidar un `<a>` dentro, y eso deja fuera del
+   * target táctil las zonas de padding y borde. Con `render` la card ES el
+   * enlace y toda su superficie responde al clic y al foco.
+   */
+  render?: React.ReactElement
+}) {
+  const Comp = render ? render.type : "div"
+  // `render.type` + `render.props` replican lo que hace `useRender` en el resto de
+  // la librería de UI (Button, Badge, Input). Se hace a mano para no agregar
+  // `useRender` como dependencia runtime solo por un caso.
+  const renderProps = render ? (render.props as Record<string, unknown>) : {}
   return (
-    <div
+    <Comp
       data-slot="card"
       data-size={size}
       className={cn(
         "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className
       )}
+      {...renderProps}
       {...props}
     />
   )

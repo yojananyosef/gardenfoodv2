@@ -1,7 +1,7 @@
 "use client";
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Pie, PieChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Pie, PieChart } from "recharts";
 
 export function TareasDonut({ data }: { data: { name: string; value: number; fill: string }[] }) {
   if (data.length === 0) return <p className="py-6 text-center text-sm text-muted-foreground">Sin tareas para graficar</p>;
@@ -24,17 +24,14 @@ export function TareasDonut({ data }: { data: { name: string; value: number; fil
   );
 }
 
-export function AlertasBar({ data }: { data: { tipo: string; count: number; fill: string }[] }) {
-  if (data.length === 0) return <p className="text-xs text-muted-foreground">Sin alertas para graficar — mes estable.</p>;
-  return (
-    <ChartContainer config={{ count: { label: "alertas", color: "var(--destructive)" } }} className="h-[140px] w-full">
-      <BarChart data={data}>
-        <CartesianGrid vertical={false} strokeDasharray="3 3" />
-        <XAxis dataKey="tipo" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
-        <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} allowDecimals={false} />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar dataKey="count" radius={[6, 6, 0, 0]} />
-      </BarChart>
-    </ChartContainer>
-  );
-}
+/*
+ * No hay gráfico de alertas, y es a propósito.
+ *
+ * existed uno de barras con «días con alerta por tipo». En la práctica siempre
+ * tenía una sola barra —casi siempre «lluvia»— con un número que la tira de 7
+ * días de arriba ya mostraba celda por celda, y que la lista de alertas de abajo
+ * volvía a enumerar con su fecha. Un gráfico de un solo dato no agrega nada:
+ * le roba altura a la pantalla y le hace creer al usuario que hay más de lo que
+ * hay. Para qué graficar cuando el dato cabe en una frase: `resumenAlertas()`
+ * en `lib/climate/alertas.ts` dice «5 días con aviso» en el badge.
+ */

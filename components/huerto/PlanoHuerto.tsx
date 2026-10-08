@@ -65,7 +65,8 @@ export function PlanoHuerto({
   modoForzado,
   huertoId: huertoIdProp,
   especieAgregar: especieAgregarProp,
-  onEspecieAgregarChange,
+  plantando: plantandoProp,
+  onPlantarChange,
 }: {
   huertos: HuertoResumen[];
   arboles: Arbol[];
@@ -74,9 +75,11 @@ export function PlanoHuerto({
   modoForzado?: "2d" | "3d";
   /** Huerto activo global (lo controla el Workbench junto a los tabs). */
   huertoId?: string | null;
-  /** Modo agregar global (header del lienzo): null = apagado, dbKey = agregando. */
+  /** Especie que se va a plantar (la elige el selector grande del header). */
   especieAgregar?: string | null;
-  onEspecieAgregarChange?: (especie: string | null) => void;
+  /** Si el plano acepta clics para plantar. Estado aparte de la especie. */
+  plantando?: boolean;
+  onPlantarChange?: (plantando: boolean) => void;
 }) {
   const router = useRouter();
   // El huerto activo lo controla el padre; se cae al primero si el id ya no existe.
@@ -89,12 +92,21 @@ export function PlanoHuerto({
   const [editando, setEditando] = useState<Arbol | null>(null);
   const [pending, startTransition] = useTransition();
   // Agregar controlado por el header cuando se pasan props; standalone si no.
+  // Igual que en `TerrenoSection`: la especie y el modo de plantar son dos
+  // estados separados, porque elegir especie no debe encender el modo.
   const [agregandoInterno, setAgregandoInterno] = useState<string | null>(null);
-  const controlado = onEspecieAgregarChange !== undefined;
-  const agregando = controlado ? (especieAgregarProp ?? null) : agregandoInterno;
+  const controlado = onPlantarChange !== undefined;
+  // Cuando está controlado, se planta si el modo está activo Y hay especie.
+  const agregando = controlado
+    ? (plantandoProp && especieAgregarProp ? especieAgregarProp : null)
+    : agregandoInterno;
   function setAgregando(v: string | null) {
     if (controlado) {
-      onEspecieAgregarChange?.(v);
+      if (v === null) {
+        onPlantarChange?.(false);
+      } else {
+        onPlantarChange?.(true);
+      }
     } else {
       setAgregandoInterno(v);
     }

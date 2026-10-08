@@ -5,6 +5,20 @@ import { usePathname } from "next/navigation";
 import { CalendarDays, Leaf, MapPinned, ShieldCheck, Sprout, UtensilsCrossed } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Destinos de la barra inferior.
+ *
+ * «Cultivos» apunta al índice de especies, no a `/huerto`. La card de Cultivos
+ * en la pantalla principal enlaza ahí, y que la barra móvil no llegara al mismo
+ * destino obligaba al usuario de celular a=subir hasta el header de escritorio
+ * para ver sus árboles. El enlace de la card era un atajo que no se podía usar
+ * en móvil.
+ *
+ * `grid-cols` NO se sube a 6. Con etiquetas como «Calendario» y «Biblioteca», seis
+ * destinos en 360 px dan ~60 px por ítem y el texto se parte o se corta; el
+ * diseño ya lo anticipaba y la salida elegida fue no agregar el sexto destino.
+ * `/especie/especies` sigue alcanzable desde el header en móvil.
+ */
 const DESTINOS = [
   { href: "/huerto", label: "Mi huerto", icon: Sprout },
   { href: "/recomendadas", label: "Zonas", icon: MapPinned },
