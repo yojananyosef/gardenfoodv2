@@ -11,6 +11,7 @@
  * el ajuste por edad y cosecha del usuario (hoja MI PLAN) vive en ajustePorArbol().
  */
 import seed from "../../supabase/fertilizacion_seed.json";
+import { ZONAS } from "./zonas";
 
 export interface DetallePrograma {
   nutriente: string;
@@ -213,15 +214,15 @@ export function mesesDeGuia(meses: string | null | undefined): number[] {
   return out;
 }
 
-/** Copy en lenguaje llano de cada momento, en el orden del año. */
-export const PROPOSITOS_MOMENTO = [
-  "Brota y arma hoja nueva: paga las ramas y las hojas que viene a hacer.",
-  "La fruta crece y se endulza. Es el momento que más pide.",
-  "Terminó la cosecha: repone lo que el árbol gastó para volver el año que viene.",
-] as const;
-
-export const REPOSO_MOMENTO =
-  "En estos meses no se le echa nada. El árbol descansa y la tierra guarda lo que le diste.";
+/**
+ * Lo que se le dice al usuario cuando en un momento no hay nada que aplicar.
+ *
+ * Habla de meses y no de estados del árbol, que es el criterio que se pidió:
+ * la calendarización es la referencia y el resto sobra. El texto viejo
+ * («el árbol descansa y la tierra guarda lo que le diste») era el mismo tono
+ * poético que el socio pidió recortar.
+ */
+export const REPOSO_MOMENTO = "En estos meses no se abona.";
 
 export interface ProductoGuia {
   nutriente: string;
@@ -233,11 +234,18 @@ export interface ProductoGuia {
 
 export interface MomentoGuia {
   orden: 0 | 1 | 2;
-  titulo: string;
-  proposito: string;
+  /**
+   * NO hay `titulo` ni `proposito`: eran el nombre del estado fenológico del
+   * XLSX («cuando despierta», «cuando engorda la fruta», «cuando se recupera»),
+   * jerga que se pidió quitar de la vista. El bloque se identifica por sus
+   * meses, que es lo que el calendario ya muestra.
+   *
+   * El `orden` sigue siendo la clave: decide el color del mes y el token
+   * `--momento-N`, así que la calendarización no depende del texto.
+   */
   /** Meses (1-12) que cubre este momento. */
   meses: number[];
-  /** «Jul · Ago», para el encabezado del bloque. */
+  /** «Jul · Ago», el título del bloque y el encabezado del calendario. */
   mesesTexto: string;
   veces: number;
   cadaDias: number;
@@ -269,8 +277,6 @@ export interface GuiaRegional {
 function momentosVisibles(programa: ProgramaFertilizacion[]): MomentoGuia[] {
   return programa.map((p) => ({
     orden: p.orden as 0 | 1 | 2,
-    titulo: p.momento,
-    proposito: PROPOSITOS_MOMENTO[p.orden] ?? "",
     meses: mesesDeGuia(p.meses),
     mesesTexto: p.meses,
     veces: p.veces,
@@ -413,10 +419,21 @@ export const EDADES_GUIA: RangoEdadGuia[] = [
   { id: "adulto", nombre: "Grande", desc: "Da fruta, 5 años o más" },
 ];
 
-/** Modo de riego, en el vocabulario del prototipo. */
+/**
+ * Tipo de fertilizante, en el vocabulario del=XLSX.
+ *
+ * Los `id` siguen siendo `suelo`/`goteo` porque son la clave con la que se
+ * consulta `programaDeEspecie` contra el campo `metodo` del seed. Lo que el
+ * usuario ve es el nombre del fertilizante, no el modo de riego: quien va a la
+ * bodega busca «granulado» o «soluble», no «con manguera».
+ *
+ * Los `desc` ya no se renderizan (el texto era largo y no aportaba), pero se
+ * conservan como documentación de a qué programa del XLSX corresponde cada
+ * entrada.
+ */
 export const METODOS_GUIA = [
-  { id: "suelo", nombre: "Con manguera", desc: "Le echas el agua al pie" },
-  { id: "goteo", nombre: "Por goteo", desc: "Tienes mangueras con goteros" },
+  { id: "suelo", nombre: "Fertilizantes granulados", desc: "Programa al suelo: se echa al pie y se riega encima" },
+  { id: "goteo", nombre: "Fertilizantes solubles", desc: "Programa por goteo: se disuelven en el agua" },
 ] as const;
 
 export type MetodoGuia = (typeof METODOS_GUIA)[number]["id"];
@@ -444,4 +461,25 @@ export function regionGuiaDeRegion(region?: string | null): string | null {
 /** Regiones con cobertura en la guía. */
 export function regionesGuia(): string[] {
   return REGION_GUIA.map((r) => r.guia);
+}
+
+/**
+ * Región de la guía que corresponde a la zona del perfil, o `null` si la guía
+ * no cubre esa combinación.
+ *
+ * Devolver `null` es deliberado. Antes esta función caía a la primera región
+ * que tuviera programa para la especie, y la ficha la mostraba como si fuera
+ * la del usuario: el calendario se repintaba con los meses y el color de otra
+ * región mientras el pie decía «salen de tu perfil». Un vacío honesto es
+ * mejor que un dato de otra zona.
+ *
+ * Se evalúa el método `suelo` para decidir si hay programa, no el que el
+ * usuario tenga elegido: las dos variantes cubren las mismas especies y
+ * regiones en el seed, así que usar el método activo haría que el estado vacío
+ * dependiera de un control que no tiene relación con la pregunta.
+ */
+export function regionDelPerfil(especie: string, zonaId: number): string | null {
+  const region = regionGuiaDeRegion(ZONAS[zonaId]?.region);
+  if (region && guiaRegional(especie, region, "suelo")) return region;
+  return null;
 }

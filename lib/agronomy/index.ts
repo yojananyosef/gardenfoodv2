@@ -47,6 +47,39 @@ export function getZonaDeComuna(comuna?: string | null): ZonaClimatica | null {
   return ZONAS[zonaId];
 }
 
+export interface ZonaResuelta {
+  /** Id de la zona agroclimática, con fallback a la zona neutra si no hay. */
+  zonaId: number;
+  /** La comuna tal cual venía del perfil, o null si no había. */
+  comuna: string | null;
+  /**
+   * `true` cuando la zona viene del fallback y NO de la comuna del usuario:
+   * no tiene comuna, o su comuna no existe en el catálogo de las 346.
+   *
+   * Existe para que la interfaz pueda decir «no tienes comuna configurada» en
+   * vez de presentar datos de la zona neutra como si fueran los de esa persona.
+   * Antes esto se escondía en el `?? 7` de los call-sites.
+   */
+  esDefault: boolean;
+}
+
+/**
+ * Resuelve la zona del perfil dejando explícito si salió de la comuna o del
+ * fallback. `getZonaDeComuna` sigue existiendo para los ~10 call-sites que
+ * solo necesitan el `ZonaClimatica`; lo nuevo es poder distinguir los casos.
+ */
+export function resolverZonaDeComuna(comuna?: string | null): ZonaResuelta {
+  // El string vacío es «sin comuna», no una comuna: sin esto el perfil guardaría
+  // "" y la interfaz no podría distinguirlo de una comuna real.
+  const valor = comuna?.trim() ? comuna.trim() : null;
+  const desdeCatalogo = getZonaIdDeComuna(valor);
+  return {
+    zonaId: desdeCatalogo ?? ZONA_FALLBACK_ID,
+    comuna: valor,
+    esDefault: desdeCatalogo == null,
+  };
+}
+
 export function getEspeciePorSlug(slug: string): Especie | null {
   return ESPECIES.find((e) => e.slug === slug) ?? null;
 }

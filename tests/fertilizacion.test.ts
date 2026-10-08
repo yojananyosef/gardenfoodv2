@@ -8,6 +8,7 @@ import {
   guiaRegional,
   medidaCasera,
   mesesDeGuia,
+  METODOS_GUIA,
   programaDeEspecie,
   regionesGuia,
   regionGuiaDeRegion,
@@ -271,5 +272,62 @@ describe("material visual: la dosis dibujada", () => {
     const recien = medidaCasera(p.gramos * 0.3, p.producto);
     const grande = medidaCasera(p.gramos, p.producto);
     expect(recien.valor).toBeLessThan(grande.valor);
+  });
+});
+
+/**
+ * Lo que ve el usuario. Los ids no cambian (son la clave del seed), pero los
+ * nombres sí: el selector pregunta por el fertilizante, no por el modo de
+ * riego, porque es lo que la persona va a buscar.
+ */
+describe("los rótulos de la guía son legibles", () => {
+  it("el selector se llama por el fertilizante", () => {
+    expect(METODOS_GUIA.map((m) => m.nombre)).toEqual([
+      "Fertilizantes granulados",
+      "Fertilizantes solubles",
+    ]);
+  });
+
+  it("los ids siguen siendo los del seed, para no romper la consulta", () => {
+    // Si el id cambiara, `programaDeEspecie` compararía contra un valor que no
+    // existe en `p.metodo` y no devolvería ningún programa.
+    expect(METODOS_GUIA.map((m) => m.id)).toEqual(["suelo", "goteo"]);
+    expect(guiaRegional("Duraznero", "Santiago-RM", "suelo")).not.toBeNull();
+    expect(guiaRegional("Duraznero", "Santiago-RM", "goteo")).not.toBeNull();
+  });
+
+  it("ningún nombre visible trae jerga de estado fenológico", () => {
+    const jerga = /cuando despierta|cuando engorda|cuando se recupera/i;
+    for (const m of METODOS_GUIA) {
+      expect(m.nombre).not.toMatch(jerga);
+      expect(m.desc).not.toMatch(jerga);
+    }
+  });
+});
+
+/**
+ * Se quitaron `titulo` y `proposito` de `MomentoGuia`: eran el nombre del estado
+ * fenológico del XLSX, que el socio pidió sacar de la vista. El bloque se
+ * identifica por sus meses. Si alguien los vuelve a agregar, la jerga
+ * reaparece sin que nada lo avise.
+ */
+describe("el bloque de dosis se identifica por sus meses", () => {
+  it("MomentoGuia ya no expone título ni propósito", () => {
+    const momento = guiaRegional("Duraznero", "Santiago-RM", "suelo")!.momentos[0];
+    expect(momento).not.toHaveProperty("titulo");
+    expect(momento).not.toHaveProperty("proposito");
+  });
+
+  it("los meses siguen presente y son el título del bloque", () => {
+    const momento = guiaRegional("Duraznero", "Santiago-RM", "suelo")!.momentos[0];
+    expect(momento.mesesTexto).toMatch(/[A-Z][a-z]{2}/);
+    expect(momento.meses.length).toBeGreaterThan(0);
+  });
+
+  it("el color del calendario no depende del texto eliminado", () => {
+    // `orden` es lo que decide el token `--momento-N`. Si el bloque ya no
+    // tiene título, el orden tiene que seguir íntegro para los tres momentos.
+    const momentos = guiaRegional("Duraznero", "Santiago-RM", "suelo")!.momentos;
+    expect(momentos.map((m) => m.orden)).toEqual([0, 1, 2]);
   });
 });

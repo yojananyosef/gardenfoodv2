@@ -19,13 +19,13 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { NutricionGuia } from "@/components/especies/NutricionGuia";
+import { usePerfilZona } from "@/hooks/usePerfilZona";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
-import { type FichaEspecie, type Especie, getFenologia, getConsejos, ZONAS, getZonaIdDeComuna } from "@/lib/agronomy";
+import { type FichaEspecie, type Especie, getFenologia, getConsejos, getMacrozona, ZONAS } from "@/lib/agronomy";
 import { zonaRiegoDeZonaId, type SueloId } from "@/lib/riego/datos";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
 import type { RiegoBasePayload } from "@/lib/riego/actions";
-import { createClient } from "@/lib/supabase/client";
 
 type TabId = "calendario" | "riego" | "nutricion" | "sanidad" | "poda" | "cosecha" | "fenologia" | "consejos" | "info";
 
@@ -161,7 +161,7 @@ function TabCalendario({ cal }: { cal: FichaEspecie["cal"] }) {
 
 const MESES_LARGOS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"] as const;
 
-function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; especieNombre: string; sueloId: SueloId | null; zonaId: number | null }) {
+function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; especieNombre: string; sueloId: SueloId | null; zonaId: number }) {
   const [base, setBase] = useState<RiegoBasePayload | null>(null);
   const [baseKey, setBaseKey] = useState<string | null>(null);
   const [error, setError] = useState(false);
@@ -267,7 +267,7 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
         </div>
         {sueloId && suelo ? (
           <div className="flex flex-1 flex-col gap-1 text-sm sm:border-l sm:pl-4">
-            <span className="inline-flex items-start gap-1.5 font-semibold"><Droplets className="mt-0.5 size-4 shrink-0 text-primary" /> Ajustado a tu suelo: {suelo.nombre} (×{String(fv).replace(".", ",")}) · {edad?.nombre.toLowerCase() ?? "adulto"} (×{String(fLitros).replace(".", ",")})</span>
+            <span className="inline-flex items-start gap-1.5 font-semibold"><Droplets className="mt-0.5 size-4 shrink-0 text-primary" /> Cálculo ajustado a suelo {suelo.nombre.toLowerCase()} (×{String(fv).replace(".", ",")}){edad ? ` y a un árbol ${edad.nombre.toLowerCase()}` : ""} (×{String(fLitros).replace(".", ",")})</span>
             <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
           </div>
         ) : (
@@ -410,50 +410,54 @@ function parseMesRange(s: string): number[] | null {
   return [...Array.from({ length: 12 - a + 1 }, (_, i) => a + i), ...Array.from({ length: b }, (_, i) => i + 1)];
 }
 
-function TabFenologia({ dbKey, ficha }: { dbKey: string; ficha: FichaEspecie }) {
-  const [zonaNombre, setZonaNombre] = useState<string | null>(null);
-  const [entrada, setEntrada] = useState<ReturnType<typeof getFenologia>>(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      const comunaPromise = data.user
-        ? supabase.from("perfiles").select("comuna").eq("id", data.user.id).maybeSingle().then(r => r.data?.comuna as string | null)
-        : Promise.resolve(null);
-      comunaPromise.then(comuna => {
-        const zonaId = getZonaIdDeComuna(comuna ?? undefined) ?? 7;
-        const zona = ZONAS[zonaId];
-        setZonaNombre(zona?.nombre ?? null);
-        setEntrada(getFenologia(dbKey, zonaId));
-        setLoading(false);
-      });
-    });
-  }, [dbKey]);
-  if (loading) return <p className="text-sm text-muted-foreground">Cargando fenología…</p>;
+function TabFenologia({ dbKey, ficha, zonaId }: { dbKey: string; ficha: FichaEspecie; zonaId: number }) {
+  // La zona llega resuelta desde `FichaEspecieView`: esta tab tenía su propia
+  // consulta a `perfiles`, la segunda de la ficha, y solo se refrescaba al
+  // cambiar de especie. Con deps `[dbKey]` el cambio de comuna tampoco la
+  // actualizaba.
+  const zonaNombre = ZONAS[zonaId]?.nombre ?? null;
+  const entrada = getFenologia(dbKey, zonaId);
   if (!entrada) return <p className="text-sm text-muted-foreground">Sin datos para tu zona {zonaNombre ? `(${zonaNombre})` : ""}.</p>;
+
+  /* El Gantt mostraba una fila por macrozona del país y resaltaba la del
+     usuario. Con la zona ya resuelta desde el perfil, el resto son datos de
+     otra gente: la fila que importa es la propia, y leerla entre cinco más
+     obligaba a buscarla.
+
+     El match es por `MACROZONA_MAP` y no por `ZONAS[zonaId].nombre`: las filas
+     de `ficha.fenologia` están etiquetadas por macrozona («Santiago-RM»,
+     «Transición»…) mientras `ZONAS` nombra la zona fina («Santiago Sur - Buin»).
+     Comparar ambos strings nunca coincidía, así que el resaltado de la fila
+     del usuario no se veía nunca y la fila propia salía como cualquier otra. */
+  const macrozona = getMacrozona(zonaId);
+  const filas = (ficha.fenologia as unknown as Array<{ macrozona: string; codigo: string; brotacion: string; floracion: string; cuaja: string; cosIni: string; cosFin: string; poda: string; nota: string }>).filter(
+    (row) => row.macrozona === macrozona,
+  );
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Gantt bento — todas las macrozonas */}
       <Card className="overflow-hidden rounded-2xl">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <Badge className="gap-1 rounded-full"><Flower2 className="size-3" /> Fenología por macrozona</Badge>
-            {zonaNombre ? <Badge variant="outline" className="rounded-full border-primary/30 bg-primary/5 text-primary">Tu zona: {zonaNombre}</Badge> : null}
+            <Badge className="gap-1 rounded-full"><Flower2 className="size-3" /> Fenología en tu zona</Badge>
+            {zonaNombre ? <Badge variant="outline" className="rounded-full border-primary/30 bg-primary/5 text-primary">{zonaNombre}</Badge> : null}
           </div>
           <CardDescription className="text-xs">Brotación · Floración · Cuaja · Cosecha · Poda a lo largo del año</CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <div className="min-w-[640px]">
             <div className="grid grid-cols-[110px_repeat(12,1fr)] gap-1 text-[11px] font-medium">
-              <div className="text-muted-foreground">Macrozona</div>
+              <div className="text-muted-foreground">Mes</div>
               {MESES_ABBR.map((m) => (
                 <div key={m} className="text-center font-mono text-muted-foreground">{m}</div>
               ))}
-              {(ficha.fenologia as unknown as Array<{ macrozona: string; codigo: string; brotacion: string; floracion: string; cuaja: string; cosIni: string; cosFin: string; poda: string; nota: string }>).map((row) => {
-                const isMine = row.macrozona === zonaNombre;
-                return (
-                  <div key={row.macrozona} className={cn("contents", isMine && "[&>div]:bg-primary/5")}>
-                    <div className={cn("flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs", isMine ? "bg-primary text-primary-foreground font-medium" : "bg-muted")}>
+              {filas.length === 0 ? (
+                <p className="col-span-13 py-4 text-sm text-muted-foreground">
+                  La ficha no tiene una curva de {dbKey} para la macrozona {macrozona}.
+                </p>
+              ) : filas.map((row) => (
+                  <div key={row.macrozona} className="contents">
+                    <div className="flex items-center gap-1 rounded-lg bg-primary px-2 py-1.5 text-xs font-medium text-primary-foreground">
                       <span className="hidden size-1.5 rounded-full bg-current sm:inline-block" aria-hidden />
                       {row.macrozona}
                     </div>
@@ -486,9 +490,9 @@ function TabFenologia({ dbKey, ficha }: { dbKey: string; ficha: FichaEspecie }) 
                       );
                     })}
                   </div>
-                );
-              })}
+                ))}
             </div>
+            {filas.length === 0 ? null : (
             <div className="mt-3 flex flex-wrap gap-2 text-xs">
               <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-emerald-500" /> Brotación</span>
               <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-pink-500" /> Floración</span>
@@ -496,6 +500,7 @@ function TabFenologia({ dbKey, ficha }: { dbKey: string; ficha: FichaEspecie }) 
               <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-primary" /> Cosecha</span>
               <span className="inline-flex items-center gap-1.5 rounded-full border px-2 py-1"><span className="size-2 rounded-full bg-slate-500" /> Poda</span>
             </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -511,7 +516,7 @@ function TabFenologia({ dbKey, ficha }: { dbKey: string; ficha: FichaEspecie }) 
           <CardHeader className="pb-2"><CardDescription className="uppercase tracking-wide">{item.k}</CardDescription><CardTitle className="text-lg">{item.v}</CardTitle></CardHeader>
         </Card>
       ))}
-      <Card className="rounded-2xl sm:col-span-2 lg:col-span-4"><CardContent className="pt-6"><p className="rounded-xl bg-muted px-3 py-2 text-xs leading-relaxed text-muted-foreground">{entrada.notas}</p><p className="mt-2 text-xs text-muted-foreground">Zona: {zonaNombre}</p></CardContent></Card>
+      <Card className="rounded-2xl sm:col-span-2 lg:col-span-4"><CardContent className="pt-6"><p className="rounded-xl bg-muted px-3 py-2 text-xs leading-relaxed text-muted-foreground">{entrada.notas}</p></CardContent></Card>
       </div>
     </div>
   );
@@ -532,8 +537,8 @@ function TabConsejos({ dbKey }: { dbKey: string }) {
   );
 }
 
-function TabInfo({ ficha, zonaId }: { ficha: FichaEspecie; zonaId: number | null }) {
-  const zona = zonaId ? ZONAS[zonaId] : null;
+function TabInfo({ ficha, zonaId }: { ficha: FichaEspecie; zonaId: number }) {
+  const zona = ZONAS[zonaId] ?? null;
   return (
     <div className="grid gap-4 lg:grid-cols-12">
       <Card className="rounded-2xl lg:col-span-8"><CardHeader><CardTitle className="flex items-center gap-2"><Info className="size-4" /> Botánica</CardTitle></CardHeader><CardContent><Descripcion desc={ficha.desc} /></CardContent></Card>
@@ -553,38 +558,11 @@ export function FichaEspecieView({
   ficha: FichaEspecie;
   locked?: boolean;
 }) {
-  const [zonaId, setZonaId] = useState<number | null>(null);
-  const [sueloId, setSueloId] = useState<SueloId | null>(null);
+  // Una sola lectura de comuna y suelo para toda la ficha. Antes cada tab que
+  // necesitaba la zona hacía su propia consulta, y `NutricionGuia` además la
+  // congelaba en un inicializador de estado (ver `fix-vincular-perfil-zona`).
+  const { zonaId, sueloId, esDefault } = usePerfilZona();
   const ref = useTrackedView<HTMLDivElement>({ name: "VIEW_FICHA", especieId: especie.slug });
-  // El perfil se re-lee al montar Y al volver a la pestaña/ventana: si el
-  // usuario cambia su suelo en /perfil y regresa con "atrás", el componente
-  // puede seguir montado y el suelo viejo quedaría pegado.
-  useEffect(() => {
-    let active = true;
-    const cargarPerfil = () => {
-      const supabase = createClient();
-      supabase.auth.getUser().then(({ data }) => {
-        if (!data.user || !active) return;
-        supabase.from("perfiles").select("comuna, tipo_suelo").eq("id", data.user.id).maybeSingle().then(r => {
-          if (!active) return;
-          setZonaId(getZonaIdDeComuna((r.data?.comuna as string | null) ?? undefined) ?? 7);
-          const ts = r.data?.tipo_suelo as string | null;
-          setSueloId(ts === "G" || ts === "MG" || ts === "M" || ts === "F" ? ts : null);
-        });
-      });
-    };
-    cargarPerfil();
-    const alVolverVisible = () => {
-      if (document.visibilityState === "visible") cargarPerfil();
-    };
-    window.addEventListener("focus", cargarPerfil);
-    document.addEventListener("visibilitychange", alVolverVisible);
-    return () => {
-      active = false;
-      window.removeEventListener("focus", cargarPerfil);
-      document.removeEventListener("visibilitychange", alVolverVisible);
-    };
-  }, []);
 
   return (
     <div ref={ref} className="flex min-w-0 flex-col gap-5">
@@ -657,11 +635,11 @@ export function FichaEspecieView({
 
             <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
             <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaId={zonaId} /></TabsContent>
-            <TabsContent value="nutricion"><NutricionGuia dbKey={especie.dbKey} especieNombre={especie.nombre} zonaId={zonaId} /></TabsContent>
+            <TabsContent value="nutricion"><NutricionGuia dbKey={especie.dbKey} especieNombre={especie.nombre} zonaId={zonaId} esDefault={esDefault} /></TabsContent>
             <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
             <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
             <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
-            <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} /></TabsContent>
+            <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} zonaId={zonaId} /></TabsContent>
             <TabsContent value="consejos"><TabConsejos dbKey={especie.dbKey} /></TabsContent>
             <TabsContent value="info"><TabInfo ficha={ficha} zonaId={zonaId} /></TabsContent>
           </Tabs>

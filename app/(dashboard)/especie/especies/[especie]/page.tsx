@@ -124,18 +124,22 @@ export default async function FichaEspecie(props: {
             return (
               <Card key={`${p.metodo}-${p.orden}`} className="rounded-2xl shadow-sm">
                 <CardHeader className="pb-3">
+                  {/* El título son los meses, no el estado fenológico del XLSX
+                      («cuando engorda la fruta»): es la calendarización la que
+                      identifica el bloque. El `p.momento` sigue bajando a
+                      `BotonLoEche` como id persistido de la aplicación. */}
                   <CardTitle className="flex items-center gap-2 text-sm">
-                    <CalendarDays className="size-4 text-primary" /> {p.momento}
+                    <CalendarDays className="size-4 text-primary" /> {p.meses}
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Meses: {p.meses} · {p.veces} {p.veces === 1 ? "aplicación" : "aplicaciones"}{" "}
-                    ({p.cada_dias} días)
+                    {p.veces} {p.veces === 1 ? "aplicación" : "aplicaciones"},{" "}
+                    una cada ~{p.cada_dias} días.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-2">
                   {activos.length === 0 ? (
                     <p className="text-xs text-muted-foreground">
-                      Sin aplicaciones en este momento del año.
+                      En estos meses no se abona.
                     </p>
                   ) : (
                     activos.map((a) => (
@@ -157,7 +161,7 @@ export default async function FichaEspecie(props: {
                     especie={especie}
                     nombreEspecie={base.nombre}
                     momento={p.momento}
-                    producto={activos[0]?.producto ?? `Programa casero ${p.momento}`}
+                    producto={activos[0]?.producto ?? `Programa casero ${p.meses}`}
                     gramos={activos.reduce((acc, a) => acc + (a.gramos ?? 0), 0)}
                     mesesProximoMomento={proximosMeses(programa, p.orden)}
                     arbolesPropios={propios.length}
@@ -183,20 +187,23 @@ export default async function FichaEspecie(props: {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Calendario anual · cuándo le toca</CardTitle>
             <CardDescription className="text-xs">
-              Región {regionGuia ?? "sin datos regionales"} — «cada cuánto» según tu método de riego
+              Región {regionGuia ?? "sin datos regionales"} — «cada cuánto» según el fertilizante que uses
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-1.5 text-xs">
             {feno ? (
+              /* Se quitaron las tres filas de estado fenológico («cuando
+                 despierta», «cuando engorda la fruta», «cuando se recupera»):
+                 son la misma jerga que se pidió sacar como título de bloque.
+                 «Brota», «Florece» y «Cosecha» se quedan porque sí son
+                 fenología observable, no nombres de estado. */
               <ul className="flex flex-col gap-1">
                 <li>Brota: {feno.brota ?? "—"}</li>
                 <li>Florece: {feno.florece ?? "—"}</li>
                 <li>Cosecha: {feno.cosecha ?? "—"}</li>
-                <li>Cuando despierta: {feno.m_despierta ?? "—"}</li>
-                <li>Cuando engorda la fruta: {feno.m_engorda ?? "—"}</li>
-                <li>Cuando se recupera: {feno.m_recupera ?? "—"}</li>
                 <li>
-                  Veces al año: {feno.veces_suelo ?? "—"} al suelo · {feno.veces_goteo ?? "—"} por goteo
+                  Veces al año: {feno.veces_suelo ?? "—"} con granulados ·{" "}
+                  {feno.veces_goteo ?? "—"} con solubles
                 </li>
                 {feno.nota ? <li className="italic">{feno.nota}</li> : null}
               </ul>
