@@ -250,7 +250,15 @@ const ACTUALIZAR_ARBOL = z.object({
   huertoId: z.string().uuid().nullable().optional(),
   posX: z.number().min(0).max(1).optional(),
   posY: z.number().min(0).max(1).optional(),
-  edadClase: z.enum(["recien", "joven", "inicial", "adulto"]).nullable().optional(),
+  /**
+   * Edad como `dim_edad.edad_n` (1..4), no como rótulo.
+   *
+   * Antes era `edadClase: z.enum(["recien","joven","inicial","adulto"])`, un
+   * cuarto vocabulario que solo existia en `EditarArbolDialog`, que tenia los
+   * dos mapas de traduccion a mano. Guardar el numero evita tenerlos: el
+   * nombre largo sale de `dim_edad` cuando haga falta mostrarlo.
+   */
+  edadN: z.number().int().min(1).max(4).nullable().optional(),
   copaM: z.number().min(0.2).max(12).nullable().optional(),
   metodoRiego: z.enum(["balde", "manguera", "goteo"]).nullable().optional(),
   caudalLH: z.number().min(0).max(500).nullable().optional(),
@@ -322,7 +330,7 @@ export async function actualizarArbol(
     patch.pos_x = Math.max(0, Math.min(1, parsed.posX));
   if (parsed.posY !== undefined)
     patch.pos_y = Math.max(0, Math.min(1, parsed.posY));
-  if (parsed.edadClase !== undefined) patch.edad_clase = parsed.edadClase;
+  if (parsed.edadN !== undefined) patch.edad_n = parsed.edadN;
   if (parsed.copaM !== undefined) patch.copa_m = parsed.copaM;
   if (parsed.metodoRiego !== undefined) patch.metodo_riego = parsed.metodoRiego;
   if (parsed.caudalLH !== undefined) patch.caudal_l_h = parsed.caudalLH;

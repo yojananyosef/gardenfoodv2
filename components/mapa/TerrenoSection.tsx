@@ -482,7 +482,7 @@ export function TerrenoSection({
       posX: result.arbol.posX,
       posY: result.arbol.posY,
       createdAt: new Date().toISOString(),
-      edadClase: null,
+      edadN: null,
       copaM: null,
       metodoRiego: null,
       caudalLH: null,

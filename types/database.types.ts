@@ -1832,10 +1832,10 @@ export type Database = {
         "huerto_id": string | null
         "pos_x": number | null
         "pos_y": number | null
-        "edad_clase": string | null
         "copa_m": number | null
         "metodo_riego": string | null
         "caudal_l_h": number | null
+        "edad_n": number | null
         }
         Insert: {
         "id"?: string | null
@@ -1849,10 +1849,10 @@ export type Database = {
         "huerto_id"?: string | null
         "pos_x"?: number | null
         "pos_y"?: number | null
-        "edad_clase"?: string | null
         "copa_m"?: number | null
         "metodo_riego"?: string | null
         "caudal_l_h"?: number | null
+        "edad_n"?: number | null
         }
         Update: {
         "id"?: string
@@ -1866,12 +1866,19 @@ export type Database = {
         "huerto_id"?: string | null
         "pos_x"?: number | null
         "pos_y"?: number | null
-        "edad_clase"?: string | null
         "copa_m"?: number | null
         "metodo_riego"?: string | null
         "caudal_l_h"?: number | null
+        "edad_n"?: number | null
         }
         Relationships: [
+        {
+          foreignKeyName: "fk_gf_arboles_edad_n_dim_edad_edad_n"
+          columns: ["edad_n"]
+          isOneToOne: false
+          referencedRelation: "dim_edad"
+          referencedColumns: ["edad_n"]
+        },
         {
           foreignKeyName: "fk_gf_arboles_huerto_id_gf_huertos_id"
           columns: ["huerto_id"]

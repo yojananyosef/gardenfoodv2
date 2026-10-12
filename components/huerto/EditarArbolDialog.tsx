@@ -29,7 +29,7 @@ import type { ZonaRiegoId } from "@/lib/riego/datos";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
 import type { RiegoBasePayload } from "@/lib/riego/actions";
 import { cn } from "@/lib/utils";
-import type { Arbol, EdadClaseArbol, MetodoRiegoArbol } from "@/types";
+import type { Arbol, MetodoRiegoArbol } from "@/types";
 
 export type OpcionEspecie = { dbKey: string; nombre: string };
 
@@ -37,19 +37,16 @@ export function nombreArbol(especie: string): string {
   return getEspeciePorDbKey(especie)?.nombre ?? especie;
 }
 
-/** Tabla C del Excel (1 recién plantado … 4 adulto) ↔ columna edad_clase. */
-const EDAD_N_A_CLASE: Record<number, EdadClaseArbol> = {
-  1: "recien",
-  2: "joven",
-  3: "inicial",
-  4: "adulto",
-};
-const EDAD_CLASE_A_N: Record<string, number> = {
-  recien: 1,
-  joven: 2,
-  inicial: 3,
-  adulto: 4,
-};
+/**
+ * Antes este archivo tenía los dos mapas de la Fase 10.5:
+ *
+ *   const EDAD_N_A_CLASE = { 1: "recien", 2: "joven", 3: "inicial", 4: "adulto" }
+ *   const EDAD_CLASE_A_N  = { recien: 1, joven: 2, inicial: 3, adulto: 4 }
+ *
+ * Eran el cuarto vocabulario de la misma edad: `dim_edad` ya tiene el número
+ * (1-4) y el rótulo largo, y `gf_arboles` guardaba un quinto. Ahora el árbol
+ * guarda `edad_n` y el número viaja tal cual, así que los mapas sobran.
+ */
 
 export function EditarArbolDialog({
   arbol,
@@ -68,9 +65,7 @@ export function EditarArbolDialog({
   const [especie, setEspecie] = useState(arbol.especie);
   const [fecha, setFecha] = useState(arbol.fechaPlantacion ?? "");
   const [observaciones, setObservaciones] = useState(arbol.observaciones ?? "");
-  const [edadN, setEdadN] = useState<string>(
-    arbol.edadClase ? String(EDAD_CLASE_A_N[arbol.edadClase] ?? 4) : "",
-  );
+  const [edadN, setEdadN] = useState<string>(arbol.edadN ? String(arbol.edadN) : "");
   const [copaM, setCopaM] = useState(arbol.copaM != null ? String(arbol.copaM) : "");
   const [metodoRiego, setMetodoRiego] = useState<MetodoRiegoArbol | "">(
     (arbol.metodoRiego as MetodoRiegoArbol | undefined) ?? "",
@@ -87,7 +82,7 @@ export function EditarArbolDialog({
     Boolean(
       arbol.fechaPlantacion ||
         arbol.observaciones ||
-        arbol.edadClase ||
+        arbol.edadN ||
         arbol.copaM ||
         arbol.metodoRiego,
     ),
@@ -186,12 +181,12 @@ export function EditarArbolDialog({
         toast.error("El caudal debe estar entre 0 y 500 L/h.");
         return;
       }
-      const clase = edadN ? (EDAD_N_A_CLASE[Number(edadN)] ?? null) : null;
+      const edadNum = edadN ? Number(edadN) : null;
       const result = await actualizarArbol(arbol.id, {
         especie,
         fechaPlantacion: fecha ? fecha : null,
         observaciones: observaciones.trim() ? observaciones.trim() : null,
-        edadClase: clase,
+        edadN: edadNum,
         copaM: copaNum,
         metodoRiego: metodoRiego ? metodoRiego : null,
         caudalLH: caudalNum,
@@ -206,7 +201,7 @@ export function EditarArbolDialog({
         especie,
         fechaPlantacion: fecha ? fecha : null,
         observaciones: observaciones.trim() ? observaciones.trim() : null,
-        edadClase: clase,
+        edadN: edadNum,
         copaM: copaNum,
         metodoRiego: (metodoRiego as MetodoRiegoArbol) || null,
         caudalLH: caudalNum,

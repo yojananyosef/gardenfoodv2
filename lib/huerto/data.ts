@@ -19,7 +19,7 @@ interface ArbolRow {
   pos_x: number | null;
   pos_y: number | null;
   created_at: string;
-  edad_clase?: string | null;
+  edad_n?: number | null;
   copa_m?: number | null;
   metodo_riego?: string | null;
   caudal_l_h?: number | null;
@@ -36,7 +36,7 @@ export function mapArbol(row: ArbolRow): Arbol {
     posX: row.pos_x,
     posY: row.pos_y,
     createdAt: row.created_at,
-    edadClase: (row.edad_clase as Arbol["edadClase"]) ?? null,
+    edadN: row.edad_n ?? null,
     copaM: row.copa_m !== undefined && row.copa_m !== null ? Number(row.copa_m) : null,
     metodoRiego: (row.metodo_riego as Arbol["metodoRiego"]) ?? null,
     caudalLH: row.caudal_l_h !== undefined && row.caudal_l_h !== null ? Number(row.caudal_l_h) : null,
@@ -96,7 +96,7 @@ export async function getArboles(userId: string): Promise<Arbol[]> {
   const { data, error } = await supabase
     .from("gf_arboles")
     .select(
-      "id, especie, cantidad, fecha_plantacion, observaciones, huerto_id, pos_x, pos_y, created_at, edad_clase, copa_m, metodo_riego, caudal_l_h",
+      "id, especie, cantidad, fecha_plantacion, observaciones, huerto_id, pos_x, pos_y, created_at, edad_n, copa_m, metodo_riego, caudal_l_h",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: true });

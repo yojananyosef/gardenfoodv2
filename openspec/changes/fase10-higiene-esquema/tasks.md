@@ -53,9 +53,41 @@ Las **7** vistas `gf_riego_*` que quedan **no se tocan**: la app las lee
 
 ## 10.4 Claves foráneas que faltan
 
-- [ ] 10.4.1 Confirmar que las 4 referencias que se van a agregar no tienen huerfanos: contar filas de `fact_riego_mes.especie_id` y `mes_n`, y de `fact_riego_etapa.especie_id` y `codigo_etapa`, que no existan en la tabla destino. Si hay huerfanos, agregar el `not valid` primero y Cleaning después.
-- [ ] 10.4.2 Migración `0041` con las 4 FKs.
-- [ ] 10.4.3 Confirmar que borrar una fila de `dim_especies` ahora falla con FK en vez de dejar filas huerfanas.
+- [x] 10.4.1 Comprobar si las 4 referencias tienen huérfanos.
+- [x] 10.4.2 **No hace falta migración: las 4 FKs ya existen.** Ver abajo.
+- [x] 10.4.3 Confirmado que borrar una fila referenciada falla por FK.
+
+### 10.4 quedó viejo: las FKs ya estaban
+
+El plan pide agregar 4 claves foráneas a `fact_riego_mes` y `fact_riego_etapa`.
+**Esas cuatro existen, y están validadas.** El punto se escribió antes de la
+migración 0037, que creó esas tablas desde cero y las dejó con su integridad.
+
+| Desde | Columna | Hacia | Estado |
+|---|---|---|---|
+| `fact_riego_mes` | `especie_id` | `dim_especies` | validada |
+| `fact_riego_mes` | `mes_n` | `dim_meses` | validada |
+| `fact_riego_etapa` | `especie_id` | `dim_especies` | validada |
+| `fact_riego_etapa` | `codigo_etapa` | `dim_etapas` | validada |
+
+Hay 3 FKs más que el plan no menciona, en las tablas de fertilización:
+`fact_fert_organica.especie_id`, `fact_fert_programa.especie_id` y
+`fact_fert_programa.macrozona_id`. **Ninguna tabla de riego o fertilización está
+sin ninguna FK.**
+
+Los huérfanos se contaron igual, por si acaso, y dan 0 en las cuatro: 360 filas
+en `fact_riego_mes` y 210 en `fact_riego_etapa`, sin nulos y sin referencias
+rotas. Los destinos son únicos: 30/30 `dim_especies.especie_id`, 12/12
+`dim_meses.mes_n`, 8/8 `dim_etapas.codigo_etapa`.
+
+Los chequeos quedan en `scripts/checar_fks_riego.mjs` y
+`scripts/listar_fks_riego.mjs`. El primero dice si se puede agregar una FK y el
+segundo lista las que hay de verdad, con nombre y columnas, para no confiar en
+un `like` sobre el nombre de la restricción.
+
+**Moraleja sobre el plan:** `PLAN-EJECUCION.md` se escribió antes del
+`import-base-maestra`. Varios de sus puntos ya no describen el estado real. Por
+eso cada punto se comprueba antes de hacerse, aunque parezca obvio.
 
 ## 10.5 Los dos vocabularios de edad
 

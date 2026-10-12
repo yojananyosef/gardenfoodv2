@@ -163,7 +163,22 @@ export interface Cultivo {
   createdAt: string;
 }
 
-export type EdadClaseArbol = "recien" | "joven" | "inicial" | "adulto";
+/**
+ * Edad del árbol como `dim_edad.edad_n` (1..4), o null si no se eligió.
+ *
+ * Antes era `EdadClaseArbol = "recien" | "joven" | "inicial" | "adulto"` con la
+ * columna `gf_arboles.edad_clase`. Ese vocabulario era un cuarto: `dim_edad` ya
+ * tiene el número (1-4) y el rótulo largo, y para pasar de uno al otro
+ * `EditarArbolDialog` tenía dos mapas escritos a mano. Guardar el número deja
+ * de necesitarlos. Ver la Fase 10.5 del plan.
+ *
+ * Es `number` y no `1 | 2 | 3 | 4` a propósito: la columna es un integer y
+ * PostgREST devuelve `number`, así que un union aquí obligaría a castear en
+ * cada lectura para no mentir. El rango 1..4 lo garantizan dos cosas de verdad:
+ * el `z.number().int().min(1).max(4)` de `ACTUALIZAR_ARBOL` y la clave foránea
+ * a `dim_edad.edad_n`.
+ */
+export type EdadArbol = number;
 export type MetodoRiegoArbol = "balde" | "manguera" | "goteo";
 
 export interface Arbol {
@@ -176,7 +191,7 @@ export interface Arbol {
   posX: number | null;
   posY: number | null;
   createdAt: string;
-  edadClase?: EdadClaseArbol | null;
+  edadN?: EdadArbol | null;
   copaM?: number | null;
   metodoRiego?: MetodoRiegoArbol | null;
   caudalLH?: number | null;
