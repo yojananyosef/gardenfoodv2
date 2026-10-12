@@ -1,0 +1,187 @@
+# fact_fert_organica: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_FERT_ORGANICA del Excel. 181 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+especie_id,n,mes,que_pasa,fertilizante,dosis_por_arbol,donde_aplicar,por_que,tipo,fuente
+duraznero,1,Agosto,"Despertar del árbol, antes de brotar",Compost o guano + Salitre,5 kg compost + 200g salitre por árbol,"Alrededor del tronco, alejado 30 cm",Le da fuerza para empezar la temporada,Aplicación,Base 20 especies
+duraznero,2,Septiembre,Brotación y formación de hojas,Urea o sulfato de amonio,150g por árbol,Esparcir bajo la copa y regar,El nitrógeno hace crecer hojas verdes,Aplicación,Base 20 especies
+duraznero,3,Octubre,Floración y cuaja,Fosfato monopotásico (foliar),1 cucharada por bidón de 20L,Pulverizar sobre hojas en la mañana,Ayuda a que los frutos cuajen y no se caigan,Aplicación,Base 20 especies
+duraznero,4,Noviembre,Crecimiento del fruto,Nitrato de potasio,200g por árbol,"Bajo la copa, regar después",El potasio hace los frutos más grandes y dulces,Aplicación,Base 20 especies
+duraznero,5,Diciembre,Llenado de fruto,Sulpomag (potasio + magnesio),150g por árbol,Disuelto en agua de riego,Mejora color y sabor del durazno,Aplicación,Base 20 especies
+duraznero,6,Enero,Maduración,"Solo agua, NO fertilizar",—,—,"Si fertiliza ahora, los frutos se ablandan y duran menos",Aplicación,Base 20 especies
+duraznero,7,Febrero - Marzo,"Después de cosecha, recuperación",Compost + Fósforo (superfosfato),5 kg compost + 200g superfosfato,Alrededor del árbol,Llena las reservas para el próximo año,Aplicación,Base 20 especies
+duraznero,8,Junio - Julio,Reposo invernal,Cal agrícola si pH bajo,1-2 kg por árbol,Esparcir bajo la copa,Solo si midió pH del suelo y está bajo 6.0,Aplicación,Base 20 especies
+ciruelo,1,Agosto,Antes de brotar,Compost + salitre,5 kg + 150g por árbol,Bajo la copa,Energía de arranque,Aplicación,Base 20 especies
+ciruelo,2,Septiembre,Brotación,Urea o sulfato amonio,150g por árbol,"Bajo copa, regar",Hojas verdes fuertes,Aplicación,Base 20 especies
+ciruelo,3,Octubre,Floración,Foliar fósforo-potasio,1 cda por 20L,Pulverizar hojas mañana,Ayuda a cuajar,Aplicación,Base 20 especies
+ciruelo,4,Noviembre,Crecimiento fruto,Nitrato de potasio,200g por árbol,"Bajo copa, regar",Frutos más grandes,Aplicación,Base 20 especies
+ciruelo,5,Diciembre,Llenado fruto,Sulpomag,150g por árbol,Disuelto en riego,Mejora dulzor y color,Aplicación,Base 20 especies
+ciruelo,6,Enero,Maduración,NO fertilizar,—,—,Frutos firmes,Aplicación,Base 20 especies
+ciruelo,7,Febrero-Marzo,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reposición invierno,Aplicación,Base 20 especies
+ciruelo,8,Junio-Julio,Reposo,Cal si pH bajo,1-2 kg si necesario,Esparcir,Solo si suelo ácido,Aplicación,Base 20 especies
+cerezo,1,Agosto,Pre-brotación,Compost + salitre,5 kg + 150g,Bajo copa,Energía inicial,Aplicación,Base 20 especies
+cerezo,2,Septiembre,Brotación-floración,Sulfato amonio + foliar boro,150g + 1 cda foliar,Bajo copa + foliar,Boro ayuda a cuaja,Aplicación,Base 20 especies
+cerezo,3,Octubre,Cuaja,Foliar fósforo-potasio,1 cda por 20L,Pulverizar mañana,Cuaja firme,Aplicación,Base 20 especies
+cerezo,4,Noviembre,Crecimiento,Nitrato potasio,200g por árbol,Bajo copa + riego,Frutos más grandes,Aplicación,Base 20 especies
+cerezo,5,Diciembre,Maduración,NO fertilizar,—,—,Cerezas firmes,Aplicación,Base 20 especies
+cerezo,6,Enero-Febrero,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Yemas próximo año,Aplicación,Base 20 especies
+cerezo,7,Junio-Julio,Reposo,Calcio si pH bajo,1 kg cal,Esparcir,Solo si pH < 6.5,Aplicación,Base 20 especies
+damasco,1,Julio-Agosto,Pre-brotación,Compost + salitre,4 kg + 150g,Bajo copa,Arranque,Aplicación,Base 20 especies
+damasco,2,Septiembre,Brotación-floración,Sulfato amonio,150g,Bajo copa,Crecimiento hojas,Aplicación,Base 20 especies
+damasco,3,Octubre,Cuaja-crecimiento,Foliar P-K + boro,1 cda por 20L,Pulverizar,Cuaja firme,Aplicación,Base 20 especies
+damasco,4,Noviembre,Crecimiento fruto,Nitrato potasio,150g,Bajo copa,Frutos grandes,Aplicación,Base 20 especies
+damasco,5,Diciembre,Maduración,NO fertilizar,—,—,Frutos firmes,Aplicación,Base 20 especies
+damasco,6,Enero-Febrero,Postcosecha,Compost + superfosfato,4 kg + 150g,Bajo copa,Reposición,Aplicación,Base 20 especies
+damasco,7,Junio,Reposo,Cal si pH bajo,1 kg,Esparcir,Solo si necesario,Aplicación,Base 20 especies
+nectarino,1,Agosto,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Energía inicial,Aplicación,Base 20 especies
+nectarino,2,Septiembre,Brotación,Urea o sulfato amonio,150g,"Bajo copa, regar",Hojas verdes,Aplicación,Base 20 especies
+nectarino,3,Octubre,Floración-cuaja,Foliar P-K,1 cda por 20L,Pulverizar mañana,Ayuda cuaja,Aplicación,Base 20 especies
+nectarino,4,Noviembre,Crecimiento,Nitrato potasio,200g,Bajo copa,Frutos grandes,Aplicación,Base 20 especies
+nectarino,5,Diciembre,Llenado,Sulpomag,150g,Disuelto en riego,Dulzor,Aplicación,Base 20 especies
+nectarino,6,Enero,Maduración,NO fertilizar,—,—,Firmeza,Aplicación,Base 20 especies
+nectarino,7,Febrero-Marzo,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reposición,Aplicación,Base 20 especies
+nectarino,8,Junio-Julio,Reposo,Cal si pH bajo,1-2 kg,Esparcir,Solo si necesario,Aplicación,Base 20 especies
+manzano,1,Agosto,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Energía,Aplicación,Base 20 especies
+manzano,2,Septiembre,Brotación,Sulfato amonio,200g,Bajo copa,Hojas verdes,Aplicación,Base 20 especies
+manzano,3,Octubre,Floración-cuaja,Foliar boro + calcio,1 cda boro + 2 cdas calcio por 20L,Pulverizar mañana,Cuaja firme,Aplicación,Base 20 especies
+manzano,4,Noviembre,Crecimiento,Nitrato potasio,200g,Bajo copa,Calidad fruto,Aplicación,Base 20 especies
+manzano,5,Diciembre-Enero,Crecimiento intenso,Calcio foliar mensual,2 cdas por 20L,Pulverizar,PREVIENE Bitter Pit,Aplicación,Base 20 especies
+manzano,6,Febrero,Maduración,NO fertilizar N,—,—,Frutos firmes,Aplicación,Base 20 especies
+manzano,7,Abril-Mayo,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas,Aplicación,Base 20 especies
+manzano,8,Junio,Reposo,Cal si pH bajo,1-2 kg,Esparcir,Solo si necesario,Aplicación,Base 20 especies
+peral,1,Agosto,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Energía,Aplicación,Base 20 especies
+peral,2,Septiembre,Brotación,Sulfato amonio,200g,Bajo copa,Hojas,Aplicación,Base 20 especies
+peral,3,Octubre,Floración-cuaja,Foliar boro,1 cda por 20L,Pulverizar,Cuaja,Aplicación,Base 20 especies
+peral,4,Noviembre-Diciembre,Crecimiento,Nitrato potasio + calcio foliar,200g + 2 cdas por 20L,Bajo copa + foliar,Calidad,Aplicación,Base 20 especies
+peral,5,Enero,Crecimiento,Calcio foliar,2 cdas por 20L,Pulverizar,Firmeza,Aplicación,Base 20 especies
+peral,6,Febrero,Maduración,NO fertilizar,—,—,Firmes,Aplicación,Base 20 especies
+peral,7,Abril-Mayo,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas,Aplicación,Base 20 especies
+peral,8,Junio,Reposo,Cal si pH bajo,1-2 kg,Esparcir,Solo si necesario,Aplicación,Base 20 especies
+membrillo,1,Agosto,Pre-brotación,Compost,5 kg,Bajo copa,Suficiente,Aplicación,Base 20 especies
+membrillo,2,Septiembre,Brotación,Sulfato amonio,100g,Bajo copa,Modesto,Aplicación,Base 20 especies
+membrillo,3,Noviembre,Crecimiento,Nitrato potasio,150g,Bajo copa,Calidad,Aplicación,Base 20 especies
+membrillo,4,Mayo-Junio,Postcosecha,Compost + superfosfato,5 kg + 150g,Bajo copa,Reservas,Aplicación,Base 20 especies
+membrillo,5,Junio,Reposo,Cal si pH bajo,1 kg,Esparcir,Solo si necesario,Aplicación,Base 20 especies
+limonero,1,Septiembre,Despertar,Sulfato amonio + compost,150g + 5 kg,Bajo copa,Inicio temporada,Aplicación,Base 20 especies
+limonero,2,Octubre,Crecimiento,Sulfato amonio,150g,Bajo copa,Hojas verdes,Aplicación,Base 20 especies
+limonero,3,Noviembre,Floración,Foliar P-K,1 cda por 20L,Pulverizar mañana,Cuaja,Aplicación,Base 20 especies
+limonero,4,Diciembre,Crecimiento fruto,Nitrato potasio,200g,Bajo copa,Frutos grandes,Aplicación,Base 20 especies
+limonero,5,Enero,Crecimiento,Sulfato amonio,150g,Bajo copa,Mantención,Aplicación,Base 20 especies
+limonero,6,Febrero,Crecimiento,Foliar quelato hierro,1 cda por 20L,Pulverizar,Hojas verdes,Aplicación,Base 20 especies
+limonero,7,Marzo,Maduración,Sulpomag,150g,Bajo copa,Calidad,Aplicación,Base 20 especies
+limonero,8,Abril-Mayo,Postcosecha primera,Compost,5 kg,Bajo copa,Recuperación,Aplicación,Base 20 especies
+limonero,9,Junio-Agosto,Reposo relativo,Mínimo,—,—,"Cítrico no descansa, va lento",Aplicación,Base 20 especies
+naranjo,1,Septiembre,Despertar,Sulfato amonio + compost,200g + 5 kg,Bajo copa,Inicio,Aplicación,Base 20 especies
+naranjo,2,Octubre,Crecimiento,Sulfato amonio,200g,Bajo copa,Hojas,Aplicación,Base 20 especies
+naranjo,3,Noviembre,Floración,Foliar P-K-Boro,1 cda por 20L,Pulverizar,Cuaja,Aplicación,Base 20 especies
+naranjo,4,Diciembre,Crecimiento fruto,Nitrato potasio,250g,Bajo copa,Calidad,Aplicación,Base 20 especies
+naranjo,5,Enero,Crecimiento,Sulfato amonio,200g,Bajo copa,Mantención,Aplicación,Base 20 especies
+naranjo,6,Febrero,Crecimiento,Foliar quelato hierro,1 cda por 20L,Pulverizar,Verde intenso,Aplicación,Base 20 especies
+naranjo,7,Marzo-Abril,Maduración,Sulpomag,200g,Bajo copa,Dulzor color,Aplicación,Base 20 especies
+naranjo,8,Mayo-Agosto,Mantención,Mínimo,—,—,Lento crecimiento,Aplicación,Base 20 especies
+mandarino,1,Septiembre,Despertar,Sulfato amonio + compost,150g + 5 kg,Bajo copa,Inicio,Aplicación,Base 20 especies
+mandarino,2,Octubre,Crecimiento,Sulfato amonio,150g,Bajo copa,Hojas,Aplicación,Base 20 especies
+mandarino,3,Noviembre,Floración,Foliar P-K-B,1 cda por 20L,Pulverizar,Cuaja,Aplicación,Base 20 especies
+mandarino,4,Diciembre-Enero,Crecimiento,Nitrato potasio,200g,Bajo copa,Calidad,Aplicación,Base 20 especies
+mandarino,5,Febrero,Crecimiento,Foliar Fe,1 cda por 20L,Pulverizar,Verde,Aplicación,Base 20 especies
+mandarino,6,Marzo-Abril,Maduración,Sulpomag,150g,Bajo copa,Dulzor,Aplicación,Base 20 especies
+mandarino,7,Mayo-Agosto,Mantención,Mínimo,—,—,Lento,Aplicación,Base 20 especies
+pomelo,1,Septiembre,Despertar,Sulfato amonio + compost,250g + 6 kg,Bajo copa,Árbol grande,Aplicación,Base 20 especies
+pomelo,2,Octubre-Noviembre,Floración,Sulfato amonio + foliar B,200g + 1 cda foliar,Bajo copa + foliar,Cuaja,Aplicación,Base 20 especies
+pomelo,3,Diciembre-Enero,Crecimiento,Nitrato potasio,300g,Bajo copa,Calidad,Aplicación,Base 20 especies
+pomelo,4,Febrero,Crecimiento,Foliar Fe,1 cda por 20L,Pulverizar,Verde,Aplicación,Base 20 especies
+pomelo,5,Marzo-Abril,Maduración,Sulpomag,200g,Bajo copa,Dulzor,Aplicación,Base 20 especies
+pomelo,6,Mayo-Agosto,Mantención,Compost cada 2 meses,5 kg,Bajo copa,Lento,Aplicación,Base 20 especies
+nogal,1,Agosto,Pre-brotación,Compost + salitre,10 kg + 500g,Bajo copa (amplia),Árbol grande necesita más,Aplicación,Base 20 especies
+nogal,2,Septiembre,Brotación,Urea,400g,"Bajo copa, regar",Hojas verdes,Aplicación,Base 20 especies
+nogal,3,Octubre,Floración,Foliar boro + zinc,1 cda cada uno por 20L,Pulverizar,Boro y zinc son CRÍTICOS para nogal,Aplicación,Base 20 especies
+nogal,4,Noviembre,Crecimiento,Nitrato de amonio,500g,Bajo copa,Desarrollo nuez,Aplicación,Base 20 especies
+nogal,5,Diciembre-Enero,Llenado,Nitrato potasio,500g,Bajo copa,Llenado bueno,Aplicación,Base 20 especies
+nogal,6,Febrero,Pre-maduración,Sulpomag,300g,Bajo copa,Calidad cáscara,Aplicación,Base 20 especies
+nogal,7,Abril-Mayo,Postcosecha,Compost + superfosfato,10 kg + 400g,Bajo copa,Reservas,Aplicación,Base 20 especies
+nogal,8,Junio-Julio,Reposo,Cal si pH bajo,3-5 kg,Esparcir amplio,Solo si necesario,Aplicación,Base 20 especies
+almendro,1,Julio,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Energía,Aplicación,Base 20 especies
+almendro,2,Agosto-Septiembre,Floración-cuaja,Foliar boro,1 cda por 20L,Pulverizar,Cuaja firme,Aplicación,Base 20 especies
+almendro,3,Octubre,Crecimiento,Sulfato amonio,200g,Bajo copa,Hojas,Aplicación,Base 20 especies
+almendro,4,Noviembre-Diciembre,Crecimiento,Nitrato potasio,200g,Bajo copa,Calidad almendra,Aplicación,Base 20 especies
+almendro,5,Enero,Llenado,Sulpomag,150g,Bajo copa,Cierre,Aplicación,Base 20 especies
+almendro,6,Abril,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas,Aplicación,Base 20 especies
+almendro,7,Junio,Reposo,Cal si pH bajo,1-2 kg,Esparcir,Solo si ácido,Aplicación,Base 20 especies
+higuera,1,Agosto-Septiembre,Pre-brotación,Compost,5 kg,Bajo copa,Simple,Aplicación,Base 20 especies
+higuera,2,Octubre,Brotación,Sulfato amonio,100g,Bajo copa,Poco,Aplicación,Base 20 especies
+higuera,3,Diciembre,Crecimiento,Nitrato potasio,150g,Bajo copa,Calidad,Aplicación,Base 20 especies
+higuera,4,Abril,Postcosecha,Compost,5 kg,Bajo copa,Recuperación,Aplicación,Base 20 especies
+higuera,5,Nota,—,Higuera necesita POCO fertilizante,—,—,"Si fertiliza mucho: muchas hojas, pocos higos",Nota,Base 20 especies
+granado,1,Agosto,Pre-brotación,Compost,5 kg,Bajo copa,Simple,Aplicación,Base 20 especies
+granado,2,Septiembre-Octubre,Brotación,Sulfato amonio,150g,Bajo copa,Crecimiento,Aplicación,Base 20 especies
+granado,3,Noviembre,Floración,Foliar P-K,1 cda por 20L,Pulverizar,Cuaja,Aplicación,Base 20 especies
+granado,4,Diciembre-Enero,Crecimiento,Nitrato potasio,200g,Bajo copa,Frutos grandes,Aplicación,Base 20 especies
+granado,5,Febrero,Llenado,Sulpomag,150g,Bajo copa,Color y dulzor,Aplicación,Base 20 especies
+granado,6,Mayo,Postcosecha,Compost,5 kg,Bajo copa,Reservas,Aplicación,Base 20 especies
+caqui,1,Septiembre,Pre-brotación,Compost + salitre,5 kg + 150g,Bajo copa,Arranque,Aplicación,Base 20 especies
+caqui,2,Octubre,Brotación,Sulfato amonio,150g,Bajo copa,Hojas,Aplicación,Base 20 especies
+caqui,3,Noviembre,Floración,Foliar P-K + boro,1 cda por 20L,Pulverizar,Cuaja,Aplicación,Base 20 especies
+caqui,4,Diciembre-Enero,Crecimiento,Nitrato potasio,200g,Bajo copa,Calidad,Aplicación,Base 20 especies
+caqui,5,Febrero,Llenado,Sulpomag,150g,Bajo copa,Dulzor y color,Aplicación,Base 20 especies
+caqui,6,Mayo,Postcosecha,Compost + superfosfato,5 kg + 150g,Bajo copa,Reservas,Aplicación,Base 20 especies
+vid,1,Agosto,Pre-brotación,Compost + salitre,3 kg + 100g por planta,Al pie,NO exagerar N en vid,Aplicación,Base 20 especies
+vid,2,Septiembre,Brotación,Sulfato amonio,100g,Al pie,Moderado,Aplicación,Base 20 especies
+vid,3,Octubre,Crecimiento,Foliar boro + zinc,1 cda cada uno por 20L,Pulverizar,Cuaja,Aplicación,Base 20 especies
+vid,4,Noviembre,Cuaja,Foliar P-K,1 cda por 20L,Pulverizar,Calidad,Aplicación,Base 20 especies
+vid,5,Diciembre-Enero,Envero,Sulpomag,150g,Al pie,Dulzor y color,Aplicación,Base 20 especies
+vid,6,Febrero,Maduración,NO fertilizar,—,—,Solo agua o nada,Aplicación,Base 20 especies
+vid,7,Mayo,Postcosecha,Compost + superfosfato,3 kg + 100g,Al pie,Reservas,Aplicación,Base 20 especies
+arandano,1,Agosto,Pre-brotación,"Azufre agrícola + compost ácido (aserrín, hojas pino)",100g azufre + 3 kg compost ácido,Bajo planta,Mantener pH ÁCIDO,Aplicación,Base 20 especies
+arandano,2,Septiembre,Brotación,"Sulfato de amonio (NO urea, NO salitre)",50g,Bajo planta,Solo fertilizantes ÁCIDOS,Aplicación,Base 20 especies
+arandano,3,Octubre,Floración,Foliar boro,0.5 cda por 20L,Pulverizar suave,Cuaja,Aplicación,Base 20 especies
+arandano,4,Noviembre,Crecimiento,Sulfato de amonio,50g,Bajo planta,"Moderado, no exagerar",Aplicación,Base 20 especies
+arandano,5,Diciembre,Fructificación,Sulpomag,50g,Bajo planta,Calidad,Aplicación,Base 20 especies
+arandano,6,Marzo,Postcosecha,"Compost ácido (aserrín pino, corteza)",3 kg,Mulch ácido,Repone acidez,Aplicación,Base 20 especies
+arandano,7,IMPORTANTE,—,"NUNCA usar cal, ceniza o estiércol fresco",—,—,Suben el pH y MATAN al arándano,Nota,Base 20 especies
+olivo,1,Agosto-Septiembre,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Arranque,Aplicación,Base 20 especies
+olivo,2,Octubre,Brotación,Sulfato amonio,200g,Bajo copa,Crecimiento,Aplicación,Base 20 especies
+olivo,3,Noviembre,Pre-floración,Foliar boro,1 cda por 20L,Pulverizar,Boro CRÍTICO para cuaja en olivo,Aplicación,Base 20 especies
+olivo,4,Diciembre-Enero,Crecimiento fruto,Nitrato potasio,200g,Bajo copa,Calidad,Aplicación,Base 20 especies
+olivo,5,Febrero,Llenado aceituna,Sulpomag,200g,Bajo copa,Aceite,Aplicación,Base 20 especies
+olivo,6,Junio,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas,Aplicación,Base 20 especies
+olivo,7,Julio,Reposo,Cal si pH bajo,—,—,Raro que sea necesario,Aplicación,Base 20 especies
+frutilla,1,Mar/Ago,Base (plantación),Compost + guano rojo,2-3 kg/m²,Incorporado al camellón antes de plantar,Materia orgánica mejora estructura y aporta nutrientes de liberación lenta para el arranque radicular,Aplicación,Base de Conocimiento
+frutilla,2,Sep,Floración,NPK bajo en N / té de compost,Foliar c/15 días,Foliar en la mañana,Exceso de nitrógeno en floración da mucha hoja y poca flor: se prioriza fósforo-potasio,Aplicación,Base de Conocimiento
+frutilla,3,Oct-Nov,Cuaja-crecimiento,Nitrato de potasio,5-8 g/planta,Junto al riego,"El potasio moviliza azúcares hacia el fruto en formación, mejorando tamaño y dulzor",Aplicación,Base de Conocimiento
+frutilla,4,Dic-Ene,Cosecha,Calcio foliar,Foliar quincenal,Foliar,El calcio firma las paredes celulares del fruto: reduce Botrytis y prolonga la vida poscosecha,Aplicación,Base de Conocimiento
+frutilla,5,Feb,Postcosecha,Compost ligero,1 kg/m²,Superficial,Repone reservas de la planta para la renovación o la próxima temporada,Aplicación,Base de Conocimiento
+frambuesa,1,Ago,Pre-brotación,Compost + guano,3-4 kg/planta,En la línea de plantación,Nitrógeno y materia orgánica activan el crecimiento explosivo de la caña nueva,Aplicación,Base de Conocimiento
+frambuesa,2,Sep-Oct,Brotación-floración,Nitrato de amonio,40-60 g/planta,"Al pie, regar después",El nitrógeno construye la masa foliar que alimentará flores y frutos,Aplicación,Base de Conocimiento
+frambuesa,3,Nov-Dic,Cuaja-cosecha,Nitrato de potasio,40 g/planta,Junto al riego,El potasio mueve los azúcares producidos en la hoja hacia el fruto en desarrollo,Aplicación,Base de Conocimiento
+frambuesa,4,Ene-Feb,Cosecha plena,Calcio + magnesio foliar,Foliar quincenal,Foliar,Firma las paredes celulares del fruto y evita hojas amarillas por falta de magnesio,Aplicación,Base de Conocimiento
+frambuesa,5,Mar-Abr,Postcosecha,Compost,2 kg/planta,En la línea,Reconstruye reservas de la corona para el rebrote de la próxima temporada,Aplicación,Base de Conocimiento
+mora,1,Ago,Pre-brotación,Compost + guano,3-4 kg/planta,En la línea de plantación,Impulsa el crecimiento vigoroso característico apenas rompe el reposo,Aplicación,Base de Conocimiento
+mora,2,Sep-Oct,Brotación-floración,Nitrato de amonio,50 g/planta,"Al pie, regar después",Sostiene el desarrollo de la masa foliar necesaria para la floración masiva,Aplicación,Base de Conocimiento
+mora,3,Nov-Ene,Cuaja-cosecha,Nitrato de potasio,40-50 g/planta,Junto al riego,"El potasio concentra azúcares en el fruto, clave para su sabor dulce característico",Aplicación,Base de Conocimiento
+mora,4,Mar,Postcosecha,Compost,2-3 kg/planta,En la línea,Repone reservas para el rebrote vigoroso de la próxima temporada,Aplicación,Base de Conocimiento
+kiwi,1,Ago,Pre-brotación,Compost + guano,5-6 kg/planta,"Bajo el parrón, en banda",Crecimiento vigoroso: necesita reservas abundantes disponibles antes de brotar,Aplicación,Base de Conocimiento
+kiwi,2,Sep-Oct,Brotación-floración,Nitrato de amonio,150-200 g/planta,"Bajo copa, regar después",Sostiene el desarrollo foliar masivo característico de la especie,Aplicación,Base de Conocimiento
+kiwi,3,Nov-Dic,Cuaja-crecimiento,Nitrato de potasio,150 g/planta,Junto al riego,"El potasio es clave para el llenado del fruto, de los más grandes del catálogo de bayas",Aplicación,Base de Conocimiento
+kiwi,4,Ene-Feb,Llenado,Calcio foliar,Foliar mensual,Foliar,"Mejora la firmeza y la vida poscosecha del fruto, que se guarda por meses",Aplicación,Base de Conocimiento
+kiwi,5,Mar,Postcosecha,Compost + fosfato,5 kg + 200g,Bajo copa,Estimula raíces nuevas para acumular reservas de cara al próximo ciclo,Aplicación,Base de Conocimiento
+avellano,1,Ago,Pre-brotación,Compost + guano,5-6 kg/planta,"Bajo copa, en banda",Aporta reservas de liberación lenta para sostener el crecimiento vegetativo de primavera,Aplicación,Base de Conocimiento
+avellano,2,Sep-Oct,Brotación,Nitrato de amonio,150 g/planta,"Bajo copa, regar después",Sostiene el desarrollo foliar que alimentará el llenado del fruto en verano,Aplicación,Base de Conocimiento
+avellano,3,Nov-Dic,Crecimiento del fruto,Sulfato de potasio,120 g/planta,Bajo copa,El potasio es clave para el llenado y calidad del grano dentro de la cáscara,Aplicación,Base de Conocimiento
+avellano,4,Feb,Postcosecha,Compost + fosfato,4 kg + 150g,Bajo copa,"Estimula raíces nuevas de cara a la floración invernal, que ocurre muy temprano",Aplicación,Base de Conocimiento
+nispero,1,Abr,Pre-floración,Compost + guano,4-5 kg/planta,Bajo copa,"Prepara reservas para sostener la floración de invierno, poco habitual en otros frutales",Aplicación,Base de Conocimiento
+nispero,2,Ago,Cuaja-crecimiento,Nitrato de potasio,100 g/planta,Bajo copa,El potasio favorece el llenado rápido del fruto en fin de invierno,Aplicación,Base de Conocimiento
+nispero,3,Dic,Postcosecha,Compost + fosfato,3-4 kg + 150g,Bajo copa,Estimula brotación vegetativa de verano que dará origen a la floración del próximo invierno,Aplicación,Base de Conocimiento
+lucuma,1,Sep,Pre-brotación,Compost + guano,5 kg/planta,Bajo copa,Aporta reservas para un árbol de crecimiento y fructificación lentos,Aplicación,Base de Conocimiento
+lucuma,2,Nov-Dic,Crecimiento del fruto,NPK mixto (ref. INIA 120-100-90 kg/ha N-P₂O₅-K₂O),≈150 g/planta,Bajo copa,Nivel de fertilización reportado en ensayos INIA para lúcuma; el potasio sostiene el desarrollo prolongado del fruto,Aplicación,Base de Conocimiento
+lucuma,3,Mar,Maduración,Compost ligero,2-3 kg/planta,Bajo copa,Mantiene reservas del árbol durante la larga maduración del fruto,Aplicación,Base de Conocimiento
+palto,1,Ago,Pre-floración,Compost + nitrato de calcio,6-8 kg + 200g,"Bajo copa, en banda ancha",El calcio fortalece tejidos florales y reduce la incidencia de problemas de cuaja,Aplicación,Base de Conocimiento
+palto,2,Sep-Oct,Floración-cuaja,Nitrato de amonio,150-200 g/planta,"Bajo copa, regar después",Sostiene el enorme gasto energético de la floración masiva característica de la especie,Aplicación,Base de Conocimiento
+palto,3,Nov-Dic,Crecimiento del fruto,Sulfato de potasio,200 g/planta,Bajo copa,El potasio es clave para el llenado de aceite y agua del fruto en desarrollo,Aplicación,Base de Conocimiento
+palto,4,Mar,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,"Estimula raíces nuevas, siempre con cuidado de no generar exceso de humedad en el suelo",Aplicación,Base de Conocimiento
+chirimoya,1,Ago-Sep,Pre-brotación,Compost + estiércol bien descompuesto,5-6 kg/planta,Bajo copa,Una aplicación alta de materia orgánica una vez al año es la base del manejo nutricional de la especie,Aplicación,Base de Conocimiento
+chirimoya,2,Oct-Nov,Floración,Foliar fosfato monopotásico,"10g/20L, c/15 días",Foliar en flores,"El fósforo mejora la viabilidad del polen, clave porque la polinización natural es escasa",Aplicación,Base de Conocimiento
+chirimoya,3,Ene-Feb,Crecimiento del fruto,Nitrato de potasio,150 g/planta,Bajo copa,El potasio sostiene el llenado de un fruto grande y de desarrollo lento,Aplicación,Base de Conocimiento
+papayo_chileno,1,Sep,Establecimiento,Compost + guano,3-4 kg/planta,Bajo la planta,Sostiene el crecimiento acelerado propio de esta especie semi-herbácea,Aplicación,Base de Conocimiento
+papayo_chileno,2,Dic-Ene,Floración-cuaja,Nitrato de potasio,80-100 g/planta,Bajo la planta,"El potasio sostiene una fructificación temprana y continua, típica de esta especie de ciclo corto",Aplicación,Base de Conocimiento
+papayo_chileno,3,Mar-Abr,Producción,Compost ligero,2 kg/planta,Bajo la planta,Mantiene el vigor de una planta que produce casi todo el año,Aplicación,Base de Conocimiento

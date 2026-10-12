@@ -1,0 +1,10 @@
+# dim_suelos: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_SUELOS del Excel. 4 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+suelo_id,suelo,nombres_usda,agua_min_mm_m,agua_max_mm_m,factor_suelo,como_se_siente,como_manejarlo
+G,Gruesa (arenosa),"Arena, arena francosa, arena fina",50,100,0.7,"Arenoso al tacto, no forma cinta, se desarma solo.","Suelo que se seca rápido: riegue MÁS SEGUIDO y con MENOS agua cada vez. Un riego grande se le escapa hacia abajo y se pierde. Ponga mulch (paja, pasto seco, hojas) de 10 cm bajo la copa y agregue compost cada año: es lo que más le sube la retención de agua."
+MG,Moderadamente gruesa,"Franco arenoso, franco arenoso fino",108,142,0.85,"Forma bola pero cinta corta (menos de 2,5 cm). Áspero al frotar mojado.","Suelo cómodo pero algo suelto. Riegue en dos tiempos (mitad del agua, esperar 20 minutos, la otra mitad) para que no escurra. Mulch de 8-10 cm y compost anual."
+M,Media (franca),"Franco, franco limoso, franco arenoso arcilloso",125,175,1,"Forma cinta de 2,5 a 5 cm. Ni muy áspero ni muy jabonoso.","El mejor suelo para frutales: retiene bien y drena bien. Mantenga el mulch y no lo pise cuando está mojado, porque se compacta. Riegue en el borde de la copa, no pegado al tronco."
+F,Fina (arcillosa),"Arcilla, franco arcilloso, franco arcilloso limoso",133,200,1.15,"Forma cinta larga (más de 5 cm), se pega y es plástico.","Suelo que retiene mucha agua: riegue MENOS SEGUIDO y con MÁS agua cada vez, pero LENTO. Si el agua se empoza, pare y espere. El riesgo real acá no es la sequía, es la asfixia de raíces: nunca riegue si al apretar el suelo queda pegajoso y resbaloso."

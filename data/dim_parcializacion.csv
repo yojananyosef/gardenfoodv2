@@ -1,0 +1,30 @@
+# dim_parcializacion: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_PARCIALIZACION del Excel. 20 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+clave,patron,nutriente,brotacion_a_cuaja,cuaja_a_cosecha,postcosecha,rango_inia,dentro_rango,que_significa
+ESTANDAR|N,ESTANDAR,N,0.2,0.5,0.3,10-30 / 40-60 / 20-40,SÍ,Cosecha a mediados de temporada estival. Aplicación directa del Cuadro 3.7 INIA.
+ESTANDAR|P2O5,ESTANDAR,P₂O₅,0.3,0.4,0.3,20-30 / 30-40 / 20-30,SÍ,
+ESTANDAR|K2O,ESTANDAR,K₂O,0.15,0.55,0.3,10-20 / 50-60 / 20-30,SÍ,
+ESTANDAR|CaO,ESTANDAR,CaO,0.3,0.7,0,20-40 / 60-80 / —,SÍ,
+ESTANDAR|MgO,ESTANDAR,MgO,0,0.55,0.45,— / 50-60 / 40-50,SÍ,
+TEMPRANA|N,TEMPRANA,N,0.2,0.45,0.35,10-30 / 40-60 / 20-40,SÍ,Cosecha temprana (nov-dic). Se aumenta la fracción de postcosecha: la planta tiene un período vegetativo largo después de cosechar y ahí forma las yemas del año siguiente.
+TEMPRANA|P2O5,TEMPRANA,P₂O₅,0.3,0.4,0.3,20-30 / 30-40 / 20-30,SÍ,
+TEMPRANA|K2O,TEMPRANA,K₂O,0.15,0.55,0.3,10-20 / 50-60 / 20-30,SÍ,
+TEMPRANA|CaO,TEMPRANA,CaO,0.3,0.7,0,20-40 / 60-80 / —,SÍ,
+TEMPRANA|MgO,TEMPRANA,MgO,0,0.5,0.5,— / 50-60 / 40-50,SÍ,
+TARDIA|N,TARDIA,N,0.3,0.65,0.05,10-30 / 40-60 / 20-40,AJUSTADO,"Cosecha tardía (mar-jun). Se reduce la postcosecha y el N se suspende casi por completo, para no retrasar la lignificación de la madera antes del invierno.
+
+Desviación deliberada. El Bol. INIA 426 (p.89-90) instruye textualmente: en especies de cosecha tardía se debe disminuir el porcentaje aplicado en postcosecha y, en el caso del N, se puede suspender esa aplicación para evitar problemas de diferenciación de yemas y de lignificación de la madera. Ese traslado obliga a salir de los rangos base del Cuadro 3.7."
+TARDIA|P2O5,TARDIA,P₂O₅,0.4,0.45,0.15,20-30 / 30-40 / 20-30,AJUSTADO,
+TARDIA|K2O,TARDIA,K₂O,0.2,0.65,0.15,10-20 / 50-60 / 20-30,AJUSTADO,
+TARDIA|CaO,TARDIA,CaO,0.3,0.7,0,20-40 / 60-80 / —,SÍ,
+TARDIA|MgO,TARDIA,MgO,0,0.6,0.4,— / 50-60 / 40-50,SÍ,
+PERENNE|N,PERENNE,N,0.3,0.45,0.25,10-30 / 40-60 / 20-40,SÍ,"Especie de hoja persistente. No hay receso marcado: el reparto es más plano y se mantiene aporte durante todo el ciclo.
+
+Desviación deliberada. El Cuadro 3.7 está construido para especies caducas con receso invernal. En perennifolios no hay caída de hoja ni parada vegetativa, por lo que se adelanta una fracción de magnesio a la primera ventana y se aplana el reparto de potasio."
+PERENNE|P2O5,PERENNE,P₂O₅,0.35,0.4,0.25,20-30 / 30-40 / 20-30,AJUSTADO,
+PERENNE|K2O,PERENNE,K₂O,0.2,0.55,0.25,10-20 / 50-60 / 20-30,SÍ,
+PERENNE|CaO,PERENNE,CaO,0.35,0.65,0,20-40 / 60-80 / —,SÍ,
+PERENNE|MgO,PERENNE,MgO,0.1,0.5,0.4,— / 50-60 / 40-50,AJUSTADO,

@@ -1,0 +1,18 @@
+# dim_meses: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_MESES del Excel. 12 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+mes_n,mes,abrev
+1,Enero,Ene
+2,Febrero,Feb
+3,Marzo,Mar
+4,Abril,Abr
+5,Mayo,May
+6,Junio,Jun
+7,Julio,Jul
+8,Agosto,Ago
+9,Septiembre,Sep
+10,Octubre,Oct
+11,Noviembre,Nov
+12,Diciembre,Dic

@@ -1,0 +1,366 @@
+# fact_labores_mes: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_LABORES_MES del Excel. 360 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+clave,especie_id,mes,mes_n,labores
+duraznero|1,duraznero,Enero,1,Maduración/cosecha según variedad. Reducir riego 10 días antes de cosechar
+duraznero|2,duraznero,Febrero,2,Cosecha o maduración tardía. Fertilizar postcosecha (P)
+duraznero|3,duraznero,Marzo,3,Postcosecha: fertilizar y regar moderado para acumular reservas
+duraznero|4,duraznero,Abril,4,"Postcosecha, riego decreciente. Recolectar frutos caídos (sanidad)"
+duraznero|5,duraznero,Mayo,5,Caída de hojas. Preparar entrada a reposo. Limpieza de restos vegetales
+duraznero|6,duraznero,Junio,6,Reposo invernal. Riego solo si suelo muy seco
+duraznero|7,duraznero,Julio,7,PODA de formación/producción. Aplicar cobre (cloca/monilia) preventivo
+duraznero|8,duraznero,Agosto,8,Pre-brotación. Fertilizar N (compost+salitre). Riego c/7-10 días al brotar
+duraznero|9,duraznero,Septiembre,9,Floración-cuaja. Riego c/5-7 días. Vigilar heladas tardías y pulgón
+duraznero|10,duraznero,Octubre,10,Cuaja-crecimiento. Fertilizar foliar P-K. Control sanitario preventivo
+duraznero|11,duraznero,Noviembre,11,Crecimiento activo + RALEO de frutos. Riego c/3-5 días. Fertilizar N-K
+duraznero|12,duraznero,Diciembre,12,COSECHA. Llenado de fruto. Riego frecuente. Vigilar mosca de la fruta
+ciruelo|1,ciruelo,Enero,1,Maduración/cosecha según variedad. Reducir riego 10 días antes de cosechar
+ciruelo|2,ciruelo,Febrero,2,Cosecha o maduración tardía. Fertilizar postcosecha (P)
+ciruelo|3,ciruelo,Marzo,3,Postcosecha: fertilizar y regar moderado para acumular reservas
+ciruelo|4,ciruelo,Abril,4,"Postcosecha, riego decreciente. Recolectar frutos caídos (sanidad)"
+ciruelo|5,ciruelo,Mayo,5,Caída de hojas. Preparar entrada a reposo. Limpieza de restos vegetales
+ciruelo|6,ciruelo,Junio,6,Reposo invernal. Riego solo si suelo muy seco
+ciruelo|7,ciruelo,Julio,7,PODA de formación/producción. Aplicar cobre (cloca/monilia) preventivo
+ciruelo|8,ciruelo,Agosto,8,Pre-brotación. Fertilizar N (compost+salitre). Riego c/7-10 días al brotar
+ciruelo|9,ciruelo,Septiembre,9,Floración-cuaja. Riego c/5-7 días. Vigilar heladas tardías y pulgón
+ciruelo|10,ciruelo,Octubre,10,Cuaja-crecimiento. Fertilizar foliar P-K. Control sanitario preventivo
+ciruelo|11,ciruelo,Noviembre,11,Crecimiento activo + RALEO de frutos. Riego c/3-5 días. Fertilizar N-K
+ciruelo|12,ciruelo,Diciembre,12,COSECHA. Llenado de fruto. Riego frecuente. Vigilar mosca de la fruta
+cerezo|1,cerezo,Enero,1,Maduración/cosecha según variedad. Reducir riego 10 días antes de cosechar
+cerezo|2,cerezo,Febrero,2,Cosecha o maduración tardía. Fertilizar postcosecha (P)
+cerezo|3,cerezo,Marzo,3,Postcosecha: fertilizar y regar moderado para acumular reservas
+cerezo|4,cerezo,Abril,4,"Postcosecha, riego decreciente. Recolectar frutos caídos (sanidad)"
+cerezo|5,cerezo,Mayo,5,Caída de hojas. Preparar entrada a reposo. Limpieza de restos vegetales
+cerezo|6,cerezo,Junio,6,Reposo invernal. Riego solo si suelo muy seco
+cerezo|7,cerezo,Julio,7,PODA de formación/producción. Aplicar cobre (cloca/monilia) preventivo
+cerezo|8,cerezo,Agosto,8,Pre-brotación. Fertilizar N (compost+salitre). Riego c/7-10 días al brotar
+cerezo|9,cerezo,Septiembre,9,Floración-cuaja. Riego c/5-7 días. Vigilar heladas tardías y pulgón
+cerezo|10,cerezo,Octubre,10,Cuaja-crecimiento. Fertilizar foliar P-K. Control sanitario preventivo
+cerezo|11,cerezo,Noviembre,11,COSECHA. Crecimiento activo + RALEO de frutos. Riego c/3-5 días. Fertilizar N-K
+cerezo|12,cerezo,Diciembre,12,COSECHA. Llenado de fruto. Riego frecuente. Vigilar mosca de la fruta
+damasco|1,damasco,Enero,1,Maduración/cosecha según variedad. Reducir riego 10 días antes de cosechar
+damasco|2,damasco,Febrero,2,Cosecha o maduración tardía. Fertilizar postcosecha (P)
+damasco|3,damasco,Marzo,3,Postcosecha: fertilizar y regar moderado para acumular reservas
+damasco|4,damasco,Abril,4,"Postcosecha, riego decreciente. Recolectar frutos caídos (sanidad)"
+damasco|5,damasco,Mayo,5,Caída de hojas. Preparar entrada a reposo. Limpieza de restos vegetales
+damasco|6,damasco,Junio,6,Reposo invernal. Riego solo si suelo muy seco
+damasco|7,damasco,Julio,7,PODA de formación/producción. Aplicar cobre (cloca/monilia) preventivo
+damasco|8,damasco,Agosto,8,Pre-brotación. Fertilizar N (compost+salitre). Riego c/7-10 días al brotar
+damasco|9,damasco,Septiembre,9,Floración-cuaja. Riego c/5-7 días. Vigilar heladas tardías y pulgón
+damasco|10,damasco,Octubre,10,Cuaja-crecimiento. Fertilizar foliar P-K. Control sanitario preventivo
+damasco|11,damasco,Noviembre,11,COSECHA. Crecimiento activo + RALEO de frutos. Riego c/3-5 días. Fertilizar N-K
+damasco|12,damasco,Diciembre,12,COSECHA. Llenado de fruto. Riego frecuente. Vigilar mosca de la fruta
+nectarino|1,nectarino,Enero,1,Maduración/cosecha según variedad. Reducir riego 10 días antes de cosechar
+nectarino|2,nectarino,Febrero,2,Cosecha o maduración tardía. Fertilizar postcosecha (P)
+nectarino|3,nectarino,Marzo,3,Postcosecha: fertilizar y regar moderado para acumular reservas
+nectarino|4,nectarino,Abril,4,"Postcosecha, riego decreciente. Recolectar frutos caídos (sanidad)"
+nectarino|5,nectarino,Mayo,5,Caída de hojas. Preparar entrada a reposo. Limpieza de restos vegetales
+nectarino|6,nectarino,Junio,6,Reposo invernal. Riego solo si suelo muy seco
+nectarino|7,nectarino,Julio,7,PODA de formación/producción. Aplicar cobre (cloca/monilia) preventivo
+nectarino|8,nectarino,Agosto,8,Pre-brotación. Fertilizar N (compost+salitre). Riego c/7-10 días al brotar
+nectarino|9,nectarino,Septiembre,9,Floración-cuaja. Riego c/5-7 días. Vigilar heladas tardías y pulgón
+nectarino|10,nectarino,Octubre,10,Cuaja-crecimiento. Fertilizar foliar P-K. Control sanitario preventivo
+nectarino|11,nectarino,Noviembre,11,Crecimiento activo + RALEO de frutos. Riego c/3-5 días. Fertilizar N-K
+nectarino|12,nectarino,Diciembre,12,COSECHA. Llenado de fruto. Riego frecuente. Vigilar mosca de la fruta
+manzano|1,manzano,Enero,1,Llenado de fruto. Riego regular
+manzano|2,manzano,Febrero,2,Cosecha variedades tempranas. Fertilizar postcosecha si ya cosechó
+manzano|3,manzano,Marzo,3,Cosecha variedades medias
+manzano|4,manzano,Abril,4,Cosecha variedades tardías. Fertilizar postcosecha (P)
+manzano|5,manzano,Mayo,5,Caída de hojas. Preparar reposo
+manzano|6,manzano,Junio,6,Reposo invernal. Riego mínimo
+manzano|7,manzano,Julio,7,PODA de formación/producción
+manzano|8,manzano,Agosto,8,Pre-brotación. Fertilizar N. Riego al iniciar brotación
+manzano|9,manzano,Septiembre,9,Floración. Riego c/7 días. Vigilar heladas tardías
+manzano|10,manzano,Octubre,10,Cuaja. Fertilizar P-K foliar. Control carpocapsa (trampas)
+manzano|11,manzano,Noviembre,11,Crecimiento de fruto. Raleo. Riego c/5-7 días
+manzano|12,manzano,Diciembre,12,Crecimiento activo. Riego regular. Vigilar sarna/oidio
+peral|1,peral,Enero,1,Llenado de fruto. Riego regular
+peral|2,peral,Febrero,2,Cosecha variedades tempranas. Fertilizar postcosecha si ya cosechó
+peral|3,peral,Marzo,3,Cosecha variedades medias
+peral|4,peral,Abril,4,Cosecha variedades tardías. Fertilizar postcosecha (P)
+peral|5,peral,Mayo,5,Caída de hojas. Preparar reposo
+peral|6,peral,Junio,6,Reposo invernal. Riego mínimo
+peral|7,peral,Julio,7,PODA de formación/producción
+peral|8,peral,Agosto,8,Pre-brotación. Fertilizar N. Riego al iniciar brotación
+peral|9,peral,Septiembre,9,Floración. Riego c/7 días. Vigilar heladas tardías
+peral|10,peral,Octubre,10,Cuaja. Fertilizar P-K foliar. Control carpocapsa (trampas)
+peral|11,peral,Noviembre,11,Crecimiento de fruto. Raleo. Riego c/5-7 días
+peral|12,peral,Diciembre,12,Crecimiento activo. Riego regular. Vigilar sarna/oidio
+membrillo|1,membrillo,Enero,1,Llenado de fruto. Riego regular
+membrillo|2,membrillo,Febrero,2,Cosecha variedades tempranas. Fertilizar postcosecha si ya cosechó
+membrillo|3,membrillo,Marzo,3,Cosecha variedades medias
+membrillo|4,membrillo,Abril,4,Cosecha variedades tardías. Fertilizar postcosecha (P)
+membrillo|5,membrillo,Mayo,5,COSECHA. Caída de hojas. Preparar reposo
+membrillo|6,membrillo,Junio,6,COSECHA. Reposo invernal. Riego mínimo
+membrillo|7,membrillo,Julio,7,PODA de formación/producción
+membrillo|8,membrillo,Agosto,8,Pre-brotación. Fertilizar N. Riego al iniciar brotación
+membrillo|9,membrillo,Septiembre,9,Floración. Riego c/7 días. Vigilar heladas tardías
+membrillo|10,membrillo,Octubre,10,Cuaja. Fertilizar P-K foliar. Control carpocapsa (trampas)
+membrillo|11,membrillo,Noviembre,11,Crecimiento de fruto. Raleo. Riego c/5-7 días
+membrillo|12,membrillo,Diciembre,12,Crecimiento activo. Riego regular. Vigilar sarna/oidio
+limonero|1,limonero,Enero,1,Riego constante. Vigilar cochinilla/minador. Fruto en desarrollo
+limonero|2,limonero,Febrero,2,Riego constante. Control sanitario preventivo
+limonero|3,limonero,Marzo,3,Fertilizar (postcosecha var. tempranas). Riego regular
+limonero|4,limonero,Abril,4,Poda liviana postcosecha si corresponde. Riego moderado
+limonero|5,limonero,Mayo,5,Cosecha variedades de otoño-invierno según especie
+limonero|6,limonero,Junio,6,Cosecha de invierno. Riego reducido (menor demanda)
+limonero|7,limonero,Julio,7,Cosecha de invierno. Proteger de heladas (cubrir/encalar tronco)
+limonero|8,limonero,Agosto,8,Fin cosecha invierno. Fertilizar pre-floración (N)
+limonero|9,limonero,Septiembre,9,COSECHA. Floración. Riego regular. Polinizadores activos
+limonero|10,limonero,Octubre,10,Cuaja. Fertilizar N-K. Riego regular
+limonero|11,limonero,Noviembre,11,Crecimiento de fruto. Riego regular. Vigilar pulgón/mosca blanca
+limonero|12,limonero,Diciembre,12,Crecimiento de fruto. Riego pleno verano
+naranjo|1,naranjo,Enero,1,Riego constante. Vigilar cochinilla/minador. Fruto en desarrollo
+naranjo|2,naranjo,Febrero,2,Riego constante. Control sanitario preventivo
+naranjo|3,naranjo,Marzo,3,Fertilizar (postcosecha var. tempranas). Riego regular
+naranjo|4,naranjo,Abril,4,Poda liviana postcosecha si corresponde. Riego moderado
+naranjo|5,naranjo,Mayo,5,Cosecha variedades de otoño-invierno según especie
+naranjo|6,naranjo,Junio,6,Cosecha de invierno. Riego reducido (menor demanda)
+naranjo|7,naranjo,Julio,7,Cosecha de invierno. Proteger de heladas (cubrir/encalar tronco)
+naranjo|8,naranjo,Agosto,8,Fin cosecha invierno. Fertilizar pre-floración (N)
+naranjo|9,naranjo,Septiembre,9,COSECHA. Floración. Riego regular. Polinizadores activos
+naranjo|10,naranjo,Octubre,10,COSECHA. Cuaja. Fertilizar N-K. Riego regular
+naranjo|11,naranjo,Noviembre,11,Crecimiento de fruto. Riego regular. Vigilar pulgón/mosca blanca
+naranjo|12,naranjo,Diciembre,12,Crecimiento de fruto. Riego pleno verano
+mandarino|1,mandarino,Enero,1,Riego constante. Vigilar cochinilla/minador. Fruto en desarrollo
+mandarino|2,mandarino,Febrero,2,Riego constante. Control sanitario preventivo
+mandarino|3,mandarino,Marzo,3,Fertilizar (postcosecha var. tempranas). Riego regular
+mandarino|4,mandarino,Abril,4,Poda liviana postcosecha si corresponde. Riego moderado
+mandarino|5,mandarino,Mayo,5,Cosecha variedades de otoño-invierno según especie
+mandarino|6,mandarino,Junio,6,Cosecha de invierno. Riego reducido (menor demanda)
+mandarino|7,mandarino,Julio,7,Cosecha de invierno. Proteger de heladas (cubrir/encalar tronco)
+mandarino|8,mandarino,Agosto,8,Fin cosecha invierno. Fertilizar pre-floración (N)
+mandarino|9,mandarino,Septiembre,9,COSECHA. Floración. Riego regular. Polinizadores activos
+mandarino|10,mandarino,Octubre,10,Cuaja. Fertilizar N-K. Riego regular
+mandarino|11,mandarino,Noviembre,11,Crecimiento de fruto. Riego regular. Vigilar pulgón/mosca blanca
+mandarino|12,mandarino,Diciembre,12,Crecimiento de fruto. Riego pleno verano
+pomelo|1,pomelo,Enero,1,Riego constante. Vigilar cochinilla/minador. Fruto en desarrollo
+pomelo|2,pomelo,Febrero,2,Riego constante. Control sanitario preventivo
+pomelo|3,pomelo,Marzo,3,Fertilizar (postcosecha var. tempranas). Riego regular
+pomelo|4,pomelo,Abril,4,Poda liviana postcosecha si corresponde. Riego moderado
+pomelo|5,pomelo,Mayo,5,Cosecha variedades de otoño-invierno según especie
+pomelo|6,pomelo,Junio,6,Cosecha de invierno. Riego reducido (menor demanda)
+pomelo|7,pomelo,Julio,7,Cosecha de invierno. Proteger de heladas (cubrir/encalar tronco)
+pomelo|8,pomelo,Agosto,8,Fin cosecha invierno. Fertilizar pre-floración (N)
+pomelo|9,pomelo,Septiembre,9,COSECHA. Floración. Riego regular. Polinizadores activos
+pomelo|10,pomelo,Octubre,10,COSECHA. Cuaja. Fertilizar N-K. Riego regular
+pomelo|11,pomelo,Noviembre,11,Crecimiento de fruto. Riego regular. Vigilar pulgón/mosca blanca
+pomelo|12,pomelo,Diciembre,12,Crecimiento de fruto. Riego pleno verano
+nogal|1,nogal,Enero,1,Llenado final. Riego regular
+nogal|2,nogal,Febrero,2,Maduración. Reducir riego antes de cosecha
+nogal|3,nogal,Marzo,3,Cosecha (recolección de nueces/almendras caídas o varejeo)
+nogal|4,nogal,Abril,4,Cosecha y secado al sol. Fertilizar postcosecha
+nogal|5,nogal,Mayo,5,Postcosecha. Preparar entrada a reposo
+nogal|6,nogal,Junio,6,Reposo invernal
+nogal|7,nogal,Julio,7,PODA de formación. Floración temprana en almendro: vigilar heladas
+nogal|8,nogal,Agosto,8,Pre-brotación/floración según especie. Fertilizar N
+nogal|9,nogal,Septiembre,9,Floración-cuaja. Riego regular
+nogal|10,nogal,Octubre,10,Crecimiento de fruto/nuez. Fertilizar K
+nogal|11,nogal,Noviembre,11,Crecimiento activo. Riego regular (alta demanda hídrica)
+nogal|12,nogal,Diciembre,12,Llenado de fruto/nuez. Riego regular
+almendro|1,almendro,Enero,1,Llenado final. Riego regular
+almendro|2,almendro,Febrero,2,Maduración. Reducir riego antes de cosecha
+almendro|3,almendro,Marzo,3,Cosecha (recolección de nueces/almendras caídas o varejeo)
+almendro|4,almendro,Abril,4,Cosecha y secado al sol. Fertilizar postcosecha
+almendro|5,almendro,Mayo,5,Postcosecha. Preparar entrada a reposo
+almendro|6,almendro,Junio,6,Reposo invernal
+almendro|7,almendro,Julio,7,PODA de formación. Floración temprana en almendro: vigilar heladas
+almendro|8,almendro,Agosto,8,Pre-brotación/floración según especie. Fertilizar N
+almendro|9,almendro,Septiembre,9,Floración-cuaja. Riego regular
+almendro|10,almendro,Octubre,10,Crecimiento de fruto/nuez. Fertilizar K
+almendro|11,almendro,Noviembre,11,Crecimiento activo. Riego regular (alta demanda hídrica)
+almendro|12,almendro,Diciembre,12,Llenado de fruto/nuez. Riego regular
+higuera|1,higuera,Enero,1,Cosecha (según especie). Riego regular
+higuera|2,higuera,Febrero,2,Cosecha plena. Riego regular a reducido
+higuera|3,higuera,Marzo,3,Cosecha (según especie). Fertilizar postcosecha
+higuera|4,higuera,Abril,4,Cosecha tardía / postcosecha. Riego reducido
+higuera|5,higuera,Mayo,5,Caída de hojas. Preparar reposo
+higuera|6,higuera,Junio,6,Reposo. Riego mínimo
+higuera|7,higuera,Julio,7,PODA de formación/despunte
+higuera|8,higuera,Agosto,8,Pre-brotación. Fertilizar compost
+higuera|9,higuera,Septiembre,9,Brotación-floración. Riego regular
+higuera|10,higuera,Octubre,10,Cuaja. Riego regular
+higuera|11,higuera,Noviembre,11,Crecimiento de fruto. Riego regular
+higuera|12,higuera,Diciembre,12,Crecimiento/1ª cosecha (higuera: brevas). Riego regular
+granado|1,granado,Enero,1,Cosecha (según especie). Riego regular
+granado|2,granado,Febrero,2,Cosecha plena. Riego regular a reducido
+granado|3,granado,Marzo,3,Cosecha (según especie). Fertilizar postcosecha
+granado|4,granado,Abril,4,Cosecha tardía / postcosecha. Riego reducido
+granado|5,granado,Mayo,5,COSECHA. Caída de hojas. Preparar reposo
+granado|6,granado,Junio,6,Reposo. Riego mínimo
+granado|7,granado,Julio,7,PODA de formación/despunte
+granado|8,granado,Agosto,8,Pre-brotación. Fertilizar compost
+granado|9,granado,Septiembre,9,Brotación-floración. Riego regular
+granado|10,granado,Octubre,10,Cuaja. Riego regular
+granado|11,granado,Noviembre,11,Crecimiento de fruto. Riego regular
+granado|12,granado,Diciembre,12,Crecimiento/1ª cosecha (higuera: brevas). Riego regular
+caqui|1,caqui,Enero,1,Cosecha (según especie). Riego regular
+caqui|2,caqui,Febrero,2,Cosecha plena. Riego regular a reducido
+caqui|3,caqui,Marzo,3,Cosecha (según especie). Fertilizar postcosecha
+caqui|4,caqui,Abril,4,Cosecha tardía / postcosecha. Riego reducido
+caqui|5,caqui,Mayo,5,COSECHA. Caída de hojas. Preparar reposo
+caqui|6,caqui,Junio,6,COSECHA. Reposo. Riego mínimo
+caqui|7,caqui,Julio,7,PODA de formación/despunte
+caqui|8,caqui,Agosto,8,Pre-brotación. Fertilizar compost
+caqui|9,caqui,Septiembre,9,Brotación-floración. Riego regular
+caqui|10,caqui,Octubre,10,Cuaja. Riego regular
+caqui|11,caqui,Noviembre,11,Crecimiento de fruto. Riego regular
+caqui|12,caqui,Diciembre,12,Crecimiento/1ª cosecha (higuera: brevas). Riego regular
+vid|1,vid,Enero,1,Crecimiento/maduración. Riego regular. Cosecha uva de mesa temprana
+vid|2,vid,Febrero,2,COSECHA. Maduración. Riego regular a moderado
+vid|3,vid,Marzo,3,Cosecha uva de mesa zona centro-sur. Riego moderado
+vid|4,vid,Abril,4,Cosecha de kiwi. Fertilizar postcosecha
+vid|5,vid,Mayo,5,"Postcosecha, caída de hojas. Preparar reposo"
+vid|6,vid,Junio,6,Reposo. Revisar estructura (parrón/pérgola)
+vid|7,vid,Julio,7,PODA severa de invierno (madera de renovación)
+vid|8,vid,Agosto,8,Pre-brotación. Fertilizar N. Plantación de nuevos ejemplares
+vid|9,vid,Septiembre,9,Brotación. Riego regular. Amarrar brotes nuevos
+vid|10,vid,Octubre,10,Floración. Riego regular. Vigilar heladas tardías (kiwi)
+vid|11,vid,Noviembre,11,Cuaja-crecimiento. Despunte de brotes vigorosos (vid)
+vid|12,vid,Diciembre,12,"COSECHA. Crecimiento de fruto. Riego frecuente. Deshoje parcial (vid, zona racimos)"
+arandano|1,arandano,Enero,1,Cosecha plena. Cosechar cada 5-7 días
+arandano|2,arandano,Febrero,2,Cosecha zona sur. Fertilizar postcosecha
+arandano|3,arandano,Marzo,3,Fin cosecha zona sur. Fertilizar postcosecha
+arandano|4,arandano,Abril,4,Postcosecha. Aplicar mulch ácido
+arandano|5,arandano,Mayo,5,Caída de hojas. Preparar reposo
+arandano|6,arandano,Junio,6,Reposo. Riego mínimo con agua de bajo pH
+arandano|7,arandano,Julio,7,PODA de renovación de ramas viejas
+arandano|8,arandano,Agosto,8,Pre-brotación. Fertilizar con formulación acidificante (sulfato amonio)
+arandano|9,arandano,Septiembre,9,"Floración. Riego regular, mulch ácido (corteza de pino)"
+arandano|10,arandano,Octubre,10,COSECHA. Cuaja. Riego frecuente (raíz superficial)
+arandano|11,arandano,Noviembre,11,COSECHA. Crecimiento de fruto. Riego frecuente. Vigilar Drosophila suzukii
+arandano|12,arandano,Diciembre,12,Inicio cosecha zona norte-centro. Riego frecuente
+olivo|1,olivo,Enero,1,Riego mínimo (muy resistente a sequía). Vigilar mosca del olivo
+olivo|2,olivo,Febrero,2,Riego mínimo. Control de mosca del olivo (trampas)
+olivo|3,olivo,Marzo,3,Envero: cambio de color de aceitunas
+olivo|4,olivo,Abril,4,Cosecha aceitunas verdes de mesa
+olivo|5,olivo,Mayo,5,Cosecha para aceite. Fertilizar postcosecha
+olivo|6,olivo,Junio,6,Poda liviana postcosecha. Riego mínimo
+olivo|7,olivo,Julio,7,COSECHA. Reposo relativo. Riego mínimo
+olivo|8,olivo,Agosto,8,Fertilizar pre-floración (N)
+olivo|9,olivo,Septiembre,9,Floración. Riego moderado si primavera seca
+olivo|10,olivo,Octubre,10,Cuaja. Riego moderado
+olivo|11,olivo,Noviembre,11,Crecimiento de fruto. Riego moderado
+olivo|12,olivo,Diciembre,12,Crecimiento de fruto. Riego moderado en verano
+frutilla|1,frutilla,Enero,1,Cosecha continua (según fecha de plantación). Riego frecuente
+frutilla|2,frutilla,Febrero,2,Cosecha continua. Eliminar estolones no deseados
+frutilla|3,frutilla,Marzo,3,PLANTACIÓN de otoño. Preparar camellones con mulch
+frutilla|4,frutilla,Abril,4,Establecimiento de plantas nuevas. Riego regular
+frutilla|5,frutilla,Mayo,5,Crecimiento vegetativo. Riego moderado
+frutilla|6,frutilla,Junio,6,Reposo relativo. Riego mínimo. Control de malezas
+frutilla|7,frutilla,Julio,7,Reposo. Fertilizar base (compost)
+frutilla|8,frutilla,Agosto,8,PLANTACIÓN de fin de invierno (alternativa). Riego al plantar
+frutilla|9,frutilla,Septiembre,9,Floración. Riego regular. Proteger de heladas tardías
+frutilla|10,frutilla,Octubre,10,Cuaja e inicio de cosecha. Riego frecuente
+frutilla|11,frutilla,Noviembre,11,Cosecha plena. Riego frecuente (raíz superficial)
+frutilla|12,frutilla,Diciembre,12,Cosecha plena. Cosechar cada 2-3 días. Vigilar Botrytis
+frambuesa|1,frambuesa,Enero,1,Cosecha plena. Riego frecuente. Cosechar cada 2-3 días
+frambuesa|2,frambuesa,Febrero,2,Cosecha (remontantes). Riego frecuente
+frambuesa|3,frambuesa,Marzo,3,Fin de cosecha remontantes. Fertilizar postcosecha
+frambuesa|4,frambuesa,Abril,4,Postcosecha. Riego decreciente
+frambuesa|5,frambuesa,Mayo,5,Caída de hojas. Preparar reposo
+frambuesa|6,frambuesa,Junio,6,Reposo. Riego mínimo
+frambuesa|7,frambuesa,Julio,7,PODA: eliminar cañas que ya fructificaron (bianuales) o cortar a ras (remontantes)
+frambuesa|8,frambuesa,Agosto,8,Pre-brotación. Fertilizar compost + N. Instalar/revisar tutorado
+frambuesa|9,frambuesa,Septiembre,9,Brotación de cañas nuevas. Riego regular
+frambuesa|10,frambuesa,Octubre,10,Floración. Riego c/5-7 días. Vigilar pulgón
+frambuesa|11,frambuesa,Noviembre,11,Cuaja-crecimiento. Riego frecuente (raíz superficial)
+frambuesa|12,frambuesa,Diciembre,12,Inicio cosecha (según variedad). Riego frecuente
+mora|1,mora,Enero,1,Cosecha plena. Riego frecuente. Cosechar cada 2-3 días
+mora|2,mora,Febrero,2,Cosecha (remontantes). Riego frecuente
+mora|3,mora,Marzo,3,Fin de cosecha remontantes. Fertilizar postcosecha
+mora|4,mora,Abril,4,Postcosecha. Riego decreciente
+mora|5,mora,Mayo,5,Caída de hojas. Preparar reposo
+mora|6,mora,Junio,6,Reposo. Riego mínimo
+mora|7,mora,Julio,7,PODA: eliminar cañas que ya fructificaron (bianuales) o cortar a ras (remontantes)
+mora|8,mora,Agosto,8,Pre-brotación. Fertilizar compost + N. Instalar/revisar tutorado
+mora|9,mora,Septiembre,9,Brotación de cañas nuevas. Riego regular
+mora|10,mora,Octubre,10,Floración. Riego c/5-7 días. Vigilar pulgón
+mora|11,mora,Noviembre,11,Cuaja-crecimiento. Riego frecuente (raíz superficial)
+mora|12,mora,Diciembre,12,Inicio cosecha (según variedad). Riego frecuente
+kiwi|1,kiwi,Enero,1,Crecimiento/maduración. Riego regular. Cosecha uva de mesa temprana
+kiwi|2,kiwi,Febrero,2,Maduración. Riego regular a moderado
+kiwi|3,kiwi,Marzo,3,Cosecha uva de mesa zona centro-sur. Riego moderado
+kiwi|4,kiwi,Abril,4,Cosecha de kiwi. Fertilizar postcosecha
+kiwi|5,kiwi,Mayo,5,"Postcosecha, caída de hojas. Preparar reposo"
+kiwi|6,kiwi,Junio,6,Reposo. Revisar estructura (parrón/pérgola)
+kiwi|7,kiwi,Julio,7,PODA severa de invierno (madera de renovación)
+kiwi|8,kiwi,Agosto,8,Pre-brotación. Fertilizar N. Plantación de nuevos ejemplares
+kiwi|9,kiwi,Septiembre,9,Brotación. Riego regular. Amarrar brotes nuevos
+kiwi|10,kiwi,Octubre,10,Floración. Riego regular. Vigilar heladas tardías (kiwi)
+kiwi|11,kiwi,Noviembre,11,Cuaja-crecimiento. Despunte de brotes vigorosos (vid)
+kiwi|12,kiwi,Diciembre,12,"Crecimiento de fruto. Riego frecuente. Deshoje parcial (vid, zona racimos)"
+avellano|1,avellano,Enero,1,Llenado final. Riego regular
+avellano|2,avellano,Febrero,2,Maduración. Reducir riego antes de cosecha
+avellano|3,avellano,Marzo,3,Cosecha (recolección de nueces/almendras caídas o varejeo)
+avellano|4,avellano,Abril,4,Cosecha y secado al sol. Fertilizar postcosecha
+avellano|5,avellano,Mayo,5,Postcosecha. Preparar entrada a reposo
+avellano|6,avellano,Junio,6,Reposo invernal
+avellano|7,avellano,Julio,7,PODA de formación. Floración temprana en almendro: vigilar heladas
+avellano|8,avellano,Agosto,8,Pre-brotación/floración según especie. Fertilizar N
+avellano|9,avellano,Septiembre,9,Floración-cuaja. Riego regular
+avellano|10,avellano,Octubre,10,Crecimiento de fruto/nuez. Fertilizar K
+avellano|11,avellano,Noviembre,11,Crecimiento activo. Riego regular (alta demanda hídrica)
+avellano|12,avellano,Diciembre,12,Llenado de fruto/nuez. Riego regular
+nispero|1,nispero,Enero,1,Riego regular en verano. Vigilar mosca de la fruta
+nispero|2,nispero,Febrero,2,Riego regular. Cuidado en zonas de calor extremo (sombra parcial)
+nispero|3,nispero,Marzo,3,Riego moderado. Iniciar cosecha en especies de otoño
+nispero|4,nispero,Abril,4,Cosecha (según especie). Fertilizar postcosecha
+nispero|5,nispero,Mayo,5,Cosecha tardía. Riego reducido
+nispero|6,nispero,Junio,6,Reposo relativo. Proteger de heladas (cobertor/riego antihelada)
+nispero|7,nispero,Julio,7,Reposo. Poda liviana de formación si corresponde
+nispero|8,nispero,Agosto,8,Fin reposo. Fertilizar N pre-brotación
+nispero|9,nispero,Septiembre,9,COSECHA. PLANTACIÓN de primavera. Floración en algunas especies
+nispero|10,nispero,Octubre,10,COSECHA. Cuaja. Riego regular
+nispero|11,nispero,Noviembre,11,COSECHA. Crecimiento de fruto. Riego regular
+nispero|12,nispero,Diciembre,12,Crecimiento de fruto. Riego regular. Vigilar plagas de verano
+lucuma|1,lucuma,Enero,1,Riego regular en verano. Vigilar mosca de la fruta
+lucuma|2,lucuma,Febrero,2,COSECHA. Riego regular. Cuidado en zonas de calor extremo (sombra parcial)
+lucuma|3,lucuma,Marzo,3,Riego moderado. Iniciar cosecha en especies de otoño
+lucuma|4,lucuma,Abril,4,Cosecha (según especie). Fertilizar postcosecha
+lucuma|5,lucuma,Mayo,5,Cosecha tardía. Riego reducido
+lucuma|6,lucuma,Junio,6,Reposo relativo. Proteger de heladas (cobertor/riego antihelada)
+lucuma|7,lucuma,Julio,7,Reposo. Poda liviana de formación si corresponde
+lucuma|8,lucuma,Agosto,8,Fin reposo. Fertilizar N pre-brotación
+lucuma|9,lucuma,Septiembre,9,PLANTACIÓN de primavera. Floración en algunas especies
+lucuma|10,lucuma,Octubre,10,Cuaja. Riego regular
+lucuma|11,lucuma,Noviembre,11,Crecimiento de fruto. Riego regular
+lucuma|12,lucuma,Diciembre,12,Crecimiento de fruto. Riego regular. Vigilar plagas de verano
+palto|1,palto,Enero,1,COSECHA (variedades tardías/exportación). Riego pleno verano; vigilar golpe de sol en fruto expuesto
+palto|2,palto,Febrero,2,COSECHA (fin temporada principal). Riego regular. Vigilar arañita roja (calor)
+palto|3,palto,Marzo,3,Riego regular. Fertilizar postcosecha (K-Ca). Vigilar chanchito blanco
+palto|4,palto,Abril,4,Riego moderado. Inicio de diferenciación de yemas florales
+palto|5,palto,Mayo,5,Riego reducido. Revisar drenaje antes de lluvias de otoño (crítico para Phytophthora)
+palto|6,palto,Junio,6,Reposo relativo. Riego mínimo. NO regar si el suelo está saturado (riesgo de tristeza del palto)
+palto|7,palto,Julio,7,COSECHA (variedades tempranas). Poda liviana de formación/sanitaria
+palto|8,palto,Agosto,8,Fertilizar pre-floración (N-Ca). Riego moderado según lluvia caída
+palto|9,palto,Septiembre,9,Floración masiva. Riego regular. Proteger de heladas tardías y viento
+palto|10,palto,Octubre,10,"COSECHA (pico exportación). Cuaja baja (~0.1-0.3% de flores, es normal). Riego regular"
+palto|11,palto,Noviembre,11,COSECHA (pico exportación). Crecimiento de fruto. Riego regular
+palto|12,palto,Diciembre,12,COSECHA continúa. Crecimiento de fruto. Riego pleno verano
+chirimoya|1,chirimoya,Enero,1,Riego regular en verano. Vigilar mosca de la fruta
+chirimoya|2,chirimoya,Febrero,2,Riego regular. Cuidado en zonas de calor extremo (sombra parcial)
+chirimoya|3,chirimoya,Marzo,3,Riego moderado. Iniciar cosecha en especies de otoño
+chirimoya|4,chirimoya,Abril,4,Cosecha (según especie). Fertilizar postcosecha
+chirimoya|5,chirimoya,Mayo,5,Cosecha tardía. Riego reducido
+chirimoya|6,chirimoya,Junio,6,COSECHA. Reposo relativo. Proteger de heladas (cobertor/riego antihelada)
+chirimoya|7,chirimoya,Julio,7,Reposo. Poda liviana de formación si corresponde
+chirimoya|8,chirimoya,Agosto,8,Fin reposo. Fertilizar N pre-brotación
+chirimoya|9,chirimoya,Septiembre,9,PLANTACIÓN de primavera. Floración en algunas especies
+chirimoya|10,chirimoya,Octubre,10,Cuaja. Riego regular
+chirimoya|11,chirimoya,Noviembre,11,Crecimiento de fruto. Riego regular
+chirimoya|12,chirimoya,Diciembre,12,Crecimiento de fruto. Riego regular. Vigilar plagas de verano
+papayo_chileno|1,papayo_chileno,Enero,1,Riego regular en verano. Vigilar mosca de la fruta
+papayo_chileno|2,papayo_chileno,Febrero,2,Riego regular. Cuidado en zonas de calor extremo (sombra parcial)
+papayo_chileno|3,papayo_chileno,Marzo,3,Riego moderado. Iniciar cosecha en especies de otoño
+papayo_chileno|4,papayo_chileno,Abril,4,Cosecha (según especie). Fertilizar postcosecha
+papayo_chileno|5,papayo_chileno,Mayo,5,Cosecha tardía. Riego reducido
+papayo_chileno|6,papayo_chileno,Junio,6,Reposo relativo. Proteger de heladas (cobertor/riego antihelada)
+papayo_chileno|7,papayo_chileno,Julio,7,Reposo. Poda liviana de formación si corresponde
+papayo_chileno|8,papayo_chileno,Agosto,8,Fin reposo. Fertilizar N pre-brotación
+papayo_chileno|9,papayo_chileno,Septiembre,9,PLANTACIÓN de primavera. Floración en algunas especies
+papayo_chileno|10,papayo_chileno,Octubre,10,Cuaja. Riego regular
+papayo_chileno|11,papayo_chileno,Noviembre,11,Crecimiento de fruto. Riego regular
+papayo_chileno|12,papayo_chileno,Diciembre,12,Crecimiento de fruto. Riego regular. Vigilar plagas de verano

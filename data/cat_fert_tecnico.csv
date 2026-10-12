@@ -1,0 +1,35 @@
+# cat_fert_tecnico: dominio agronomico importado del Excel maestro.
+# Origen: hoja CAT_FERT_TECNICO del Excel. 29 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+producto_id,tipo,fertilizante,n_pct,p2o5_pct,k2o_pct,cao_pct,mgo_pct,s_pct,reaccion_ph,apto_organico,solubilidad_g_l,para_que_y_cuidados
+urea_granulado,Granulado,Urea,46,,,,,,Acidificante,No,,La fuente de N más concentrada y barata. Se volatiliza si queda en superficie sin incorporar ni regar.
+sulfato_de_amonio_granulado,Granulado,Sulfato de amonio,21,,,,,24,Muy acidificante,No,,N amoniacal + azufre. Es EL nitrogenado del arándano: baja el pH en vez de subirlo.
+salitre_sodico_nitrato_de_sodio_granulado,Granulado,Salitre sódico (nitrato de sodio),16,,,,,,Alcalinizante,Restringido,,N nítrico de acción inmediata. Aporta sodio: evitar en suelos salinos o de riego con agua dura.
+salitre_potasico_nitrato_de_potasio_granulado_granulado,Granulado,Salitre potásico (nitrato de potasio granulado),15,,14,,,,Neutra,No,,Aporta N y K juntos. Muy usado en llenado de fruta. Verificar la riqueza del envase: existen formulaciones 15-0-14 y 13-0-46.
+nitrato_de_calcio_granulado_granulado,Granulado,Nitrato de calcio granulado,15.5,,,26.5,,,Alcalinizante,No,,Única fuente que aporta N y Ca simultáneamente. Higroscópico: guardar sellado.
+superfosfato_triple_sft_granulado,Granulado,Superfosfato triple (SFT),,46,,14,,,Neutra,No,,Fuente concentrada de P. Aplicar localizado en la zona de raíces: el P no se mueve en el suelo.
+superfosfato_normal_granulado,Granulado,Superfosfato normal,,21,,28,,12,Neutra,No,,Menos concentrado que el SFT pero aporta Ca y S. Buena opción de fondo a la plantación.
+fosfato_diamonico_dap_granulado,Granulado,Fosfato diamónico (DAP),18,46,,,,,Acidificante,No,,N + P en un solo producto. No mezclar con cal ni con productos alcalinos: se pierde el N por volatilización.
+fosfato_monoamonico_map_granulado,Granulado,Fosfato monoamónico (MAP),12,52,,,,,Acidificante,No,,Similar al DAP pero más ácido en la zona de aplicación. Mejor que el DAP en suelos alcalinos del norte.
+muriato_de_potasio_kcl_granulado,Granulado,Muriato de potasio (KCl),,,60,,,,Neutra,No,,El potásico más barato. Aporta cloruro: evitar en suelos salinos y en especies sensibles al cloro.
+sulfato_de_potasio_sop_granulado,Granulado,Sulfato de potasio (SOP),,,50,,,18,Neutra,Sí,,K sin cloro + azufre. Más caro que el KCl pero obligatorio en suelos salinos y preferido en fruta de exportación.
+sulpomag_sulfato_doble_k_mg_granulado,Granulado,Sulpomag (sulfato doble K-Mg),,,22,,18,22,Neutra,Sí,,"Aporta K, Mg y S a la vez. La forma más práctica de corregir Mg sin subir el pH."
+sulfato_de_magnesio_kieserita_granulado,Granulado,Sulfato de magnesio (kieserita),,,,,25,20,Neutra,Sí,,Corrección de Mg sin aportar Ca ni subir pH. Apto para arándano.
+yeso_agricola_sulfato_de_calcio_granulado,Granulado,Yeso agrícola (sulfato de calcio),,,,32,,18,Neutra,Sí,,Aporta Ca y S SIN subir el pH. Es la fuente de Ca correcta en suelos ácidos y la única aceptable cerca de arándano.
+cal_dolomitica_granulado,Granulado,Cal dolomítica,,,,30,20,,Muy alcalinizante,Sí,,Enmienda para subir pH y aportar Ca y Mg en suelos ácidos del sur. NUNCA en arándano: lo mata.
+roca_fosforica_granulado,Granulado,Roca fosfórica,,29,,35,,,Neutra,Sí,,"P de liberación lenta, solo eficaz en suelos ácidos (pH bajo 6). Fuente de P autorizada en orgánico."
+guano_rojo_fosfato_natural_granulado,Granulado,Guano rojo (fosfato natural),1,10,1,25,0.5,,Neutra,Sí,,"Fosforita chilena. Liberación lenta, aporta también Ca y micros. Verificar la riqueza del lote."
+compost_maduro_referencial_granulado,Granulado,Compost maduro (referencial),1.2,0.6,1,2,0.4,0.2,Variable,Sí,,Riqueza referencial de compost de guano vacuno maduro. SIEMPRE pedir análisis del lote: varía mucho.
+nitrato_de_potasio_soluble_ultrasol_potassium_similar_soluble,Soluble,Nitrato de potasio soluble (Ultrasol Potassium / similar),13,,46,,,,,,316,El caballo de batalla del fertirriego en llenado de fruta. Solubilidad alta y sin residuo.
+nitrato_de_calcio_soluble_ultrasol_calcium_similar_soluble,Soluble,Nitrato de calcio soluble (Ultrasol Calcium / similar),15.5,,,26.5,,,,,1200,N + Ca. NUNCA mezclar en el mismo estanque con sulfatos ni fosfatos: precipita yeso y tapa los goteros.
+nitrato_de_magnesio_soluble_ultrasol_magnit_similar_soluble,Soluble,Nitrato de magnesio soluble (Ultrasol Magnit / similar),11.5,,,,15,,,,700,"Corrección rápida de Mg vía riego, sin aportar sulfato."
+fosfato_monoamonico_soluble_map_soluble_soluble,Soluble,Fosfato monoamónico soluble (MAP soluble),12,61,,,,,,,370,"Fuente soluble de P. Acidifica la solución, lo que ayuda a mantener limpia la red de goteo."
+acido_fosforico_85_soluble,Soluble,Ácido fosfórico 85%,,61,,,,,,,Muy alta,"P + limpieza de la línea de riego. PELIGROSO: siempre ácido sobre agua, nunca al revés. Usar EPP."
+sulfato_de_potasio_soluble_soluble,Soluble,Sulfato de potasio soluble,,,50,,,18,,,110,K sin cloro. Solubilidad limitada: disolver con agitación y agua templada.
+sulfato_de_magnesio_heptahidratado_sal_de_epsom_soluble,Soluble,Sulfato de magnesio heptahidratado (sal de Epsom),,,,,16,13,,,710,Mg + S soluble y barato. Apto para arándano. No mezclar con nitrato de calcio.
+urea_soluble,Soluble,Urea,46,,,,,,,,1080,N más concentrado y económico para fertirriego. No acidifica la línea.
+sulfato_de_amonio_soluble_soluble,Soluble,Sulfato de amonio soluble,21,,,,,24,,,750,N amoniacal acidificante. Fuente preferente en arándano vía fertirriego.
+nitrato_de_amonio_soluble,Soluble,Nitrato de amonio,34,,,,,,,,Muy alta,50% nítrico y 50% amoniacal. Compra regulada en Chile: requiere autorización.
+ultrasol_multiproposito_npk_soluble_mg_y_micros_soluble,Soluble,Ultrasol Multipropósito (NPK soluble + Mg y micros),18,18,18,,2,,,,400,Formulación equilibrada para huertos pequeños y macetas: resuelve N-P-K en un solo producto.

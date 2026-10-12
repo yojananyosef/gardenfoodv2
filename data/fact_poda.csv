@@ -1,0 +1,110 @@
+# fact_poda: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_PODA del Excel. 104 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+especie_id,n,tipo_poda,cuando,que_cortar,herramienta,por_que,error_frecuente,fuente
+duraznero,1,Poda de formación,Año 1-3 (junio-julio),Dejar 3-4 ramas principales en forma de copa abierta,Tijera de podar y serrucho,Forma el esqueleto del árbol para toda su vida,Dejar muchas ramas centrales (la copa debe ser hueca para que entre luz),Base 20 especies
+duraznero,2,Poda de invierno (producción),Junio - Julio (sin hojas),"Cortar ramas que cruzan, secas o muy verticales. Acortar ramas largas a 50 cm",Tijera de podar y serrucho,"El durazno produce en madera del año anterior, debe renovarse cada año",Podar muy poco (el árbol no producirá) o demasiado (no habrá fruta el próximo año),Base 20 especies
+duraznero,3,Poda en verde,Noviembre,Sacar chupones (ramas verticales muy vigorosas) sin frutos,A mano o tijera pequeña,Mejora la entrada de luz y aire al centro del árbol,Olvidar esta poda: el árbol queda muy denso y enferma más fácil,Base 20 especies
+duraznero,4,Raleo de frutos,Noviembre (cuando frutos miden 2 cm),"Sacar frutos pegados, dejar uno cada 15 cm en la rama",A mano,"Frutos más grandes, dulces y el árbol no se cansa",No ralear: muchos frutos pequeños y el árbol descansa al año siguiente,Base 20 especies
+duraznero,5,Poda sanitaria,Cualquier época,"Cortar ramas con goma, enfermas o quebradas",Tijera desinfectada con alcohol,Evita que la enfermedad pase a ramas sanas,No desinfectar la tijera entre cortes contagia más el árbol,Base 20 especies
+ciruelo,1,Formación,Año 1-3 invierno,3-4 ramas en copa abierta o eje central,Tijera y serrucho,Da estructura toda la vida,Dejar centro lleno: queda oscuro,Base 20 especies
+ciruelo,2,Poda invierno,Junio-Julio,"Cortar ramas secas, cruzadas, vigorosas verticales",Tijera y serrucho,Renovar madera productiva,Podar excesivamente: pierde producción,Base 20 especies
+ciruelo,3,Poda verde,Noviembre-Diciembre,Sacar chupones (ramas vigorosas verticales),A mano o tijera,Más luz al fruto,Olvidar: árbol denso y enfermo,Base 20 especies
+ciruelo,4,Raleo frutos,Noviembre (frutos 2 cm),Dejar uno cada 8-10 cm,A mano,Mejor calidad,No ralear: frutos chicos,Base 20 especies
+ciruelo,5,Sanitaria,Cuando aparezca,Cortar afectadas y quemar,Tijera desinfectada,Evita contagio,Sin desinfectar: contagia más,Base 20 especies
+cerezo,1,Formación,Año 1-4 invierno,Eje central modificado o copa abierta,Tijera y serrucho,Estructura definitiva,Cerezo no perdona errores de formación,Base 20 especies
+cerezo,2,Poda invierno,Junio-Agosto (días secos),"POCO: ramas secas, cruzadas, muy verticales",Tijera y serrucho,"Cerezo produce en madera vieja, no podar mucho",Podar mucho: producción cae años,Base 20 especies
+cerezo,3,Poda verde post-cosecha,Diciembre-Enero,"Sacar chupones, abrir copa",Tijera,Mejor método para cerezo: poda en verano,No podar invierno con humedad: cancrosis,Base 20 especies
+cerezo,4,Raleo de frutos,Generalmente NO,—,—,Cerezo se autorrralea,Solo ralear si la rama está doblada,Base 20 especies
+cerezo,5,Sanitaria,Cuando aparezca,Cortar y quemar afectadas,Tijera desinfectada,Evita contagio,CRÍTICO sellar cortes con pasta cicatrizante,Base 20 especies
+damasco,1,Formación,Año 1-3 invierno,Copa abierta o eje central,Tijera serrucho,Estructura,No dejar centro lleno,Base 20 especies
+damasco,2,Invierno,Julio (días secos),"Sacar secas, cruzadas, viejas. Renovar madera productiva",Tijera serrucho,Damasco produce en ramas de 2-3 años,Mucha poda baja producción,Base 20 especies
+damasco,3,Verde,Noviembre,Chupones (verticales sin fruto),A mano,Más luz,Olvidar densifica copa,Base 20 especies
+damasco,4,Raleo,Octubre (frutos 2 cm),Uno cada 8-10 cm,A mano,Mejor calidad,No ralear: chico,Base 20 especies
+damasco,5,Sanitaria,Cuando aparezca,Cortar y quemar,Desinfectada,Evita contagio,Sellar cortes obligatorio,Base 20 especies
+nectarino,1,Formación,Año 1-3 invierno,Copa abierta 3-4 ramas principales,Tijera serrucho,Estructura,Centro debe ser hueco,Base 20 especies
+nectarino,2,Invierno,Junio-Julio,"Renovar madera, cortar largas a 50 cm",Tijera serrucho,Nectarino produce en madera año anterior,Podar mucho o poco son errores,Base 20 especies
+nectarino,3,Verde,Noviembre,Chupones verticales sin fruto,A mano,Más luz,Densifica si no se hace,Base 20 especies
+nectarino,4,Raleo,Noviembre (frutos 2 cm),Uno cada 15 cm,A mano,Mejor tamaño,Sin raleo: chicos,Base 20 especies
+nectarino,5,Sanitaria,Cuando aparezca,Cortar y quemar,Desinfectada,Contagio,Sellar cortes,Base 20 especies
+manzano,1,Formación,Año 1-4 invierno,Eje central piramidal con ramas en espiral,Tijera serrucho,Estructura,Manzano necesita poda formación cuidadosa,Base 20 especies
+manzano,2,Invierno,Junio-Agosto,"Eliminar verticales, ramas viejas no productivas, cruzadas",Tijera serrucho,Renovar madera y dar luz,No podar mucho: árbol se 'desboca' en chupones,Base 20 especies
+manzano,3,Verde,Noviembre-Diciembre,"Sacar chupones, despuntar ramas largas",A mano-tijera,Más luz al fruto,Esencial para color,Base 20 especies
+manzano,4,Raleo frutos,Noviembre (frutos 1.5 cm),"Dejar 1 manzana por dardo, separadas 15 cm",A mano,Calibre y calidad,Sin raleo: chicas y descansa al año,Base 20 especies
+manzano,5,Sanitaria,Cuando aparezca,Cortar y quemar,Desinfectada,Contagio,Sellar cortes,Base 20 especies
+peral,1,Formación,Año 1-5 invierno,Eje central piramidal alto,Tijera serrucho,Estructura,Peral más vertical que manzano,Base 20 especies
+peral,2,Invierno,Junio-Agosto,"Sacar verticales, viejas, cruzadas. Despuntar ramas largas",Tijera serrucho,Renovar madera,Mucha poda: chupones,Base 20 especies
+peral,3,Verde,Noviembre,Chupones verticales sin fruto,A mano-tijera,Luz,Densifica si no se hace,Base 20 especies
+peral,4,Raleo,Noviembre (frutos 2 cm),"Dejar 1 fruto por dardo, separados 15 cm",A mano,Calibre,Sin raleo: chicas,Base 20 especies
+peral,5,Sanitaria,Cuando aparezca,"Cortar 30 cm más abajo, quemar",Desinfectada,Especial fuego bacteriano,CRÍTICO desinfectar,Base 20 especies
+membrillo,1,Formación,Año 1-3 invierno,Copa abierta multitronco,Tijera serrucho,Membrillo crece tipo arbusto,Dejarlo libre,Base 20 especies
+membrillo,2,Invierno,Junio-Julio,"Cortar secas, vigorosas, viejas",Tijera serrucho,Renovar,Tolera bien la poda,Base 20 especies
+membrillo,3,Sanitaria,Cuando aparezca,Quemar,Desinfectada,Contagio,Sellar,Base 20 especies
+limonero,1,Formación,Año 1-3 (primavera/otoño),Copa redondeada o multitronco,Tijera,Estructura suelta,Cítrico tolera mucha forma,Base 20 especies
+limonero,2,Limpieza,Septiembre o Marzo,"Sacar secas, cruzadas, chupones internos",Tijera serrucho,Mantención,Cítrico no necesita poda fuerte,Base 20 especies
+limonero,3,Sanitaria,Cuando aparezca,Cortar afectadas y quemar,Desinfectada,Contagio,Sellar cortes,Base 20 especies
+naranjo,1,Formación,Año 1-3,Copa redondeada,Tijera,Estructura,Tolera,Base 20 especies
+naranjo,2,Limpieza,Septiembre o Marzo,"Secas, chupones internos",Tijera serrucho,Mantención,No necesita mucha,Base 20 especies
+naranjo,3,Sanitaria,Cuando aparezca,Cortar y quemar,Desinfectada,Contagio,Sellar,Base 20 especies
+mandarino,1,Formación,Año 1-3,Copa redondeada baja,Tijera,Estructura,Tolera,Base 20 especies
+mandarino,2,Limpieza,Septiembre o Marzo,"Secas, chupones",Tijera serrucho,Mantención,Poco,Base 20 especies
+mandarino,3,Sanitaria,Cuando,Cortar y quemar,Desinfectada,Contagio,Sellar,Base 20 especies
+pomelo,1,Formación,Año 1-4,Copa redondeada,Tijera serrucho,Estructura,Tolera,Base 20 especies
+pomelo,2,Limpieza,Septiembre o Marzo,"Secas, chupones, ramas bajas",Tijera serrucho,Mantención,Es grande,Base 20 especies
+pomelo,3,Sanitaria,Cuando,Cortar y quemar,Desinfectada,Contagio,Sellar,Base 20 especies
+nogal,1,Formación,Año 1-5 invierno,Eje central con pisos de ramas separados 80 cm,Serrucho,Estructura de vida,No cortar el eje central hasta alcanzar altura deseada,Base 20 especies
+nogal,2,Invierno,Julio-Agosto,"Sacar ramas secas, cruzadas, rotas. Aclarar copa",Serrucho (ramas gruesas),Luz y ventilación,No cortar ramas gruesas principales,Base 20 especies
+nogal,3,Verde,Diciembre,Chupones verticales vigorosos,A mano o sierra,Luz y aire,Cuidar: nogal cicatriza lento,Base 20 especies
+nogal,4,Sanitaria,Cuando aparezca,Cortar y quemar ramas enfermas,Desinfectada,Contagio,"SELLAR cortes, nogal sangra mucho",Base 20 especies
+almendro,1,Formación,Año 1-3 invierno,Copa abierta 3-4 ramas,Tijera serrucho,Estructura,Centro abierto,Base 20 especies
+almendro,2,Invierno,Junio-Julio,"Secas, cruzadas, renovar madera vieja",Tijera serrucho,Producción,No podar mucho,Base 20 especies
+almendro,3,Verde,Noviembre,Chupones verticales,A mano,Luz,Densifica si no,Base 20 especies
+almendro,4,Sanitaria,Cuando,Cortar y quemar,Desinfectada,Contagio,Sellar cortes,Base 20 especies
+higuera,1,Formación,Año 1-2 invierno,Multitronco o copa abierta baja,Tijera serrucho,Higuera crece arbustiva,Dejar crecer libre,Base 20 especies
+higuera,2,Invierno,Julio,"Sacar secas, cruzadas, centro denso",Tijera serrucho,Mantención,Tolera poda fuerte,Base 20 especies
+higuera,3,Verde,Noviembre,Despuntar ramas largas,A mano,Más higos,Despuntar = pellizcar la punta,Base 20 especies
+higuera,4,Sanitaria,Cuando,Cortar afectadas,Desinfectada,Contagio,Latex irrita piel: usar guantes,Base 20 especies
+granado,1,Formación,Año 1-3,Multitronco (3-5 troncos) o arbolito eje,Tijera serrucho,Estructura,Granado quiere ser arbusto,Base 20 especies
+granado,2,Invierno,Julio-Agosto,"Sacar hijuelos base, secas, cruzadas",Tijera serrucho,Mantención,Sacar TODOS los hijuelos de la base,Base 20 especies
+granado,3,Verde,Noviembre,Chupones,A mano,Luz,Ventilación,Base 20 especies
+granado,4,Sanitaria,Cuando,Cortar,Desinfectada,Contagio,Sellar,Base 20 especies
+caqui,1,Formación,Año 1-4 invierno,Eje central modificado o copa abierta,Tijera serrucho,Estructura,Madera de caqui es FRÁGIL,Base 20 especies
+caqui,2,Invierno,Julio,"Secas, cruzadas, aclarar. Caqui tiene madera frágil",Tijera serrucho,Mantención,Ramas se quiebran con mucho peso: ralear,Base 20 especies
+caqui,3,Raleo,Diciembre (si hay mucho fruto),Dejar 2-3 frutos por rama según grosor,A mano,Evitar quiebre y calidad,Ramas se quiebran,Base 20 especies
+caqui,4,Sanitaria,Cuando,Cortar,Desinfectada,Contagio,Caqui cicatriza bien,Base 20 especies
+vid,1,Formación,Año 1-3 invierno,"Formar tronco + brazos en estructura (parrón, espaldera)",Tijera,Estructura definitiva,Año 1: un brote vertical. Año 2: brazos. Año 3: producción,Base 20 especies
+vid,2,Poda invierno (la más importante),Julio (sin hojas),Podar cargadores a 6-10 yemas y pitones a 2 yemas,Tijera de podar,La vid SOLO produce en brotes del año que nacen de madera del año anterior,No podar = selva sin fruta. Podar mal = poca o mucha fruta,Base 20 especies
+vid,3,Desbrote,Octubre (brotes 15-20 cm),"Sacar brotes dobles, mal ubicados, sin racimo",A mano,Energía a los racimos,Dejar solo 1 brote por yema,Base 20 especies
+vid,4,Despunte,Noviembre-Diciembre,Cortar punta del brote 3-4 hojas después del último racimo,Tijera,Concentra azúcar en racimos,No cortar MUY corto: necesita hojas,Base 20 especies
+vid,5,Deshoje,Enero-Febrero,Sacar 2-3 hojas alrededor de cada racimo,A mano,"Luz, color, ventilación contra Botrytis",No sacar todas: quemadura solar,Base 20 especies
+vid,6,Raleo racimos,Noviembre (si hay muchos),Dejar 1 racimo por brote o máximo 2 en brotes vigorosos,Tijera,Calidad sobre cantidad,"Muchos racimos = uva chica, sin sabor",Base 20 especies
+arandano,1,Formación,Año 1-3 invierno,Sacar flores año 1-2 para crecer. Seleccionar 5-6 cañas principales,Tijera,Producir desde año 3,No dejarlo producir joven: se agota,Base 20 especies
+arandano,2,Invierno (renovación),Julio,"Sacar cañas viejas (>4 años, gruesas, gris), dejar jóvenes (rojizas)",Tijera,Arándano produce en madera de 2-3 años,Renovar 1/4 de cañas cada año,Base 20 especies
+arandano,3,Verde,Noviembre,"Sacar brotes débiles, cruzados internos",A mano,Ventilación,Densifica si no,Base 20 especies
+arandano,4,Sanitaria,Cuando,Cortar,Desinfectada,Contagio,Arándano es resistente,Base 20 especies
+olivo,1,Formación,Año 1-5,Copa tipo vaso con 3-4 ramas principales,Tijera serrucho,Estructura de vida,Olivo crece lento: paciencia,Base 20 especies
+olivo,2,Producción,Julio-Agosto,"Aclarar copa: más luz interior. Sacar chupones, secas, cruzadas",Tijera serrucho,Olivo produce en ramas del año anterior con luz,No podar mucho un año: descansa al siguiente (vecería),Base 20 especies
+olivo,3,Rejuvenecimiento,Cada 4-5 años,"Cortar ramas viejas, renovar con brotes nuevos",Sierra,Renovar copa,Olivo rebrota de madera vieja,Base 20 especies
+olivo,4,Sanitaria,Cuando,Cortar y quemar,Desinfectada,Contagio,Sellar cortes,Base 20 especies
+frutilla,1,Deshije de estolones,Primavera-verano (continuo),Cortar estolones no deseados dejando solo los necesarios para renovar el cultivo,Tijera fina,Cada estolón consume azúcar que podría ir al fruto: dejarlos todos reduce el tamaño de la cosecha,Dejar todos los estolones y sacrificar el rendimiento de fruta,Base de Conocimiento
+frutilla,2,Limpieza foliar,Después de cada cosecha,"Retirar hojas viejas, secas o enfermas y frutos residuales",Tijera,Reduce la humedad interna de la planta y la fuente de esporas de Botrytis,Dejar restos vegetales sobre el camellón,Base de Conocimiento
+frambuesa,1,Poda de cañas (no remontante),Jun-Jul,Cortar a ras del suelo las cañas que ya fructificaron (bianuales),Tijera de podar,La caña que fructificó no vuelve a producir: dejarla compite por luz y nutrientes con la nueva,Dejar cañas viejas mezcladas con las nuevas,Base de Conocimiento
+frambuesa,2,"Poda de renovación (remontante, ej. Heritage)",Jun-Jul,Corte total a ras de suelo de todas las cañas,Tijera de podar,Las variedades remontantes fructifican en caña del mismo año: cortar todo simplifica el manejo,"Podar solo parcialmente, mezclando ciclos",Base de Conocimiento
+frambuesa,3,Tutorado,Ago-Sep,Instalar o revisar espaldera de 1.5-1.8 m de altura,Postes y alambre,Las cañas cargadas de fruto se doblan y quiebran sin soporte; el tutor mejora la ventilación,"Dejar las cañas sin tutor, tendidas en el suelo",Base de Conocimiento
+mora,1,Contención de vigor,Todo el año (activa),Cortar brotes que escapan de la espaldera o invaden espacios vecinos,Tijera de podar,Es la especie más vigorosa del catálogo: sin contención invade rápidamente el huerto,No contener el crecimiento: la planta se vuelve inmanejable en 1-2 temporadas,Base de Conocimiento
+mora,2,Poda de renovación,Jun-Jul,"Cortar a ras las cañas que ya fructificaron, dejar solo cañas nuevas del año",Tijera + serrucho,Fructifica en caña del año anterior: renovar mantiene la producción alta,Dejar acumular cañas viejas improductivas,Base de Conocimiento
+kiwi,1,Formación (años 1-3),Jun-Jul,Conducir un tronco líder hasta la estructura y formar 2 brazos principales,Tijera + serrucho,El kiwi necesita una estructura sólida (parrón/pérgola) para sostener su enorme vigor,Dejar crecer sin conducción: se vuelve una maraña improductiva,Base de Conocimiento
+kiwi,2,Poda de invierno,Jun-Jul,"Cortar madera que fructificó, dejando varas de reemplazo cada 25-30 cm",Tijera + serrucho,Fructifica en madera del año anterior: sin renovación anual la producción cae,Podar muy poco: exceso de madera vieja improductiva,Base de Conocimiento
+kiwi,3,Poda verde,Dic-Ene,Despuntar brotes vigorosos que tapan la fruta y quitar exceso de guías,A mano,"Mejora entrada de luz al fruto, aumentando calidad y coloración de la pulpa",Copa muy densa favorece Botrytis y Psa,Base de Conocimiento
+avellano,1,Formación,Jun-Jul,Conducir 4-6 varas principales en forma de copa abierta o mata,Tijera + serrucho,"Forma abierta favorece la entrada de luz, necesaria para un buen llenado de fruto",Dejar crecer como matorral cerrado sin estructura,Base de Conocimiento
+avellano,2,Poda de producción,Jun-Jul,Eliminar chupones de la base y ramas cruzadas o secas,Tijera,Los chupones basales consumen recursos sin aportar producción,Dejar acumular chupones año tras año,Base de Conocimiento
+nispero,1,Formación y despunte,Después de cosecha (nov-dic),Despuntar brotes para mantener tamaño manejable; aclarar centro de la copa,Tijera de podar,Especie de crecimiento denso: aclarar mejora la ventilación y reduce hongos foliares,Podar en invierno y cortar la floración en curso,Base de Conocimiento
+lucuma,1,Formación,Primeros 2-3 años,Formar estructura de copa abierta con 3-4 ramas principales,Tijera + serrucho,Árbol grande: una buena estructura temprana facilita el manejo y la cosecha futura,No formar el árbol: crece desordenado y de difícil cosecha,Base de Conocimiento
+lucuma,2,Poda sanitaria,Postcosecha,"Eliminar ramas secas, cruzadas o dañadas",Tijera de podar,"Mantiene la copa ventilada, reduciendo pudrición de raíz asociada a exceso de humedad interna",Descuidar la ventilación de la copa,Base de Conocimiento
+palto,1,Formación,Primeros 2-3 años,Formar un solo eje central con ramas laterales bien distribuidas,Tijera + serrucho,Una estructura equilibrada reduce el riesgo de vuelco: la raíz superficial no ancla bien,Dejar crecer sin estructura en un sitio ventoso,Base de Conocimiento
+palto,2,Poda sanitaria y de altura,Postcosecha (jul-ago según variedad),Eliminar ramas secas o enfermas y controlar la altura para facilitar cosecha,Tijera + serrucho,Reduce zonas de humedad interna donde prospera la antracnosis de poscosecha,Podar en época de floración: se pierde producción del año,Base de Conocimiento
+chirimoya,1,Formación y aclareo,Ago (antes de brotación),Formar copa baja y abierta; aclarar ramas internas,Tijera + serrucho,La polinización suele hacerse a mano: una copa baja y abierta facilita el trabajo,"Dejar un árbol muy alto y denso, imposible de polinizar manualmente",Base de Conocimiento
+chirimoya,2,Polinización asistida,Oct-Nov (floración),"Trasladar polen de flores masculinas a femeninas con un pincel fino, en las horas de la mañana",Pincel suave,"La flor tiene fases no simultáneas y pocos polinizadores naturales: sin ayuda, el cuajado es muy bajo",Confiar solo en polinización natural: el rendimiento cae drásticamente,Base de Conocimiento
+papayo_chileno,1,Despunte de formación,Primer año,Despuntar el tallo principal para inducir ramificación baja,Tijera,"Sin despunte crece muy alta y de tallo único, dificultando la cosecha",Dejar crecer sin ramificar: planta alta y frágil ante el viento,Base de Conocimiento

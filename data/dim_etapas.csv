@@ -1,0 +1,14 @@
+# dim_etapas: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_ETAPAS del Excel. 8 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+codigo_etapa,lo_que_ve,kc_referencial
+CAL,Prefiero que lo decida el calendario del mes,—
+BRO,Yemas hinchadas o brotes nuevos saliendo,0.45
+FLO,En flor,0.55
+CUA,"Frutos recién cuajados, del tamaño de una arveja",0.7
+CRE,"Frutos creciendo, todavía verdes y duros",0.9
+MAD,"Frutos tomando color, madurando o en cosecha",0.85
+POS,"Ya cosechó, el árbol sigue con hojas",0.65
+REP,"Sin hojas, o parado sin crecer (invierno)",0.2

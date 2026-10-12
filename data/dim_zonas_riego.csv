@@ -1,0 +1,17 @@
+# dim_zonas_riego: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_ZONAS_RIEGO del Excel. 11 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+zona_riego_id,zona_riego,donde_queda,eto_verano_mm_dia,factor_clima,desfase_meses,que_significa,eto_verano_min,eto_verano_max
+N1,Norte y valles transversales,"Copiapó, Vallenar, Ovalle, Illapel, interior de Coquimbo",6 a 7,1.3,-1,Acá todo pasa antes: la flor puede adelantarse entre tres y cuatro semanas respecto del valle central.,6,7
+N2,Costa norte,"La Serena, Tongoy, Los Vilos, Papudo",4 a 5,0.95,0,La camanchaca y el mar bajan la demanda pese a la latitud. La fenología se adelanta una o dos semanas.,4,5
+C1,Valle central interior,"Aconcagua, Santiago, Melipilla, Rancagua, San Fernando, Curicó","6 a 6,5",1,0,Es la zona de referencia de la base de datos: acá el calendario original calza tal cual.,6,6.5
+C2,Costa central,"Casablanca, Litoral de Valparaíso y O'Higgins, Pichilemu","4 a 4,5",0.78,0,Menos calor y más humedad: el mismo árbol pide bastante menos agua que a 60 km hacia el interior.,4,4.5
+S1,Centro sur,"Talca, Linares, Cauquenes, Chillán, Ñuble, Los Ángeles","5 a 5,5",0.88,0,"La fenología va una a dos semanas más atrás que en Santiago: si el calendario no calza, confíe en lo que ve en el árbol.",5,5.5
+S2,Sur,"Temuco, Villarrica, Valdivia, Osorno, Puerto Montt","4 a 4,8",0.72,1,"Acá todo pasa después: la flor se atrasa entre tres y cuatro semanas. Además llueve en verano, así que muchas veces el test de la bola le va a decir que no riegue.",4,4.8
+P1,Precordillera y zonas de altura,"Curacautín, Las Trancas, secano de altura, valles cordilleranos","4,5 a 5,5",0.9,1,El frío atrasa la brotación y acorta la temporada. Cuide más las heladas tardías que el riego.,4.5,5.5
+V1,"Verano muy caluroso y seco, sobre 32 °C, prácticamente sin lluvia",Para quien no conoce su zona o está fuera de Chile,—,1.3,0,Se usa solo la demanda de agua descrita; el calendario queda en el del valle central.,,
+V2,"Verano caluroso y seco, entre 28 y 32 °C",Para quien no conoce su zona o está fuera de Chile,—,1,0,Se usa solo la demanda de agua descrita; el calendario queda en el del valle central.,,
+V3,"Verano templado, entre 24 y 28 °C, con alguna lluvia",Para quien no conoce su zona o está fuera de Chile,—,0.88,0,Se usa solo la demanda de agua descrita; el calendario queda en el del valle central.,,
+V4,"Verano fresco, bajo 24 °C, o con neblina de mar casi todos los días",Para quien no conoce su zona o está fuera de Chile,—,0.75,0,Se usa solo la demanda de agua descrita; el calendario queda en el del valle central.,,

@@ -1,0 +1,17 @@
+# cat_fert_casero: dominio agronomico importado del Excel maestro.
+# Origen: hoja CAT_FERT_CASERO del Excel. 11 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+producto,etiqueta,n_pct,p_pct,k_pct,calcio_pct,magnesio_pct,g_por_cucharada,se_reparte,como_pedirlo_y_cuidar
+Urea,46-0-0,46,,,,,11,"Sí, cada vez","Se vende en cualquier agrícola, en sacos de 1, 5 o 25 kg. Riega inmediatamente después de aplicarla. Si queda seca en la superficie, se evapora y pierdes la mitad."
+Sulfato de amonio,21-0-0 con azufre,21,,,,,14,"Sí, cada vez","Pídelo por su nombre. Es el nitrogenado de los arándanos. Acidifica el suelo, que es justo lo que el arándano necesita. En otras especies úsalo con moderación."
+Nitrato de calcio,"15,5-0-0 con 26,5% de calcio",15.5,,,26.5,,14,"Sí, cada vez",Se vende granulado o soluble. Cualquiera sirve. Guárdalo bien cerrado: absorbe humedad del aire y se apelmaza.
+Superfosfato triple,0-46-0,,46,,14,,15,Una vez al año,"En la agrícola pídelo como SFT o superfosfato triple. Entiérralo unos centímetros. El fósforo no se mueve en el suelo: si lo dejas arriba, la raíz nunca lo alcanza."
+Sulfato de potasio,0-0-50 con azufre,,,50,,,16,"Sí, cada vez","También lo verás como SOP o sulfato de potasa. Más caro que el muriato, pero no aporta cloro y da mejor sabor a la fruta."
+Sulpomag,0-0-22 con 18% de magnesio,,,22,,18,15,"Sí, cada vez","También se vende como sulfato doble de potasio y magnesio, o K-Mag. Resuelve potasio y magnesio en un solo producto, sin tocar el pH."
+Sulfato de magnesio,25% de magnesio,,,,,25,13,"Sí, cada vez","En farmacia se llama sal de Epsom; en agrícola, kieserita o sulfato de magnesio. Apto para arándano: aporta magnesio sin subir el pH."
+Yeso agrícola,32% de calcio con azufre,,,,32,,13,Una vez al año,"Pide yeso agrícola, no yeso de construcción. Aporta calcio sin subir el pH. Es la única forma de darle calcio a un arándano."
+Nitrato de potasio,13-0-46,13,,46,,,14,"Sí, cada vez",También se vende como salitre potásico soluble. Revisa la etiqueta: existe una versión 15-0-14 más débil. Se disuelve muy bien. Aporta potasio y algo de nitrógeno a la vez.
+Fosfato monoamónico soluble,12-61-0,12,61,,,,14,"Sí, cada vez","Pídelo como MAP soluble. Acidifica el agua de riego, lo que ayuda a mantener limpios los goteros."
+Sal de Epsom,16% de magnesio,,,,,16,12,"Sí, cada vez","En farmacia como sal de Epsom, o en agrícola como sulfato de magnesio heptahidratado. Nunca la mezcles en el mismo balde con nitrato de calcio: se forma una sal blanca que tapa los goteros."

@@ -1,0 +1,155 @@
+# fact_ficha_riego: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_FICHA_RIEGO del Excel. 149 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+especie_id,n,etapa,meses,frecuencia,volumen,senal_visual,por_que_fisiologico
+duraznero,1,Brotación,Ago-Sep,Cada 7-10 días,20-30 L,Hojas verdes,El árbol despierta: mueve reservas de almidón desde raíces a yemas. Sin agua no puede disolver ni transportar nutrientes
+duraznero,2,Floración,Sep-Oct,Cada 5-7 días,30-40 L,Flores abiertas,"Flores necesitan turgencia (estar llenas de agua) para abrirse. Sin agua, el polen no germina"
+duraznero,3,Cuaja,Oct-Nov,Cada 5 días,40-50 L,Frutos como arveja,CRÍTICO: el embrión se divide rápido. Sin agua el árbol aborta frutos porque 'decide' que no tiene recursos
+duraznero,4,Crecimiento,Nov-Dic,Cada 3-5 días,50-70 L,Creciendo,El 85% del durazno ES agua. Sin riego queda chico: no tiene con qué llenarse
+duraznero,5,Maduración,Dic-Feb,Cada 3-4 días,60-80 L,Coloreando,"Reducir 10 días antes: al quitar agua, concentra azúcares. Como reducir un caldo para más sabor"
+duraznero,6,Postcosecha,Feb-Abr,Cada 7-10 días,30-40 L,Hojas activas,El árbol llena la despensa: acumula almidón en raíces para la próxima temporada
+duraznero,7,Reposo,May-Ago,Solo si seco,15-20 L c/15d,Sin hojas,Sin hojas no transpira. Raíces siguen vivas
+ciruelo,1,Brotación,Ago-Sep,Cada 10 días,20-30 L,Hojas verdes saliendo,"El árbol 'despierta' y necesita agua para activar sus raíces y mover las reservas que guardó en invierno hacia las yemas. Sin agua, las yemas brotan débiles"
+ciruelo,2,Floración,Sep-Oct,Cada 7 días,30 L,Flores blancas abiertas,"Las flores necesitan turgencia (estar 'hinchadas' de agua) para abrirse bien y recibir polen. Si la flor está deshidratada, el polen no germina y no cuaja fruto"
+ciruelo,3,Cuaja,Oct-Nov,Cada 5-7 días,40 L,Frutitos verdes chicos,"El ovario fecundado empieza a dividir células para formar el fruto. Sin agua suficiente, el árbol interpreta que no tiene recursos y BOTA los frutos (aborto fisiológico)"
+ciruelo,4,Crecimiento fruto,Nov-Dic,Cada 4-5 días,50-60 L,Frutos creciendo,"El fruto se llena de agua y azúcar. El 85% de una ciruela ES agua. Sin riego, el fruto queda chico porque literalmente no tiene con qué llenarse"
+ciruelo,5,Maduración,Dic-Feb,Cada 3-4 días,60-70 L,Cambian color,"Reducir 7 días antes de cosecha: al reducir agua, el árbol concentra los azúcares en el fruto, haciéndolo más dulce. Es como reducir un caldo para que quede más sabroso"
+ciruelo,6,Postcosecha,Feb-Abr,Cada 10 días,30 L,Hojas activas,"Después de producir fruta, el árbol está 'agotado'. Necesita seguir con hojas activas para fabricar y guardar reservas (almidón) en raíces y tronco para el próximo año"
+ciruelo,7,Reposo,May-Jul,Solo si seco,Mínimo,Sin hojas,"Sin hojas no transpira, casi no usa agua. Pero las raíces siguen vivas: si hay sequía extrema, pueden morir"
+cerezo,1,Brotación,Ago-Sep,Cada 10 días,20 L,Hojas brotando,Inicio gradual. Cerezo sensible a exceso agua en raíz
+cerezo,2,Floración,Sep,Cada 7 días,30 L,Flores blancas,NO mojar flores: humedad favorece Monilia
+cerezo,3,Cuaja,Oct,Cada 5-7 días,40 L,Frutitos verdes,Constante. Embrión de cereza se desarrolla rápido
+cerezo,4,Crecimiento,Oct-Nov,Cada 4-5 días,50 L,Cerezas verdes,Déficit = fruto chico
+cerezo,5,Pinta-maduración,Nov-Dic,Cada 5 días o MENOS,40 L,Cambian color,REDUCIR: exceso agua = PARTIDURA. Pulpa se hincha más rápido que la piel → se rompe
+cerezo,6,Postcosecha,Dic-Mar,Cada 7-10 días,40 L,Hojas verdes,Forma yemas florales PRÓXIMO año
+cerezo,7,Reposo,Abr-Jul,Casi nada,Mínimo,Sin hojas,Necesita 700-1100 hrs frío para romper dormancia
+damasco,1,Brotación,Ago,Cada 10 días,20 L,Hojas saliendo,El damasco brota antes que otros carozos. Las raíces se activan con las primeras temperaturas sobre 5°C del suelo
+damasco,2,Floración,Ago-Sep,Cada 7 días,25 L,Flores rosa-blancas,"PELIGRO HELADAS. La flor del damasco es la primera del huerto. Si hiela: el agua dentro de las células se congela, rompe las paredes celulares, y la flor muere (se pone negra)"
+damasco,3,Cuaja,Sep-Oct,Cada 5-7 días,35 L,Frutitos verdes,"Crítico. El embrión dentro de la semilla necesita agua para desarrollarse. Si aborta, el fruto cae"
+damasco,4,Crecimiento,Oct-Nov,Cada 4-5 días,45 L,Creciendo,El damasco tiene ciclo CORTO: crece rápido y madura rápido. Necesita agua concentrada en poco tiempo
+damasco,5,Maduración,Nov-Dic,Cada 4 días,50 L,Cambian naranja,"Reducir 7 días antes. Los carotenoides (pigmentos naranjas) se concentran al reducir agua, dando mejor color"
+damasco,6,Postcosecha,Dic-Mar,Cada 10 días,30 L,Hojas verdes,Acumula reservas para brotar temprano el próximo año
+damasco,7,Reposo,Abr-Jul,Casi nada,Mínimo,Sin hojas,Muy resistente a sequía invernal
+nectarino,1,Brotación,Sep,Cada 7-10 días,20-30 L,Hojas brotando,Igual que duraznero. La diferencia es que el nectarino NO tiene pelusa: su piel lisa lo hace más sensible a golpe de sol y deshidratación
+nectarino,2,Floración,Oct,Cada 5-7 días,30-40 L,Flores rosadas,"No mojar flores. El nectarino es genéticamente idéntico al duraznero, solo difiere en el gen de la pelusa (es un gen recesivo)"
+nectarino,3,Cuaja,Oct-Nov,Cada 5 días,40-50 L,Frutitos verdes,"Crítico: sin agua, aborta frutos igual que duraznero"
+nectarino,4,Crecimiento,Nov-Dic,Cada 3-5 días,50-70 L,Creciendo rápido,Piel sin pelusa = mayor pérdida de agua por transpiración cuticular. Necesita más riego que duraznero en días calurosos
+nectarino,5,Maduración,Dic-Feb,Cada 3-4 días,60-80 L,Coloreando,Reducir 10 días antes. Piel lisa muestra mejor el color (rojo/amarillo) que en duraznero
+nectarino,6,Postcosecha,Feb-Abr,Cada 7-10 días,30-40 L,Hojas activas,Igual que duraznero: reservas para próximo año
+nectarino,7,Reposo,May-Ago,Solo si seco,Mínimo,Sin hojas,Mínimo
+manzano,1,Brotación,Sep,Cada 10 días,25 L,Hojas brotando,El manzano tiene ciclo más largo que carozos: brota más lento y produce más tarde. Las raíces necesitan agua para activar el transporte de savia
+manzano,2,Floración,Oct,Cada 7 días,30 L,Flores blanco-rosadas,"Necesita ABEJAS para polinización cruzada. Si no llueve, las abejas vuelan más y polinizan mejor. Riego al suelo, no aspersión"
+manzano,3,Cuaja,Oct-Nov,Cada 7 días,40 L,Frutitos verdes,El manzano naturalmente bota frutos en exceso ('June drop' = caída de noviembre en Chile). Es normal perder 70-90% de las flores
+manzano,4,Crecimiento,Nov-Ene,Cada 5-7 días,50-70 L,Manzanas creciendo,"Período largo de crecimiento (4-5 meses vs 2-3 de carozos). El fruto acumula lentamente azúcar, ácidos y aromas"
+manzano,5,Maduración,Feb-Abr,Cada 7 días,50 L,Cambian color,La manzana madura con etileno (gas que ella misma produce). Reducir agua antes de cosecha intensifica aroma y firmeza
+manzano,6,Postcosecha,Abr-May,Cada 10 días,30 L,Hojas activas,Manzano guarda MUCHO almidón en madera: estas reservas son cruciales para la floración del próximo año
+manzano,7,Reposo,Jun-Ago,Mínimo,Solo si seco,Sin hojas,Muy resistente al frío en reposo (-15°C). Necesita acumular horas frío para romper dormancia
+peral,1,Brotación,Sep,Cada 10 días,25 L,Hojas brotan,Similar a manzano. Peral tolera mejor suelos húmedos que manzano (raíces más profundas)
+peral,2,Floración,Oct,Cada 7 días,30 L,Flores blancas,NECESITA polinizador (otra variedad). Las flores del peral producen menos néctar que manzano → abejas las visitan menos → polinización más difícil
+peral,3,Cuaja,Oct-Nov,Cada 7 días,40 L,Frutitos verdes,El peral cuaja menos frutos que el manzano naturalmente. Por eso la polinización cruzada es tan importante
+peral,4,Crecimiento,Nov-Ene,Cada 5-7 días,50-60 L,Peras creciendo,Ciclo largo como manzano. La pera acumula azúcar y ácidos lentamente
+peral,5,Maduración,Feb-Mar,Cada 7 días,50 L,Cambio color sutil,IMPORTANTE: la pera NO se cosecha madura del árbol. Se cosecha VERDE FIRME y madura en casa/frío. En el árbol se pone harinosa
+peral,6,Postcosecha,Abr-May,Cada 10 días,30 L,Hojas activas,Reservas para próximo año
+peral,7,Reposo,Jun-Ago,Mínimo,Solo si seco,Sin hojas,Muy resistente al frío
+membrillo,1,Brotación,Sep,Cada 10 días,20 L,Hojas brotan,Membrillo es poco exigente. Tolera suelos más húmedos que otros frutales porque sus raíces son naturalmente tolerantes a saturación temporal
+membrillo,2,Crecimiento,Nov-Feb,Cada 7 días,30-40 L,Membrillos creciendo,El fruto crece LENTO: 5-6 meses desde cuaja hasta cosecha. No necesita riego intensivo como carozos
+membrillo,3,Maduración,Mar-May,Cada 7-10 días,30 L,Cambian a amarillo,El membrillo madura en OTOÑO: es uno de los últimos frutos del año. El frío nocturno concentra aromas
+membrillo,4,Reposo,Jun-Ago,Mínimo,Solo si seco,Sin hojas,Muy resistente a sequía invernal. Pocas horas frío necesarias
+limonero,1,Primavera,Sep-Nov,Cada 7-10 días,30-40 L,Hojas brillantes,Los cítricos son SIEMPREVERDES: sus hojas son la 'fábrica' permanente. Nunca 'descansan' del todo. El agua es necesaria todo el año para mantener hojas activas
+limonero,2,Verano,Dic-Feb,Cada 4-7 días,50-70 L,Hojas firmes,El verano es CRÍTICO porque el fruto está creciendo Y las hojas transpiran más (pierden agua por calor). Déficit = caída masiva de frutos (el árbol sacrifica fruta para sobrevivir)
+limonero,3,Otoño,Mar-May,Cada 10 días,30-40 L,Brillantes,Los frutos están madurando. Reducir gradual pero NUNCA cortar riego: el limón se deshidrata y pierde jugo
+limonero,4,Invierno,Jun-Ago,Cada 15 días si seco,20-30 L,Sin caída hojas,"Los cítricos NO botan hojas: siguen fotosintizando todo el invierno (más lento). Si las hojas caen = PROBLEMA (estrés, enfermedad o helada)"
+naranjo,1,Primavera,Sep-Nov,Cada 7-10 días,40 L,Hojas brillantes,Igual que limonero. Siempreverde necesita agua todo año
+naranjo,2,Verano,Dic-Feb,Cada 4-7 días,60-80 L,Hojas firmes,Fruto llenándose de jugo. El naranjo es MÁS sensible al estrés hídrico que limonero
+naranjo,3,Otoño,Mar-May,Cada 10 días,40 L,Brillantes,Frutos madurando. La naranja desarrolla color naranja con frío nocturno (los carotenoides se expresan cuando baja la temperatura)
+naranjo,4,Invierno,Jun-Ago,Cada 15 días,30 L,Firmes,Cosecha de invierno. La naranja puede quedarse en el árbol semanas sin perder calidad
+mandarino,1,Primavera,Sep-Nov,Cada 7-10 días,30 L,Brillantes,Similar a otros cítricos
+mandarino,2,Verano,Dic-Feb,Cada 4-7 días,50-60 L,Firmes,"EVITAR altibajos: si riega mucho después de sequía, mandarinas se RAJAN (la pulpa crece más rápido que la cáscara y la revienta)"
+mandarino,3,Otoño,Mar-May,Cada 10 días,30 L,Brillantes,Frutos madurando
+mandarino,4,Invierno,Jun-Ago,Cada 15 días,20 L,Firmes,Mandarino es el cítrico más tolerante al frío (-4°C en reposo)
+pomelo,1,Primavera,Sep-Nov,Cada 7-10 días,40 L,Brillantes,Pomelo es un árbol GRANDE: necesita más agua que otros cítricos
+pomelo,2,Verano,Dic-Feb,Cada 4-7 días,70-90 L,Firmes,Fruto grande = mucha agua. Es el cítrico de mayor tamaño
+pomelo,3,Otoño-Invierno,Mar-Ago,Cada 10-15 días,30-40 L,Firmes,Mejor sabor en INVIERNO: el frío concentra azúcares y reduce la amargura de la naringina
+nogal,1,Brotación,Sep-Oct,Cada 10-15 días,40-60 L,Hojas saliendo,Nogal tiene raíz PIVOTANTE profunda (1-2 m). Necesita suelo profundo. Riego debe mojar hasta 60-80 cm de profundidad
+nogal,2,Floración,Oct,Cada 10 días,50-60 L,Flores (amentos) pequeñas,Nogal tiene flores masculinas (amentos colgantes) y femeninas (en punta de ramas) SEPARADAS. Necesita viento para polinización
+nogal,3,Crecimiento fruto,Nov-Dic,Cada 7-10 días,80-120 L,Nueces verdes creciendo,Define TAMAÑO de la nuez. El pericarpio (cáscara verde) se llena de agua y protege la nuez interna
+nogal,4,Llenado nuez,Ene-Feb,Cada 5-7 días,100-150 L,Nueces verdes llenando,"ETAPA MÁS CRÍTICA: la almendra dentro de la cáscara se está llenando de aceite y proteína. Si falta agua AHORA, la nuez queda VACÍA"
+nogal,5,Maduración,Mar-Abr,Cada 7-10 días,80 L,Cáscara verde se abre,Reducir antes cosecha. La cáscara verde (pericarpio) se parte naturalmente cuando la nuez está lista
+nogal,6,Postcosecha,Abr-May,Cada 15 días,50 L,Hojas activas,Reservas. El nogal almacena almidón en raíces gruesas para el próximo año
+almendro,1,Brotación-floración,Ago-Sep,Cada 10-15 días,25-30 L,Flores blancas masivas,Almendro florece ANTES que todos los carozos. La flor es muy sensible al frío porque abre cuando aún hay riesgo de helada
+almendro,2,Cuaja,Sep-Oct,Cada 7-10 días,40 L,Frutitos verdes,La abeja es ESENCIAL: almendro depende 100% de abejas para polinización (no hay viento suficiente)
+almendro,3,Crecimiento,Oct-Dic,Cada 7-10 días,50-60 L,Almendras verdes,La cáscara verde protege la almendra mientras la semilla acumula aceite y proteína
+almendro,4,Llenado,Dic-Ene,Cada 7 días,50 L,Llenando,La almendra se llena de aceite (50-60%). El aceite es la reserva energética de la semilla para germinar
+almendro,5,Maduración,Feb-Mar,Cada 10-15 días,30 L,Cáscara verde seca,Reducir mucho. El almendro TOLERA sequía mejor que casi cualquier frutal: adaptado a clima mediterráneo seco
+almendro,6,Postcosecha-reposo,Abr-Jul,Mínimo,Solo si seco,Sin hojas,Muy tolerante a sequía
+higuera,1,Brotación,Sep-Oct,Cada 10-15 días,20 L,Hojas grandes saliendo,"Higuera es MUY eficiente con agua: hojas grandes captan luz pero pierden agua. Sin embargo, las raíces buscan agua profundo. Tolera sequía mejor que la mayoría"
+higuera,2,Crecimiento-cosecha,Nov-Mar,Cada 7-10 días,30-40 L,Higos formándose,Los higos son en realidad FLORES INVERTIDAS: la fruta es un receptáculo que contiene cientos de flores diminutas adentro. El agua llena este receptáculo de jugo
+higuera,3,Reposo,Abr-Ago,Solo si seco,Mínimo,Sin hojas,Extremadamente resistente a sequía. Raíces pueden llegar a 3-5 metros de profundidad
+granado,1,Brotación,Sep-Oct,Cada 10-15 días,20 L,Hojas brotando,Granado brota tarde (octubre). Tolera sequía mejor que la mayoría de frutales: adaptado a clima semiárido de Persia/Irán original
+granado,2,Floración,Nov-Dic,Cada 7-10 días,30 L,Flores rojas brillantes,Flores hermafroditas (tienen órganos masculinos Y femeninos). Las flores 'perfectas' (con ovario grande) dan fruto; las 'imperfectas' (ovario chico) caen
+granado,3,Crecimiento,Dic-Feb,Cada 5-7 días,40-50 L,Granadas creciendo,"La cáscara (pericarpio) es rígida: NO se estira como la piel de una ciruela. Si se riega irregular (seco→mojado), los arilos (granos) crecen y REVIENTAN la cáscara = RAJADO"
+granado,4,Maduración,Mar-May,Cada 7-10 días,30-40 L,Granadas coloreando,"RIEGO CONSTANTE SIN ALTIBAJOS. La razón fisiológica del rajado: los arilos absorben agua por ósmosis y se hinchan, pero la cáscara ya endureció y no cede"
+caqui,1,Brotación,Sep-Oct,Cada 10-15 días,25 L,Hojas brotando TARDE,Caqui brota MUY TARDE (octubre cuando otros ya tienen hojas). No preocuparse: es normal. Necesita calor acumulado para activar brotación
+caqui,2,Crecimiento,Dic-Feb,Cada 5-7 días,50-60 L,Caquis verdes creciendo,"El caqui acumula TANINOS en el fruto verde (la sustancia que 'pega la boca'). Con la maduración, los taninos se polimerizan y pierden astringencia"
+caqui,3,Maduración,Mar-May,Cada 7-10 días,40 L,Cambian a naranja,Los taninos solubles se vuelven insolubles (se 'condensan'). En Fuyu ocurre en el árbol. En Hachiya ocurre al ablandarse completamente
+vid,1,Brotación,Sep,Cada 10 días,15-20 L/planta,"Yemas brotan, hojas salen","Antes de brotar, la vid 'llora' (gotea savia por los cortes de poda). Esto indica que las raíces ya están activas bombeando agua y nutrientes hacia arriba"
+vid,2,Floración,Nov,Cada 7-10 días,25-30 L,Flores diminutas,NO exceso agua en flor: provoca 'corrimiento' (las flores no cuajan y caen). La razón: exceso de vigor vegetativo compite con las flores por los recursos. El brote crece tanto que 'roba' azúcar a la flor
+vid,3,Cuaja-crecimiento,Nov-Dic,Cada 5-7 días,30-40 L,Grano formándose,Período crítico. Los granos se llenan de agua+ácido tartárico+ácido málico. Los ácidos se forman AHORA; después solo disminuyen
+vid,4,Envero-maduración,Ene-Feb,Cada 7-10 días o REDUCIR,20-30 L,Uvas cambian color,"ENVERO: los granos cambian de verde a rojo/amarillo. Los azúcares suben rápidamente, los ácidos bajan. Reducir agua CONCENTRA azúcar. Bol. INIA 383: estrés hídrico moderado mejora calidad"
+vid,5,Maduración final,Feb-Mar,Cortar o mínimo,Casi nada,Uvas dulces,"Cortar riego 15-20 días antes cosecha. Sin agua, la planta concentra TODO en la fruta: más azúcar, más color, más aroma. Es la filosofía del 'estrés controlado'"
+arandano,1,Brotación,Sep,Cada 3-5 días,5-10 L,Hojas y flores,Raíz MUY SUPERFICIAL (20 cm): se seca en HORAS. Riego frecuente poco volumen
+arandano,2,Floración,Oct,Cada 3-5 días,8-10 L,Flores acampanadas,No mojar flores. Necesita abejas
+arandano,3,Cuaja-crecimiento,Nov-Dic,Cada 2-3 días,10-15 L,Frutos verdes-rosados,CRÍTICO. Raíz sin pelos absorbentes: depende de micorrizas que necesitan humedad constante
+arandano,4,Maduración,Dic-Feb,Cada 2-3 días,10-15 L,Frutos azules,Color azul = ANTOCIANINAS que se sintetizan con luz + madurez
+arandano,5,Postcosecha,Feb-Abr,Cada 5 días,8 L,Hojas activas,Yemas florales próximo año se forman AHORA
+arandano,6,Reposo,May-Ago,Cada 10-15 días,5 L,Hojas caen,No dejar secar totalmente: raíz superficial muere
+olivo,1,Brotación,Sep-Oct,Cada 15 días,20-30 L,Brotes nuevos claros,El olivo es EXTRAORDINARIAMENTE tolerante a sequía: sus hojas tienen estomas SOLO en la cara inferior + cubierta cerosa + color plateado que refleja calor. Todo para conservar agua
+olivo,2,Floración,Nov,Cada 10-15 días,30 L,Racimos florales pequeños,Regar ANTES de floración. La inflorescencia del olivo tiene flores perfectas (con pistilo) e imperfectas (sin pistilo). Solo las perfectas dan fruto. El estrés hídrico reduce proporción de flores perfectas
+olivo,3,Cuaja-crecimiento,Dic-Feb,Cada 7-10 días,40-50 L,Aceitunas verdes,El fruto acumula aceite lentamente: de 1% de aceite en enero a 20-25% en mayo. El agua es necesaria para que las células fabriquen ácido oleico
+olivo,4,Envero-maduración,Mar-May,Cada 10-15 días,30-40 L,Cambian de verde a morado/negro,"ESTRÉS HÍDRICO MODERADO mejora calidad del aceite: más polifenoles (antioxidantes), más aroma. Riego deficitario controlado es práctica estándar en olivicultura"
+olivo,5,Postcosecha,Jun-Jul,Cada 15-20 días,20 L,Siempreverde,Recuperación. El olivo es siempreverde: fotosintiza todo el año
+frutilla,1,Plantación,Mar-May / Ago-Sep,Diario primeros 15 días,1-2 L/planta,Sustrato húmedo no encharcado,Raíz nueva y superficial: sin humedad constante la planta no logra establecerse y muere en pocos días
+frutilla,2,Floración,Sep,Cada 2-3 días,1-2 L/planta,Flores blancas abiertas,Flores turgentes fecundan mejor; el riego regula la temperatura de la corona en días cálidos de primavera
+frutilla,3,Cuaja-Crecimiento,Oct-Nov,Cada 2 días (diario en calor),1.5-2.5 L/planta,Frutos verdes creciendo,El fruto es 90% agua: sin riego constante queda pequeño y fibroso
+frutilla,4,Cosecha,Dic-Ene,Diario o día por medio,1.5-2 L/planta,Fruto rojo brillante,Riego irregular en esta etapa provoca partidura del fruto y pérdida de sabor
+frutilla,5,Reposo relativo,Jun-Jul,1-2 veces/semana,0.5-1 L/planta,Follaje verde apagado,Crecimiento lento pero raíz sigue activa; exceso de agua en frío favorece Phytophthora de corona
+frambuesa,1,Reposo,Jun-Ago,Solo si suelo seco,5-8 L/planta c/15d,Sin hojas,"Cañas dormidas no transpiran, pero raíces siguen vivas y no toleran sequía extrema"
+frambuesa,2,Brotación,Sep,Cada 5-7 días,8-10 L/planta,Brotes verdes nuevos,La caña nueva necesita agua constante para expandir hojas y preparar la floración del año
+frambuesa,3,Floración-Cuaja,Oct-Nov,Cada 3-4 días,10-12 L/planta,Flores blancas y frutos verdes,Raíz superficial: un día sin agua en floración aborta flores y reduce el número de frutos
+frambuesa,4,Cosecha,Dic-Mar,Cada 2-3 días,10-15 L/planta,"Fruto rojo intenso, se desprende solo",El fruto se llena de agua en pocos días: riego irregular da fruta pequeña y opaca
+frambuesa,5,Postcosecha,Mar-Abr,Cada 7 días,8-10 L/planta,Caña vigorosa,La planta acumula reservas en la corona para las cañas del próximo año
+mora,1,Reposo,Jun-Ago,Solo si suelo seco,8-10 L/planta c/15d,Sin hojas,"Planta muy resistente en reposo, pero raíz vigorosa igual sufre en sequía prolongada"
+mora,2,Brotación,Sep,Cada 5-7 días,10-12 L/planta,Brotes nuevos vigorosos,El crecimiento de la mora es explosivo: sin agua constante no logra su vigor característico
+mora,3,Floración-Cuaja,Oct-Nov,Cada 4-5 días,12-15 L/planta,"Flores blancas, frutos verdes",El agua sostiene la floración masiva típica de la especie; el déficit reduce fuertemente el cuajado
+mora,4,Cosecha,Dic-Mar,Cada 3-4 días,12-15 L/planta,Fruto negro brillante,Fruto muy jugoso: riego irregular provoca frutos pequeños y ácidos
+kiwi,1,Reposo,Jun-Ago,Solo si suelo seco,15-20 L c/15d,Sin hojas,Raíz superficial y carnosa: se deshidrata más rápido que la de un frutal de raíz profunda
+kiwi,2,Brotación,Sep,Cada 5-7 días,25-30 L,Brotes verdes largos,Hojas grandes de alta transpiración: exige agua constante desde el primer brote
+kiwi,3,Floración,Oct-Nov,Cada 4-5 días,30-35 L,Flores blancas cremosas,Flor muy sensible a estrés hídrico y a heladas tardías simultáneamente: etapa más delicada del cultivo
+kiwi,4,Crecimiento del fruto,Dic-Feb,Cada 3-4 días,35-40 L,Frutos vellosos creciendo,El fruto crece rápido en verano: el déficit hídrico reduce directamente el calibre final
+kiwi,5,Maduración-cosecha,Mar-May,Cada 5-7 días,20-25 L,"Piel parda, pulpa verde firme",Se cosecha firme (madura fuera de la planta): reducir riego mejora concentración de azúcares
+avellano,1,Reposo (floración invernal),Jun-Jul,Solo si suelo seco,20-25 L c/15d,"Sin hojas, floración en curso","Aunque no tiene hojas, la floración de invierno exige humedad de suelo constante para la fecundación"
+avellano,2,Brotación,Ago-Sep,Cada 7-10 días,25-30 L,Hojas nuevas expandiéndose,El período mayo-julio (floración-inducción-crecimiento del grano) es el más exigente en agua de todo el ciclo
+avellano,3,Crecimiento del fruto,Oct-Ene,Cada 7 días,30-35 L,Avellanas verdes en formación,El llenado del grano requiere agua constante; el déficit reduce el calibre y el peso final
+avellano,4,Maduración-cosecha,Feb-Abr,Cada 10-12 días,20 L,Cáscara verde se abre y seca,Reducir riego gradualmente ayuda al secado natural del fruto en la planta
+nispero,1,Floración,May-Jul,Cada 10-12 días,20-25 L,Flores blancas aromáticas,Florece en pleno invierno: el agua ayuda a amortiguar el estrés de las bajas temperaturas durante la floración
+nispero,2,Cuaja-crecimiento,Ago-Sep,Cada 7-10 días,25-30 L,Frutos pequeños en formación,El fruto crece rápido en fin de invierno-inicio de primavera: necesita agua constante
+nispero,3,Maduración-cosecha,Oct-Nov,Cada 5-7 días,25 L,"Fruto naranja, dulce al gusto",Riego regular en esta etapa evita fruta pequeña y ácida
+nispero,4,Reposo relativo,Dic-Abr,Cada 12-15 días,15-20 L,Follaje verde oscuro brillante,Especie rústica de bajo consumo hídrico fuera de la etapa de fructificación
+lucuma,1,Brotación-floración,Sep-Nov,Cada 7-10 días,30-35 L,Brotes nuevos y flores pequeñas,Etapa de mayor actividad metabólica: requiere riego más frecuente que el resto del año
+lucuma,2,Crecimiento del fruto,Dic-Feb,Cada 10-12 días,30 L,Fruto verde-oliva creciendo,"Tolera sequía moderada, pero el fruto crece mejor y más grande con riego regular"
+lucuma,3,Maduración,Mar-May,Cada 12-15 días,20-25 L,"Piel verde-amarillenta, aroma dulce",Maduración muy lenta (puede tardar más de un año desde la floración): riego estable evita estrés y caída de fruta
+lucuma,4,Reposo relativo,Jun-Ago,Cada 15-20 días,15 L,Follaje perenne oscuro,Tolerante a sequía una vez establecida; el riego de invierno es solo de mantención
+palto,1,Reposo relativo,Jun-Jul,Cada 12-15 días,40-50 L,Follaje verde oscuro,NUNCA regar si el suelo está saturado en esta etapa: el exceso de agua en frío es la principal puerta de entrada de Phytophthora cinnamomi
+palto,2,Floración,Sep,Cada 7 días,50-60 L,Floración masiva blanco-verdosa,La raíz superficial del palto sufre tanto por falta como por exceso de agua: el equilibrio es crítico en esta etapa
+palto,3,Cuaja,Oct-Nov,Cada 5-7 días,60-70 L,Frutos pequeños cuajados,Solo 0.1-0.3% de las flores cuajan fruto de forma natural: el estrés hídrico reduce aún más ese porcentaje
+palto,4,Crecimiento del fruto,Dic-Feb,Cada 5 días,70-80 L,"Frutos creciendo, piel verde",El fruto acumula aceite y agua durante meses: la demanda hídrica es la más alta del ciclo. Huertos adultos: 12.000-13.000 m³/ha/año (INIA)
+palto,5,Maduración-cosecha,Jul-Feb según variedad,Cada 7-10 días,50-60 L,Piel oscurece (Hass),"Se cosecha maduro fisiológicamente pero firme; madura fuera del árbol, por lo que el riego se mantiene regular hasta el corte"
+chirimoya,1,Brotación-floración,Sep-Nov,Cada 5-7 días,30-35 L,Brotes y flores color crema,La floración coincide con el crecimiento vegetativo: ambos procesos compiten por agua y azúcar
+chirimoya,2,Cuaja,Dic-Ene,Cada 4-5 días,35-40 L,Frutos pequeños cuajados,MUY sensible a sequía en esta etapa: el déficit provoca aborto masivo de frutos recién cuajados
+chirimoya,3,Crecimiento del fruto,Feb-Abr,Cada 5-7 días,35 L,Fruto verde creciendo,El fruto necesita agua constante durante varios meses de desarrollo hasta la cosecha de otoño
+chirimoya,4,Reposo relativo,Jun-Ago,Cada 12-15 días,15-20 L,Follaje semicaducifolio ralo,Reduce actividad en invierno pero no tolera sequía prolongada ni heladas
+papayo_chileno,1,Establecimiento,Sep-Nov,Cada 3-4 días,10-15 L,Hojas nuevas grandes,Planta semi-herbácea de crecimiento muy rápido: exige agua constante para desarrollarse en pocos meses
+papayo_chileno,2,Floración-cuaja,Dic-Feb,Cada 4-5 días,15-20 L,Flores y frutos pequeños,Ciclo productivo corto y acelerado: el estrés hídrico retrasa la primera cosecha
+papayo_chileno,3,Producción,Todo el año en clima favorable,Cada 5-7 días,15-20 L,Frutos en distintos estados,Planta de producción continua: necesita riego regular durante todo su corto ciclo de vida (4-8 años)

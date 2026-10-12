@@ -1,0 +1,166 @@
+# fact_sanidad: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_SANIDAD del Excel. 160 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+especie_id,n,problema,sintomas,epoca,control_organico,control_quimico,prevencion,fuente
+duraznero,1,Cloca o Torque (hongo),"Hojas arrugadas color rojo, luego se caen",Brotación (Sep),Caldo bordelés (cobre + cal),Oxicloruro de cobre,"PREVENIR en yema hinchada antes de abrir, julio-agosto",Base 20 especies
+duraznero,2,Oidio (hongo blanco),Polvo blanco en hojas y frutos jóvenes,Octubre - Diciembre,Azufre mojable + bicarbonato,Penconazol o Difenoconazol,"Buena ventilación, no plantar muy juntos",Base 20 especies
+duraznero,3,Monilia (hongo de pudrición),Frutos con manchas marrones que se pudren,Diciembre - cosecha,Caldo sulfocálcico,Iprodione o Tebuconazol,"Sacar y enterrar frutos podridos, no dejar en el suelo",Base 20 especies
+duraznero,4,Pulgón verde,Hojas enrolladas con bichitos verdes pegajosos,Octubre - Diciembre,Jabón potásico + ajo + ají,Imidacloprid (cuidado con abejas),Atraer mariquitas plantando alyssum y caléndulas,Base 20 especies
+duraznero,5,Mosca de la fruta,Frutos con pinchaduras y gusanos blancos,Diciembre - Febrero,Trampas con vinagre y agua,Spinosad o Malation,Recoger frutos caídos TODOS los días,Base 20 especies
+duraznero,6,Cancrosis (bacteria),Heridas con goma en ramas y tronco,Todo el año,Caldo bordelés en invierno,Cobre + Mancozeb,"No podar en días lluviosos, sellar cortes con pasta cicatrizante",Base 20 especies
+duraznero,7,Arañita roja,"Hojas con puntitos amarillos, polvo bajo las hojas",Verano caluroso,Aceite de neem + agua a presión,Abamectina,Lavar hojas con agua fría en días calurosos,Base 20 especies
+ciruelo,1,Monilia o pudrición parda,Frutos pudridos color marrón con polvo gris,Diciembre - cosecha,Caldo bordelés,Iprodione o Tebuconazol,Sacar frutos podridos del árbol y suelo,Base 20 especies
+ciruelo,2,Pulgón ceniciento,"Hojas con polvo blanco-gris, enrolladas",Octubre - Diciembre,Jabón potásico,Imidacloprid,Mariquitas son sus enemigas naturales,Base 20 especies
+ciruelo,3,Royas (manchas en hojas),Manchas naranjas en envés de hojas,Verano húmedo,Caldo bordelés,Mancozeb,No mojar las hojas al regar,Base 20 especies
+ciruelo,4,Mosca de la fruta,Frutos con pinchaduras,Diciembre - Febrero,Trampas vinagre,Spinosad,Recoger frutos caídos diario,Base 20 especies
+ciruelo,5,Cancrosis,Heridas con goma en ramas,Todo el año,Cobre invierno,Cobre + cicatrizante,No podar con lluvia,Base 20 especies
+ciruelo,6,Plateado (hongo),"Hojas color plateado, ramas mueren",Otoño-invierno,No tiene control orgánico bueno,Cortar y quemar ramas afectadas,Sellar TODO corte de poda,Base 20 especies
+ciruelo,7,Trips,"Pétalos manchados, frutos deformes",Floración,Aceite de neem,Spinosad,Atrae bichos beneficiosos con flores,Base 20 especies
+cerezo,1,Monilia (pudrición),Frutos pudridos color marrón,Noviembre - cosecha,Caldo bordelés en floración,Iprodione o Tebuconazol,Recoger frutos podridos,Base 20 especies
+cerezo,2,Cancrosis bacteriana,"Heridas con goma, ramas mueren",Todo el año,Cobre invierno y otoño,Cobre + cicatrizante,"Podar en SECO, sellar cortes",Base 20 especies
+cerezo,3,Mosca de la cereza,Frutos con gusanitos blancos,Noviembre - Enero,Trampas amarillas con feromona,Spinosad o Lambda-cihalotrina,Mallas anti-mosca son la mejor solución,Base 20 especies
+cerezo,4,Pulgón negro,Hojas enrolladas con bichitos negros,Octubre - Diciembre,Jabón potásico + ajo,Imidacloprid (cuidado abejas),Mariquitas y crisopas atacan pulgones,Base 20 especies
+cerezo,5,Partidura por lluvia,Cerezas se parten al madurar,Noviembre - Diciembre,Calcio foliar 30 días antes cosecha,Mismas (calcio),Cubrir con plástico si llueve cerca cosecha,Base 20 especies
+cerezo,6,Royas y manchas hojas,"Manchas en hojas, caen prematuro",Otoño,Caldo bordelés caída hojas,Mancozeb,Recoger hojas caídas y quemar,Base 20 especies
+cerezo,7,Pájaros (no plaga pero...),Cerezas comidas a medias,Maduración,Mallas anti-pájaros,—,"Mallas son la única solución real, espantapájaros se acostumbran",Base 20 especies
+damasco,1,Monilia,Flores y frutos pudridos,Floración y cosecha,Caldo bordelés,Iprodione,Sacar afectados,Base 20 especies
+damasco,2,Cancrosis,Goma en ramas y tronco,Todo el año,Cobre invierno,Cobre,No podar con lluvia,Base 20 especies
+damasco,3,Pulgón verde,Hojas enrolladas,Octubre-Diciembre,Jabón potásico + ajo,Imidacloprid,Mariquitas naturales,Base 20 especies
+damasco,4,Mosca fruta,Pinchaduras y gusanos,Noviembre-Enero,Trampas vinagre,Spinosad,Recoger caídos,Base 20 especies
+damasco,5,Sharka (virus),"Anillos en hojas y frutos, deformes",Todo el año,NO TIENE CURA,Arrancar y quemar árbol,Comprar en viveros certificados,Base 20 especies
+damasco,6,Oidio,Polvo blanco,Primavera,Azufre,Penconazol,Buena ventilación,Base 20 especies
+damasco,7,Heladas tardías,Flores y brotes negros,Agosto-Septiembre,Riego antes helada,—,"Pintar tronco con cal, bidones agua bajo árbol",Base 20 especies
+nectarino,1,Cloca o Torque,Hojas arrugadas y rojas,Brotación,Caldo bordelés,Oxicloruro cobre,Prevenir en yema hinchada (julio-agosto),Base 20 especies
+nectarino,2,Oidio,Polvo blanco hojas y frutos,Octubre-Diciembre,Azufre,Penconazol,Buena ventilación,Base 20 especies
+nectarino,3,Monilia,Frutos pudridos,Diciembre-cosecha,Caldo sulfocálcico,Iprodione,Sacar afectados,Base 20 especies
+nectarino,4,Pulgón verde,Hojas enrolladas con bichos,Octubre-Diciembre,Jabón + ajo,Imidacloprid,Mariquitas,Base 20 especies
+nectarino,5,Mosca fruta,Pinchaduras,Diciembre-Febrero,Trampas vinagre,Spinosad,Recoger caídos,Base 20 especies
+nectarino,6,Cancrosis,Goma en ramas,Todo año,Cobre invierno,Cobre,No podar húmedo,Base 20 especies
+nectarino,7,Arañita roja,Puntos amarillos hojas,Verano caluroso,Aceite neem,Abamectina,Lavar hojas,Base 20 especies
+manzano,1,Carpocapsa o gusano de la manzana,Manzanas con galerías y gusano blanco-rosado,Octubre-Marzo,Trampas con feromona + virus de granulosis,Spinosad o Methoxyfenozide,Trampas son CRÍTICAS desde octubre,Base 20 especies
+manzano,2,Venturia o sarna del manzano,Manchas oliváceas en hojas y frutos,Primavera-otoño húmedo,Caldo bordelés + azufre,Captan o Difenoconazol,"Recoger hojas caídas, no acumular humedad",Base 20 especies
+manzano,3,Oidio,Polvo blanco brotes y hojas,Primavera,Azufre mojable,Penconazol,Cortar brotes afectados,Base 20 especies
+manzano,4,Pulgón lanígero,Bichos blancos algodonosos en heridas y ramas,Primavera-verano,Aceite mineral + jabón,Imidacloprid,Avispa parásita Aphelinus mali es enemigo natural,Base 20 especies
+manzano,5,Bitter Pit,Manchas marrones hundidas en la fruta al guardarla,Cosecha y postcosecha,Calcio foliar mensual,Mismo (calcio),"Es deficiencia de calcio, no enfermedad",Base 20 especies
+manzano,6,Cancrosis europea,Heridas hundidas en ramas y tronco,Otoño-invierno,Cobre + cicatrizante,Cobre,Sellar TODO corte de poda,Base 20 especies
+manzano,7,Arañita roja,"Hojas con polvo, puntos amarillos",Verano,Aceite neem,Abamectina,Lavar hojas,Base 20 especies
+peral,1,Fuego bacteriano,"Brotes negros como quemados, hojas colgando",Primavera lluviosa,Cobre en floración,Estreptomicina (no autorizada en Chile),"Cortar 30 cm más abajo, quemar, desinfectar tijera",Base 20 especies
+peral,2,Sarna del peral (Venturia),Manchas negras hojas y frutos,Primavera-otoño,Caldo bordelés,Captan o Difenoconazol,Recoger hojas caídas,Base 20 especies
+peral,3,Psila del peral,Hojas pegajosas y negras (fumagina),Primavera-verano,Aceite mineral + jabón,Spirotetramat,"Manejo difícil, atraer predadores",Base 20 especies
+peral,4,Carpocapsa,Gusano en peras,Octubre-Marzo,Trampas + virus,Spinosad,Trampas desde octubre,Base 20 especies
+peral,5,Pulgón lanígero,Bichos blancos algodonosos,Primavera,Aceite mineral,Imidacloprid,Limitado en peral,Base 20 especies
+peral,6,Stemphylium (mancha),Manchas hojas y frutos,Verano,Caldo bordelés,Difenoconazol,Buena ventilación,Base 20 especies
+peral,7,Russet (no es enfermedad),Frutos con piel rugosa marrón,Cuaja,Bolsas de papel sobre frutos,—,"Genético, normal en algunas variedades",Base 20 especies
+membrillo,1,Fuego bacteriano,Brotes negros quemados,Primavera lluviosa,Cobre,—,Cortar 30 cm más abajo,Base 20 especies
+membrillo,2,Polilla oriental,Gusanos en frutos,Verano,Trampas feromona,Spinosad,Recoger caídos,Base 20 especies
+membrillo,3,Stemphylium (mancha),Manchas hojas y frutos,Verano húmedo,Caldo bordelés,Mancozeb,Buena ventilación,Base 20 especies
+membrillo,4,Diaprepes (raíces),Árbol decaído sin causa visible,Verano,—,—,"Difícil control, prevenir con suelo sano",Base 20 especies
+membrillo,5,Pulgón verde,Hojas enrolladas,Primavera,Jabón potásico,Imidacloprid,Mariquitas,Base 20 especies
+limonero,1,Pulgón,Brotes nuevos enrollados con bichitos verdes/negros,Primavera-verano,Jabón potásico + ajo,Imidacloprid,Mariquitas y crisopas,Base 20 especies
+limonero,2,Cochinilla,Costras blancas o cafés en hojas y ramas,Todo el año,Aceite mineral mensual,Buprofezin,Aceite ahoga las cochinillas,Base 20 especies
+limonero,3,Mosca blanca,Bichos blancos pequeños bajo hojas,Verano,Jabón potásico + neem,Buprofezin,Trampas amarillas pegajosas,Base 20 especies
+limonero,4,Minador de hojas,Galerías plateadas en hojas nuevas,Primavera-verano,Aceite neem,Abamectina,"Solo daña brotes nuevos, árbol adulto resiste",Base 20 especies
+limonero,5,Phytophthora (raíz y tronco),"Goma en tronco, hojas amarillas",Suelos húmedos,Mejorar drenaje,Fosetil-Al,NO regar el tronco,Base 20 especies
+limonero,6,Clorosis férrica,Hojas amarillas con venas verdes,Primavera,Sulfato ferroso o quelato,Mismo,Suelos calcáreos lo provocan,Base 20 especies
+limonero,7,HLB o Greening (bacteria),"Hojas con manchas asimétricas, frutos deformes amargos",Todo el año,NO TIENE CURA,Arrancar y quemar árbol,"Comprar en viveros certificados, controlar Diaphorina",Base 20 especies
+naranjo,1,Cochinilla,Costras en hojas y ramas,Todo año,Aceite mineral mensual,Buprofezin,Aceite es clave,Base 20 especies
+naranjo,2,Pulgón,Brotes enrollados,Primavera,Jabón potásico + ajo,Imidacloprid,Mariquitas,Base 20 especies
+naranjo,3,Mosca blanca,Polvo blanco bajo hojas,Verano,Neem,Buprofezin,Trampas amarillas,Base 20 especies
+naranjo,4,Minador hojas,Galerías plateadas,Primavera-verano,Aceite neem,Abamectina,Resiste árbol adulto,Base 20 especies
+naranjo,5,Phytophthora,"Goma en tronco, decae",Suelos húmedos,Drenaje,Fosetil-Al,No regar tronco,Base 20 especies
+naranjo,6,Clorosis férrica,Hojas amarillas venas verdes,Primavera,Sulfato ferroso,Quelato,Suelos calcáreos,Base 20 especies
+naranjo,7,HLB Greening,"Hojas asimétricas, fruto amargo",Todo año,SIN CURA,Arrancar y quemar,Vivero certificado,Base 20 especies
+mandarino,1,Cochinilla,Costras en hojas,Todo año,Aceite mineral mensual,Buprofezin,Clave,Base 20 especies
+mandarino,2,Pulgón,Brotes enrollados,Primavera,Jabón + ajo,Imidacloprid,Mariquitas,Base 20 especies
+mandarino,3,Mosca blanca,Polvo blanco,Verano,Neem,Buprofezin,Trampas amarillas,Base 20 especies
+mandarino,4,Minador hojas,Galerías plateadas,Primavera-verano,Neem,Abamectina,Brotes nuevos,Base 20 especies
+mandarino,5,Phytophthora,Goma tronco,Suelos húmedos,Drenaje,Fosetil-Al,No regar tronco,Base 20 especies
+mandarino,6,Clorosis férrica,Amarillo venas verdes,Primavera,Sulfato ferroso,Quelato,Calcáreos,Base 20 especies
+mandarino,7,Trips,Cicatrices anilladas en frutos,Floración-cuaja,Spinosad,Spinosad,Atrae predadores con flores,Base 20 especies
+pomelo,1,Cochinilla,Costras,Todo año,Aceite mineral,Buprofezin,Clave,Base 20 especies
+pomelo,2,Pulgón,Brotes enrollados,Primavera,Jabón,Imidacloprid,Natural,Base 20 especies
+pomelo,3,Mosca blanca,Polvo blanco,Verano,Neem,Buprofezin,Trampas,Base 20 especies
+pomelo,4,Minador,Galerías,Primavera-verano,Neem,Abamectina,Brotes,Base 20 especies
+pomelo,5,Phytophthora,Goma tronco,Húmedo,Drenaje,Fosetil-Al,No regar tronco,Base 20 especies
+pomelo,6,Clorosis Fe,Amarillas venas verdes,Primavera,Sulfato ferroso,Quelato,Calcáreos,Base 20 especies
+pomelo,7,Mancha grasienta,Manchas oscuras hojas,Otoño-invierno,Cobre,Cobre + Mancozeb,Recoger hojas,Base 20 especies
+nogal,1,Peste negra (Xanthomonas),Manchas negras hundidas en nueces y hojas,Primavera lluviosa,Cobre preventivo en brotación,Cobre agrícola,Aplicar cobre ANTES de lluvias de primavera,Base 20 especies
+nogal,2,Agalla de corona,Tumores en cuello del tronco,Todo el año,Sin cura efectiva,Arrancar si es grave,Comprar plantas sanas de vivero,Base 20 especies
+nogal,3,Polilla del nogal (Cydia),Gusano dentro de la nuez,Diciembre - Marzo,Trampas con feromona,Spinosad,Trampas desde noviembre,Base 20 especies
+nogal,4,Pulgón del nogal,"Hojas enrolladas, melaza pegajosa",Octubre - Diciembre,Jabón potásico,Imidacloprid,Mariquitas y crisopas,Base 20 especies
+nogal,5,Antracnosis,Manchas marrones en hojas que caen,Verano-otoño húmedo,Caldo bordelés,Mancozeb,Recoger hojas caídas,Base 20 especies
+nogal,6,Arañita roja,"Hojas con puntitos, bronceadas",Verano caluroso,Aceite neem + agua,Abamectina,Lavados con agua,Base 20 especies
+almendro,1,Monilia (pudrición),Flores marchitas y pegadas,Floración (agosto-sep),Caldo bordelés,Iprodione,Sacar flores momificadas,Base 20 especies
+almendro,2,Torque (cloca),Hojas arrugadas rojas,Brotación,Cobre preventivo julio,Oxicloruro cobre,Cobre ANTES de brotar,Base 20 especies
+almendro,3,Fusicocum (cancrosis),"Ramas secas, goma",Todo año,Cobre invierno,Cobre,Sellar cortes,Base 20 especies
+almendro,4,Pulgón verde,Hojas enrolladas,Primavera,Jabón potásico,Imidacloprid,Mariquitas,Base 20 especies
+almendro,5,Avispa taladro (Scolytus),"Agujeros en tronco, aserrín",Primavera,Cuidar vigor del árbol,—,Solo ataca árboles débiles,Base 20 especies
+almendro,6,Polilla almendra,Gusano en almendra,Verano,Trampas feromona,Spinosad,Recoger caídos,Base 20 especies
+higuera,1,Mosca del higo,Higos con gusanos o podridos,Maduración,Trampas vinagre + jabón,Spinosad,"Cosechar a tiempo, no dejar madurar mucho",Base 20 especies
+higuera,2,Cochinilla cerosa,Costras blancas en ramas,Todo año,Aceite mineral,—,Aceite mineral invierno,Base 20 especies
+higuera,3,Roya del higo,Manchas naranjas en hojas,Otoño,Caldo bordelés,Mancozeb,Recoger hojas caídas,Base 20 especies
+higuera,4,Pudrición de raíz,"Árbol decae, hojas amarillas",Suelos encharcados,Mejorar drenaje,—,No encharcar,Base 20 especies
+higuera,5,Pájaros,Higos picoteados,Maduración,Mallas o bolsas individuales,—,Mallas funcionan,Base 20 especies
+higuera,6,Avispas/abejas en higos,Insectos en frutos maduros,Verano,Cosechar antes que se abran mucho,—,"No es plaga, son atraídos por el dulzor",Base 20 especies
+granado,1,Rajado de frutos,Granadas se parten en el árbol,Maduración (Mar-May),Riego constante SIN ALTIBAJOS,—,NO regar mucho después de sequía: se rajan,Base 20 especies
+granado,2,Pulgón,Brotes enrollados,Primavera,Jabón potásico,Imidacloprid,Mariquitas,Base 20 especies
+granado,3,Cochinilla,Costras en ramas,Todo año,Aceite mineral,—,Aceite invierno,Base 20 especies
+granado,4,Barrenador del granado,Gusano dentro de granada,Verano,Trampas feromona,Spinosad,Recoger caídos,Base 20 especies
+granado,5,Botrytis (pudrición gris),Moho gris en frutos,Otoño húmedo,Ventilación,Iprodione,Espaciar ramas,Base 20 especies
+granado,6,Alternaria (manchas),Manchas oscuras en granos,Maduración,Caldo bordelés,—,Difícil controlar,Base 20 especies
+caqui,1,Mosca de la fruta,Pinchaduras en frutos,Maduración,Trampas vinagre,Spinosad,Cosechar antes de madurar totalmente,Base 20 especies
+caqui,2,Cochinilla,Costras en ramas y hojas,Todo año,Aceite mineral,Buprofezin,Aceite invierno,Base 20 especies
+caqui,3,Antracnosis,Manchas oscuras en hojas y frutos,Otoño húmedo,Caldo bordelés,Mancozeb,Recoger hojas,Base 20 especies
+caqui,4,Pudrición por Botrytis,Moho gris,Otoño húmedo,Ventilación,Iprodione,Espaciar,Base 20 especies
+caqui,5,Caída de frutos,Caquis caen antes de madurar,Diciembre-Enero,Riego constante + foliar K,—,NO es enfermedad: es estrés por agua o exceso de carga,Base 20 especies
+vid,1,Oidio (hongo blanco),"Polvo blanco en hojas, brotes, racimos",Primavera-verano,Azufre mojable o espolvoreo,Penconazol o Myclobutanil,La PEOR enfermedad de la vid. Azufre preventivo cada 15 días,Base 20 especies
+vid,2,Mildiú (hongo),"Manchas amarillo-aceitosas arriba, polvo blanco abajo",Primavera lluviosa,Caldo bordelés,Metalaxyl + Mancozeb,Cobre preventivo con lluvia,Base 20 especies
+vid,3,Botrytis (moho gris),"Racimos con moho gris, uvas podridas",Maduración con lluvia,"Ralear racimos, ventilación",Iprodione,Quitar hojas alrededor de racimos en enero,Base 20 especies
+vid,4,Polilla del racimo (Lobesia),"Gusanitos en grano, telas",Floración y envero,Trampas feromona,Spinosad,2 generaciones: flor y envero,Base 20 especies
+vid,5,Chanchito blanco (cochinilla),Bichitos blancos algodonosos bajo corteza,Primavera-verano,Aceite mineral invierno,Clorpirifos (restringido),"Difícil, aceite en invierno",Base 20 especies
+vid,6,Arañita roja,Hojas bronceadas con polvo,Verano caluroso,Aceite neem + agua,Abamectina,Lavar con agua,Base 20 especies
+vid,7,Pulgón de la raíz (Filoxera),"Raíces con agallas, planta decae",Todo año subterráneo,Usar portainjerto resistente,No hay control químico efectivo,SIEMPRE plantar vid injertada sobre portainjerto americano,Base 20 especies
+arandano,1,Botrytis (moho gris),Frutos con moho gris,Maduración lluviosa,Ventilación,Iprodione,No tocar frutos mojados,Base 20 especies
+arandano,2,Monilia,Flores marchitas pegadas,Floración,Caldo bordelés suave,Iprodione,Sacar flores muertas,Base 20 especies
+arandano,3,Pulgón,Brotes enrollados,Primavera,Jabón potásico,—,Leve,Base 20 especies
+arandano,4,Mosca de alas manchadas (Drosophila suzukii),Frutos blandos con gusanitos,Maduración,Trampas vinagre de manzana,Spinosad,PEOR plaga del arándano moderno,Base 20 especies
+arandano,5,Clorosis férrica,Hojas amarillas venas verdes,Cuando pH > 5.5,Sulfato ferroso + bajar pH,Quelato hierro ácido,"ES POR pH ALTO, no falta de hierro",Base 20 especies
+arandano,6,Phytophthora (raíz),"Planta decae rápido, raíces café",Suelos encharcados,Drenaje OBLIGATORIO,Fosetil-Al,NO encharcar jamás,Base 20 especies
+olivo,1,Mosca del olivo (Bactrocera),"Aceitunas con pinchaduras, gusano",Febrero - Mayo,Trampas McPhail con fosfato diamónico,Dimetoato (restringido) o Spinosad,LA plaga más importante del olivo,Base 20 especies
+olivo,2,Cochinilla del olivo,Costras oscuras en ramas,Todo año,Aceite mineral invierno,Buprofezin,Aceite invernal,Base 20 especies
+olivo,3,Repilo (mancha ojo de pavo),Manchas circulares en hojas,Otoño-invierno húmedo,Cobre otoñal,Cobre + Mancozeb,"Recoger hojas, ventilación",Base 20 especies
+olivo,4,Verticilium (hongo de raíz),"Ramas mueren de un lado, marchitez",Primavera-verano,Sin cura efectiva,"Evitar suelos donde hubo tomate, papa, pimiento",CRÍTICO: no plantar donde hubo solanáceas,Base 20 especies
+olivo,5,Negrilla (hongo negro),Hollín negro en hojas,Con cochinilla,Controlar cochinilla,—,Es secundario a cochinilla/pulgón,Base 20 especies
+olivo,6,Tuberculosis (bacteria),Tumores en ramas y tronco,Todo año,Cobre + cortar afectadas,—,Sellar cortes,Base 20 especies
+frutilla,1,Botrytis (moho gris),"Fruto con pelusa gris, se pudre en la planta","Floración-cosecha, clima húmedo","Ventilación, mulch, eliminar fruta afectada",Iprodione,Se favorece con humedad y fruto en contacto con el suelo: usar mulch siempre,Base de Conocimiento
+frutilla,2,Araña roja,"Punteado amarillo en hojas, telaraña fina","Verano, clima seco-caluroso",Jabón potásico + azufre,Abamectina,Prolifera con calor y sequedad ambiental; regar follaje ayuda a bajar población,Base de Conocimiento
+frutilla,3,Babosas y caracoles,"Fruto y hojas con mordeduras, rastro de baba","Otoño-invierno, clima húmedo","Trampas de cerveza, ceniza alrededor de la planta",Metaldehído (cebos),Activos de noche y con humedad; recolección manual nocturna es muy efectiva,Base de Conocimiento
+frambuesa,1,Botrytis,"Fruto con pudrición gris, especialmente con lluvia en cosecha","Cosecha, clima húmedo","Buena ventilación, poda de cañas, cosecha frecuente",Iprodione,Entra por flores y heridas; evitar riego por aspersión sobre el fruto,Base de Conocimiento
+frambuesa,2,Roya,Pústulas anaranjadas en el envés de las hojas,Primavera-verano húmedo,"Eliminar hojas afectadas, mejorar ventilación",Oxicloruro de cobre,Se disemina con humedad foliar prolongada,Base de Conocimiento
+frambuesa,3,Pulgón,"Brotes deformados, melaza en hojas jóvenes",Primavera,"Jabón potásico, liberar chinitas",Imidacloprid,Ataca brotes tiernos y puede transmitir virus,Base de Conocimiento
+mora,1,Botrytis,Pudrición gris del fruto maduro,Cosecha húmeda,"Ventilación, cosecha frecuente",Iprodione,Igual mecanismo que en frambuesa: humedad + fruto maduro,Base de Conocimiento
+mora,2,Roya,Manchas anaranjadas en hojas,Primavera húmeda,"Poda para ventilar, eliminar hojas afectadas",Oxicloruro de cobre,Favorecida por humedad foliar,Base de Conocimiento
+mora,3,Mosca de la fruta,Larvas dentro del fruto maduro,Diciembre-marzo,Trampas con vinagre/jugo,Spinosad,Cosechar apenas madura evita oviposición,Base de Conocimiento
+kiwi,1,Psa (cancro bacteriano),"Manchas angulares en hojas, exudado rojizo en tronco/ramas, muerte de brotes","Todo el año, más severo en clima húmedo-frío","Poda de partes afectadas y quema, cobre preventivo","Estreptomicina (uso restringido, consultar norma vigente)",Bacteria cuarentenaria grave; comprar plantas certificadas libres de Psa es la mejor prevención,Base de Conocimiento
+kiwi,2,Chanchito blanco,Colonias algodonosas en ramas y frutos,Primavera-verano,"Aceite mineral, jabón potásico",Clorpirifós (uso restringido),Prolifera en zonas de baja ventilación de la planta,Base de Conocimiento
+kiwi,3,Botrytis,Pudrición del fruto en poscosecha,"Poscosecha, almacenaje húmedo","Buena ventilación en guarda, cosecha en seco",Iprodione,Se desarrolla en frío si hay humedad residual en el fruto,Base de Conocimiento
+avellano,1,Bacteriosis (Xanthomonas arboricola),"Manchas necróticas en hojas y frutos, muerte de brotes",Primavera húmeda,Cobre preventivo en brotación,Oxicloruro de cobre,Entra por heridas y estomas con lluvia; evitar podar en época húmeda,Base de Conocimiento
+avellano,2,Barrenador (Curculio nucum),"Orificio en la avellana, larva interior",Verano (llenado de fruto),Recolección y destrucción de frutos caídos,Deltametrina,Hembra oviposita en fruto en desarrollo; el control cultural es clave,Base de Conocimiento
+avellano,3,Cytospora (cancro),"Cancros en tronco y ramas, muerte regresiva","Todo el año, más en plantas estresadas","Poda de partes afectadas, evitar heridas",Sin control químico curativo eficaz,Hongo oportunista en heridas o estrés hídrico,Base de Conocimiento
+nispero,1,Fuego bacteriano (Erwinia amylovora),Brotes y flores ennegrecidos como quemados,Floración (invierno),Poda de partes afectadas y desinfección de tijeras,Cobre preventivo,Bacteria que ingresa por flor; puede afectar también manzano/peral cercanos,Base de Conocimiento
+nispero,2,Pulgón,"Brotes deformados, melaza",Primavera,Jabón potásico,Imidacloprid,Ataca brotes tiernos en primavera,Base de Conocimiento
+nispero,3,Pájaros,Frutos picoteados antes de cosecha,Primavera (maduración),Mallas antipájaro,No aplica,El níspero madura temprano cuando hay poca otra fruta disponible: atrae aves,Base de Conocimiento
+lucuma,1,Mosca de la fruta,Larvas en el fruto en maduración,Verano-otoño,"Trampas, recolección de frutos caídos",Spinosad,Cosechar oportunamente reduce el daño,Base de Conocimiento
+lucuma,2,Chanchito blanco,Colonias en brotes y frutos,Primavera-verano,Aceite mineral,Clorpirifós (uso restringido),Prolifera en climas cálidos con baja ventilación,Base de Conocimiento
+lucuma,3,Pudrición de raíz,Marchitez y muerte de ramas,"Todo el año, suelos mal drenados","Mejorar drenaje, evitar riego excesivo",Fungicida sistémico (caso severo),Encharcamiento asfixia la raíz y favorece hongos de suelo,Base de Conocimiento
+palto,1,Tristeza del palto (Phytophthora cinnamomi),"Hojas pequeñas amarillentas, caída de hojas, copa rala, frutos pequeños con golpe de sol, raicillas podridas",Todo el año; se agrava con exceso de humedad en el suelo (otoño-invierno),"Mejorar drenaje, evitar encharcamiento, portainjertos tolerantes",Fosfonato de potasio (fosetil-Al),Principal problema fitosanitario del palto en Chile; nunca plantar en suelo mal drenado ni sobre-regar (INIA),Base de Conocimiento
+palto,2,Chanchito blanco,"Colonias algodonosas en ramas, hojas y frutos; melaza y fumagina",Primavera-verano,"Aceite mineral, jabón potásico, control biológico (avispitas parásitas)",Clorpirifós (uso restringido),Favorecido por baja ventilación del follaje; monitorear con trampas,Base de Conocimiento
+palto,3,Arañita roja,Punteado amarillento en hojas; bronceado del follaje en ataques severos,"Verano, clima cálido-seco","Riego del follaje, jabón potásico, ácaros depredadores",Abamectina,Prolifera con calor y polvo ambiental (caminos de tierra cerca del huerto),Base de Conocimiento
+chirimoya,1,Mosca de la fruta,"Larvas dentro del fruto, pudrición",Otoño (cosecha),"Trampas McPhail, embolsado de fruta",Spinosad,Riesgo cuarentenario; embolsar frutos jóvenes reduce daño,Base de Conocimiento
+chirimoya,2,Cochinilla,"Colonias en ramas y frutos, melaza y fumagina",Todo el año,"Aceite mineral, jabón potásico",Clorpirifós (uso restringido),Favorecida por baja ventilación del follaje,Base de Conocimiento
+chirimoya,3,Antracnosis,Manchas necróticas en fruto y hojas,Clima húmedo,"Poda para ventilar, cobre preventivo",Fungicida cúprico,Se agrava con humedad foliar prolongada,Base de Conocimiento
+papayo_chileno,1,Virus del mosaico,"Hojas moteadas, deformadas, planta debilitada",Todo el año,"Eliminar plantas infectadas, controlar pulgón vector",No tiene cura (control del vector),Transmitido por pulgones; usar plantines sanos certificados,Base de Conocimiento
+papayo_chileno,2,Pulgón,"Brotes deformados, vector de virus",Primavera-verano,Jabón potásico,Imidacloprid,Controlar temprano por ser vector de virosis,Base de Conocimiento
+papayo_chileno,3,Pudrición de raíz,Marchitez repentina,Suelos mal drenados,Mejorar drenaje,Fungicida sistémico,Planta muy sensible a encharcamiento,Base de Conocimiento

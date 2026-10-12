@@ -1,0 +1,12 @@
+# dim_macrozonas: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_MACROZONAS del Excel. 6 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+macrozona_id,macrozona,factor_n,factor_p2o5,factor_k2o,factor_cao,factor_mgo,parcialidades_min_ano,por_que
+NOR,Norte (Atacama-Coquimbo),1,1.3,1,0.5,0.8,10,"Suelos alcalinos y calcáreos: el P se fija como fosfato de calcio y hay que subir la dosis o aplicarlo localizado. El Ca sobra en el suelo, se reduce a la mitad. Sin lluvia no hay lavado de N, pero la alta evapotranspiración obliga a fraccionar mucho. Vigilar salinidad: preferir fuentes de bajo índice salino."
+VAL,Valparaíso-Aconcagua,1,1.1,1,0.7,0.9,8,Zona de referencia mediterránea. Ajuste leve de P por suelos algo calcáreos en el interior y menor necesidad de Ca.
+RM,Santiago-RM,1,1,1,0.7,0.9,8,Zona de referencia: los factores del Cuadro 3.6 se aplican sin corrección. Suelos con Ca generalmente adecuado.
+CSU,Centro-Sur (O'Higgins-Maule),1.05,1.05,1,1,1,8,"Precipitación de 600-900 mm concentrada en invierno: leve lavado de N si se aplica temprano. Suelos variados, en general de fertilidad adecuada."
+TRA,Transición (Ñuble-Biobío),1.15,1.2,1.1,1.2,1.2,10,"Suelos trumaos (Andisoles) de origen volcánico con alta retención de fósforo y acidez moderada. Precipitación de 1.000-1.300 mm: lavado real de N, K y Mg. Subir Ca y Mg porque el complejo de intercambio está desbalanceado."
+SUR,Sur (Araucanía-Los Lagos),1.25,1.4,1.2,1.4,1.3,12,"Andisoles con la mayor capacidad de fijación de P del país y saturación de aluminio en sectores. Precipitación sobre 1.300 mm: pérdida importante de nutrientes móviles. Aquí el encalado previo suele rendir más que subir la dosis, salvo en arándano donde nunca se encala."

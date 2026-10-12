@@ -181,6 +181,19 @@ def main(ruta_xlsx):
 
 
 if __name__ == "__main__":
+    if "--import" in sys.argv or "--sql" in sys.argv:
+        # Modos de importacion del dominio (Excel -> data/*.csv -> migracion).
+        import importar_base_maestra as imp
+        args = [a for a in sys.argv[1:] if not a.startswith("--")]
+        if not args:
+            print("Falta la ruta del Excel maestro.")
+            print("Uso: python scripts/generar_base_maestra.py <ruta.xlsx> --import")
+            print("     python scripts/generar_base_maestra.py <ruta.xlsx> --sql")
+            sys.exit(2)
+        if "--sql" in sys.argv:
+            sys.exit(imp.ejecutar_sql(args[0]))
+        sys.exit(imp.ejecutar_import(args[0]))
+
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(2)

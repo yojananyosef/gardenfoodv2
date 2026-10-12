@@ -1,0 +1,216 @@
+# fact_riego_etapa: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_RIEGO_ETAPA del Excel. 210 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+clave,especie_id,codigo_etapa,etapa,meses_originales,coincide_exacto,dias_min,dias_max,litros_min,litros_max,reposo,que_vera,consejo
+duraznero|BRO,duraznero,BRO,Brotación (Sep-Oct),Septiembre - Octubre,Sí,7,10,20,30,false,Hojas firmes y verdes brillantes,"Empezar suave, no exagerar al principio"
+duraznero|FLO,duraznero,FLO,Floración (Oct),Octubre,Sí,5,7,30,40,false,Flores abiertas y firmes,"NO mojar las flores, regar solo al suelo"
+duraznero|CUA,duraznero,CUA,Cuaja (Oct-Nov),Octubre - Noviembre,Sí,5,5,40,50,false,Frutos pequeños del tamaño de una arveja,Etapa CRÍTICA: si falta agua se caen los frutos
+duraznero|CRE,duraznero,CRE,Crecimiento de fruto (Nov-Dic),Noviembre - Diciembre,Sí,3,5,50,70,false,Frutos creciendo rápido,"Mantener humedad constante, sin altibajos"
+duraznero|MAD,duraznero,MAD,Maduración (Dic-Feb),Diciembre - Febrero,Sí,3,4,60,80,false,Frutos cambiando de color,10 días antes de cosechar reducir riego para concentrar sabor
+duraznero|POS,duraznero,POS,Postcosecha (Feb-Abr),Febrero - Abril,Sí,7,10,30,40,false,Hojas verdes activas,Importante: el árbol guarda reservas para la próxima temporada
+duraznero|REP,duraznero,REP,Reposo (May-Ago),Mayo - Agosto,Sí,15,15,15,20,false,"Sin hojas, ramas firmes","Casi no necesita agua, salvo sequía extrema"
+ciruelo|BRO,ciruelo,BRO,Brotación (Ago-Sep),Agosto - Septiembre,Sí,10,10,20,30,false,Hojas saliendo verdes,Empezar gradual
+ciruelo|FLO,ciruelo,FLO,Floración (Sep-Oct),Septiembre - Octubre,Sí,7,7,30,30,false,Flores blancas abiertas,No regar las flores
+ciruelo|CUA,ciruelo,CUA,Cuaja (Oct-Nov),Octubre - Noviembre,Sí,5,7,40,40,false,Frutitos verdes pequeños,"Riego constante, sin estrés"
+ciruelo|CRE,ciruelo,CRE,Crecimiento (Nov-Dic),Noviembre - Diciembre,Sí,4,5,50,60,false,Frutos creciendo,"Si falta agua, frutos pequeños"
+ciruelo|MAD,ciruelo,MAD,Maduración (Dic-Feb),Diciembre - Febrero,Sí,3,4,60,70,false,Frutos cambian color,Reducir 7 días antes de cosecha
+ciruelo|POS,ciruelo,POS,Postcosecha (Feb-Abr),Febrero - Abril,Sí,10,10,30,30,false,Hojas verdes activas,Repone reservas
+ciruelo|REP,ciruelo,REP,Reposo (May-Jul),Mayo - Julio,Sí,20,20,0,0,true,Sin hojas,Casi no riega
+cerezo|BRO,cerezo,BRO,Brotación (Ago-Sep),Agosto - Septiembre,Sí,10,10,20,20,false,Hojas brotando,No exagerar
+cerezo|FLO,cerezo,FLO,Floración (Sep),Septiembre,Sí,7,7,30,30,false,Flores blancas,NO mojar flor
+cerezo|CUA,cerezo,CUA,Cuaja (Oct),Octubre,Sí,5,7,40,40,false,Frutitos verdes,Crítico para producción
+cerezo|CRE,cerezo,CRE,Crecimiento (Oct-Nov),Octubre - Noviembre,Sí,4,5,50,50,false,Cerezas verdes creciendo,"Constante, sin altibajos"
+cerezo|MAD,cerezo,MAD,Pinta y maduración (Nov-Dic),Noviembre - Diciembre,Sí,5,5,40,40,false,Cerezas cambian color,REDUCIR riego: el exceso parte las cerezas
+cerezo|POS,cerezo,POS,Postcosecha (Dic-Mar),Diciembre - Marzo,Sí,7,10,40,40,false,Hojas verdes,Recuperación importante
+cerezo|REP,cerezo,REP,Reposo (Abr-Jul),Abril - Julio,Sí,20,20,0,0,true,Sin hojas,Mínimo
+damasco|BRO,damasco,BRO,Brotación (Ago),Agosto,Sí,10,10,20,20,false,Hojas saliendo,Inicio suave
+damasco|FLO,damasco,FLO,Floración (Ago-Sep),Agosto - Septiembre,Sí,7,7,25,25,false,Flores rosa-blancas,PELIGRO: heladas tardías
+damasco|CUA,damasco,CUA,Cuaja (Sep-Oct),Septiembre - Octubre,Sí,5,7,35,35,false,Frutitos verdes,Crítico
+damasco|CRE,damasco,CRE,Crecimiento (Oct-Nov),Octubre - Noviembre,Sí,4,5,45,45,false,Frutos creciendo,Constante
+damasco|MAD,damasco,MAD,Maduración (Nov-Dic),Noviembre - Diciembre,Sí,4,4,50,50,false,Cambian a naranja,Reducir 7 días antes cosecha
+damasco|POS,damasco,POS,Postcosecha (Dic-Mar),Diciembre - Marzo,Sí,10,10,30,30,false,Hojas verdes,Recuperación
+damasco|REP,damasco,REP,Reposo (Abr-Jul),Abril - Julio,Sí,20,20,0,0,true,Sin hojas,Casi no necesita
+nectarino|BRO,nectarino,BRO,Brotación (Sep),Septiembre,Sí,7,10,20,30,false,Hojas brotando,Inicio suave
+nectarino|FLO,nectarino,FLO,Floración (Oct),Octubre,Sí,5,7,30,40,false,Flores rosadas,No mojar flores
+nectarino|CUA,nectarino,CUA,Cuaja (Oct-Nov),Octubre - Noviembre,Sí,5,5,40,50,false,Frutitos verdes,Crítico
+nectarino|CRE,nectarino,CRE,Crecimiento (Nov-Dic),Noviembre - Diciembre,Sí,3,5,50,70,false,Frutos creciendo,Constante
+nectarino|MAD,nectarino,MAD,Maduración (Dic-Feb),Diciembre - Febrero,Sí,3,4,60,80,false,Cambio color,Reducir 10 días antes
+nectarino|POS,nectarino,POS,Postcosecha (Feb-Abr),Febrero - Abril,Sí,7,10,30,40,false,Hojas activas,Importante
+nectarino|REP,nectarino,REP,Reposo (May-Ago),Mayo - Agosto,Sí,20,20,0,0,true,Sin hojas,Casi nada
+manzano|BRO,manzano,BRO,Brotación (Sep),Septiembre,Sí,10,10,25,25,false,Hojas brotando,Inicio gradual
+manzano|FLO,manzano,FLO,Floración (Oct),Octubre,Sí,7,7,30,30,false,Flores blanco-rosadas,No mojar flores
+manzano|CUA,manzano,CUA,Cuaja (Oct-Nov),Octubre - Noviembre,Sí,7,7,40,40,false,Frutitos verdes,Constante
+manzano|CRE,manzano,CRE,Crecimiento (Nov-Ene),Noviembre - Enero,Sí,5,7,50,70,false,Manzanas creciendo,No falte agua
+manzano|MAD,manzano,MAD,Maduración (Feb-Abr),Febrero - Abril,Sí,7,7,50,50,false,Cambio color,Reducir antes cosecha
+manzano|POS,manzano,POS,Postcosecha (Abr-May),Abril - Mayo,Sí,10,10,30,30,false,Hojas verdes,Reservas
+manzano|REP,manzano,REP,Reposo (Jun-Ago),Junio - Agosto,Sí,20,20,0,0,true,Sin hojas,Casi nada
+peral|BRO,peral,BRO,Brotación (Sep),Septiembre,Sí,10,10,25,25,false,Hojas brotan,Inicio
+peral|FLO,peral,FLO,Floración (Oct),Octubre,Sí,7,7,30,30,false,Flores blancas,No mojar
+peral|CUA,peral,CUA,Cuaja (Oct-Nov),Octubre - Noviembre,Sí,7,7,40,40,false,Pequeños verdes,Constante
+peral|CRE,peral,CRE,Crecimiento (Nov-Ene),Noviembre - Enero,Sí,5,7,50,60,false,Peras creciendo,No falte
+peral|MAD,peral,MAD,Maduración (Feb-Mar),Febrero - Marzo,Sí,7,7,50,50,false,Cambio color,Reducir antes cosecha
+peral|POS,peral,POS,Postcosecha (Abr-May),Abril - Mayo,Sí,10,10,30,30,false,Hojas activas,Recuperación
+peral|REP,peral,REP,Reposo (Jun-Ago),Junio - Agosto,Sí,20,20,0,0,true,Sin hojas,Casi nada
+membrillo|BRO,membrillo,BRO,Brotación (Sep),Septiembre,Sí,10,10,20,20,false,Hojas brotan,Inicio
+membrillo|FLO,membrillo,FLO,Floración (Oct),Octubre,Sí,7,10,25,25,false,Flores blanco-rosadas,Tolerante
+membrillo|CUA,membrillo,CUA,Cuaja (Nov),Noviembre,Sí,7,7,30,30,false,Frutos pequeños,Estable
+membrillo|CRE,membrillo,CRE,Crecimiento (Dic-Feb),Diciembre - Febrero,Sí,7,7,40,40,false,Membrillos creciendo,Constante
+membrillo|MAD,membrillo,MAD,Maduración (Mar-May),Marzo - Mayo,Sí,7,10,30,40,false,Cambio color amarillo,Reducir antes cosecha
+membrillo|POS,membrillo,POS,Postcosecha (May-Jun),Mayo - Junio,Sí,15,15,20,20,false,Hojas activas,Recuperación
+membrillo|REP,membrillo,REP,Reposo (Jun-Ago),Junio - Agosto,Sí,20,20,0,0,true,Sin hojas,Casi nada
+limonero|BRO,limonero,BRO,Primavera (Sep-Nov),Septiembre - Noviembre,Sí,7,10,30,40,false,Hojas brillantes,Aumenta gradual
+limonero|FLO,limonero,FLO,Primavera (Sep-Nov),Septiembre - Noviembre,Sí,7,10,30,40,false,Hojas brillantes,Aumenta gradual
+limonero|CUA,limonero,CUA,Verano (Dic-Feb),Diciembre - Febrero,Sí,4,7,50,70,false,Hojas verdes firmes,Crítico
+limonero|CRE,limonero,CRE,Verano (Dic-Feb),Diciembre - Febrero,Sí,4,7,50,70,false,Hojas verdes firmes,Crítico
+limonero|MAD,limonero,MAD,Verano (Dic-Feb),Diciembre - Febrero,Sí,4,7,50,70,false,Hojas verdes firmes,Crítico
+limonero|POS,limonero,POS,Otoño (Mar-May),Marzo - Mayo,Sí,10,10,30,40,false,Hojas brillantes,Reducir gradual
+limonero|REP,limonero,REP,Invierno (Jun-Ago),Junio - Agosto,Sí,15,15,20,30,false,Sin caída de hojas,"Mínimo, cítrico es siempreverde"
+naranjo|BRO,naranjo,BRO,Primavera (Sep-Nov),Septiembre - Noviembre,Sí,7,10,40,40,false,Hojas brillantes,Aumenta gradual
+naranjo|FLO,naranjo,FLO,Primavera (Sep-Nov),Septiembre - Noviembre,Sí,7,10,40,40,false,Hojas brillantes,Aumenta gradual
+naranjo|CUA,naranjo,CUA,Verano (Dic-Feb),Diciembre - Febrero,Sí,4,7,60,80,false,Hojas firmes,Crítico para fruto
+naranjo|CRE,naranjo,CRE,Verano (Dic-Feb),Diciembre - Febrero,Sí,4,7,60,80,false,Hojas firmes,Crítico para fruto
+naranjo|MAD,naranjo,MAD,Verano (Dic-Feb),Diciembre - Febrero,Sí,4,7,60,80,false,Hojas firmes,Crítico para fruto
+naranjo|POS,naranjo,POS,Otoño (Mar-May),Marzo - Mayo,Sí,10,10,40,40,false,Hojas brillantes,Reducir
+naranjo|REP,naranjo,REP,Invierno (Jun-Ago),Junio - Agosto,Sí,15,15,30,30,false,Hojas firmes,Mínimo
+mandarino|BRO,mandarino,BRO,Primavera,Septiembre - Noviembre,Sí,7,10,30,30,false,Hojas brillantes,Inicio
+mandarino|FLO,mandarino,FLO,Primavera,Septiembre - Noviembre,Sí,7,10,30,30,false,Hojas brillantes,Inicio
+mandarino|CUA,mandarino,CUA,Verano,Diciembre - Febrero,Sí,4,7,50,60,false,Hojas firmes,Crítico
+mandarino|CRE,mandarino,CRE,Verano,Diciembre - Febrero,Sí,4,7,50,60,false,Hojas firmes,Crítico
+mandarino|MAD,mandarino,MAD,Verano,Diciembre - Febrero,Sí,4,7,50,60,false,Hojas firmes,Crítico
+mandarino|POS,mandarino,POS,Otoño,Marzo - Mayo,Sí,10,10,30,30,false,Brillantes,Reducir
+mandarino|REP,mandarino,REP,Invierno,Junio - Agosto,Sí,15,15,20,20,false,Firmes,Mínimo
+pomelo|BRO,pomelo,BRO,Primavera,Septiembre - Noviembre,Sí,7,10,40,40,false,Hojas brillantes,Inicio
+pomelo|FLO,pomelo,FLO,Primavera,Septiembre - Noviembre,Sí,7,10,40,40,false,Hojas brillantes,Inicio
+pomelo|CUA,pomelo,CUA,Verano,Diciembre - Febrero,Sí,4,7,70,90,false,Hojas firmes,"Crítico, árbol grande"
+pomelo|CRE,pomelo,CRE,Verano,Diciembre - Febrero,Sí,4,7,70,90,false,Hojas firmes,"Crítico, árbol grande"
+pomelo|MAD,pomelo,MAD,Verano,Diciembre - Febrero,Sí,4,7,70,90,false,Hojas firmes,"Crítico, árbol grande"
+pomelo|POS,pomelo,POS,Otoño,Marzo - Mayo,Sí,10,10,40,40,false,Brillantes,Reducir
+pomelo|REP,pomelo,REP,Invierno,Junio - Agosto,Sí,15,15,30,30,false,Firmes,Mínimo
+nogal|BRO,nogal,BRO,Brotación (Sep-Oct),Septiembre - Octubre,Sí,10,15,40,60,false,Hojas saliendo,Inicio gradual
+nogal|FLO,nogal,FLO,Floración (Oct),Octubre,Sí,10,10,50,60,false,Flores pequeñas,No exagerar
+nogal|CUA,nogal,CUA,Floración (Oct),Octubre,Aproximada,10,10,50,60,false,Flores pequeñas,No exagerar
+nogal|CRE,nogal,CRE,Crecimiento fruto (Nov-Dic),Noviembre - Diciembre,Sí,7,10,80,120,false,Nueces verdes creciendo,Etapa crítica: define tamaño nuez
+nogal|MAD,nogal,MAD,Maduración (Mar-Abr),Marzo - Abril,Sí,7,10,80,80,false,Cáscara verde se abre,Reducir antes cosecha
+nogal|POS,nogal,POS,Postcosecha (Abr-May),Abril - Mayo,Sí,15,15,50,50,false,Hojas activas,Reservas
+nogal|REP,nogal,REP,Reposo (Jun-Ago),Junio - Agosto,Sí,20,20,0,0,true,Sin hojas,Casi nada
+almendro|BRO,almendro,BRO,Brotación (Ago-Sep),Agosto - Septiembre,Sí,10,15,25,25,false,Hojas y flores,Florece MUY temprano (agosto)
+almendro|FLO,almendro,FLO,Floración (Ago-Sep),Agosto - Septiembre,Sí,10,10,30,30,false,Flores blancas masivas,HELADAS: mayor riesgo
+almendro|CUA,almendro,CUA,Cuaja (Sep-Oct),Septiembre - Octubre,Sí,7,10,40,40,false,Frutitos verdes,Crítico
+almendro|CRE,almendro,CRE,Crecimiento (Oct-Dic),Octubre - Diciembre,Sí,7,10,50,60,false,Almendras verdes,Constante
+almendro|MAD,almendro,MAD,Maduración (Feb-Mar),Febrero - Marzo,Sí,10,15,30,30,false,Cáscara verde seca,Reducir mucho
+almendro|POS,almendro,POS,Postcosecha-reposo (Abr-Jul),Abril - Julio,Sí,20,20,0,0,true,Sin hojas,Tolera sequía
+almendro|REP,almendro,REP,Postcosecha-reposo (Abr-Jul),Abril - Julio,Sí,20,20,0,0,true,Sin hojas,Tolera sequía
+higuera|BRO,higuera,BRO,Brotación (Sep-Oct),Septiembre - Octubre,Sí,10,15,20,20,false,Hojas grandes saliendo,"Inicio, poco"
+higuera|FLO,higuera,FLO,Brotación (Sep-Oct),Septiembre - Octubre,Aproximada,10,15,20,20,false,Hojas grandes saliendo,"Inicio, poco"
+higuera|CUA,higuera,CUA,Crecimiento (Nov-Dic),Noviembre - Diciembre,Aproximada,7,10,30,40,false,Higos formándose,Constante
+higuera|CRE,higuera,CRE,Crecimiento (Nov-Dic),Noviembre - Diciembre,Sí,7,10,30,40,false,Higos formándose,Constante
+higuera|MAD,higuera,MAD,Maduración 1ra cosecha (Dic-Ene),Diciembre - Enero,Sí,5,7,40,40,false,Brevas madurando (si produce),Brevas = higos de la primera cosecha
+higuera|POS,higuera,POS,Postcosecha (Abr-May),Abril - Mayo,Sí,15,15,20,20,false,Hojas activas,Recuperación
+higuera|REP,higuera,REP,Reposo (Jun-Ago),Junio - Agosto,Sí,20,20,0,0,true,Sin hojas,Muy resistente a sequía
+granado|BRO,granado,BRO,Brotación (Sep-Oct),Septiembre - Octubre,Sí,10,15,20,20,false,Hojas brotando,Inicio suave
+granado|FLO,granado,FLO,Floración (Nov-Dic),Noviembre - Diciembre,Sí,7,10,30,30,false,Flores rojas brillantes,"Constante, no altibajos"
+granado|CUA,granado,CUA,Floración (Nov-Dic),Noviembre - Diciembre,Aproximada,7,10,30,30,false,Flores rojas brillantes,"Constante, no altibajos"
+granado|CRE,granado,CRE,Crecimiento (Dic-Feb),Diciembre - Febrero,Sí,5,7,40,50,false,Granadas creciendo,Importante
+granado|MAD,granado,MAD,Maduración (Mar-May),Marzo - Mayo,Sí,7,10,30,40,false,Granadas coloreando,"Reducir: si alterna seco-mojado, se RAJAN"
+granado|POS,granado,POS,Postcosecha (May-Jun),Mayo - Junio,Sí,15,15,20,20,false,Hojas activas,Recuperación
+granado|REP,granado,REP,Reposo (Jul-Ago),Julio - Agosto,Sí,20,20,0,0,true,Sin hojas,Muy resistente sequía
+caqui|BRO,caqui,BRO,Brotación (Sep-Oct),Septiembre - Octubre,Sí,10,15,25,25,false,Hojas brotando tarde,Caqui brota TARDE
+caqui|FLO,caqui,FLO,Floración (Nov),Noviembre,Sí,7,10,30,30,false,Flores pequeñas,Constante
+caqui|CUA,caqui,CUA,Floración (Nov),Noviembre,Aproximada,7,10,30,30,false,Flores pequeñas,Constante
+caqui|CRE,caqui,CRE,Crecimiento (Dic-Feb),Diciembre - Febrero,Sí,5,7,50,60,false,Caquis verdes creciendo,Importante
+caqui|MAD,caqui,MAD,Maduración (Mar-May),Marzo - Mayo,Sí,7,10,40,40,false,Cambian a naranja,Reducir gradual
+caqui|POS,caqui,POS,Postcosecha (Jun),Junio,Sí,15,15,20,20,false,Hojas coloreando,Recuperación
+caqui|REP,caqui,REP,Reposo (Jul-Ago),Julio - Agosto,Sí,20,20,0,0,true,Sin hojas,Resistente
+vid|BRO,vid,BRO,Brotación (Sep),Septiembre,Sí,10,10,15,20,false,"Yemas brotan, hojas salen","Inicio suave, sin exceso"
+vid|FLO,vid,FLO,Floración (Nov),Noviembre,Sí,7,10,25,30,false,Florecitas pequeñas,NO regar mucho en flor: cae fruto (corrimiento)
+vid|CUA,vid,CUA,Cuaja-crecimiento (Nov-Dic),Noviembre - Diciembre,Sí,5,7,30,40,false,Grano formándose,Crítico
+vid|CRE,vid,CRE,Crecimiento brotes (Oct),Octubre,Sí,7,10,20,30,false,Brotes creciendo rápido,Constante
+vid|MAD,vid,MAD,Envero-maduración (Ene-Feb),Enero - Febrero,Sí,7,10,20,30,false,Uvas cambian color (envero),REDUCIR: exceso diluye sabor
+vid|POS,vid,POS,Postcosecha-reposo (Abr-Ago),Abril - Agosto,Sí,20,20,0,0,true,"Hojas caen, reposo",Casi nada
+vid|REP,vid,REP,Postcosecha-reposo (Abr-Ago),Abril - Agosto,Sí,20,20,0,0,true,"Hojas caen, reposo",Casi nada
+arandano|BRO,arandano,BRO,Brotación (Sep),Septiembre,Sí,3,5,5,10,false,Hojas y flores brotan,Arándano tiene raíces superficiales: riego FRECUENTE
+arandano|FLO,arandano,FLO,Floración (Oct),Octubre,Sí,3,5,8,10,false,Flores blancas acampanadas,No mojar flores
+arandano|CUA,arandano,CUA,Cuaja-crecimiento (Nov-Dic),Noviembre - Diciembre,Sí,2,3,10,15,false,Frutos verdes-rosados,CRÍTICO: raíz superficial se seca rápido
+arandano|CRE,arandano,CRE,Cuaja-crecimiento (Nov-Dic),Noviembre - Diciembre,Sí,2,3,10,15,false,Frutos verdes-rosados,CRÍTICO: raíz superficial se seca rápido
+arandano|MAD,arandano,MAD,Maduración (Dic-Feb),Diciembre - Febrero,Sí,2,3,10,15,false,Frutos azules,Mantener constante
+arandano|POS,arandano,POS,Postcosecha (Feb-Abr),Febrero - Abril,Sí,5,5,8,8,false,Hojas activas,Reservas
+arandano|REP,arandano,REP,Reposo (May-Ago),Mayo - Agosto,Sí,10,15,5,5,false,Hojas caen o rojean,No dejar secar totalmente
+olivo|BRO,olivo,BRO,Brotación (Sep-Oct),Septiembre - Octubre,Sí,15,15,20,30,false,Brotes nuevos claros,Inicio moderado
+olivo|FLO,olivo,FLO,Floración (Nov),Noviembre,Sí,10,15,30,30,false,Racimos florales pequeños,"Regar antes de floración, no durante"
+olivo|CUA,olivo,CUA,Cuaja (Dic),Diciembre,Sí,10,10,40,40,false,Aceitunitas verdes,Importante para cuaja
+olivo|CRE,olivo,CRE,Crecimiento (Ene-Feb),Enero - Febrero,Sí,7,10,50,50,false,Aceitunas creciendo,Importante
+olivo|MAD,olivo,MAD,Envero-maduración (Mar-May),Marzo - Mayo,Sí,10,15,30,40,false,Cambian verde a negro,Reducir: el estrés hídrico mejora aceite
+olivo|POS,olivo,POS,Postcosecha (Jun-Jul),Junio - Julio,Sí,15,20,20,20,false,Hojas activas,Recuperación
+olivo|REP,olivo,REP,Reposo (Jul-Ago),Julio - Agosto,Sí,20,20,0,0,true,Siempreverde,MUY resistente sequía
+frutilla|BRO,frutilla,BRO,Establecimiento (Abril - Mayo),Abril - Mayo,Sí,2,3,2,2,false,Hojas nuevas chicas saliendo del centro,No deje que se seque ni un día: la raíz nueva no alcanza a buscar agua abajo
+frutilla|FLO,frutilla,FLO,Floración (Octubre),Octubre,Sí,2,3,2,4,false,Flores blancas abiertas,"Riegue al suelo, nunca sobre la flor: el agua en la flor trae botrytis"
+frutilla|CUA,frutilla,CUA,Crecimiento vegetativo (Agosto - Septiembre),Agosto - Septiembre,Aproximada,3,4,2,3,false,Hojas nuevas verdes y grandes,Es el momento de aportar compost y renovar el mulch de paja
+frutilla|CRE,frutilla,CRE,Crecimiento vegetativo (Agosto - Septiembre),Agosto - Septiembre,Sí,3,4,2,3,false,Hojas nuevas verdes y grandes,Es el momento de aportar compost y renovar el mulch de paja
+frutilla|MAD,frutilla,MAD,Fructificación y cosecha (Noviembre - Enero),Noviembre - Enero,Sí,2,2,3,4,false,Frutos verdes engordando y tomando color,"Humedad pareja: si se seca y se moja de golpe, la fruta se parte"
+frutilla|POS,frutilla,POS,Postcosecha (Febrero - Marzo),Febrero - Marzo,Sí,4,5,2,3,false,Estolones (guías) saliendo por los lados,"Corte los estolones si quiere fruta el año que viene, o enraícelos para nuevas plantas"
+frutilla|REP,frutilla,REP,Reposo (Junio - Julio),Junio - Julio,Sí,10,15,0,0,true,"Planta chica, hojas rojizas, sin crecimiento",Riegue apenas: el exceso en invierno pudre la corona
+frambuesa|BRO,frambuesa,BRO,Brotación (Septiembre),Septiembre,Sí,5,6,8,12,false,Brotes nuevos saliendo de la base,Deje solo 6 a 8 cañas por planta y saque el resto
+frambuesa|FLO,frambuesa,FLO,Floración (Noviembre - Diciembre),Noviembre - Diciembre,Sí,3,4,15,20,false,Flores blancas chicas en los laterales,No moje la flor: riegue por goteo o al pie
+frambuesa|CUA,frambuesa,CUA,Crecimiento de cañas (Octubre - Noviembre),Octubre - Noviembre,Aproximada,4,5,12,18,false,Cañas creciendo rápido en altura,Amarre las cañas al alambre antes de que se doblen con la fruta
+frambuesa|CRE,frambuesa,CRE,Crecimiento de cañas (Octubre - Noviembre),Octubre - Noviembre,Sí,4,5,12,18,false,Cañas creciendo rápido en altura,Amarre las cañas al alambre antes de que se doblen con la fruta
+frambuesa|MAD,frambuesa,MAD,Fructificación (Diciembre - Febrero),Diciembre - Febrero,Sí,2,3,20,28,false,"Frutos rojos, cosecha cada 2-3 días","Es la etapa que más agua pide de todo el año; si falta, la fruta sale chica y seca"
+frambuesa|POS,frambuesa,POS,Postcosecha (Marzo - Abril),Marzo - Abril,Sí,7,8,10,15,false,Hojas empezando a amarillear,Baje el riego de a poco para que la planta entre bien al invierno
+frambuesa|REP,frambuesa,REP,Reposo (Mayo - Agosto),Mayo - Agosto,Sí,15,20,0,0,true,Cañas sin hojas,Es la época de podar: saque las cañas que ya dieron fruta
+mora|BRO,mora,BRO,Brotación (Septiembre - Octubre),Septiembre - Octubre,Sí,6,7,10,15,false,Brotes nuevos vigorosos desde la base,Guíe las cañas nuevas al alambre desde temprano
+mora|FLO,mora,FLO,Floración (Noviembre - Diciembre),Noviembre - Diciembre,Sí,4,5,18,25,false,Flores blancas o rosadas,Riegue parejo: la flor con estrés no cuaja
+mora|CUA,mora,CUA,Crecimiento (Octubre - Noviembre),Octubre - Noviembre,Aproximada,5,6,15,20,false,Cañas largas y hojas grandes,Aporte compost al pie; la mora responde fuerte a la materia orgánica
+mora|CRE,mora,CRE,Crecimiento (Octubre - Noviembre),Octubre - Noviembre,Sí,5,6,15,20,false,Cañas largas y hojas grandes,Aporte compost al pie; la mora responde fuerte a la materia orgánica
+mora|MAD,mora,MAD,Fructificación (Enero - Febrero),Enero - Febrero,Sí,3,4,25,35,false,Frutos pasando de rojo a negro brillante,Coseche solo las negras opacas: la negra brillante todavía está ácida
+mora|POS,mora,POS,Postcosecha (Marzo - Abril),Marzo - Abril,Sí,8,10,12,18,false,"Hojas amarillando, cañas maduras",Saque al ras las cañas que fructificaron: no vuelven a dar
+mora|REP,mora,REP,Reposo (Mayo - Agosto),Mayo - Agosto,Sí,15,20,0,0,true,Cañas sin hojas o con pocas,Pode las cañas viejas al ras y deje las nuevas
+kiwi|BRO,kiwi,BRO,Brotación (Septiembre - Octubre),Septiembre - Octubre,Sí,5,6,40,60,false,"Brotes tiernos, muy frágiles al viento",Proteja del viento: el brote nuevo se quiebra solo
+kiwi|FLO,kiwi,FLO,Floración (Noviembre),Noviembre,Sí,4,5,60,80,false,Flores blancas grandes y perfumadas,"Necesita una planta macho cada 6 a 8 hembras, o no hay fruta"
+kiwi|CUA,kiwi,CUA,Cuaja y crecimiento (Diciembre - Enero),Diciembre - Enero,Sí,3,4,90,120,false,Frutos chicos tomando forma,Es el frutal que más agua consume por planta: no lo deje secar ni un día de calor
+kiwi|CRE,kiwi,CRE,Cuaja y crecimiento (Diciembre - Enero),Diciembre - Enero,Sí,3,4,90,120,false,Frutos chicos tomando forma,Es el frutal que más agua consume por planta: no lo deje secar ni un día de calor
+kiwi|MAD,kiwi,MAD,Cuaja y crecimiento (Diciembre - Enero),Diciembre - Enero,Aproximada,3,4,90,120,false,Frutos chicos tomando forma,Es el frutal que más agua consume por planta: no lo deje secar ni un día de calor
+kiwi|POS,kiwi,POS,Cosecha y postcosecha (Abril - Mayo),Abril - Mayo,Sí,7,8,50,70,false,"Fruto firme, semilla ya negra por dentro",Coseche firme y madure adentro de la casa con una manzana al lado
+kiwi|REP,kiwi,REP,Reposo (Junio - Agosto),Junio - Agosto,Sí,20,25,0,0,true,Parrón sin hojas,Época de poda: es la especie que más poda necesita
+avellano|BRO,avellano,BRO,Floración invernal (Julio - Agosto),Julio - Agosto,Aproximada,12,15,20,30,false,Amentos colgando como gusanitos amarillos,"Florece en pleno invierno: acá casi no se riega, la lluvia basta"
+avellano|FLO,avellano,FLO,Floración invernal (Julio - Agosto),Julio - Agosto,Sí,12,15,20,30,false,Amentos colgando como gusanitos amarillos,"Florece en pleno invierno: acá casi no se riega, la lluvia basta"
+avellano|CUA,avellano,CUA,Floración invernal (Julio - Agosto),Julio - Agosto,Aproximada,12,15,20,30,false,Amentos colgando como gusanitos amarillos,"Florece en pleno invierno: acá casi no se riega, la lluvia basta"
+avellano|CRE,avellano,CRE,Crecimiento vegetativo (Septiembre - Octubre),Septiembre - Octubre,Sí,8,10,35,50,false,Hojas nuevas y brotes creciendo,Saque los chupones de la base o se le transforma en matorral
+avellano|MAD,avellano,MAD,Maduración y caída (Febrero - Marzo),Febrero - Marzo,Sí,8,10,40,55,false,Avellanas cayendo solas al suelo,Mantenga el suelo limpio y parejo para juntarlas fácil
+avellano|POS,avellano,POS,Postcosecha (Abril - Mayo),Abril - Mayo,Sí,12,15,25,35,false,Hojas amarillas cayendo,Aporte compost antes de que entre el invierno
+avellano|REP,avellano,REP,Reposo (Junio),Junio,Sí,20,25,0,0,true,Árbol sin hojas,Época de poda de formación
+nispero|BRO,nispero,BRO,Postcosecha y brotación (Noviembre - Diciembre),Noviembre - Diciembre,Sí,7,9,40,55,false,Brotes nuevos y hojas grandes saliendo,"Pode ahora, justo después de cosechar"
+nispero|FLO,nispero,FLO,Floración (Abril - Junio),Abril - Junio,Sí,12,15,25,35,false,"Racimos de flores blancas peludas, en pleno otoño",Florece al revés que todos: la flor pasa el invierno y la fruta sale en primavera
+nispero|CUA,nispero,CUA,Floración (Abril - Junio),Abril - Junio,Aproximada,12,15,25,35,false,"Racimos de flores blancas peludas, en pleno otoño",Florece al revés que todos: la flor pasa el invierno y la fruta sale en primavera
+nispero|CRE,nispero,CRE,Crecimiento de fruto (Julio - Agosto),Julio - Agosto,Sí,8,10,35,50,false,Frutos verdes chicos en racimo,Ralee el racimo a 3 o 4 frutos si quiere fruta grande
+nispero|MAD,nispero,MAD,Maduración y cosecha (Septiembre - Octubre),Septiembre - Octubre,Sí,6,8,45,60,false,"Frutos amarillo-anaranjados, blandos al tacto",Es el primer fruto del año: coseche cuando suelta fácil
+nispero|POS,nispero,POS,Postcosecha y brotación (Noviembre - Diciembre),Noviembre - Diciembre,Sí,7,9,40,55,false,Brotes nuevos y hojas grandes saliendo,"Pode ahora, justo después de cosechar"
+nispero|REP,nispero,REP,Postcosecha y brotación (Noviembre - Diciembre),Noviembre - Diciembre,Aproximada,7,9,40,55,false,Brotes nuevos y hojas grandes saliendo,"Pode ahora, justo después de cosechar"
+lucuma|BRO,lucuma,BRO,Floración (Septiembre - Noviembre),Septiembre - Noviembre,Aproximada,8,10,40,55,false,"Flores verdosas chicas, poco llamativas",Necesita calor y nada de heladas; solo prospera en la franja costera norte y centro
+lucuma|FLO,lucuma,FLO,Floración (Septiembre - Noviembre),Septiembre - Noviembre,Sí,8,10,40,55,false,"Flores verdosas chicas, poco llamativas",Necesita calor y nada de heladas; solo prospera en la franja costera norte y centro
+lucuma|CUA,lucuma,CUA,Cuaja y crecimiento (Diciembre - Febrero),Diciembre - Febrero,Sí,6,8,55,75,false,Frutos verdes redondos creciendo,Riegue parejo pero nunca encharque: la raíz se pudre con facilidad
+lucuma|CRE,lucuma,CRE,Cuaja y crecimiento (Diciembre - Febrero),Diciembre - Febrero,Sí,6,8,55,75,false,Frutos verdes redondos creciendo,Riegue parejo pero nunca encharque: la raíz se pudre con facilidad
+lucuma|MAD,lucuma,MAD,Maduración (Marzo - Junio),Marzo - Junio,Sí,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol
+lucuma|POS,lucuma,POS,Maduración (Marzo - Junio),Marzo - Junio,Aproximada,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol
+lucuma|REP,lucuma,REP,Maduración (Marzo - Junio),Marzo - Junio,Aproximada,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol
+palto|BRO,palto,BRO,Floración (Septiembre - Noviembre),Septiembre - Noviembre,Aproximada,6,8,50,70,false,Miles de flores amarillo-verdosas,Estrés hídrico en flor bota casi toda la cuaja: es el momento más delicado del año
+palto|FLO,palto,FLO,Floración (Septiembre - Noviembre),Septiembre - Noviembre,Sí,6,8,50,70,false,Miles de flores amarillo-verdosas,Estrés hídrico en flor bota casi toda la cuaja: es el momento más delicado del año
+palto|CUA,palto,CUA,Cuaja (Noviembre - Diciembre),Noviembre - Diciembre,Sí,5,6,70,90,false,"Frutos chicos como arvejas, con mucha caída natural",La caída de frutitos es normal: el árbol deja los que puede mantener
+palto|CRE,palto,CRE,Crecimiento de fruto (Diciembre - Febrero),Diciembre - Febrero,Sí,4,5,90,120,false,"Frutos creciendo rápido, piel verde",Mulch grueso bajo la copa: la raíz de la palta vive en los primeros 30 cm
+palto|MAD,palto,MAD,Maduración (Marzo - Mayo),Marzo - Mayo,Sí,6,8,70,90,false,"Frutos de tamaño final, piel opaca",La palta madura fuera del árbol: coséchela y espere unos días
+palto|POS,palto,POS,Invierno (Junio - Agosto),Junio - Agosto,Aproximada,12,15,35,50,false,"Árbol verde, sin crecimiento visible",Cuide las heladas más que el riego; el exceso de agua fría en invierno mata raíces
+palto|REP,palto,REP,Invierno (Junio - Agosto),Junio - Agosto,Sí,12,15,35,50,false,"Árbol verde, sin crecimiento visible",Cuide las heladas más que el riego; el exceso de agua fría en invierno mata raíces
+chirimoya|BRO,chirimoya,BRO,Brotación y floración (Septiembre - Diciembre),Septiembre - Diciembre,Sí,7,9,40,60,false,Hojas nuevas y flores carnosas verdes,En huerto de casa conviene polinizar a mano con pincel: sin eso casi no cuaja
+chirimoya|FLO,chirimoya,FLO,Brotación y floración (Septiembre - Diciembre),Septiembre - Diciembre,Sí,7,9,40,60,false,Hojas nuevas y flores carnosas verdes,En huerto de casa conviene polinizar a mano con pincel: sin eso casi no cuaja
+chirimoya|CUA,chirimoya,CUA,Cuaja y crecimiento (Diciembre - Febrero),Diciembre - Febrero,Sí,5,7,60,85,false,Frutos verdes con escamas marcadas,Sombra en las horas de más calor si vive tierra adentro
+chirimoya|CRE,chirimoya,CRE,Cuaja y crecimiento (Diciembre - Febrero),Diciembre - Febrero,Sí,5,7,60,85,false,Frutos verdes con escamas marcadas,Sombra en las horas de más calor si vive tierra adentro
+chirimoya|MAD,chirimoya,MAD,Maduración (Marzo - Mayo),Marzo - Mayo,Sí,7,9,50,70,false,"Frutos grandes, escamas que se abren",Coseche firme: madura en dos o tres días dentro de la casa
+chirimoya|POS,chirimoya,POS,Maduración (Marzo - Mayo),Marzo - Mayo,Aproximada,7,9,50,70,false,"Frutos grandes, escamas que se abren",Coseche firme: madura en dos o tres días dentro de la casa
+chirimoya|REP,chirimoya,REP,Cosecha y reposo (Junio - Agosto),Junio - Agosto,Sí,15,20,20,30,false,"Árbol con pocas hojas, semi caduco",Solo prospera en microclimas costeros protegidos de helada
+papayo_chileno|BRO,papayo_chileno,BRO,Floración y cuaja continua (Diciembre - Febrero),Diciembre - Febrero,Aproximada,4,5,35,50,false,Flores y frutos de todos los tamaños a la vez,Produce todo el año donde no hiela: siempre tendrá fruta en alguna etapa
+papayo_chileno|FLO,papayo_chileno,FLO,Floración y cuaja continua (Diciembre - Febrero),Diciembre - Febrero,Sí,4,5,35,50,false,Flores y frutos de todos los tamaños a la vez,Produce todo el año donde no hiela: siempre tendrá fruta en alguna etapa
+papayo_chileno|CUA,papayo_chileno,CUA,Floración y cuaja continua (Diciembre - Febrero),Diciembre - Febrero,Sí,4,5,35,50,false,Flores y frutos de todos los tamaños a la vez,Produce todo el año donde no hiela: siempre tendrá fruta en alguna etapa
+papayo_chileno|CRE,papayo_chileno,CRE,Crecimiento de primavera (Septiembre - Noviembre),Septiembre - Noviembre,Sí,5,6,25,35,false,"Hojas grandes nuevas, crecimiento rápido",Crece muy rápido: aporte compost dos veces al año
+papayo_chileno|MAD,papayo_chileno,MAD,Maduración (Marzo - Mayo),Marzo - Mayo,Sí,6,8,30,40,false,Frutos amarillos y muy aromáticos,Se cosecha amarillo; verde solo sirve para cocinar en almíbar
+papayo_chileno|POS,papayo_chileno,POS,Invierno (Junio - Agosto),Junio - Agosto,Aproximada,12,15,15,25,false,"Planta parada, frutos madurando lento",Nunca riegue contra el tallo: haga el anillo a 40 cm del cuello
+papayo_chileno|REP,papayo_chileno,REP,Invierno (Junio - Agosto),Junio - Agosto,Sí,12,15,15,25,false,"Planta parada, frutos madurando lento",Nunca riegue contra el tallo: haga el anillo a 40 cm del cuello

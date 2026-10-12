@@ -1,0 +1,606 @@
+# fact_viabilidad_zona: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_VIABILIDAD_ZONA del Excel. 600 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+clave,especie_id,zona_agro_id,zona_agro,viabilidad
+duraznero|1,duraznero,1,Arica-Azapa,NO
+duraznero|2,duraznero,2,Copiapó Valle,RIESGO
+duraznero|3,duraznero,3,La Serena Costa,RIESGO
+duraznero|4,duraznero,4,Ovalle-Limarí,SÍ
+duraznero|5,duraznero,5,Valparaíso-Quillota,SÍ
+duraznero|6,duraznero,6,San Felipe-Los Andes,SÍ
+duraznero|7,duraznero,7,Santiago Norte,SÍ
+duraznero|8,duraznero,8,Santiago Sur-Buin,SÍ
+duraznero|9,duraznero,9,Melipilla Costa RM,SÍ
+duraznero|10,duraznero,10,Rancagua-Cachapoal,SÍ
+duraznero|11,duraznero,11,Pichilemu Costa,SÍ
+duraznero|12,duraznero,12,Lago Rapel,SÍ
+duraznero|13,duraznero,13,Curicó-Teno,SÍ
+duraznero|14,duraznero,14,Talca-Linares,SÍ
+duraznero|15,duraznero,15,Chillán-Ñuble,SÍ
+duraznero|16,duraznero,16,Los Ángeles,SÍ
+duraznero|17,duraznero,17,Concepción Costa,SÍ
+duraznero|18,duraznero,18,Temuco-Araucanía,SÍ
+duraznero|19,duraznero,19,Valdivia-Los Ríos,RIESGO
+duraznero|20,duraznero,20,Osorno-Los Lagos,RIESGO
+ciruelo|1,ciruelo,1,Arica-Azapa,NO
+ciruelo|2,ciruelo,2,Copiapó Valle,RIESGO
+ciruelo|3,ciruelo,3,La Serena Costa,RIESGO
+ciruelo|4,ciruelo,4,Ovalle-Limarí,SÍ
+ciruelo|5,ciruelo,5,Valparaíso-Quillota,SÍ
+ciruelo|6,ciruelo,6,San Felipe-Los Andes,SÍ
+ciruelo|7,ciruelo,7,Santiago Norte,SÍ
+ciruelo|8,ciruelo,8,Santiago Sur-Buin,SÍ
+ciruelo|9,ciruelo,9,Melipilla Costa RM,SÍ
+ciruelo|10,ciruelo,10,Rancagua-Cachapoal,SÍ
+ciruelo|11,ciruelo,11,Pichilemu Costa,SÍ
+ciruelo|12,ciruelo,12,Lago Rapel,SÍ
+ciruelo|13,ciruelo,13,Curicó-Teno,SÍ
+ciruelo|14,ciruelo,14,Talca-Linares,SÍ
+ciruelo|15,ciruelo,15,Chillán-Ñuble,SÍ
+ciruelo|16,ciruelo,16,Los Ángeles,SÍ
+ciruelo|17,ciruelo,17,Concepción Costa,SÍ
+ciruelo|18,ciruelo,18,Temuco-Araucanía,SÍ
+ciruelo|19,ciruelo,19,Valdivia-Los Ríos,RIESGO
+ciruelo|20,ciruelo,20,Osorno-Los Lagos,RIESGO
+cerezo|1,cerezo,1,Arica-Azapa,NO
+cerezo|2,cerezo,2,Copiapó Valle,NO
+cerezo|3,cerezo,3,La Serena Costa,NO
+cerezo|4,cerezo,4,Ovalle-Limarí,RIESGO
+cerezo|5,cerezo,5,Valparaíso-Quillota,RIESGO
+cerezo|6,cerezo,6,San Felipe-Los Andes,RIESGO
+cerezo|7,cerezo,7,Santiago Norte,RIESGO
+cerezo|8,cerezo,8,Santiago Sur-Buin,SÍ
+cerezo|9,cerezo,9,Melipilla Costa RM,SÍ
+cerezo|10,cerezo,10,Rancagua-Cachapoal,SÍ
+cerezo|11,cerezo,11,Pichilemu Costa,SÍ
+cerezo|12,cerezo,12,Lago Rapel,SÍ
+cerezo|13,cerezo,13,Curicó-Teno,SÍ
+cerezo|14,cerezo,14,Talca-Linares,SÍ
+cerezo|15,cerezo,15,Chillán-Ñuble,SÍ
+cerezo|16,cerezo,16,Los Ángeles,SÍ
+cerezo|17,cerezo,17,Concepción Costa,SÍ
+cerezo|18,cerezo,18,Temuco-Araucanía,SÍ
+cerezo|19,cerezo,19,Valdivia-Los Ríos,SÍ
+cerezo|20,cerezo,20,Osorno-Los Lagos,SÍ
+damasco|1,damasco,1,Arica-Azapa,RIESGO
+damasco|2,damasco,2,Copiapó Valle,SÍ
+damasco|3,damasco,3,La Serena Costa,RIESGO
+damasco|4,damasco,4,Ovalle-Limarí,SÍ
+damasco|5,damasco,5,Valparaíso-Quillota,SÍ
+damasco|6,damasco,6,San Felipe-Los Andes,SÍ
+damasco|7,damasco,7,Santiago Norte,SÍ
+damasco|8,damasco,8,Santiago Sur-Buin,SÍ
+damasco|9,damasco,9,Melipilla Costa RM,SÍ
+damasco|10,damasco,10,Rancagua-Cachapoal,SÍ
+damasco|11,damasco,11,Pichilemu Costa,SÍ
+damasco|12,damasco,12,Lago Rapel,SÍ
+damasco|13,damasco,13,Curicó-Teno,SÍ
+damasco|14,damasco,14,Talca-Linares,SÍ
+damasco|15,damasco,15,Chillán-Ñuble,SÍ
+damasco|16,damasco,16,Los Ángeles,SÍ
+damasco|17,damasco,17,Concepción Costa,SÍ
+damasco|18,damasco,18,Temuco-Araucanía,SÍ
+damasco|19,damasco,19,Valdivia-Los Ríos,RIESGO
+damasco|20,damasco,20,Osorno-Los Lagos,RIESGO
+nectarino|1,nectarino,1,Arica-Azapa,NO
+nectarino|2,nectarino,2,Copiapó Valle,RIESGO
+nectarino|3,nectarino,3,La Serena Costa,RIESGO
+nectarino|4,nectarino,4,Ovalle-Limarí,SÍ
+nectarino|5,nectarino,5,Valparaíso-Quillota,SÍ
+nectarino|6,nectarino,6,San Felipe-Los Andes,SÍ
+nectarino|7,nectarino,7,Santiago Norte,SÍ
+nectarino|8,nectarino,8,Santiago Sur-Buin,SÍ
+nectarino|9,nectarino,9,Melipilla Costa RM,SÍ
+nectarino|10,nectarino,10,Rancagua-Cachapoal,SÍ
+nectarino|11,nectarino,11,Pichilemu Costa,SÍ
+nectarino|12,nectarino,12,Lago Rapel,SÍ
+nectarino|13,nectarino,13,Curicó-Teno,SÍ
+nectarino|14,nectarino,14,Talca-Linares,SÍ
+nectarino|15,nectarino,15,Chillán-Ñuble,SÍ
+nectarino|16,nectarino,16,Los Ángeles,SÍ
+nectarino|17,nectarino,17,Concepción Costa,SÍ
+nectarino|18,nectarino,18,Temuco-Araucanía,SÍ
+nectarino|19,nectarino,19,Valdivia-Los Ríos,RIESGO
+nectarino|20,nectarino,20,Osorno-Los Lagos,RIESGO
+manzano|1,manzano,1,Arica-Azapa,NO
+manzano|2,manzano,2,Copiapó Valle,RIESGO
+manzano|3,manzano,3,La Serena Costa,NO
+manzano|4,manzano,4,Ovalle-Limarí,RIESGO
+manzano|5,manzano,5,Valparaíso-Quillota,SÍ
+manzano|6,manzano,6,San Felipe-Los Andes,SÍ
+manzano|7,manzano,7,Santiago Norte,SÍ
+manzano|8,manzano,8,Santiago Sur-Buin,SÍ
+manzano|9,manzano,9,Melipilla Costa RM,SÍ
+manzano|10,manzano,10,Rancagua-Cachapoal,SÍ
+manzano|11,manzano,11,Pichilemu Costa,SÍ
+manzano|12,manzano,12,Lago Rapel,SÍ
+manzano|13,manzano,13,Curicó-Teno,SÍ
+manzano|14,manzano,14,Talca-Linares,SÍ
+manzano|15,manzano,15,Chillán-Ñuble,SÍ
+manzano|16,manzano,16,Los Ángeles,SÍ
+manzano|17,manzano,17,Concepción Costa,SÍ
+manzano|18,manzano,18,Temuco-Araucanía,SÍ
+manzano|19,manzano,19,Valdivia-Los Ríos,SÍ
+manzano|20,manzano,20,Osorno-Los Lagos,SÍ
+peral|1,peral,1,Arica-Azapa,NO
+peral|2,peral,2,Copiapó Valle,RIESGO
+peral|3,peral,3,La Serena Costa,NO
+peral|4,peral,4,Ovalle-Limarí,RIESGO
+peral|5,peral,5,Valparaíso-Quillota,SÍ
+peral|6,peral,6,San Felipe-Los Andes,SÍ
+peral|7,peral,7,Santiago Norte,SÍ
+peral|8,peral,8,Santiago Sur-Buin,SÍ
+peral|9,peral,9,Melipilla Costa RM,SÍ
+peral|10,peral,10,Rancagua-Cachapoal,SÍ
+peral|11,peral,11,Pichilemu Costa,SÍ
+peral|12,peral,12,Lago Rapel,SÍ
+peral|13,peral,13,Curicó-Teno,SÍ
+peral|14,peral,14,Talca-Linares,SÍ
+peral|15,peral,15,Chillán-Ñuble,SÍ
+peral|16,peral,16,Los Ángeles,SÍ
+peral|17,peral,17,Concepción Costa,SÍ
+peral|18,peral,18,Temuco-Araucanía,SÍ
+peral|19,peral,19,Valdivia-Los Ríos,RIESGO
+peral|20,peral,20,Osorno-Los Lagos,RIESGO
+membrillo|1,membrillo,1,Arica-Azapa,RIESGO
+membrillo|2,membrillo,2,Copiapó Valle,SÍ
+membrillo|3,membrillo,3,La Serena Costa,SÍ
+membrillo|4,membrillo,4,Ovalle-Limarí,SÍ
+membrillo|5,membrillo,5,Valparaíso-Quillota,SÍ
+membrillo|6,membrillo,6,San Felipe-Los Andes,SÍ
+membrillo|7,membrillo,7,Santiago Norte,SÍ
+membrillo|8,membrillo,8,Santiago Sur-Buin,SÍ
+membrillo|9,membrillo,9,Melipilla Costa RM,SÍ
+membrillo|10,membrillo,10,Rancagua-Cachapoal,SÍ
+membrillo|11,membrillo,11,Pichilemu Costa,SÍ
+membrillo|12,membrillo,12,Lago Rapel,SÍ
+membrillo|13,membrillo,13,Curicó-Teno,SÍ
+membrillo|14,membrillo,14,Talca-Linares,SÍ
+membrillo|15,membrillo,15,Chillán-Ñuble,SÍ
+membrillo|16,membrillo,16,Los Ángeles,SÍ
+membrillo|17,membrillo,17,Concepción Costa,SÍ
+membrillo|18,membrillo,18,Temuco-Araucanía,SÍ
+membrillo|19,membrillo,19,Valdivia-Los Ríos,RIESGO
+membrillo|20,membrillo,20,Osorno-Los Lagos,RIESGO
+limonero|1,limonero,1,Arica-Azapa,SÍ
+limonero|2,limonero,2,Copiapó Valle,SÍ
+limonero|3,limonero,3,La Serena Costa,SÍ
+limonero|4,limonero,4,Ovalle-Limarí,SÍ
+limonero|5,limonero,5,Valparaíso-Quillota,SÍ
+limonero|6,limonero,6,San Felipe-Los Andes,NO
+limonero|7,limonero,7,Santiago Norte,SÍ
+limonero|8,limonero,8,Santiago Sur-Buin,NO
+limonero|9,limonero,9,Melipilla Costa RM,SÍ
+limonero|10,limonero,10,Rancagua-Cachapoal,NO
+limonero|11,limonero,11,Pichilemu Costa,SÍ
+limonero|12,limonero,12,Lago Rapel,SÍ
+limonero|13,limonero,13,Curicó-Teno,NO
+limonero|14,limonero,14,Talca-Linares,NO
+limonero|15,limonero,15,Chillán-Ñuble,NO
+limonero|16,limonero,16,Los Ángeles,NO
+limonero|17,limonero,17,Concepción Costa,SÍ
+limonero|18,limonero,18,Temuco-Araucanía,NO
+limonero|19,limonero,19,Valdivia-Los Ríos,NO
+limonero|20,limonero,20,Osorno-Los Lagos,NO
+naranjo|1,naranjo,1,Arica-Azapa,SÍ
+naranjo|2,naranjo,2,Copiapó Valle,SÍ
+naranjo|3,naranjo,3,La Serena Costa,SÍ
+naranjo|4,naranjo,4,Ovalle-Limarí,SÍ
+naranjo|5,naranjo,5,Valparaíso-Quillota,SÍ
+naranjo|6,naranjo,6,San Felipe-Los Andes,NO
+naranjo|7,naranjo,7,Santiago Norte,SÍ
+naranjo|8,naranjo,8,Santiago Sur-Buin,NO
+naranjo|9,naranjo,9,Melipilla Costa RM,SÍ
+naranjo|10,naranjo,10,Rancagua-Cachapoal,NO
+naranjo|11,naranjo,11,Pichilemu Costa,SÍ
+naranjo|12,naranjo,12,Lago Rapel,SÍ
+naranjo|13,naranjo,13,Curicó-Teno,NO
+naranjo|14,naranjo,14,Talca-Linares,NO
+naranjo|15,naranjo,15,Chillán-Ñuble,NO
+naranjo|16,naranjo,16,Los Ángeles,NO
+naranjo|17,naranjo,17,Concepción Costa,SÍ
+naranjo|18,naranjo,18,Temuco-Araucanía,NO
+naranjo|19,naranjo,19,Valdivia-Los Ríos,NO
+naranjo|20,naranjo,20,Osorno-Los Lagos,NO
+mandarino|1,mandarino,1,Arica-Azapa,SÍ
+mandarino|2,mandarino,2,Copiapó Valle,SÍ
+mandarino|3,mandarino,3,La Serena Costa,SÍ
+mandarino|4,mandarino,4,Ovalle-Limarí,SÍ
+mandarino|5,mandarino,5,Valparaíso-Quillota,SÍ
+mandarino|6,mandarino,6,San Felipe-Los Andes,NO
+mandarino|7,mandarino,7,Santiago Norte,SÍ
+mandarino|8,mandarino,8,Santiago Sur-Buin,NO
+mandarino|9,mandarino,9,Melipilla Costa RM,SÍ
+mandarino|10,mandarino,10,Rancagua-Cachapoal,NO
+mandarino|11,mandarino,11,Pichilemu Costa,SÍ
+mandarino|12,mandarino,12,Lago Rapel,SÍ
+mandarino|13,mandarino,13,Curicó-Teno,NO
+mandarino|14,mandarino,14,Talca-Linares,NO
+mandarino|15,mandarino,15,Chillán-Ñuble,NO
+mandarino|16,mandarino,16,Los Ángeles,NO
+mandarino|17,mandarino,17,Concepción Costa,SÍ
+mandarino|18,mandarino,18,Temuco-Araucanía,NO
+mandarino|19,mandarino,19,Valdivia-Los Ríos,NO
+mandarino|20,mandarino,20,Osorno-Los Lagos,NO
+pomelo|1,pomelo,1,Arica-Azapa,SÍ
+pomelo|2,pomelo,2,Copiapó Valle,SÍ
+pomelo|3,pomelo,3,La Serena Costa,SÍ
+pomelo|4,pomelo,4,Ovalle-Limarí,SÍ
+pomelo|5,pomelo,5,Valparaíso-Quillota,SÍ
+pomelo|6,pomelo,6,San Felipe-Los Andes,NO
+pomelo|7,pomelo,7,Santiago Norte,SÍ
+pomelo|8,pomelo,8,Santiago Sur-Buin,NO
+pomelo|9,pomelo,9,Melipilla Costa RM,SÍ
+pomelo|10,pomelo,10,Rancagua-Cachapoal,NO
+pomelo|11,pomelo,11,Pichilemu Costa,SÍ
+pomelo|12,pomelo,12,Lago Rapel,SÍ
+pomelo|13,pomelo,13,Curicó-Teno,NO
+pomelo|14,pomelo,14,Talca-Linares,NO
+pomelo|15,pomelo,15,Chillán-Ñuble,NO
+pomelo|16,pomelo,16,Los Ángeles,NO
+pomelo|17,pomelo,17,Concepción Costa,SÍ
+pomelo|18,pomelo,18,Temuco-Araucanía,NO
+pomelo|19,pomelo,19,Valdivia-Los Ríos,NO
+pomelo|20,pomelo,20,Osorno-Los Lagos,NO
+nogal|1,nogal,1,Arica-Azapa,NO
+nogal|2,nogal,2,Copiapó Valle,NO
+nogal|3,nogal,3,La Serena Costa,NO
+nogal|4,nogal,4,Ovalle-Limarí,RIESGO
+nogal|5,nogal,5,Valparaíso-Quillota,RIESGO
+nogal|6,nogal,6,San Felipe-Los Andes,SÍ
+nogal|7,nogal,7,Santiago Norte,SÍ
+nogal|8,nogal,8,Santiago Sur-Buin,SÍ
+nogal|9,nogal,9,Melipilla Costa RM,SÍ
+nogal|10,nogal,10,Rancagua-Cachapoal,SÍ
+nogal|11,nogal,11,Pichilemu Costa,SÍ
+nogal|12,nogal,12,Lago Rapel,SÍ
+nogal|13,nogal,13,Curicó-Teno,SÍ
+nogal|14,nogal,14,Talca-Linares,SÍ
+nogal|15,nogal,15,Chillán-Ñuble,SÍ
+nogal|16,nogal,16,Los Ángeles,SÍ
+nogal|17,nogal,17,Concepción Costa,SÍ
+nogal|18,nogal,18,Temuco-Araucanía,SÍ
+nogal|19,nogal,19,Valdivia-Los Ríos,RIESGO
+nogal|20,nogal,20,Osorno-Los Lagos,RIESGO
+almendro|1,almendro,1,Arica-Azapa,RIESGO
+almendro|2,almendro,2,Copiapó Valle,SÍ
+almendro|3,almendro,3,La Serena Costa,SÍ
+almendro|4,almendro,4,Ovalle-Limarí,SÍ
+almendro|5,almendro,5,Valparaíso-Quillota,SÍ
+almendro|6,almendro,6,San Felipe-Los Andes,SÍ
+almendro|7,almendro,7,Santiago Norte,SÍ
+almendro|8,almendro,8,Santiago Sur-Buin,SÍ
+almendro|9,almendro,9,Melipilla Costa RM,SÍ
+almendro|10,almendro,10,Rancagua-Cachapoal,SÍ
+almendro|11,almendro,11,Pichilemu Costa,SÍ
+almendro|12,almendro,12,Lago Rapel,SÍ
+almendro|13,almendro,13,Curicó-Teno,SÍ
+almendro|14,almendro,14,Talca-Linares,SÍ
+almendro|15,almendro,15,Chillán-Ñuble,SÍ
+almendro|16,almendro,16,Los Ángeles,SÍ
+almendro|17,almendro,17,Concepción Costa,SÍ
+almendro|18,almendro,18,Temuco-Araucanía,SÍ
+almendro|19,almendro,19,Valdivia-Los Ríos,NO
+almendro|20,almendro,20,Osorno-Los Lagos,RIESGO
+higuera|1,higuera,1,Arica-Azapa,RIESGO
+higuera|2,higuera,2,Copiapó Valle,SÍ
+higuera|3,higuera,3,La Serena Costa,SÍ
+higuera|4,higuera,4,Ovalle-Limarí,SÍ
+higuera|5,higuera,5,Valparaíso-Quillota,SÍ
+higuera|6,higuera,6,San Felipe-Los Andes,SÍ
+higuera|7,higuera,7,Santiago Norte,SÍ
+higuera|8,higuera,8,Santiago Sur-Buin,SÍ
+higuera|9,higuera,9,Melipilla Costa RM,SÍ
+higuera|10,higuera,10,Rancagua-Cachapoal,SÍ
+higuera|11,higuera,11,Pichilemu Costa,SÍ
+higuera|12,higuera,12,Lago Rapel,SÍ
+higuera|13,higuera,13,Curicó-Teno,SÍ
+higuera|14,higuera,14,Talca-Linares,SÍ
+higuera|15,higuera,15,Chillán-Ñuble,SÍ
+higuera|16,higuera,16,Los Ángeles,SÍ
+higuera|17,higuera,17,Concepción Costa,SÍ
+higuera|18,higuera,18,Temuco-Araucanía,SÍ
+higuera|19,higuera,19,Valdivia-Los Ríos,NO
+higuera|20,higuera,20,Osorno-Los Lagos,RIESGO
+granado|1,granado,1,Arica-Azapa,RIESGO
+granado|2,granado,2,Copiapó Valle,SÍ
+granado|3,granado,3,La Serena Costa,SÍ
+granado|4,granado,4,Ovalle-Limarí,SÍ
+granado|5,granado,5,Valparaíso-Quillota,SÍ
+granado|6,granado,6,San Felipe-Los Andes,SÍ
+granado|7,granado,7,Santiago Norte,SÍ
+granado|8,granado,8,Santiago Sur-Buin,SÍ
+granado|9,granado,9,Melipilla Costa RM,SÍ
+granado|10,granado,10,Rancagua-Cachapoal,SÍ
+granado|11,granado,11,Pichilemu Costa,SÍ
+granado|12,granado,12,Lago Rapel,SÍ
+granado|13,granado,13,Curicó-Teno,SÍ
+granado|14,granado,14,Talca-Linares,SÍ
+granado|15,granado,15,Chillán-Ñuble,SÍ
+granado|16,granado,16,Los Ángeles,SÍ
+granado|17,granado,17,Concepción Costa,SÍ
+granado|18,granado,18,Temuco-Araucanía,SÍ
+granado|19,granado,19,Valdivia-Los Ríos,NO
+granado|20,granado,20,Osorno-Los Lagos,RIESGO
+caqui|1,caqui,1,Arica-Azapa,RIESGO
+caqui|2,caqui,2,Copiapó Valle,SÍ
+caqui|3,caqui,3,La Serena Costa,SÍ
+caqui|4,caqui,4,Ovalle-Limarí,SÍ
+caqui|5,caqui,5,Valparaíso-Quillota,SÍ
+caqui|6,caqui,6,San Felipe-Los Andes,SÍ
+caqui|7,caqui,7,Santiago Norte,SÍ
+caqui|8,caqui,8,Santiago Sur-Buin,SÍ
+caqui|9,caqui,9,Melipilla Costa RM,SÍ
+caqui|10,caqui,10,Rancagua-Cachapoal,SÍ
+caqui|11,caqui,11,Pichilemu Costa,SÍ
+caqui|12,caqui,12,Lago Rapel,SÍ
+caqui|13,caqui,13,Curicó-Teno,SÍ
+caqui|14,caqui,14,Talca-Linares,SÍ
+caqui|15,caqui,15,Chillán-Ñuble,SÍ
+caqui|16,caqui,16,Los Ángeles,SÍ
+caqui|17,caqui,17,Concepción Costa,SÍ
+caqui|18,caqui,18,Temuco-Araucanía,SÍ
+caqui|19,caqui,19,Valdivia-Los Ríos,RIESGO
+caqui|20,caqui,20,Osorno-Los Lagos,RIESGO
+vid|1,vid,1,Arica-Azapa,RIESGO
+vid|2,vid,2,Copiapó Valle,SÍ
+vid|3,vid,3,La Serena Costa,SÍ
+vid|4,vid,4,Ovalle-Limarí,SÍ
+vid|5,vid,5,Valparaíso-Quillota,SÍ
+vid|6,vid,6,San Felipe-Los Andes,SÍ
+vid|7,vid,7,Santiago Norte,SÍ
+vid|8,vid,8,Santiago Sur-Buin,SÍ
+vid|9,vid,9,Melipilla Costa RM,SÍ
+vid|10,vid,10,Rancagua-Cachapoal,SÍ
+vid|11,vid,11,Pichilemu Costa,SÍ
+vid|12,vid,12,Lago Rapel,SÍ
+vid|13,vid,13,Curicó-Teno,SÍ
+vid|14,vid,14,Talca-Linares,SÍ
+vid|15,vid,15,Chillán-Ñuble,SÍ
+vid|16,vid,16,Los Ángeles,SÍ
+vid|17,vid,17,Concepción Costa,SÍ
+vid|18,vid,18,Temuco-Araucanía,SÍ
+vid|19,vid,19,Valdivia-Los Ríos,NO
+vid|20,vid,20,Osorno-Los Lagos,RIESGO
+arandano|1,arandano,1,Arica-Azapa,NO
+arandano|2,arandano,2,Copiapó Valle,RIESGO
+arandano|3,arandano,3,La Serena Costa,RIESGO
+arandano|4,arandano,4,Ovalle-Limarí,SÍ
+arandano|5,arandano,5,Valparaíso-Quillota,SÍ
+arandano|6,arandano,6,San Felipe-Los Andes,RIESGO
+arandano|7,arandano,7,Santiago Norte,RIESGO
+arandano|8,arandano,8,Santiago Sur-Buin,SÍ
+arandano|9,arandano,9,Melipilla Costa RM,SÍ
+arandano|10,arandano,10,Rancagua-Cachapoal,SÍ
+arandano|11,arandano,11,Pichilemu Costa,SÍ
+arandano|12,arandano,12,Lago Rapel,SÍ
+arandano|13,arandano,13,Curicó-Teno,SÍ
+arandano|14,arandano,14,Talca-Linares,SÍ
+arandano|15,arandano,15,Chillán-Ñuble,SÍ
+arandano|16,arandano,16,Los Ángeles,SÍ
+arandano|17,arandano,17,Concepción Costa,SÍ
+arandano|18,arandano,18,Temuco-Araucanía,SÍ
+arandano|19,arandano,19,Valdivia-Los Ríos,SÍ
+arandano|20,arandano,20,Osorno-Los Lagos,SÍ
+olivo|1,olivo,1,Arica-Azapa,RIESGO
+olivo|2,olivo,2,Copiapó Valle,SÍ
+olivo|3,olivo,3,La Serena Costa,SÍ
+olivo|4,olivo,4,Ovalle-Limarí,SÍ
+olivo|5,olivo,5,Valparaíso-Quillota,SÍ
+olivo|6,olivo,6,San Felipe-Los Andes,SÍ
+olivo|7,olivo,7,Santiago Norte,SÍ
+olivo|8,olivo,8,Santiago Sur-Buin,SÍ
+olivo|9,olivo,9,Melipilla Costa RM,SÍ
+olivo|10,olivo,10,Rancagua-Cachapoal,SÍ
+olivo|11,olivo,11,Pichilemu Costa,SÍ
+olivo|12,olivo,12,Lago Rapel,SÍ
+olivo|13,olivo,13,Curicó-Teno,SÍ
+olivo|14,olivo,14,Talca-Linares,SÍ
+olivo|15,olivo,15,Chillán-Ñuble,SÍ
+olivo|16,olivo,16,Los Ángeles,SÍ
+olivo|17,olivo,17,Concepción Costa,SÍ
+olivo|18,olivo,18,Temuco-Araucanía,SÍ
+olivo|19,olivo,19,Valdivia-Los Ríos,NO
+olivo|20,olivo,20,Osorno-Los Lagos,SÍ
+frutilla|1,frutilla,1,Arica-Azapa,RIESGO
+frutilla|2,frutilla,2,Copiapó Valle,RIESGO
+frutilla|3,frutilla,3,La Serena Costa,SÍ
+frutilla|4,frutilla,4,Ovalle-Limarí,SÍ
+frutilla|5,frutilla,5,Valparaíso-Quillota,SÍ
+frutilla|6,frutilla,6,San Felipe-Los Andes,SÍ
+frutilla|7,frutilla,7,Santiago Norte,SÍ
+frutilla|8,frutilla,8,Santiago Sur-Buin,SÍ
+frutilla|9,frutilla,9,Melipilla Costa RM,SÍ
+frutilla|10,frutilla,10,Rancagua-Cachapoal,SÍ
+frutilla|11,frutilla,11,Pichilemu Costa,SÍ
+frutilla|12,frutilla,12,Lago Rapel,SÍ
+frutilla|13,frutilla,13,Curicó-Teno,SÍ
+frutilla|14,frutilla,14,Talca-Linares,SÍ
+frutilla|15,frutilla,15,Chillán-Ñuble,SÍ
+frutilla|16,frutilla,16,Los Ángeles,SÍ
+frutilla|17,frutilla,17,Concepción Costa,SÍ
+frutilla|18,frutilla,18,Temuco-Araucanía,SÍ
+frutilla|19,frutilla,19,Valdivia-Los Ríos,SÍ
+frutilla|20,frutilla,20,Osorno-Los Lagos,RIESGO
+frambuesa|1,frambuesa,1,Arica-Azapa,NO
+frambuesa|2,frambuesa,2,Copiapó Valle,NO
+frambuesa|3,frambuesa,3,La Serena Costa,RIESGO
+frambuesa|4,frambuesa,4,Ovalle-Limarí,RIESGO
+frambuesa|5,frambuesa,5,Valparaíso-Quillota,SÍ
+frambuesa|6,frambuesa,6,San Felipe-Los Andes,SÍ
+frambuesa|7,frambuesa,7,Santiago Norte,SÍ
+frambuesa|8,frambuesa,8,Santiago Sur-Buin,SÍ
+frambuesa|9,frambuesa,9,Melipilla Costa RM,SÍ
+frambuesa|10,frambuesa,10,Rancagua-Cachapoal,SÍ
+frambuesa|11,frambuesa,11,Pichilemu Costa,SÍ
+frambuesa|12,frambuesa,12,Lago Rapel,SÍ
+frambuesa|13,frambuesa,13,Curicó-Teno,SÍ
+frambuesa|14,frambuesa,14,Talca-Linares,SÍ
+frambuesa|15,frambuesa,15,Chillán-Ñuble,SÍ
+frambuesa|16,frambuesa,16,Los Ángeles,SÍ
+frambuesa|17,frambuesa,17,Concepción Costa,SÍ
+frambuesa|18,frambuesa,18,Temuco-Araucanía,SÍ
+frambuesa|19,frambuesa,19,Valdivia-Los Ríos,SÍ
+frambuesa|20,frambuesa,20,Osorno-Los Lagos,RIESGO
+mora|1,mora,1,Arica-Azapa,NO
+mora|2,mora,2,Copiapó Valle,NO
+mora|3,mora,3,La Serena Costa,RIESGO
+mora|4,mora,4,Ovalle-Limarí,RIESGO
+mora|5,mora,5,Valparaíso-Quillota,SÍ
+mora|6,mora,6,San Felipe-Los Andes,SÍ
+mora|7,mora,7,Santiago Norte,SÍ
+mora|8,mora,8,Santiago Sur-Buin,SÍ
+mora|9,mora,9,Melipilla Costa RM,SÍ
+mora|10,mora,10,Rancagua-Cachapoal,SÍ
+mora|11,mora,11,Pichilemu Costa,SÍ
+mora|12,mora,12,Lago Rapel,SÍ
+mora|13,mora,13,Curicó-Teno,SÍ
+mora|14,mora,14,Talca-Linares,SÍ
+mora|15,mora,15,Chillán-Ñuble,SÍ
+mora|16,mora,16,Los Ángeles,SÍ
+mora|17,mora,17,Concepción Costa,SÍ
+mora|18,mora,18,Temuco-Araucanía,SÍ
+mora|19,mora,19,Valdivia-Los Ríos,SÍ
+mora|20,mora,20,Osorno-Los Lagos,RIESGO
+kiwi|1,kiwi,1,Arica-Azapa,NO
+kiwi|2,kiwi,2,Copiapó Valle,NO
+kiwi|3,kiwi,3,La Serena Costa,NO
+kiwi|4,kiwi,4,Ovalle-Limarí,NO
+kiwi|5,kiwi,5,Valparaíso-Quillota,RIESGO
+kiwi|6,kiwi,6,San Felipe-Los Andes,RIESGO
+kiwi|7,kiwi,7,Santiago Norte,RIESGO
+kiwi|8,kiwi,8,Santiago Sur-Buin,SÍ
+kiwi|9,kiwi,9,Melipilla Costa RM,SÍ
+kiwi|10,kiwi,10,Rancagua-Cachapoal,SÍ
+kiwi|11,kiwi,11,Pichilemu Costa,SÍ
+kiwi|12,kiwi,12,Lago Rapel,SÍ
+kiwi|13,kiwi,13,Curicó-Teno,SÍ
+kiwi|14,kiwi,14,Talca-Linares,SÍ
+kiwi|15,kiwi,15,Chillán-Ñuble,SÍ
+kiwi|16,kiwi,16,Los Ángeles,SÍ
+kiwi|17,kiwi,17,Concepción Costa,SÍ
+kiwi|18,kiwi,18,Temuco-Araucanía,RIESGO
+kiwi|19,kiwi,19,Valdivia-Los Ríos,RIESGO
+kiwi|20,kiwi,20,Osorno-Los Lagos,NO
+avellano|1,avellano,1,Arica-Azapa,NO
+avellano|2,avellano,2,Copiapó Valle,NO
+avellano|3,avellano,3,La Serena Costa,NO
+avellano|4,avellano,4,Ovalle-Limarí,NO
+avellano|5,avellano,5,Valparaíso-Quillota,RIESGO
+avellano|6,avellano,6,San Felipe-Los Andes,SÍ
+avellano|7,avellano,7,Santiago Norte,SÍ
+avellano|8,avellano,8,Santiago Sur-Buin,SÍ
+avellano|9,avellano,9,Melipilla Costa RM,SÍ
+avellano|10,avellano,10,Rancagua-Cachapoal,SÍ
+avellano|11,avellano,11,Pichilemu Costa,SÍ
+avellano|12,avellano,12,Lago Rapel,SÍ
+avellano|13,avellano,13,Curicó-Teno,SÍ
+avellano|14,avellano,14,Talca-Linares,SÍ
+avellano|15,avellano,15,Chillán-Ñuble,SÍ
+avellano|16,avellano,16,Los Ángeles,SÍ
+avellano|17,avellano,17,Concepción Costa,SÍ
+avellano|18,avellano,18,Temuco-Araucanía,SÍ
+avellano|19,avellano,19,Valdivia-Los Ríos,SÍ
+avellano|20,avellano,20,Osorno-Los Lagos,RIESGO
+nispero|1,nispero,1,Arica-Azapa,SÍ
+nispero|2,nispero,2,Copiapó Valle,SÍ
+nispero|3,nispero,3,La Serena Costa,SÍ
+nispero|4,nispero,4,Ovalle-Limarí,SÍ
+nispero|5,nispero,5,Valparaíso-Quillota,SÍ
+nispero|6,nispero,6,San Felipe-Los Andes,SÍ
+nispero|7,nispero,7,Santiago Norte,SÍ
+nispero|8,nispero,8,Santiago Sur-Buin,SÍ
+nispero|9,nispero,9,Melipilla Costa RM,SÍ
+nispero|10,nispero,10,Rancagua-Cachapoal,SÍ
+nispero|11,nispero,11,Pichilemu Costa,SÍ
+nispero|12,nispero,12,Lago Rapel,SÍ
+nispero|13,nispero,13,Curicó-Teno,SÍ
+nispero|14,nispero,14,Talca-Linares,RIESGO
+nispero|15,nispero,15,Chillán-Ñuble,RIESGO
+nispero|16,nispero,16,Los Ángeles,NO
+nispero|17,nispero,17,Concepción Costa,RIESGO
+nispero|18,nispero,18,Temuco-Araucanía,NO
+nispero|19,nispero,19,Valdivia-Los Ríos,NO
+nispero|20,nispero,20,Osorno-Los Lagos,NO
+lucuma|1,lucuma,1,Arica-Azapa,RIESGO
+lucuma|2,lucuma,2,Copiapó Valle,RIESGO
+lucuma|3,lucuma,3,La Serena Costa,SÍ
+lucuma|4,lucuma,4,Ovalle-Limarí,SÍ
+lucuma|5,lucuma,5,Valparaíso-Quillota,SÍ
+lucuma|6,lucuma,6,San Felipe-Los Andes,RIESGO
+lucuma|7,lucuma,7,Santiago Norte,RIESGO
+lucuma|8,lucuma,8,Santiago Sur-Buin,RIESGO
+lucuma|9,lucuma,9,Melipilla Costa RM,RIESGO
+lucuma|10,lucuma,10,Rancagua-Cachapoal,RIESGO
+lucuma|11,lucuma,11,Pichilemu Costa,SÍ
+lucuma|12,lucuma,12,Lago Rapel,RIESGO
+lucuma|13,lucuma,13,Curicó-Teno,NO
+lucuma|14,lucuma,14,Talca-Linares,NO
+lucuma|15,lucuma,15,Chillán-Ñuble,NO
+lucuma|16,lucuma,16,Los Ángeles,NO
+lucuma|17,lucuma,17,Concepción Costa,NO
+lucuma|18,lucuma,18,Temuco-Araucanía,NO
+lucuma|19,lucuma,19,Valdivia-Los Ríos,NO
+lucuma|20,lucuma,20,Osorno-Los Lagos,NO
+palto|1,palto,1,Arica-Azapa,RIESGO
+palto|2,palto,2,Copiapó Valle,RIESGO
+palto|3,palto,3,La Serena Costa,SÍ
+palto|4,palto,4,Ovalle-Limarí,SÍ
+palto|5,palto,5,Valparaíso-Quillota,SÍ
+palto|6,palto,6,San Felipe-Los Andes,RIESGO
+palto|7,palto,7,Santiago Norte,RIESGO
+palto|8,palto,8,Santiago Sur-Buin,RIESGO
+palto|9,palto,9,Melipilla Costa RM,SÍ
+palto|10,palto,10,Rancagua-Cachapoal,RIESGO
+palto|11,palto,11,Pichilemu Costa,SÍ
+palto|12,palto,12,Lago Rapel,RIESGO
+palto|13,palto,13,Curicó-Teno,RIESGO
+palto|14,palto,14,Talca-Linares,NO
+palto|15,palto,15,Chillán-Ñuble,NO
+palto|16,palto,16,Los Ángeles,NO
+palto|17,palto,17,Concepción Costa,RIESGO
+palto|18,palto,18,Temuco-Araucanía,NO
+palto|19,palto,19,Valdivia-Los Ríos,NO
+palto|20,palto,20,Osorno-Los Lagos,NO
+chirimoya|1,chirimoya,1,Arica-Azapa,RIESGO
+chirimoya|2,chirimoya,2,Copiapó Valle,RIESGO
+chirimoya|3,chirimoya,3,La Serena Costa,SÍ
+chirimoya|4,chirimoya,4,Ovalle-Limarí,RIESGO
+chirimoya|5,chirimoya,5,Valparaíso-Quillota,SÍ
+chirimoya|6,chirimoya,6,San Felipe-Los Andes,NO
+chirimoya|7,chirimoya,7,Santiago Norte,NO
+chirimoya|8,chirimoya,8,Santiago Sur-Buin,NO
+chirimoya|9,chirimoya,9,Melipilla Costa RM,RIESGO
+chirimoya|10,chirimoya,10,Rancagua-Cachapoal,NO
+chirimoya|11,chirimoya,11,Pichilemu Costa,RIESGO
+chirimoya|12,chirimoya,12,Lago Rapel,NO
+chirimoya|13,chirimoya,13,Curicó-Teno,NO
+chirimoya|14,chirimoya,14,Talca-Linares,NO
+chirimoya|15,chirimoya,15,Chillán-Ñuble,NO
+chirimoya|16,chirimoya,16,Los Ángeles,NO
+chirimoya|17,chirimoya,17,Concepción Costa,NO
+chirimoya|18,chirimoya,18,Temuco-Araucanía,NO
+chirimoya|19,chirimoya,19,Valdivia-Los Ríos,NO
+chirimoya|20,chirimoya,20,Osorno-Los Lagos,NO
+papayo_chileno|1,papayo_chileno,1,Arica-Azapa,NO
+papayo_chileno|2,papayo_chileno,2,Copiapó Valle,RIESGO
+papayo_chileno|3,papayo_chileno,3,La Serena Costa,SÍ
+papayo_chileno|4,papayo_chileno,4,Ovalle-Limarí,SÍ
+papayo_chileno|5,papayo_chileno,5,Valparaíso-Quillota,SÍ
+papayo_chileno|6,papayo_chileno,6,San Felipe-Los Andes,NO
+papayo_chileno|7,papayo_chileno,7,Santiago Norte,NO
+papayo_chileno|8,papayo_chileno,8,Santiago Sur-Buin,NO
+papayo_chileno|9,papayo_chileno,9,Melipilla Costa RM,RIESGO
+papayo_chileno|10,papayo_chileno,10,Rancagua-Cachapoal,NO
+papayo_chileno|11,papayo_chileno,11,Pichilemu Costa,RIESGO
+papayo_chileno|12,papayo_chileno,12,Lago Rapel,NO
+papayo_chileno|13,papayo_chileno,13,Curicó-Teno,NO
+papayo_chileno|14,papayo_chileno,14,Talca-Linares,NO
+papayo_chileno|15,papayo_chileno,15,Chillán-Ñuble,NO
+papayo_chileno|16,papayo_chileno,16,Los Ángeles,NO
+papayo_chileno|17,papayo_chileno,17,Concepción Costa,NO
+papayo_chileno|18,papayo_chileno,18,Temuco-Araucanía,NO
+papayo_chileno|19,papayo_chileno,19,Valdivia-Los Ríos,NO
+papayo_chileno|20,papayo_chileno,20,Osorno-Los Lagos,NO

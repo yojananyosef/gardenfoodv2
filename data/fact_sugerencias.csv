@@ -1,0 +1,341 @@
+# fact_sugerencias: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_SUGERENCIAS del Excel. 335 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+especie_id,tipo,nombre,etapa_o_nivel,categoria_o_plan,por_que
+duraznero,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+duraznero,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+duraznero,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+duraznero,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+duraznero,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+duraznero,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+duraznero,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+duraznero,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+duraznero,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+duraznero,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+duraznero,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+duraznero,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+ciruelo,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+ciruelo,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+ciruelo,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+ciruelo,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+ciruelo,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+ciruelo,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+ciruelo,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+ciruelo,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+ciruelo,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+ciruelo,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+ciruelo,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+ciruelo,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+cerezo,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+cerezo,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+cerezo,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+cerezo,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+cerezo,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+cerezo,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+cerezo,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+cerezo,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+cerezo,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+cerezo,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+cerezo,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+damasco,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+damasco,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+damasco,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+damasco,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+damasco,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+damasco,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+damasco,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+damasco,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+damasco,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+damasco,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+damasco,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+damasco,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+nectarino,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+nectarino,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+nectarino,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+nectarino,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+nectarino,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+nectarino,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+nectarino,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+nectarino,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+nectarino,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+nectarino,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+nectarino,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+nectarino,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+manzano,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+manzano,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+manzano,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+manzano,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+manzano,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+manzano,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+manzano,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+manzano,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+manzano,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+manzano,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+manzano,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+manzano,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+peral,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+peral,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+peral,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+peral,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+peral,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+peral,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+peral,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+peral,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+peral,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+peral,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+peral,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+membrillo,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+membrillo,Curso,Huerto resiliente: especies de bajo mantenimiento y bajo riego,Iniciación · 2 semanas,Plan Semilla,Diseñar un huerto de bajo mantenimiento y bajo consumo de agua
+membrillo,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+membrillo,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+membrillo,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+membrillo,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+membrillo,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+membrillo,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+membrillo,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+membrillo,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+membrillo,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+membrillo,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+limonero,Curso,Cítricos productivos todo el año,Iniciación · 3 semanas,Plan Semilla,"Manejo de riego, fertilización y protección contra heladas en cítricos"
+limonero,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+limonero,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+limonero,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+limonero,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+limonero,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+limonero,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+limonero,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+limonero,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+limonero,Producto,Manta antihelada / cobertor térmico,Invierno,Insumo,Protección en zonas límite (RIESGO) donde el cítrico es sensible a heladas
+limonero,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+naranjo,Curso,Cítricos productivos todo el año,Iniciación · 3 semanas,Plan Semilla,"Manejo de riego, fertilización y protección contra heladas en cítricos"
+naranjo,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+naranjo,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+naranjo,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+naranjo,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+naranjo,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+naranjo,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+naranjo,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+naranjo,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+naranjo,Producto,Manta antihelada / cobertor térmico,Invierno,Insumo,Protección en zonas límite (RIESGO) donde el cítrico es sensible a heladas
+naranjo,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+mandarino,Curso,Cítricos productivos todo el año,Iniciación · 3 semanas,Plan Semilla,"Manejo de riego, fertilización y protección contra heladas en cítricos"
+mandarino,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+mandarino,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+mandarino,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+mandarino,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+mandarino,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+mandarino,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+mandarino,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+mandarino,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+mandarino,Producto,Manta antihelada / cobertor térmico,Invierno,Insumo,Protección en zonas límite (RIESGO) donde el cítrico es sensible a heladas
+mandarino,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+pomelo,Curso,Cítricos productivos todo el año,Iniciación · 3 semanas,Plan Semilla,"Manejo de riego, fertilización y protección contra heladas en cítricos"
+pomelo,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+pomelo,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+pomelo,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+pomelo,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+pomelo,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+pomelo,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+pomelo,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+pomelo,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+pomelo,Producto,Manta antihelada / cobertor térmico,Invierno,Insumo,Protección en zonas límite (RIESGO) donde el cítrico es sensible a heladas
+pomelo,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+nogal,Curso,"Frutos secos: nogal, almendro y avellano europeo",Avanzado · 3 semanas,Plan Campo,"Planificación de espacio, polinización y cosecha de frutos secos"
+nogal,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+nogal,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+nogal,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+nogal,Producto,Cascador/partidor manual de frutos secos,Cosecha,Herramienta,Venta cruzada natural en la etapa de cosecha de frutos secos
+nogal,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+nogal,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+nogal,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+nogal,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+nogal,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+nogal,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+nogal,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+almendro,Curso,"Frutos secos: nogal, almendro y avellano europeo",Avanzado · 3 semanas,Plan Campo,"Planificación de espacio, polinización y cosecha de frutos secos"
+almendro,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+almendro,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+almendro,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+almendro,Curso,Poda de frutales deciduos,Intermedio · 3 semanas,Plan Huerto,Dominar poda de formación y producción en carozo y pomáceas
+almendro,Producto,Cascador/partidor manual de frutos secos,Cosecha,Herramienta,Venta cruzada natural en la etapa de cosecha de frutos secos
+almendro,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+almendro,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+almendro,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+almendro,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+almendro,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+almendro,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+almendro,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+higuera,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+higuera,Curso,Huerto resiliente: especies de bajo mantenimiento y bajo riego,Iniciación · 2 semanas,Plan Semilla,Diseñar un huerto de bajo mantenimiento y bajo consumo de agua
+higuera,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+higuera,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+higuera,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+higuera,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+higuera,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+higuera,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+higuera,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+higuera,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+granado,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+granado,Curso,Huerto resiliente: especies de bajo mantenimiento y bajo riego,Iniciación · 2 semanas,Plan Semilla,Diseñar un huerto de bajo mantenimiento y bajo consumo de agua
+granado,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+granado,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+granado,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+granado,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+granado,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+granado,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+granado,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+granado,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+caqui,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+caqui,Curso,Huerto resiliente: especies de bajo mantenimiento y bajo riego,Iniciación · 2 semanas,Plan Semilla,Diseñar un huerto de bajo mantenimiento y bajo consumo de agua
+caqui,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+caqui,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+caqui,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+caqui,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+caqui,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+caqui,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+caqui,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+caqui,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+vid,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+vid,Curso,Kiwi y vid: trepadoras productivas,Avanzado · 4 semanas,Plan Campo,"Instalación de estructuras, polinización y poda de trepadoras"
+vid,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+vid,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+vid,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+vid,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+vid,Producto,Estructura de espaldera o pérgola,Plantación/formación,Estructura,Especies trepadoras/de caña requieren tutorado obligatorio
+vid,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+vid,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+vid,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+vid,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+arandano,Curso,"Berries en maceta: frutilla, arándano y frambuesa",Iniciación · 3 semanas,Plan Semilla,Cultivo de bayas de alto valor en espacios reducidos
+arandano,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+arandano,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+arandano,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+arandano,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+arandano,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+arandano,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+arandano,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+arandano,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+arandano,Producto,Mallas antipájaro / antigranizo,Cosecha,Insumo,Protección de bayas de alto valor frente a aves
+arandano,Producto,"Mulch orgánico (paja, corteza)",Mantenimiento,Insumo,"Reduce malezas, conserva humedad y evita Botrytis por contacto con el suelo"
+arandano,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+arandano,Producto,Sustrato ácido premium (turba + corteza de pino),Plantación/mantenimiento,Insumo,"pH óptimo 4.5-6.5, distinto al suelo estándar; venta cruzada natural"
+olivo,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+olivo,Curso,Huerto resiliente: especies de bajo mantenimiento y bajo riego,Iniciación · 2 semanas,Plan Semilla,Diseñar un huerto de bajo mantenimiento y bajo consumo de agua
+olivo,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+olivo,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+olivo,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+olivo,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+olivo,Producto,Kit casero de conservación de aceitunas de mesa,Cosecha/postcosecha,Insumo,Cosecha da pie a un producto de valor agregado casero
+olivo,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+olivo,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+olivo,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+olivo,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+frutilla,Curso,"Berries en maceta: frutilla, arándano y frambuesa",Iniciación · 3 semanas,Plan Semilla,Cultivo de bayas de alto valor en espacios reducidos
+frutilla,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+frutilla,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+frutilla,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+frutilla,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+frutilla,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+frutilla,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+frutilla,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+frutilla,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+frutilla,Producto,Mallas antipájaro / antigranizo,Cosecha,Insumo,Protección de bayas de alto valor frente a aves
+frutilla,Producto,"Mulch orgánico (paja, corteza)",Mantenimiento,Insumo,"Reduce malezas, conserva humedad y evita Botrytis por contacto con el suelo"
+frutilla,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+frutilla,Producto,Sustrato ácido premium (turba + corteza de pino),Plantación/mantenimiento,Insumo,"pH óptimo 4.5-6.5, distinto al suelo estándar; venta cruzada natural"
+frambuesa,Curso,"Berries en maceta: frutilla, arándano y frambuesa",Iniciación · 3 semanas,Plan Semilla,Cultivo de bayas de alto valor en espacios reducidos
+frambuesa,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+frambuesa,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+frambuesa,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+frambuesa,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+frambuesa,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+frambuesa,Producto,Estructura de espaldera o pérgola,Plantación/formación,Estructura,Especies trepadoras/de caña requieren tutorado obligatorio
+frambuesa,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+frambuesa,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+frambuesa,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+frambuesa,Producto,"Mulch orgánico (paja, corteza)",Mantenimiento,Insumo,"Reduce malezas, conserva humedad y evita Botrytis por contacto con el suelo"
+frambuesa,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+frambuesa,Producto,Sustrato ácido premium (turba + corteza de pino),Plantación/mantenimiento,Insumo,"pH óptimo 4.5-6.5, distinto al suelo estándar; venta cruzada natural"
+mora,Curso,"Berries en maceta: frutilla, arándano y frambuesa",Iniciación · 3 semanas,Plan Semilla,Cultivo de bayas de alto valor en espacios reducidos
+mora,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+mora,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+mora,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+mora,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+mora,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+mora,Producto,Estructura de espaldera o pérgola,Plantación/formación,Estructura,Especies trepadoras/de caña requieren tutorado obligatorio
+mora,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+mora,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+mora,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+mora,Producto,"Mulch orgánico (paja, corteza)",Mantenimiento,Insumo,"Reduce malezas, conserva humedad y evita Botrytis por contacto con el suelo"
+mora,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+kiwi,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+kiwi,Curso,Kiwi y vid: trepadoras productivas,Avanzado · 4 semanas,Plan Campo,"Instalación de estructuras, polinización y poda de trepadoras"
+kiwi,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+kiwi,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+kiwi,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+kiwi,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+kiwi,Producto,Estructura de espaldera o pérgola,Plantación/formación,Estructura,Especies trepadoras/de caña requieren tutorado obligatorio
+kiwi,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+kiwi,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+kiwi,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+avellano,Curso,"Frutos secos: nogal, almendro y avellano europeo",Avanzado · 3 semanas,Plan Campo,"Planificación de espacio, polinización y cosecha de frutos secos"
+avellano,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+avellano,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+avellano,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+avellano,Producto,Cascador/partidor manual de frutos secos,Cosecha,Herramienta,Venta cruzada natural en la etapa de cosecha de frutos secos
+avellano,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+avellano,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+avellano,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+avellano,Producto,Kit de poda (tijera + serrucho + sellador de cortes),Invierno (poda),Herramienta,Poda anual obligatoria en el 100% de frutales deciduos del catálogo
+avellano,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+avellano,Producto,Plantón injertado certificado,Plantación,Planta,Compra base del huerto; variedad y portainjerto correctos según zona (regla R-01)
+avellano,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+nispero,Curso,Frutales subtropicales de la zona costera,Avanzado · 3 semanas,Plan Campo,Cultivo de especies sensibles a heladas en franja costera Coquimbo-Valparaíso
+nispero,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+nispero,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+nispero,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+nispero,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+nispero,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+nispero,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+nispero,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+nispero,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+nispero,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+lucuma,Curso,Frutales subtropicales de la zona costera,Avanzado · 3 semanas,Plan Campo,Cultivo de especies sensibles a heladas en franja costera Coquimbo-Valparaíso
+lucuma,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+lucuma,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+lucuma,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+lucuma,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+lucuma,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+lucuma,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+lucuma,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+lucuma,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+palto,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+palto,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+palto,Curso,"Palto (Palta Hass): riego, drenaje y manejo de Phytophthora",Avanzado · 4 semanas,Plan Campo,"Prevenir la tristeza del palto, manejar el riego/drenaje y entender la floración-cuaja del palto en patio o parcela"
+palto,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+palto,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+palto,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+palto,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+palto,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+palto,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+chirimoya,Curso,Frutales subtropicales de la zona costera,Avanzado · 3 semanas,Plan Campo,Cultivo de especies sensibles a heladas en franja costera Coquimbo-Valparaíso
+chirimoya,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+chirimoya,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+chirimoya,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+chirimoya,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+chirimoya,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+chirimoya,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+chirimoya,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+chirimoya,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"
+papayo_chileno,Curso,Frutales subtropicales de la zona costera,Avanzado · 3 semanas,Plan Campo,Cultivo de especies sensibles a heladas en franja costera Coquimbo-Valparaíso
+papayo_chileno,Curso,Fundamentos del huerto de patio,Iniciación · 4 semanas,Plan Semilla,"Elegir especies según comuna/clima, preparar suelo y definir plan de riego"
+papayo_chileno,Curso,Manejo sanitario orgánico del huerto,Intermedio · 4 semanas,Plan Huerto,Reconocer y controlar de forma orgánica las principales plagas y enfermedades del catálogo
+papayo_chileno,Curso,Planificación anual del huerto (calendario y registro),Intermedio · 2 semanas,Plan Huerto,Usar el calendario mensual y registrar labores/cosechas en 'Mi Huerto'
+papayo_chileno,Producto,Cobre orgánico / caldo bordelés,Pre-brotación (jul-ago),Insumo fitosanitario,"Tratamiento preventivo universal contra hongos de brotación (cloca, monilia, fuego bacteriano)"
+papayo_chileno,Producto,Compost/humus de lombriz certificado,Fertilización,Insumo,Base de la fertilización orgánica recomendada en todas las fichas de manejo
+papayo_chileno,Producto,Kit de análisis de suelo (pH y NPK),Análisis inicial,Servicio/Insumo,Habilita la regla R-12 (corrección de pH) y personaliza la recomendación de especie
+papayo_chileno,Producto,Kit de riego por goteo con temporizador,Todo el año,Insumo/Tecnología,Reduce 30-50% el consumo de agua; crítico en zonas de riesgo de sequía alto
+papayo_chileno,Producto,Maceta/contenedor de tela (grow bag) 40-100 L,Plantación,Insumo/Contenedor,Especies compatibles con maceta (columna Compatibilidad_maceta = Sí)
+papayo_chileno,Producto,Suscripción 'Mi Huerto' (registro y alertas del plan Huerto/Campo),Todo el año,Servicio digital,"Monetiza directamente el calendario de labores y las reglas de recomendación (R-06, R-07, R-10)"

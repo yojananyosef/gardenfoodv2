@@ -1,0 +1,246 @@
+# fact_tareas_mes: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_TAREAS_MES del Excel. 240 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+clave,especie_id,mes,mes_n,etapa,riego,nutricion,sanidad,alerta_tarea
+duraznero|1,duraznero,Enero,1,Maduración temprana,Cada 3 días,Solo agua,"Mosca fruta, monilia",Recoger frutos caídos
+duraznero|2,duraznero,Febrero,2,Cosecha,Reducir antes cosecha,Postcosecha: compost,Monilia,Cosechar firmes en la mañana
+duraznero|3,duraznero,Marzo,3,Postcosecha,Cada 7-10 días,Fósforo,Monilia tardía,Reposición de reservas
+duraznero|4,duraznero,Abril,4,Caída de hojas,Cada 10-15 días,—,Limpieza de hojas caídas,Recoger hojas enfermas
+duraznero|5,duraznero,Mayo,5,Reposo inicio,Solo si no llueve,—,—,Aplicar caldo bordelés
+duraznero|6,duraznero,Junio,6,Reposo profundo,Casi nada,—,—,Tiempo de PODA invernal
+duraznero|7,duraznero,Julio,7,Reposo profundo,Casi nada,Cal si pH bajo,Cobre preventivo,Continuar poda
+duraznero|8,duraznero,Agosto,8,Yema hinchada,Iniciar riego,Compost,Cobre PREVENTIVO cloca,ÚLTIMA chance de cobre antes de brotar
+duraznero|9,duraznero,Septiembre,9,Brotación,Cada 7-10 días,Compost + salitre,"Cloca, prevención","Si hay heladas, proteger flores"
+duraznero|10,duraznero,Octubre,10,Floración,Cada 5-7 días,Foliar fosfato,"Pulgón, oidio",NO mojar flores con riego
+duraznero|11,duraznero,Noviembre,11,Cuaja y crecimiento,Cada 3-5 días,Nitrato potasio,"Pulgón, raleo de frutos",Etapa crítica: no falte agua
+duraznero|12,duraznero,Diciembre,12,Crecimiento fruto,Cada 3 días,Sulpomag,"Mosca fruta, oidio",Trampas para mosca
+ciruelo|1,ciruelo,Enero,1,Maduración,Cada 3 días,Solo agua,"Mosca, monilia",Recoger caídos
+ciruelo|2,ciruelo,Febrero,2,Cosecha,Reducir antes,Postcosecha,Monilia,Cosechar firmes
+ciruelo|3,ciruelo,Marzo,3,Postcosecha,Cada 10 días,Compost+P,—,Reponer reservas
+ciruelo|4,ciruelo,Abril,4,Caída hojas,Cada 15 días,—,Limpieza,Recoger hojas
+ciruelo|5,ciruelo,Mayo,5,Reposo,Solo si seco,—,—,Caldo bordelés
+ciruelo|6,ciruelo,Junio,6,Reposo,Casi nada,—,—,PODA invernal
+ciruelo|7,ciruelo,Julio,7,Reposo,Casi nada,Cal si pH,Cobre,Continuar poda
+ciruelo|8,ciruelo,Agosto,8,Yema hinchada,Iniciar,Compost+salitre,Cobre,Última chance cobre
+ciruelo|9,ciruelo,Septiembre,9,Brotación-floración,Cada 7-10 días,Compost + salitre,Cobre preventivo,Cuidar flor de heladas
+ciruelo|10,ciruelo,Octubre,10,Cuaja,Cada 5-7 días,Foliar P-K,"Pulgón, trips",No mojar flores
+ciruelo|11,ciruelo,Noviembre,11,Crecimiento,Cada 4-5 días,Nitrato potasio,"Pulgón, raleo",Etapa crítica de agua
+ciruelo|12,ciruelo,Diciembre,12,Crecimiento fruto,Cada 3-4 días,Sulpomag,"Mosca, monilia",Trampas mosca
+cerezo|1,cerezo,Enero,1,Postcosecha,Cada 7-10 días,Compost,—,Poda en verde si necesario
+cerezo|2,cerezo,Febrero,2,Postcosecha,Cada 10 días,Superfosfato,—,Recuperación
+cerezo|3,cerezo,Marzo,3,Final actividad,Cada 15 días,—,Roya hojas,Recoger hojas caídas
+cerezo|4,cerezo,Abril,4,Caída hojas,Casi nada,—,Cobre caída hojas,Limpieza
+cerezo|5,cerezo,Mayo,5,Reposo,Solo seco,—,—,Caldo bordelés
+cerezo|6,cerezo,Junio,6,Reposo,Casi nada,—,—,PODA invernal en seco
+cerezo|7,cerezo,Julio,7,Reposo,Casi nada,Cal pH,Cobre,Continuar poda
+cerezo|8,cerezo,Agosto,8,Yema hinchada,Iniciar,Compost,Cobre,Última chance cobre
+cerezo|9,cerezo,Septiembre,9,Brotación-floración,Cada 7-10 días,Salitre + foliar boro,Cobre preventivo,Heladas peligrosas en flor
+cerezo|10,cerezo,Octubre,10,Cuaja,Cada 5-7 días,Foliar P-K,"Pulgón, monilia",Trampas mosca
+cerezo|11,cerezo,Noviembre,11,Crecimiento,Cada 5 días,Nitrato potasio,"Mosca, partidura",Calcio foliar prevención
+cerezo|12,cerezo,Diciembre,12,Maduración-cosecha,Reducir,Solo agua,"Mosca, monilia, pájaros",Mallas anti-pájaros
+damasco|1,damasco,Enero,1,Postcosecha,Cada 10 días,Compost,—,Recuperación
+damasco|2,damasco,Febrero,2,Postcosecha,Cada 10 días,Superfosfato,—,Reservas
+damasco|3,damasco,Marzo,3,Final actividad,Cada 15 días,—,—,Limpieza hojas
+damasco|4,damasco,Abril,4,Caída hojas,Casi nada,—,Cobre,Recoger hojas
+damasco|5,damasco,Mayo,5,Reposo,Si seco,—,—,Caldo bordelés
+damasco|6,damasco,Junio,6,Reposo,Casi nada,Cal pH,—,Inicio poda
+damasco|7,damasco,Julio,7,Reposo profundo,Casi nada,—,Cobre,PODA invernal
+damasco|8,damasco,Agosto,8,Brotación-FLORACIÓN,Cada 7-10 días,Compost+salitre,"Cobre, helada",PROTEGER de heladas
+damasco|9,damasco,Septiembre,9,Cuaja,Cada 5-7 días,Foliar P-K-B,"Pulgón, monilia",No mojar flores
+damasco|10,damasco,Octubre,10,Crecimiento,Cada 5 días,Nitrato potasio,"Pulgón, raleo",Etapa crítica
+damasco|11,damasco,Noviembre,11,Maduración,Cada 4 días,—,Mosca,Trampas
+damasco|12,damasco,Diciembre,12,COSECHA,Reducir,—,"Mosca, monilia",Cosechar firmes
+nectarino|1,nectarino,Enero,1,Maduración temprana,Cada 3 días,Solo agua,"Mosca, monilia",Caídos
+nectarino|2,nectarino,Febrero,2,Cosecha,Reducir,Postcosecha,Monilia,Firmes mañana
+nectarino|3,nectarino,Marzo,3,Postcosecha,Cada 7-10 días,Fósforo,—,Recuperación
+nectarino|4,nectarino,Abril,4,Caída hojas,Cada 10-15 días,—,Limpieza,Hojas caídas
+nectarino|5,nectarino,Mayo,5,Inicio reposo,Si seco,—,—,Caldo bordelés
+nectarino|6,nectarino,Junio,6,Reposo,Casi nada,—,—,PODA invernal
+nectarino|7,nectarino,Julio,7,Reposo,Casi nada,Cal pH,Cobre,Continuar poda
+nectarino|8,nectarino,Agosto,8,Yema hinchada,Iniciar,Compost,Cobre,Última chance cobre
+nectarino|9,nectarino,Septiembre,9,Brotación,Cada 7-10 días,Compost+salitre,Cloca,Vigilar yemas
+nectarino|10,nectarino,Octubre,10,Floración,Cada 5-7 días,Foliar P-K,"Pulgón, oidio",No mojar flores
+nectarino|11,nectarino,Noviembre,11,Cuaja-crecimiento,Cada 3-5 días,Nitrato potasio,"Raleo, pulgón",Etapa crítica
+nectarino|12,nectarino,Diciembre,12,Crecimiento,Cada 3 días,Sulpomag,Mosca,Trampas
+manzano|1,manzano,Enero,1,Crecimiento,Cada 5 días,Calcio foliar,"Carpocapsa, mosca",Continuar calcio
+manzano|2,manzano,Febrero,2,Maduración,Cada 7 días,Calcio foliar,Carpocapsa,Variedades tempranas
+manzano|3,manzano,Marzo,3,Maduración,Cada 7 días,—,"Carpocapsa, monilia",Cosecha medias
+manzano|4,manzano,Abril,4,Cosecha tardías,Reducir,Postcosecha compost,Cancrosis,"Granny Smith, Fuji"
+manzano|5,manzano,Mayo,5,Postcosecha,Cada 10-15 días,Compost+P,—,Hojas caen
+manzano|6,manzano,Junio,6,Caída hojas,Casi nada,—,Cobre,Limpieza
+manzano|7,manzano,Julio,7,Reposo,Casi nada,Cal pH,Cobre,PODA invernal
+manzano|8,manzano,Agosto,8,Yema hinchada,Iniciar,Compost,Cobre,Última cobre
+manzano|9,manzano,Septiembre,9,Brotación,Cada 10 días,Salitre,"Cobre, sarna",Vigilar yemas
+manzano|10,manzano,Octubre,10,Floración,Cada 7 días,Foliar B+Ca,"Pulgón, oidio",Carpocapsa trampas
+manzano|11,manzano,Noviembre,11,Cuaja-crecimiento,Cada 7 días,Nitrato potasio,"Carpocapsa, sarna, raleo",Etapa clave
+manzano|12,manzano,Diciembre,12,Crecimiento,Cada 5-7 días,Calcio foliar,"Carpocapsa, oidio",Calcio para Bitter Pit
+peral|1,peral,Enero,1,Crecimiento,Cada 5-7 días,Calcio foliar,"Carpocapsa, psila",Continuar
+peral|2,peral,Febrero,2,Maduración,Cada 7 días,—,Carpocapsa,Williams temprana
+peral|3,peral,Marzo,3,Cosecha,Reducir,Postcosecha compost,Sarna tardía,Cosechar firmes
+peral|4,peral,Abril,4,Postcosecha,Cada 10 días,Superfosfato,—,Recuperación
+peral|5,peral,Mayo,5,Caída hojas,Cada 15 días,—,Cobre,Limpieza
+peral|6,peral,Junio,6,Reposo,Casi nada,—,—,PODA invernal
+peral|7,peral,Julio,7,Reposo profundo,Casi nada,Cal pH,Cobre,Continuar poda
+peral|8,peral,Agosto,8,Yema hinchada,Iniciar,Compost+salitre,Cobre,Última cobre
+peral|9,peral,Septiembre,9,Brotación,Cada 10 días,Salitre,"Cobre, sarna",Vigilar fuego bacteriano
+peral|10,peral,Octubre,10,Floración,Cada 7 días,Foliar boro,"Carpocapsa trampas, fuego bacteriano",NO mojar flores
+peral|11,peral,Noviembre,11,Cuaja,Cada 7 días,Nitrato K + calcio,"Carpocapsa, raleo",Etapa clave
+peral|12,peral,Diciembre,12,Crecimiento,Cada 5-7 días,Calcio foliar,"Carpocapsa, sarna",Calcio firmeza
+membrillo|1,membrillo,Enero,1,Crecimiento,Cada 7 días,—,Polilla,Continuar
+membrillo|2,membrillo,Febrero,2,Crecimiento,Cada 7 días,—,—,Crecen
+membrillo|3,membrillo,Marzo,3,Maduración,Cada 7-10 días,—,Stemphylium,Cambian color
+membrillo|4,membrillo,Abril,4,Maduración,Cada 10 días,—,—,Cosecha próxima
+membrillo|5,membrillo,Mayo,5,COSECHA,Reducir,Postcosecha compost,—,Cosechar amarillos
+membrillo|6,membrillo,Junio,6,Postcosecha,Cada 15 días,Superfosfato,Cobre,PODA invernal
+membrillo|7,membrillo,Julio,7,Reposo,Casi nada,Cal pH,Cobre,Continuar poda
+membrillo|8,membrillo,Agosto,8,Yema hinchada,Iniciar,Compost,Cobre,Pre-brotación
+membrillo|9,membrillo,Septiembre,9,Brotación,Cada 10 días,Compost,Cobre,Vigilar
+membrillo|10,membrillo,Octubre,10,Floración,Cada 7-10 días,—,Pulgón,Tolerante
+membrillo|11,membrillo,Noviembre,11,Cuaja,Cada 7 días,Nitrato K,—,Estable
+membrillo|12,membrillo,Diciembre,12,Crecimiento,Cada 7 días,—,Polilla,Tranquilo
+limonero|1,limonero,Enero,1,Crecimiento,Cada 4 días,Sulfato amonio,Cochinilla,Verano caluroso
+limonero|2,limonero,Febrero,2,Crecimiento,Cada 4-5 días,Foliar hierro,Mosca blanca,Calor
+limonero|3,limonero,Marzo,3,Maduración primera,Cada 7 días,Sulpomag,Cochinilla,Limones maduros
+limonero|4,limonero,Abril,4,Cosecha continua,Cada 10 días,Compost,Aceite preventivo,Cosecha
+limonero|5,limonero,Mayo,5,Cosecha,Cada 15 días,—,—,Continuar cosecha
+limonero|6,limonero,Junio,6,Cosecha invierno,Cada 15 días,—,—,Cosecha
+limonero|7,limonero,Julio,7,Reposo relativo,Cada 15-20 días,—,—,Vigilar heladas
+limonero|8,limonero,Agosto,8,Pre-despertar,Cada 10-15 días,—,—,Tronco con cal
+limonero|9,limonero,Septiembre,9,Despertar,Cada 7-10 días,Sulfato amonio + compost,"Pulgón, cochinilla",Inicio
+limonero|10,limonero,Octubre,10,Crecimiento-Floración,Cada 7 días,Sulfato amonio,"Pulgón, minador",Florece y carga
+limonero|11,limonero,Noviembre,11,Floración-cuaja,Cada 7 días,Foliar P-K,Pulgón,Aroma fuerte
+limonero|12,limonero,Diciembre,12,Crecimiento fruto,Cada 4-5 días,Nitrato potasio,"Mosca blanca, cochinilla",Importante riego
+naranjo|1,naranjo,Enero,1,Crecimiento,Cada 4 días,Sulfato amonio,Cochinilla,Calor
+naranjo|2,naranjo,Febrero,2,Crecimiento,Cada 4-5 días,Foliar Fe,—,Verde
+naranjo|3,naranjo,Marzo,3,Maduración,Cada 7 días,Sulpomag,—,Color
+naranjo|4,naranjo,Abril,4,Maduración,Cada 10 días,—,Cobre,Cambia color
+naranjo|5,naranjo,Mayo,5,Cosecha Navel,Cada 15 días,Compost,—,Cosechar
+naranjo|6,naranjo,Junio,6,Cosecha,Cada 15 días,—,—,Continuar
+naranjo|7,naranjo,Julio,7,Cosecha,Cada 15-20 días,—,—,Heladas vigilar
+naranjo|8,naranjo,Agosto,8,Final cosecha,Cada 15 días,—,—,Cal tronco
+naranjo|9,naranjo,Septiembre,9,Despertar-floración,Cada 7-10 días,Sulfato amonio + compost,Cochinilla,FLORACIÓN
+naranjo|10,naranjo,Octubre,10,Floración-cuaja,Cada 7 días,Sulfato amonio,"Pulgón, minador",Aroma azahar
+naranjo|11,naranjo,Noviembre,11,Cuaja-crecimiento,Cada 7 días,Foliar P-K-B,Pulgón,Frutitos
+naranjo|12,naranjo,Diciembre,12,Crecimiento,Cada 4-5 días,Nitrato K,Mosca blanca,Riego clave
+mandarino|1,mandarino,Enero,1,Crecimiento,Cada 4 días,Nitrato K,Cochinilla,Calor
+mandarino|2,mandarino,Febrero,2,Crecimiento,Cada 4-5 días,Foliar Fe,—,Verde
+mandarino|3,mandarino,Marzo,3,Maduración,Cada 7 días,Sulpomag,—,Color
+mandarino|4,mandarino,Abril,4,Maduración,Cada 10 días,—,—,Cosecha tempranas
+mandarino|5,mandarino,Mayo,5,Cosecha,Cada 15 días,Compost,—,Cosecha
+mandarino|6,mandarino,Junio,6,Cosecha,Cada 15 días,—,—,Clemenules
+mandarino|7,mandarino,Julio,7,Cosecha tardías,Cada 15-20 días,—,—,W. Murcott
+mandarino|8,mandarino,Agosto,8,Final cosecha,Cada 15 días,—,—,Cal tronco
+mandarino|9,mandarino,Septiembre,9,Despertar,Cada 7-10 días,Sulfato amonio + compost,Cochinilla,Inicio
+mandarino|10,mandarino,Octubre,10,Floración,Cada 7 días,Sulfato amonio,"Pulgón, minador",Florece
+mandarino|11,mandarino,Noviembre,11,Cuaja,Cada 7 días,Foliar P-K-B,"Pulgón, trips",Frutitos
+mandarino|12,mandarino,Diciembre,12,Crecimiento,Cada 4-5 días,Nitrato K,Mosca blanca,Importante
+pomelo|1,pomelo,Enero,1,Crecimiento,Cada 4 días,Nitrato K,Cochinilla,Calor
+pomelo|2,pomelo,Febrero,2,Crecimiento,Cada 4-5 días,Foliar Fe,—,Verde
+pomelo|3,pomelo,Marzo,3,Maduración,Cada 7 días,Sulpomag,—,Color
+pomelo|4,pomelo,Abril,4,Maduración,Cada 10 días,—,Cobre,Cambia
+pomelo|5,pomelo,Mayo,5,Maduración tardía,Cada 15 días,Compost,—,Madurando
+pomelo|6,pomelo,Junio,6,Cosecha inicio,Cada 15 días,—,—,Cosechar
+pomelo|7,pomelo,Julio,7,Cosecha,Cada 15-20 días,—,—,Mejor sabor invierno
+pomelo|8,pomelo,Agosto,8,Cosecha,Cada 15-20 días,—,—,Mejor sabor invierno
+pomelo|9,pomelo,Septiembre,9,Despertar,Cada 7-10 días,Sulfato amonio + compost,Cochinilla,Inicio
+pomelo|10,pomelo,Octubre,10,Floración,Cada 7 días,Foliar B,"Pulgón, minador",Aroma
+pomelo|11,pomelo,Noviembre,11,Cuaja,Cada 7 días,Sulfato amonio,Pulgón,Frutitos
+pomelo|12,pomelo,Diciembre,12,Crecimiento,Cada 4-5 días,Nitrato K,Mosca blanca,Riego clave
+nogal|1,nogal,Enero,1,Llenado CRÍTICO,Cada 5-7 días,Nitrato potasio,"Polilla, arañita",Si falta agua: nuez vacía
+nogal|2,nogal,Febrero,2,Pre-maduración,Cada 7 días,Sulpomag,Arañita,Cáscara formándose
+nogal|3,nogal,Marzo,3,Maduración,Cada 10 días,—,Antracnosis,Cáscara verde se abre
+nogal|4,nogal,Abril,4,COSECHA,Reducir,Postcosecha compost,—,Cosechar cuando cáscara se abre
+nogal|5,nogal,Mayo,5,Postcosecha,Cada 15 días,Superfosfato,—,Hojas caen
+nogal|6,nogal,Junio,6,Caída hojas,Casi nada,—,Cobre,Limpieza
+nogal|7,nogal,Julio,7,Reposo,Casi nada,Cal pH,—,PODA invernal
+nogal|8,nogal,Agosto,8,Yema hinchada,Iniciar,Compost,Cobre,Última cobre
+nogal|9,nogal,Septiembre,9,Brotación,Cada 10-15 días,Compost + salitre,Cobre preventivo,Heladas tardías peligrosas
+nogal|10,nogal,Octubre,10,Floración,Cada 10 días,Foliar boro + zinc,"Peste negra, pulgón",Polinización cruzada
+nogal|11,nogal,Noviembre,11,Crecimiento,Cada 7-10 días,Nitrato amonio,Polilla trampas,Tamaño nuez
+nogal|12,nogal,Diciembre,12,Crecimiento,Cada 7 días,Nitrato potasio,Polilla,Continuar
+almendro|1,almendro,Enero,1,Llenado,Cada 7 días,Sulpomag,—,Cerrando
+almendro|2,almendro,Febrero,2,Maduración,Cada 10-15 días,—,—,Secando
+almendro|3,almendro,Marzo,3,COSECHA,Reducir mucho,—,—,Cáscara abierta
+almendro|4,almendro,Abril,4,Postcosecha,Cada 15 días,Compost + P,Cobre,Hojas caen
+almendro|5,almendro,Mayo,5,Reposo inicio,Casi nada,—,—,Caldo bordelés
+almendro|6,almendro,Junio,6,Reposo,Casi nada,Cal pH,—,PODA invernal
+almendro|7,almendro,Julio,7,Reposo,Casi nada,—,Cobre,Continuar poda
+almendro|8,almendro,Agosto,8,FLORACIÓN (temprana),Cada 10 días,Foliar boro,"Monilia, helada",PROTEGER de heladas
+almendro|9,almendro,Septiembre,9,Cuaja,Cada 7-10 días,Compost + salitre,"Pulgón, monilia",Crítico
+almendro|10,almendro,Octubre,10,Crecimiento,Cada 7-10 días,Sulfato amonio,Pulgón,Estable
+almendro|11,almendro,Noviembre,11,Crecimiento,Cada 7-10 días,Nitrato K,Polilla,Constante
+almendro|12,almendro,Diciembre,12,Llenado,Cada 7 días,Nitrato K,Polilla,Calidad
+higuera|1,higuera,Enero,1,COSECHA BREVAS,Cada 5-7 días,—,"Mosca, pájaros",Cosechar blandos
+higuera|2,higuera,Febrero,2,Higos 2da cosecha,Cada 5-7 días,—,"Mosca, pájaros",Cosecha principal
+higuera|3,higuera,Marzo,3,Cosecha final,Cada 7 días,—,Mosca,Últimos higos
+higuera|4,higuera,Abril,4,Postcosecha,Cada 15 días,Compost,Roya,Hojas caen
+higuera|5,higuera,Mayo,5,Caída hojas,Casi nada,—,—,Limpiar
+higuera|6,higuera,Junio,6,Reposo,Si seco,—,—,PODA invernal
+higuera|7,higuera,Julio,7,Reposo,Casi nada,—,—,Continuar poda
+higuera|8,higuera,Agosto,8,Pre-brotación,Iniciar,—,Aceite mineral,Preparar
+higuera|9,higuera,Septiembre,9,Brotación,Cada 10-15 días,Compost,—,Hojas grandes
+higuera|10,higuera,Octubre,10,Crecimiento,Cada 10 días,Sulfato amonio,—,Crecer
+higuera|11,higuera,Noviembre,11,Crecimiento,Cada 7-10 días,—,—,Despuntar
+higuera|12,higuera,Diciembre,12,Brevas creciendo,Cada 7 días,Nitrato K,Mosca,1ra cosecha formándose
+granado|1,granado,Enero,1,Crecimiento,Cada 5-7 días,Nitrato K,Barrenador,Crecen
+granado|2,granado,Febrero,2,Llenado,Cada 7 días,Sulpomag,—,Colorean
+granado|3,granado,Marzo,3,Maduración,Cada 7-10 días,—,Rajado,Riego CONSTANTE
+granado|4,granado,Abril,4,Maduración-cosecha,Cada 10 días,—,Rajado,Cosechar antes rajado
+granado|5,granado,Mayo,5,COSECHA,Cada 15 días,Compost,Botrytis,Cosechar rojizas
+granado|6,granado,Junio,6,Postcosecha,Cada 15 días,—,Cobre,Hojas caen
+granado|7,granado,Julio,7,Reposo,Casi nada,—,—,PODA + quitar hijuelos
+granado|8,granado,Agosto,8,Reposo,Casi nada,—,—,Preparar
+granado|9,granado,Septiembre,9,Brotación,Cada 10-15 días,Compost,—,Hojas salen
+granado|10,granado,Octubre,10,Crecimiento,Cada 10 días,Sulfato amonio,Pulgón,Crecer
+granado|11,granado,Noviembre,11,FLORACIÓN,Cada 7-10 días,Foliar P-K,Pulgón,Flores rojas espectaculares
+granado|12,granado,Diciembre,12,Cuaja-crecimiento,Cada 5-7 días,Nitrato K,—,Frutitos
+caqui|1,caqui,Enero,1,Crecimiento,Cada 5-7 días,Nitrato K,Mosca trampas,Crecen
+caqui|2,caqui,Febrero,2,Llenado-color,Cada 7 días,Sulpomag,—,Colorean
+caqui|3,caqui,Marzo,3,Maduración,Cada 7-10 días,—,Mosca,Naranja
+caqui|4,caqui,Abril,4,Maduración-cosecha,Cada 10 días,—,Mosca,Cosechar según tipo
+caqui|5,caqui,Mayo,5,COSECHA principal,Cada 15 días,Compost + P,—,Cosecha
+caqui|6,caqui,Junio,6,Final cosecha,Cada 15 días,—,Cobre,Hojas bonitas
+caqui|7,caqui,Julio,7,Reposo,Casi nada,—,—,PODA invernal
+caqui|8,caqui,Agosto,8,Reposo,Casi nada,—,—,Preparar
+caqui|9,caqui,Septiembre,9,Despertar,Cada 10-15 días,Compost + salitre,—,Brota tarde
+caqui|10,caqui,Octubre,10,Brotación,Cada 10 días,Sulfato amonio,—,Hojas grandes
+caqui|11,caqui,Noviembre,11,Floración,Cada 7-10 días,Foliar P-K-B,—,Flores discretas
+caqui|12,caqui,Diciembre,12,Cuaja-crecimiento,Cada 5-7 días,Nitrato K,Raleo si mucho,Frutitos
+vid|1,vid,Enero,1,Envero (cambio color),Cada 7-10 días,—,"Botrytis, deshoje",DESHOJE racimos
+vid|2,vid,Febrero,2,Maduración,Reducir o cortar,—,"Botrytis, polilla",Reducir agua
+vid|3,vid,Marzo,3,COSECHA,Cortar antes cosecha,—,Botrytis,Cosechar dulces
+vid|4,vid,Abril,4,Postcosecha,Casi nada,Compost,—,Hojas caen
+vid|5,vid,Mayo,5,Caída hojas,Casi nada,Superfosfato,Cobre,Limpieza
+vid|6,vid,Junio,6,Reposo,Casi nada,—,—,Pre-poda
+vid|7,vid,Julio,7,Reposo,Casi nada,—,—,PODA INVERNAL
+vid|8,vid,Agosto,8,Lloro (savia sale),Casi nada,—,Aceite mineral,Savia = preparándose
+vid|9,vid,Septiembre,9,Brotación (lloro),Cada 10 días,Compost + salitre,Oidio preventivo,Yemas brotan
+vid|10,vid,Octubre,10,Crecimiento brotes,Cada 7-10 días,Foliar B+Zn,"Oidio, desbrote",Desbrotar
+vid|11,vid,Noviembre,11,Floración-cuaja,Cada 7 días,Foliar P-K,"Oidio, mildiú, raleo",NO exceso agua
+vid|12,vid,Diciembre,12,Crecimiento grano,Cada 5-7 días,Sulpomag,"Oidio, despunte",Despuntar
+arandano|1,arandano,Enero,1,COSECHA principal,Cada 2-3 días,—,"Drosophila, Botrytis",Cosechar 2x por semana
+arandano|2,arandano,Febrero,2,Cosecha tardías,Cada 3 días,—,Drosophila,Últimos frutos
+arandano|3,arandano,Marzo,3,Postcosecha,Cada 5 días,Compost ácido,—,Mulch ácido
+arandano|4,arandano,Abril,4,Hojas coloreando,Cada 7 días,—,—,Rojean
+arandano|5,arandano,Mayo,5,Caída hojas,Cada 10 días,—,—,Limpiar
+arandano|6,arandano,Junio,6,Reposo,Cada 15 días,—,—,Pre-poda
+arandano|7,arandano,Julio,7,Reposo,Cada 15 días,—,—,PODA invernal
+arandano|8,arandano,Agosto,8,Pre-brotación,Cada 10 días,Azufre + compost ácido,—,Acidificar suelo
+arandano|9,arandano,Septiembre,9,Brotación-floración,Cada 3-5 días,Sulfato amonio,Monilia,Flores blancas
+arandano|10,arandano,Octubre,10,Floración,Cada 3-5 días,Foliar boro,Pulgón,Abejas polinizan
+arandano|11,arandano,Noviembre,11,Cuaja,Cada 2-3 días,Sulfato amonio,—,Frutitos verdes
+arandano|12,arandano,Diciembre,12,Crecimiento-maduración temprana,Cada 2-3 días,Sulpomag,Drosophila trampas,Primeros azules
+olivo|1,olivo,Enero,1,Crecimiento aceituna,Cada 7-10 días,Nitrato K,—,Crecen
+olivo|2,olivo,Febrero,2,Llenado,Cada 10 días,Sulpomag,Mosca trampas,Aceite
+olivo|3,olivo,Marzo,3,Envero (cambio color),Cada 10-15 días,—,Mosca del olivo,Cambia
+olivo|4,olivo,Abril,4,Maduración,Cada 15 días,—,Mosca,Cosechar mesa verdes
+olivo|5,olivo,Mayo,5,COSECHA aceite/negras,Reducir,—,Mosca,Cosechar para aceite
+olivo|6,olivo,Junio,6,Postcosecha,Cada 15-20 días,Compost + P,Cobre,Recuperar
+olivo|7,olivo,Julio,7,Reposo,Mínimo,—,—,PODA + limpieza
+olivo|8,olivo,Agosto,8,Reposo,Casi nada,—,—,Preparar
+olivo|9,olivo,Septiembre,9,Brotación,Cada 15 días,Compost + salitre,—,Inicio
+olivo|10,olivo,Octubre,10,Crecimiento,Cada 15 días,Sulfato amonio,Repilo,Crecer
+olivo|11,olivo,Noviembre,11,FLORACIÓN,Cada 10-15 días,Foliar boro,Repilo,Floración
+olivo|12,olivo,Diciembre,12,Cuaja,Cada 10 días,Nitrato K,—,Frutitos

@@ -1,0 +1,155 @@
+# fact_ficha_fertilizacion: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_FICHA_FERTILIZACION del Excel. 149 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+especie_id,n,mes,etapa,producto,dosis,donde,por_que_fisiologico
+duraznero,1,Ago,Pre-brotación,Compost + salitre,5kg+200g,Bajo copa 30cm tronco,Nitrógeno activa enzimas que convierten almidón guardado en azúcares → combustible para brotar
+duraznero,2,Sep,Brotación,Sulfato amonio,150g,"Bajo copa, regar",Nitrógeno construye CLOROFILA. Sin clorofila la hoja no captura luz → no fabrica azúcar
+duraznero,3,Oct,Floración-cuaja,Foliar fosfato monopotásico,10g/20L,Pulverizar mañana,Fósforo para DIVISIÓN CELULAR del fruto. Potasio regula estomas (poros respiratorios de la hoja)
+duraznero,4,Nov,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio = 'bomba de agua': atrae agua al fruto por ÓSMOSIS → más grande y dulce
+duraznero,5,Dic,Llenado,Sulpomag,150g,En riego,Magnesio es el átomo CENTRAL de la clorofila. Sin Mg = hoja amarilla = fábrica cerrada
+duraznero,6,Ene,Maduración,NO FERTILIZAR,—,—,N ahora hace que el árbol crezca hojas NUEVAS en vez de madurar fruta. Frutos blandos
+duraznero,7,Feb-Mar,Postcosecha,Compost + superfosfato,5kg+200g,Bajo copa,Fósforo estimula RAÍCES nuevas → mejor absorción para próxima temporada
+ciruelo,1,Ago,Pre-brotación,Compost + salitre,5 kg + 150g,Bajo copa,El nitrógeno del salitre es como 'combustible' para arrancar: activa las enzimas que convierten las reservas de almidón en azúcares simples que las yemas usan para brotar
+ciruelo,2,Sep,Brotación,Urea o sulfato amonio,150g,"Bajo copa, regar",Nitrógeno construye clorofila (el 'pigmento verde'). Sin clorofila las hojas no pueden capturar luz solar para fabricar azúcar. Hojas amarillas = fábrica parada
+ciruelo,3,Oct,Floración,Foliar fósforo-potasio,10g/20L,Pulverizar mañana,El fósforo es esencial para la división celular (el fruto multiplica células). El potasio regula la apertura de los estomas (poros de las hojas) para que respiren bien
+ciruelo,4,Nov,Crecimiento,Nitrato potasio,200g,Bajo copa,"El potasio actúa como 'bomba de agua': atrae agua hacia el fruto (ósmosis), haciéndolo más grande. También transporta azúcares desde las hojas al fruto"
+ciruelo,5,Dic,Llenado,Sulpomag (K+Mg),150g,En riego,"El magnesio es el corazón de la clorofila (sin Mg, hoja amarilla). El potasio mejora el sabor: concentra azúcares y ácidos que dan el 'gusto' a la ciruela"
+ciruelo,6,Ene,Maduración,NO fertilizar,—,—,"Si pone nitrógeno ahora, el árbol produce crecimiento vegetativo NUEVO en vez de madurar la fruta. El fruto queda blando y se pudre rápido en poscosecha"
+ciruelo,7,Feb-Mar,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,El fósforo ahora estimula el crecimiento de raíces nuevas. Las raíces absorben y almacenan nutrientes para la próxima temporada. Es 'llenar la despensa' del árbol
+ciruelo,8,Jun-Jul,Reposo,Cal si pH < 6.0,1-2 kg,Esparcir,La cal neutraliza la acidez del suelo. Un suelo muy ácido 'bloquea' nutrientes como fósforo y calcio: están ahí pero la raíz no puede absorberlos
+cerezo,1,Ago,Pre-brotación,Compost + salitre,5kg+150g,Bajo copa,Energía arranque
+cerezo,2,Sep,Brotación,Sulfato amonio + foliar boro,150g+5gB/20L,Copa+foliar,BORO crítico: sin boro el polen no llega al óvulo → no cuaja
+cerezo,3,Oct,Cuaja,Foliar P-K,10g/20L,Pulverizar,Fósforo para división celular fruto joven
+cerezo,4,Nov,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio introduce agua al fruto por ósmosis
+cerezo,5,Nov-Dic,Pre-cosecha,Calcio foliar CaCl2 0.5%,100g/20L c/10d,Pulverizar,Calcio FORTALECE paredes celulares → PREVIENE partidura
+cerezo,6,Ene-Feb,Postcosecha,Compost + superfosfato,5kg+200g,Bajo copa,Las yemas que se forman AHORA serán las flores de septiembre
+damasco,1,Jul-Ago,Pre-brotación,Compost + salitre,4 kg + 150g,Bajo copa,"Arranque temprano necesita nutrientes listos. El compost libera nutrientes lento (meses), el salitre rápido (días). Combinación = energía inmediata + sostenida"
+damasco,2,Sep,Brotación,Sulfato amonio,150g,Bajo copa,Nitrógeno para construir las proteínas de las hojas nuevas. Las proteínas son las 'máquinas' que hacen fotosíntesis
+damasco,3,Oct,Cuaja-crecimiento,Foliar P-K + boro,10g PK + 2g boro / 20L,Pulverizar,"El BORO es esencial para el tubo polínico: sin boro, el polen no puede llegar al óvulo y no hay fecundación → fruto cae"
+damasco,4,Nov,Crecimiento,Nitrato potasio,150g,Bajo copa,Potasio regula la entrada de CO2 a la hoja (abre y cierra estomas). Más CO2 = más fotosíntesis = más azúcar para el fruto
+damasco,5,Dic,Maduración,NO fertilizar,—,—,Nitrógeno retrasa maduración: el árbol 'prefiere' crecer hojas nuevas en vez de madurar fruta si tiene N disponible
+damasco,6,Ene-Feb,Postcosecha,Compost + superfosfato,4 kg + 150g,Bajo copa,Fósforo estimula raíces. Raíces sanas = mejor absorción de agua y nutrientes toda la próxima temporada
+damasco,7,Jun,Reposo,Cal si pH bajo,1 kg,Esparcir,Solo si análisis de suelo indica acidez
+nectarino,1,Ago,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Mismo que duraznero. Ver ficha Duraznero Bol. INIA 373
+nectarino,2,Sep,Brotación,Sulfato amonio,150g,Bajo copa,Nitrógeno para clorofila y crecimiento
+nectarino,3,Oct,Floración-cuaja,Foliar P-K,10g/20L,Pulverizar,Fósforo y potasio para división celular y cuaja
+nectarino,4,Nov,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio = frutos grandes. Transporta azúcares
+nectarino,5,Dic,Llenado,Sulpomag,150g,En riego,"Magnesio para clorofila, potasio para dulzor"
+nectarino,6,Ene,Maduración,NO fertilizar,—,—,N ahora = frutos blandos
+nectarino,7,Feb-Mar,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas raíces
+nectarino,8,Jun-Jul,Reposo,Cal si pH bajo,1-2 kg,Esparcir,Solo si necesario
+manzano,1,Ago,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Energía de arranque. Las yemas del manzano contienen flores YA formadas desde otoño anterior: solo necesitan 'combustible' para abrirse
+manzano,2,Sep,Brotación,Sulfato amonio,200g,Bajo copa,Nitrógeno para las hojas que alimentarán al fruto durante 5 meses
+manzano,3,Oct,Floración-cuaja,Foliar boro + calcio,5g boro + 20g CaCl2 / 20L,Pulverizar,Boro para tubo polínico (fecundación). Calcio fortalece paredes celulares del fruto → previene Bitter Pit
+manzano,4,Nov-Ene,Crecimiento,Calcio foliar MENSUAL,20g CaCl2 / 20L,Pulverizar,"PREVIENE Bitter Pit: manchas marrones hundidas en fruta guardada. El calcio 'cementa' las paredes celulares. Sin calcio, las células se rompen y la pulpa se oxida (mancha)"
+manzano,5,Feb,Maduración,NO fertilizar N,—,—,Nitrógeno ahora produce crecimiento vegetativo tardío que no lignifica (endurece) antes del invierno → ramas tiernas mueren con helada
+manzano,6,Abr-May,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Fósforo estimula diferenciación floral: las yemas que se forman AHORA serán las flores de octubre próximo
+manzano,7,Jun,Reposo,Cal si pH bajo,1-2 kg,Esparcir,Corregir acidez
+peral,1,Ago,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Similar a manzano
+peral,2,Sep,Brotación,Sulfato amonio,200g,Bajo copa,Nitrógeno para hojas
+peral,3,Oct,Floración-cuaja,Foliar boro,5g/20L,Pulverizar,"Boro CRÍTICO para tubo polínico en peral. Sin boro, la flor se abre pero no cuaja fruto (el polen no llega al óvulo)"
+peral,4,Nov-Dic,Crecimiento,Nitrato potasio + calcio foliar,200g NK + 20g CaCl2/20L,Bajo copa + foliar,Calcio da firmeza. El peral tiene más riesgo de 'internal breakdown' (descomposición interna) que manzano si falta calcio
+peral,5,Feb,Maduración,NO fertilizar,—,—,Nitrógeno retrasa maduración y reduce firmeza
+peral,6,Abr-May,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Fósforo para raíces y yemas florales
+membrillo,1,Ago-Sep,Pre-brotación,Compost,5 kg,Bajo copa,"Membrillo necesita POCO fertilizante. Si fertiliza mucho nitrógeno: muchas hojas, pocos frutos. El árbol interpreta abundancia de N como señal de 'seguir creciendo' en vez de 'reproducirse'"
+membrillo,2,Oct,Brotación,Sulfato amonio,100g (POCO),Bajo copa,Solo una aplicación leve. Membrillo es eficiente con pocos nutrientes
+membrillo,3,Nov,Crecimiento,Nitrato potasio,150g,Bajo copa,Potasio mejora la pectina del fruto (gelificante natural). Esto es clave para mermelada: membrillo con buen potasio gelifica mejor
+membrillo,4,May-Jun,Postcosecha,Compost,5 kg,Bajo copa,Reposición simple. No complicar
+limonero,1,Sep,Despertar,Sulfato amonio + compost,150g + 5 kg,Bajo copa,Los cítricos necesitan MUCHO nitrógeno: producen hojas todo el año. El nitrógeno se incorpora a aminoácidos que forman proteínas (enzimas de fotosíntesis)
+limonero,2,Oct-Nov,Crecimiento-floración,Sulfato amonio + foliar P-K,150g + 10g PK/20L,Bajo copa + foliar,El fósforo activa la formación de flores. El potasio regula el balance hídrico de pétalos y ovario para que la cuaja sea efectiva
+limonero,3,Dic-Ene,Crecimiento fruto,Nitrato potasio,200g,Bajo copa,El limón es 90% agua + ácido cítrico + azúcares. El potasio es la 'bomba osmótica' que introduce agua al fruto. Más potasio = más jugo
+limonero,4,Feb,Mantenimiento,Foliar quelato hierro,5g/20L,Pulverizar,Los cítricos son MUY sensibles a clorosis férrica (hojas amarillas con venas verdes). El hierro es esencial para la clorofila. Suelos calcáreos bloquean hierro
+limonero,5,Mar-Abr,Maduración,Sulpomag,150g,Bajo copa,"Magnesio es el átomo central de la molécula de clorofila. Sin Mg, la hoja literalmente no puede ser verde ni hacer fotosíntesis"
+naranjo,1,Sep,Despertar,Sulfato amonio + compost,200g + 5 kg,Bajo copa,Nitrógeno para hojas todo el año
+naranjo,2,Oct-Nov,Floración,Sulfato amonio + foliar P-K-B,200g + 10g/20L,Bajo copa + foliar,"El azahar (flor del naranjo) necesita boro para cuajar. Sin boro, las flores caen sin cuajar fruto"
+naranjo,3,Dic-Ene,Crecimiento,Nitrato potasio,250g,Bajo copa,Potasio = más jugo y más dulce
+naranjo,4,Mar-Abr,Maduración,Sulpomag,200g,Bajo copa,Magnesio para clorofila + potasio para dulzor. La relación azúcar/ácido define el sabor de la naranja
+mandarino,1,Sep,Despertar,Sulfato amonio + compost,150g + 5 kg,Bajo copa,Igual que otros cítricos
+mandarino,2,Nov,Floración,Foliar P-K-B,10g/20L,Pulverizar,Boro para cuaja
+mandarino,3,Dic-Ene,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio para dulzor y facilidad de pelado (cáscara suelta)
+mandarino,4,Mar-Abr,Maduración,Sulpomag,150g,Bajo copa,"Mg para clorofila, K para sabor"
+pomelo,1,Sep,Despertar,Sulfato amonio + compost,250g + 6 kg,Bajo copa,Árbol grande = más fertilizante
+pomelo,2,Nov,Floración,Foliar boro,2g/20L,Pulverizar,Boro para cuaja
+pomelo,3,Dic-Ene,Crecimiento,Nitrato potasio,300g,Bajo copa,Fruto grande necesita mucho potasio
+pomelo,4,Mar-Abr,Maduración,Sulpomag,200g,Bajo copa,"Dulzor y color rosado (en Star Ruby el color viene de licopeno, mismo antioxidante del tomate)"
+nogal,1,Ago,Pre-brotación,Compost + salitre,10 kg + 500g,Bajo copa (amplia!),"Nogal es árbol GRANDE: necesita más que frutales chicos. La copa puede tener 8-10 m de diámetro, fertilizar toda esa área"
+nogal,2,Sep-Oct,Brotación-floración,Foliar boro + zinc,5g B + 5g Zn / 20L,Pulverizar,BORO y ZINC son CRÍTICOS para nogal (Bol. INIA 454). El boro permite formación del tubo polínico. El zinc activa enzimas de crecimiento (auxinas). Sin zinc: hojas chicas en roseta
+nogal,3,Nov,Crecimiento,Nitrato amonio,500g,Bajo copa,Nitrógeno para el enorme follaje del nogal
+nogal,4,Dic-Ene,Llenado,Nitrato potasio,500g,Bajo copa,Potasio transporta los ácidos grasos (aceite) hacia la almendra. Una buena nuez tiene 60%+ de aceite. Potasio = nuez llena de aceite
+nogal,5,Feb,Pre-maduración,Sulpomag,300g,Bajo copa,K+Mg para cáscara firme y almendra bien terminada
+nogal,6,Abr-May,Postcosecha,Compost + superfosfato,10 kg + 400g,Bajo copa,Fósforo para raíces. Las raíces del nogal pueden extenderse 2x el ancho de la copa
+almendro,1,Jul,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Energía para floración temprana
+almendro,2,Ago-Sep,Floración-cuaja,Foliar boro,5g/20L,Pulverizar,Boro CRÍTICO para tubo polínico. Sin boro: flores abiertas pero sin cuaja (flor estéril)
+almendro,3,Oct-Nov,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio transporta aceite a la semilla
+almendro,4,Ene,Llenado,Sulpomag,150g,Bajo copa,Mg para mantener hojas verdes en verano seco
+almendro,5,Abr,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas
+higuera,1,Ago-Sep,Pre-brotación,Compost,5 kg,Bajo copa,"POCO fertilizante. Si da mucho nitrógeno: muchas hojas enormes, pocos higos. La higuera interpreta N alto como 'condiciones de abundancia → crecer' en vez de 'reproducirse → frutar'"
+higuera,2,Dic,Crecimiento,Nitrato potasio,150g,Bajo copa,Potasio para dulzor. Los higos maduros tienen hasta 40% de azúcar (uno de los frutos más dulces). El potasio facilita la acumulación de sacarosa
+higuera,3,NOTA,—,Higuera necesita POCO fertilizante,—,—,"En suelos pobres y secos produce MEJOR fruta (más dulce, más concentrada). Es contra-intuitivo pero cierto: el estrés moderado mejora calidad"
+granado,1,Ago,Pre-brotación,Compost,5 kg,Bajo copa,"Granado necesita poco fertilizante. Como higuera: exceso N = crecimiento vegetativo, poca fruta"
+granado,2,Sep-Oct,Brotación,Sulfato amonio,150g,Bajo copa,Nitrógeno moderado para hojas
+granado,3,Nov,Floración,Foliar P-K,10g/20L,Pulverizar,Fósforo para cuaja. Potasio para que los arilos se llenen de jugo dulce
+granado,4,Dic-Ene,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio es el nutriente MÁS importante del granado: los arilos son básicamente bolsas de jugo llenas de azúcar+ácido+potasio
+granado,5,Feb,Llenado,Sulpomag,150g,Bajo copa,Potasio para color rojo intenso (antocianinas). El granado concentra antocianinas con la maduración → rojo profundo
+caqui,1,Sep,Pre-brotación,Compost + salitre,5 kg + 150g,Bajo copa,Arranque tardío
+caqui,2,Nov,Floración,Foliar P-K + boro,10g PK + 2g B / 20L,Pulverizar,La mayoría de caquis son PARTENOCÁRPICOS: producen fruto SIN necesitar fecundación (como el plátano). El boro mejora la retención del fruto
+caqui,3,Dic-Ene,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio para acumulación de azúcar (hasta 20% en caqui maduro)
+caqui,4,Feb,Llenado,Sulpomag,150g,Bajo copa,Color naranja = carotenoides. El potasio mejora la síntesis y acumulación de estos pigmentos
+vid,1,Ago,Pre-brotación,Compost + salitre,3 kg + 100g/planta,Al pie,"NO EXAGERAR nitrógeno en vid. Exceso N = mucho follaje, poca fruta, peor calidad. La vid de viña produce MEJOR con estrés moderado"
+vid,2,Oct,Crecimiento,Foliar boro + zinc,2g B + 5g Zn / 20L,Pulverizar,Boro para cuaja del grano. Zinc para crecimiento del grano (activa auxinas). Deficiencia de zinc = granos chicos irregulares ('millerandage')
+vid,3,Nov,Cuaja,Foliar P-K,10g/20L,Pulverizar,Potasio para transporte de azúcar de hojas a racimo
+vid,4,Dic-Ene,Envero,Sulpomag,150g/planta,Al pie,Potasio es EL nutriente de la vid: concentra azúcar y color. El Mg mantiene hojas funcionales cuando más se necesitan (verano)
+vid,5,May,Postcosecha,Compost + superfosfato,3 kg + 100g,Al pie,Reservas en madera para próximo año
+arandano,1,Ago,Pre-brotación,Azufre + compost ÁCIDO (aserrín pino),100g azufre+3kg,Mulch bajo planta,pH 4.5-5.5 REGLA N°1. Evolucionó en bosques coníferas. Raíz NO funciona pH>5.5
+arandano,2,Sep,Brotación,Sulfato amonio (NO urea NO salitre),50g,"Bajo planta, regar",SOLO fertilizantes ÁCIDOS. Sulfato amonio BAJA pH. Urea y salitre lo SUBEN
+arandano,3,Oct,Floración,Foliar boro,2.5g/20L,Pulverizar suave,Mejora cuaja
+arandano,4,Nov,Crecimiento,Sulfato amonio 2da,50g,Bajo planta,Moderado
+arandano,5,Dic,Fructificación,Sulpomag,50g,Bajo planta,K para antocianinas (azul). Mg para clorofila
+arandano,6,Mar,Postcosecha,Compost ÁCIDO (aserrín/corteza pino),3-5 kg mulch,Sobre suelo,Descomposición coníferas produce ácidos orgánicos que mantienen pH bajo
+arandano,7,NUNCA,—,"NUNCA cal, ceniza, guano gallina",—,—,SUBEN pH y MATAN arándano. Cal es VENENO para arándano
+olivo,1,Ago-Sep,Pre-brotación,Compost + salitre,5 kg + 200g,Bajo copa,Nitrógeno para brotes nuevos. El olivo crece lento pero constante
+olivo,2,Nov,Pre-floración,Foliar boro,5g/20L,Pulverizar,"BORO es CRÍTICO para cuaja en olivo. Sin boro, la cuaja cae dramáticamente (puede bajar de 5% a 0.5% de flores que cuajan). Es el micronutriente más limitante"
+olivo,3,Dic-Ene,Crecimiento,Nitrato potasio,200g,Bajo copa,Potasio para formación de aceite. El ácido oleico (grasa principal del aceite de oliva) se sintetiza en los cloroplastos de las células del fruto con K como cofactor
+olivo,4,Feb,Llenado,Sulpomag,200g,Bajo copa,"Magnesio mantiene hojas funcionales para fotosíntesis en verano seco. Sin Mg, hojas amarillean y la aceituna no llena de aceite"
+olivo,5,Jun,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,Reservas. Fósforo estimula raíces
+frutilla,1,Mar/Ago,Base (plantación),Compost + guano rojo,2-3 kg/m²,Incorporado al camellón antes de plantar,Materia orgánica mejora estructura y aporta nutrientes de liberación lenta para el arranque radicular
+frutilla,2,Sep,Floración,NPK bajo en N / té de compost,Foliar c/15 días,Foliar en la mañana,Exceso de nitrógeno en floración da mucha hoja y poca flor: se prioriza fósforo-potasio
+frutilla,3,Oct-Nov,Cuaja-crecimiento,Nitrato de potasio,5-8 g/planta,Junto al riego,"El potasio moviliza azúcares hacia el fruto en formación, mejorando tamaño y dulzor"
+frutilla,4,Dic-Ene,Cosecha,Calcio foliar,Foliar quincenal,Foliar,El calcio firma las paredes celulares del fruto: reduce Botrytis y prolonga la vida poscosecha
+frutilla,5,Feb,Postcosecha,Compost ligero,1 kg/m²,Superficial,Repone reservas de la planta para la renovación o la próxima temporada
+frambuesa,1,Ago,Pre-brotación,Compost + guano,3-4 kg/planta,En la línea de plantación,Nitrógeno y materia orgánica activan el crecimiento explosivo de la caña nueva
+frambuesa,2,Sep-Oct,Brotación-floración,Nitrato de amonio,40-60 g/planta,"Al pie, regar después",El nitrógeno construye la masa foliar que alimentará flores y frutos
+frambuesa,3,Nov-Dic,Cuaja-cosecha,Nitrato de potasio,40 g/planta,Junto al riego,El potasio mueve los azúcares producidos en la hoja hacia el fruto en desarrollo
+frambuesa,4,Ene-Feb,Cosecha plena,Calcio + magnesio foliar,Foliar quincenal,Foliar,Firma las paredes celulares del fruto y evita hojas amarillas por falta de magnesio
+frambuesa,5,Mar-Abr,Postcosecha,Compost,2 kg/planta,En la línea,Reconstruye reservas de la corona para el rebrote de la próxima temporada
+mora,1,Ago,Pre-brotación,Compost + guano,3-4 kg/planta,En la línea de plantación,Impulsa el crecimiento vigoroso característico apenas rompe el reposo
+mora,2,Sep-Oct,Brotación-floración,Nitrato de amonio,50 g/planta,"Al pie, regar después",Sostiene el desarrollo de la masa foliar necesaria para la floración masiva
+mora,3,Nov-Ene,Cuaja-cosecha,Nitrato de potasio,40-50 g/planta,Junto al riego,"El potasio concentra azúcares en el fruto, clave para su sabor dulce característico"
+mora,4,Mar,Postcosecha,Compost,2-3 kg/planta,En la línea,Repone reservas para el rebrote vigoroso de la próxima temporada
+kiwi,1,Ago,Pre-brotación,Compost + guano,5-6 kg/planta,"Bajo el parrón, en banda",Crecimiento vigoroso: necesita reservas abundantes disponibles antes de brotar
+kiwi,2,Sep-Oct,Brotación-floración,Nitrato de amonio,150-200 g/planta,"Bajo copa, regar después",Sostiene el desarrollo foliar masivo característico de la especie
+kiwi,3,Nov-Dic,Cuaja-crecimiento,Nitrato de potasio,150 g/planta,Junto al riego,"El potasio es clave para el llenado del fruto, de los más grandes del catálogo de bayas"
+kiwi,4,Ene-Feb,Llenado,Calcio foliar,Foliar mensual,Foliar,"Mejora la firmeza y la vida poscosecha del fruto, que se guarda por meses"
+kiwi,5,Mar,Postcosecha,Compost + fosfato,5 kg + 200g,Bajo copa,Estimula raíces nuevas para acumular reservas de cara al próximo ciclo
+avellano,1,Ago,Pre-brotación,Compost + guano,5-6 kg/planta,"Bajo copa, en banda",Aporta reservas de liberación lenta para sostener el crecimiento vegetativo de primavera
+avellano,2,Sep-Oct,Brotación,Nitrato de amonio,150 g/planta,"Bajo copa, regar después",Sostiene el desarrollo foliar que alimentará el llenado del fruto en verano
+avellano,3,Nov-Dic,Crecimiento del fruto,Sulfato de potasio,120 g/planta,Bajo copa,El potasio es clave para el llenado y calidad del grano dentro de la cáscara
+avellano,4,Feb,Postcosecha,Compost + fosfato,4 kg + 150g,Bajo copa,"Estimula raíces nuevas de cara a la floración invernal, que ocurre muy temprano"
+nispero,1,Abr,Pre-floración,Compost + guano,4-5 kg/planta,Bajo copa,"Prepara reservas para sostener la floración de invierno, poco habitual en otros frutales"
+nispero,2,Ago,Cuaja-crecimiento,Nitrato de potasio,100 g/planta,Bajo copa,El potasio favorece el llenado rápido del fruto en fin de invierno
+nispero,3,Dic,Postcosecha,Compost + fosfato,3-4 kg + 150g,Bajo copa,Estimula brotación vegetativa de verano que dará origen a la floración del próximo invierno
+lucuma,1,Sep,Pre-brotación,Compost + guano,5 kg/planta,Bajo copa,Aporta reservas para un árbol de crecimiento y fructificación lentos
+lucuma,2,Nov-Dic,Crecimiento del fruto,NPK mixto (ref. INIA 120-100-90 kg/ha N-P₂O₅-K₂O),≈150 g/planta,Bajo copa,Nivel de fertilización reportado en ensayos INIA para lúcuma; el potasio sostiene el desarrollo prolongado del fruto
+lucuma,3,Mar,Maduración,Compost ligero,2-3 kg/planta,Bajo copa,Mantiene reservas del árbol durante la larga maduración del fruto
+palto,1,Ago,Pre-floración,Compost + nitrato de calcio,6-8 kg + 200g,"Bajo copa, en banda ancha",El calcio fortalece tejidos florales y reduce la incidencia de problemas de cuaja
+palto,2,Sep-Oct,Floración-cuaja,Nitrato de amonio,150-200 g/planta,"Bajo copa, regar después",Sostiene el enorme gasto energético de la floración masiva característica de la especie
+palto,3,Nov-Dic,Crecimiento del fruto,Sulfato de potasio,200 g/planta,Bajo copa,El potasio es clave para el llenado de aceite y agua del fruto en desarrollo
+palto,4,Mar,Postcosecha,Compost + superfosfato,5 kg + 200g,Bajo copa,"Estimula raíces nuevas, siempre con cuidado de no generar exceso de humedad en el suelo"
+chirimoya,1,Ago-Sep,Pre-brotación,Compost + estiércol bien descompuesto,5-6 kg/planta,Bajo copa,Una aplicación alta de materia orgánica una vez al año es la base del manejo nutricional de la especie
+chirimoya,2,Oct-Nov,Floración,Foliar fosfato monopotásico,"10g/20L, c/15 días",Foliar en flores,"El fósforo mejora la viabilidad del polen, clave porque la polinización natural es escasa"
+chirimoya,3,Ene-Feb,Crecimiento del fruto,Nitrato de potasio,150 g/planta,Bajo copa,El potasio sostiene el llenado de un fruto grande y de desarrollo lento
+papayo_chileno,1,Sep,Establecimiento,Compost + guano,3-4 kg/planta,Bajo la planta,Sostiene el crecimiento acelerado propio de esta especie semi-herbácea
+papayo_chileno,2,Dic-Ene,Floración-cuaja,Nitrato de potasio,80-100 g/planta,Bajo la planta,"El potasio sostiene una fructificación temprana y continua, típica de esta especie de ciclo corto"
+papayo_chileno,3,Mar-Abr,Producción,Compost ligero,2 kg/planta,Bajo la planta,Mantiene el vigor de una planta que produce casi todo el año

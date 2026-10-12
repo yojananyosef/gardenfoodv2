@@ -1,0 +1,462 @@
+TIPOS INFERIDOS POR VALOR (revisar a mano antes de aplicar la migracion)
+==============================================================================
+
+## dim_especies   (DIM_ESPECIES, 30 filas)
+   especie_id                   text       30 de 30 valores no son numero  ej. almendro | arandano | avellano
+   especie                      text       30 de 30 valores no son numero  ej. Almendro | Arándano | Avellano
+   nombre_cientifico            text       30 de 30 valores no son numero  ej. Actinidia deliciosa | Annona cherimola | Citrus reticulata
+   grupo                        text       30 de 30 valores no son numero  ej. Baya | Berries | Carozo
+   alias_riego                  text       30 de 30 valores no son numero  ej. Almendro | Arandano | Avellano Europeo
+   nombre_en_excel_riego        text       30 de 30 valores no son numero  ej. Almendro | Arandano | Avellano
+   alias_nutricion              text       30 de 30 valores no son numero  ej. Almendro | Arándano | Avellano Europeo
+   alias_bd20                   text       20 de 20 valores no son numero  ej. Almendro | Arandano | Caqui
+   tiene_ficha_bd20             boolean    valores del conjunto booleano del Excel
+   origen_programa_riego        text       30 de 30 valores no son numero  ej. Base GARDENFOOD validada | PROPUESTA — pendiente de val
+   riego_mantencion_l           smallint   todos enteros, max 30
+   copa_ref_m                   numeric    todos numericos con decimales
+   suelo_preferido              text       30 de 30 valores no son numero  ej. Bien drenado, tolera suelos  | Drenado, NO encharcado | Drenado, fértil
+   ph_ideal                     text       30 de 30 valores no son numero  ej. 4.5 a 5.5 (ÁCIDO — esto es C | 5.5 a 6.5 | 5.5 a 6.5 (no tolera suelos 
+   ph_min                       numeric    todos numericos con decimales
+   ph_max                       numeric    todos numericos con decimales
+   rendimiento_ref_kg_pl        numeric    todos numericos con decimales
+   marco_plantacion             text       30 de 30 valores no son numero  ej. 0.28 × 0.9 | 0.5 × 2.5 | 1.2 × 3.0
+   densidad_pl_ha               integer    todos enteros, max 39683
+   patron_parcializacion        text       30 de 30 valores no son numero  ej. ESTANDAR | PERENNE | TARDIA
+   confianza_nutricion          text       30 de 30 valores no son numero  ej. Analogía | Estimado | INIA medido
+   fuente_nutricion             text       30 de 30 valores no son numero  ej. Analogía duraznero (misma es | Analogía frambueso (Bol. INI | Analogía fruto seco + Redagr
+   nota_critica_nutricion       text       10 de 10 valores no son numero  ej. El exceso de N baja la calid | Especie de altísima extracci | Floración muy temprana. La f
+   foliar_epoca                 text       17 de 17 valores no son numero  ej. Enero-febrero | Enero-febrero, una semana de | Marzo-abril
+   foliar_tejido                text       17 de 17 valores no son numero  ej. Hojas de 4 a 7 meses de brot | Hojas de 5 a 7 meses de brot | Hojas jóvenes maduras antes 
+
+## dim_comunas   (DIM_COMUNAS, 346 filas)
+   comuna_id                    text       346 de 346 valores no son numero  ej. algarrobo | alhue | alto_biobio
+   comuna                       text       346 de 346 valores no son numero  ej. Algarrobo | Alhué | Alto Biobío
+   cut                          smallint   todos enteros, max 16305
+   region                       text       346 de 346 valores no son numero  ej. Antofagasta | Arica y Parinacota | Atacama
+   zona_riego_id                text       346 de 346 valores no son numero  ej. C1 | C2 | N1
+   origen_zona_riego            text       346 de 346 valores no son numero  ej. Asignación GARDENFOOD (pendi | Fuente: la zona nombra la co
+   macrozona_id                 text       346 de 346 valores no son numero  ej. CSU | NOR | RM
+   origen_macrozona             text       346 de 346 valores no son numero  ej. Asignación GARDENFOOD (regió | Fuente: región incluida en l
+   criterio_asignacion          text       85 de 85 valores no son numero  ej. Altiplano | Altiplano (sobre 3.000 m) | Altiplano (sobre 4.000 m)
+   zona_agro_id                 integer    todos enteros, max 20
+   origen_zona_agro             text       346 de 346 valores no son numero  ej. Base de Conocimiento | Propuesta GARDENFOOD (no est | Sin zona (fuera de las 20 zo
+   zona_agro_propuesta_id       integer    todos enteros, max 20
+   tipo_clima                   text       129 de 129 valores no son numero  ej. Desértico costero | Desértico interior | Mediterráneo central
+   heladas                      text       129 de 129 valores no son numero  ej. 0-5 días | 10-25 días | 15-30 días
+   riesgo_sequia                text       129 de 129 valores no son numero  ej. Alto | Bajo | Bajo-Medio
+   restricciones_huerto         text       129 de 129 valores no son numero  ej. Alto riesgo de heladas: evit | Priorizar especies de bajo r | Priorizar especies de bajo r
+   nota_cut                     text       3 de 3 valores no son numero  ej. El listado CUT escribe «Coih | El listado CUT escribe «Marc | El listado CUT escribe «Paig
+
+## dim_zonas_riego   (DIM_ZONAS_RIEGO, 11 filas)
+   zona_riego_id                text       11 de 11 valores no son numero  ej. C1 | C2 | N1
+   zona_riego                   text       11 de 11 valores no son numero  ej. Centro sur | Costa central | Costa norte
+   donde_queda                  text       11 de 11 valores no son numero  ej. Aconcagua, Santiago, Melipil | Casablanca, Litoral de Valpa | Copiapó, Vallenar, Ovalle, I
+   eto_verano_mm_dia            text       11 de 11 valores no son numero  ej. 4 a 4,5 | 4 a 4,8 | 4 a 5
+   factor_clima                 numeric    todos numericos con decimales
+   desfase_meses                smallint   todos enteros, max 1
+   que_significa                text       11 de 11 valores no son numero  ej. Acá todo pasa antes: la flor | Acá todo pasa después: la fl | El frío atrasa la brotación 
+   eto_verano_min               numeric    todos numericos con decimales
+   eto_verano_max               numeric    todos numericos con decimales
+
+## dim_zonas_agro   (DIM_ZONAS_AGRO, 20 filas)
+   zona_agro_id                 integer    todos enteros, max 20
+   zona_agro                    text       20 de 20 valores no son numero  ej. Arica-Azapa | Chillán-Ñuble | Concepción Costa
+   region                       text       20 de 20 valores no son numero  ej. Araucanía | Arica y Parinacota | Atacama
+   tipo_clima                   text       20 de 20 valores no son numero  ej. Desértico costero | Desértico interior | Mediterráneo central
+   t_max_enero                  text       20 de 20 valores no son numero  ej. 21°C | 22°C | 23°C
+   t_min_julio                  text       20 de 20 valores no son numero  ej. 12°C | 1°C | 2°C
+   t_min_absoluta               text       20 de 20 valores no son numero  ej. -1°C | -2°C | -3°C
+   precipitacion_anual_mm       smallint   todos enteros, max 1800
+   horas_frio                   text       20 de 20 valores no son numero  ej. 0-50 | 100-300 | 1000-1500
+   heladas_dias_ano             text       20 de 20 valores no son numero  ej. 0-5 días | 10-25 días | 15-30 días
+   riesgo_sequia                text       20 de 20 valores no son numero  ej. Alto | Bajo | Bajo-Medio
+   estacion_agromet             text       20 de 20 valores no son numero  ej. Agromet Azapa | Agromet Calera de Tango | Agromet Calle Larga
+
+## dim_macrozonas   (DIM_MACROZONAS, 6 filas)
+   macrozona_id                 text       6 de 6 valores no son numero  ej. CSU | NOR | RM
+   macrozona                    text       6 de 6 valores no son numero  ej. Centro-Sur (O'Higgins-Maule) | Norte (Atacama-Coquimbo) | Santiago-RM
+   factor_n                     numeric    todos numericos con decimales
+   factor_p2o5                  numeric    todos numericos con decimales
+   factor_k2o                   numeric    todos numericos con decimales
+   factor_cao                   numeric    todos numericos con decimales
+   factor_mgo                   numeric    todos numericos con decimales
+   parcialidades_min_ano        smallint   todos enteros, max 12
+   por_que                      text       6 de 6 valores no son numero  ej. Andisoles con la mayor capac | Precipitación de 600-900 mm  | Suelos alcalinos y calcáreos
+
+## dim_suelos   (DIM_SUELOS, 4 filas)
+   suelo_id                     text       4 de 4 valores no son numero  ej. F | G | M
+   suelo                        text       4 de 4 valores no son numero  ej. Fina (arcillosa) | Gruesa (arenosa) | Media (franca)
+   nombres_usda                 text       4 de 4 valores no son numero  ej. Arcilla, franco arcilloso, f | Arena, arena francosa, arena | Franco arenoso, franco areno
+   agua_min_mm_m                smallint   todos enteros, max 133
+   agua_max_mm_m                smallint   todos enteros, max 200
+   factor_suelo                 numeric    todos numericos con decimales
+   como_se_siente               text       4 de 4 valores no son numero  ej. Arenoso al tacto, no forma c | Forma bola pero cinta corta  | Forma cinta de 2,5 a 5 cm. N
+   como_manejarlo               text       4 de 4 valores no son numero  ej. El mejor suelo para frutales | Suelo cómodo pero algo suelt | Suelo que retiene mucha agua
+
+## dim_humedad   (DIM_HUMEDAD, 5 filas)
+   humedad_n                    smallint   todos enteros, max 5
+   nivel                        text       5 de 5 valores no son numero  ej. 0-25 % — muy seco | 100 % — capacidad de campo | 25-50 % — seco (punto de rie
+   pct_min                      smallint   todos enteros, max 100
+   pct_max                      smallint   todos enteros, max 100
+   factor_riego                 numeric    todos numericos con decimales
+   factor_control               numeric    todos numericos con decimales
+   que_significa                text       5 de 5 valores no son numero  ej. NO RIEGUE todavía. Queda agu | NO RIEGUE. El suelo está cas | NO RIEGUE. El suelo está lle
+   se_ve_gruesa                 text       5 de 5 valores no son numero  ej. Húmedo. Forma una bola débil | Levemente húmedo. Forma una  | Mojado. Forma bola débil y d
+   se_ve_mod_gruesa             text       5 de 5 valores no son numero  ej. Húmedo. Bola con marcas de d | Levemente húmedo. Bola débil | Mojado. Bola blanda; al apre
+   se_ve_media                  text       5 de 5 valores no son numero  ej. Húmedo. Forma bola, manchas  | Ligeramente húmedo. Bola déb | Mojado. Bola blanda; aparece
+   se_ve_fina                   text       5 de 5 valores no son numero  ej. Húmedo. Bola blanda con marc | Ligeramente húmedo. Bola déb | Mojado. Bola blanda; aparece
+
+## dim_edad   (DIM_EDAD, 4 filas)
+   edad_n                       smallint   todos enteros, max 4
+   edad                         text       4 de 4 valores no son numero  ej. Adulto (6 años o más) | En producción inicial (4-5 a | Joven (2-3 años)
+   anos_min                     smallint   todos enteros, max 6
+   anos_max                     smallint   todos enteros, max 5
+   factor_litros                numeric    todos numericos con decimales
+   factor_dias                  numeric    todos numericos con decimales
+
+## dim_edad_nutricion   (DIM_EDAD_NUTRICION, 3 filas)
+   edad_nutricion_id            text       3 de 3 valores no son numero  ej. ADU | FOR | PLA
+   tramo                        text       3 de 3 valores no son numero  ej. Adulta (5+ años) | Formación (3-4 años) | Plantación (1-2 años)
+   anos_min                     smallint   todos enteros, max 5
+   anos_max                     smallint   todos enteros, max 4
+   factor_nutricion             numeric    todos numericos con decimales
+
+## dim_etapas   (DIM_ETAPAS, 8 filas)
+   codigo_etapa                 text       8 de 8 valores no son numero  ej. BRO | CAL | CRE
+   lo_que_ve                    text       8 de 8 valores no son numero  ej. En flor | Frutos creciendo, todavía ve | Frutos recién cuajados, del 
+   kc_referencial               text       1 de 8 valores no son numero  ej. —
+
+## dim_meses   (DIM_MESES, 12 filas)
+   mes_n                        smallint   todos enteros, max 12
+   mes                          text       12 de 12 valores no son numero  ej. Abril | Agosto | Diciembre
+   abrev                        text       12 de 12 valores no son numero  ej. Abr | Ago | Dic
+
+## dim_parcializacion   (DIM_PARCIALIZACION, 20 filas)
+   clave                        text       20 de 20 valores no son numero  ej. ESTANDAR|CaO | ESTANDAR|K2O | ESTANDAR|MgO
+   patron                       text       20 de 20 valores no son numero  ej. ESTANDAR | PERENNE | TARDIA
+   nutriente                    text       20 de 20 valores no son numero  ej. CaO | K₂O | MgO
+   brotacion_a_cuaja            numeric    todos numericos con decimales
+   cuaja_a_cosecha              numeric    todos numericos con decimales
+   postcosecha                  numeric    todos numericos con decimales
+   rango_inia                   text       20 de 20 valores no son numero  ej. 10-20 / 50-60 / 20-30 | 10-30 / 40-60 / 20-40 | 20-30 / 30-40 / 20-30
+   dentro_rango                 text       20 de 20 valores no son numero  ej. AJUSTADO | SÍ
+   que_significa                text       4 de 4 valores no son numero  ej. Cosecha a mediados de tempor | Cosecha tardía (mar-jun). Se | Cosecha temprana (nov-dic). 
+
+## cat_fert_casero   (CAT_FERT_CASERO, 11 filas)
+   producto                     text       11 de 11 valores no son numero  ej. Fosfato monoamónico soluble | Nitrato de calcio | Nitrato de potasio
+   etiqueta                     text       11 de 11 valores no son numero  ej. 0-0-22 con 18% de magnesio | 0-0-50 con azufre | 0-46-0
+   n_pct                        numeric    todos numericos con decimales
+   p_pct                        smallint   todos enteros, max 61
+   k_pct                        smallint   todos enteros, max 50
+   calcio_pct                   numeric    todos numericos con decimales
+   magnesio_pct                 smallint   todos enteros, max 25
+   g_por_cucharada              smallint   todos enteros, max 16
+   se_reparte                   text       11 de 11 valores no son numero  ej. Sí, cada vez | Una vez al año
+   como_pedirlo_y_cuidar        text       11 de 11 valores no son numero  ej. En farmacia como sal de Epso | En farmacia se llama sal de  | En la agrícola pídelo como S
+
+## cat_fert_tecnico   (CAT_FERT_TECNICO, 29 filas)
+   producto_id                  text       29 de 29 valores no son numero  ej. acido_fosforico_85_soluble | cal_dolomitica_granulado | compost_maduro_referencial_g
+   tipo                         text       29 de 29 valores no son numero  ej. Granulado | Soluble
+   fertilizante                 text       29 de 29 valores no son numero  ej. Cal dolomítica | Compost maduro (referencial) | Fosfato diamónico (DAP)
+   n_pct                        numeric    todos numericos con decimales
+   p2o5_pct                     numeric    todos numericos con decimales
+   k2o_pct                      smallint   todos enteros, max 60
+   cao_pct                      numeric    todos numericos con decimales
+   mgo_pct                      numeric    todos numericos con decimales
+   s_pct                        numeric    todos numericos con decimales
+   reaccion_ph                  text       18 de 18 valores no son numero  ej. Acidificante | Alcalinizante | Muy acidificante
+   apto_organico                text       18 de 18 valores no son numero  ej. No | Restringido | Sí
+   solubilidad_g_l              text       2 de 11 valores no son numero  ej. Muy alta
+   para_que_y_cuidados          text       29 de 29 valores no son numero  ej. 50% nítrico y 50% amoniacal. | Aporta Ca y S SIN subir el p | Aporta K, Mg y S a la vez. L
+
+## fact_riego_mes   (FACT_RIEGO_MES, 360 filas)
+   clave                        text       360 de 360 valores no son numero  ej. almendro|1 | almendro|10 | almendro|11
+   especie_id                   text       360 de 360 valores no son numero  ej. almendro | arandano | avellano
+   especie_alias                text       360 de 360 valores no son numero  ej. Almendro | Arandano | Avellano
+   mes                          text       360 de 360 valores no son numero  ej. Abril | Agosto | Diciembre
+   mes_n                        smallint   todos enteros, max 12
+   etapa                        text       360 de 360 valores no son numero  ej. Brotación | Brotación y floración | Brotación y floración → Cuaj
+   dias_min                     smallint   todos enteros, max 20
+   dias_max                     smallint   todos enteros, max 20
+   litros_min                   smallint   todos enteros, max 100
+   litros_max                   smallint   todos enteros, max 150
+   reposo                       boolean    valores del conjunto booleano del Excel
+   que_vera                     text       360 de 360 valores no son numero  ej. Aceitunas creciendo | Aceitunitas verdes | Almendra formándose
+   consejo                      text       360 de 360 valores no son numero  ej. 10 días antes de cosechar re | 10 días antes de cosechar re | Acá se define el peso del gr
+   frecuencia_original          text       360 de 360 valores no son numero  ej. Cada 10 días | Cada 10 días / Cada 7 días | Cada 10-15 días
+   volumen_original             text       360 de 360 valores no son numero  ej. 1.5-2.5 litros por planta | 10-15 litros | 10-15 litros / 8 litros
+
+## fact_riego_etapa   (FACT_RIEGO_ETAPA, 210 filas)
+   clave                        text       210 de 210 valores no son numero  ej. almendro|BRO | almendro|CRE | almendro|CUA
+   especie_id                   text       210 de 210 valores no son numero  ej. almendro | arandano | avellano
+   codigo_etapa                 text       210 de 210 valores no son numero  ej. BRO | CRE | CUA
+   etapa                        text       210 de 210 valores no son numero  ej. Brotación (Ago) | Brotación (Ago-Sep) | Brotación (Sep)
+   meses_originales             text       210 de 210 valores no son numero  ej. Abril - Agosto | Abril - Julio | Abril - Junio
+   coincide_exacto              text       210 de 210 valores no son numero  ej. Aproximada | Sí
+   dias_min                     smallint   todos enteros, max 20
+   dias_max                     smallint   todos enteros, max 25
+   litros_min                   smallint   todos enteros, max 90
+   litros_max                   smallint   todos enteros, max 120
+   reposo                       boolean    valores del conjunto booleano del Excel
+   que_vera                     text       210 de 210 valores no son numero  ej. Aceitunas creciendo | Aceitunitas verdes | Almendras verdes
+   consejo                      text       210 de 210 valores no son numero  ej. 10 días antes de cosechar re | Amarre las cañas al alambre  | Aporte compost al pie; la mo
+
+## fact_fenologia   (FACT_FENOLOGIA, 180 filas)
+   clave                        text       180 de 180 valores no son numero  ej. almendro|CSU | almendro|NOR | almendro|RM
+   especie_id                   text       180 de 180 valores no son numero  ej. almendro | arandano | avellano
+   macrozona_id                 text       180 de 180 valores no son numero  ej. CSU | NOR | RM
+   macrozona                    text       180 de 180 valores no son numero  ej. Centro-Sur (O'Higgins-Maule) | Norte (Atacama-Coquimbo) | Santiago-RM
+   viable                       text       180 de 180 valores no son numero  ej. Con riesgo | No | Solo microclimas
+   brotacion                    text       180 de 180 valores no son numero  ej. Ago | Ago-Sep | Jul
+   floracion                    text       180 de 180 valores no son numero  ej. Ago | Ago-Sep | Dic
+   cuaja                        text       180 de 180 valores no son numero  ej. Ago | Ago-Sep | Dic
+   cosecha                      text       180 de 180 valores no son numero  ej. Abr a Ago | Abr a Jul | Abr a Jun
+   cosecha_inicio               text       180 de 180 valores no son numero  ej. Abr | Abr-May | Dic
+   cosecha_fin                  text       180 de 180 valores no son numero  ej. Abr | Ago | Dic
+   meses_despierta              text       180 de 180 valores no son numero  ej. Ago, Sep | Ago, Sep, Oct | Ago, Sep, Oct, Nov
+   meses_engorda                text       180 de 180 valores no son numero  ej. Ago, Sep | Ago, Sep, Oct | Ago, Sep, Oct, Nov
+   meses_recupera               text       180 de 180 valores no son numero  ej. Abr, May | Ago, Sep | Dic, Ene
+   veces_ano_suelo              smallint   todos enteros, max 13
+   veces_ano_goteo              smallint   todos enteros, max 26
+   nota                         text       107 de 107 valores no son numero  ej. El exceso de N baja la calid | Especie de altísima extracci | Floración muy temprana. La f
+   caida_hojas                  text       120 de 120 valores no son numero  ej. Abr | Jul | Jul-Ago
+   nota_fenologia_bc            text       180 de 180 valores no son numero  ej. 1-2 cosechas | 2 cosechas posibles | 8.249 ha O'Higgins. Santina:
+
+## fact_fert_programa   (FACT_FERT_PROGRAMA, 786 filas)
+   clave                        text       786 de 786 valores no son numero  ej. almendro|CSU|GOTEO|1 | almendro|CSU|GOTEO|2 | almendro|CSU|GOTEO|3
+   especie_id                   text       786 de 786 valores no son numero  ej. almendro | arandano | avellano
+   macrozona_id                 text       786 de 786 valores no son numero  ej. CSU | NOR | RM
+   sistema                      text       786 de 786 valores no son numero  ej. GOTEO | SUELO
+   periodo_n                    smallint   todos enteros, max 3
+   periodo                      text       786 de 786 valores no son numero  ej. Cuando despierta | Cuando engorda la fruta | Cuando se recupera
+   meses                        text       786 de 786 valores no son numero  ej. Abr, May | Ago, Sep | Ago, Sep, Oct
+   veces                        smallint   todos enteros, max 18
+   frecuencia                   text       786 de 786 valores no son numero  ej. cada 15 días | cada 30 días
+   ca_producto                  text       509 de 509 valores no son numero  ej. Nitrato de calcio | Yeso agrícola
+   ca_g_cada_vez                numeric    todos numericos con decimales
+   ca_veces                     smallint   todos enteros, max 18
+   ca_g_periodo                 numeric    todos numericos con decimales
+   mg_producto                  text       580 de 580 valores no son numero  ej. Sal de Epsom | Sulfato de magnesio | Sulpomag
+   mg_g_cada_vez                numeric    todos numericos con decimales
+   mg_veces                     smallint   todos enteros, max 18
+   mg_g_periodo                 numeric    todos numericos con decimales
+   k_producto                   text       786 de 786 valores no son numero  ej. Nitrato de potasio | Sulfato de potasio
+   k_g_cada_vez                 numeric    todos numericos con decimales
+   k_veces                      smallint   todos enteros, max 18
+   k_g_periodo                  numeric    todos numericos con decimales
+   p_producto                   text       524 de 524 valores no son numero  ej. Fosfato monoamónico soluble | Superfosfato triple
+   p_g_cada_vez                 numeric    todos numericos con decimales
+   p_veces                      smallint   todos enteros, max 18
+   p_g_periodo                  numeric    todos numericos con decimales
+   n_producto                   text       722 de 722 valores no son numero  ej. Sulfato de amonio | Urea
+   n_g_cada_vez                 numeric    todos numericos con decimales
+   n_veces                      smallint   todos enteros, max 18
+   n_g_periodo                  numeric    todos numericos con decimales
+
+## fact_nutrientes_anual   (FACT_NUTRIENTES_ANUAL, 30 filas)
+   especie_id                   text       30 de 30 valores no son numero  ej. almendro | arandano | avellano
+   especie_alias                text       30 de 30 valores no son numero  ej. Almendro | Arándano | Avellano Europeo
+   categoria                    text       30 de 30 valores no son numero  ej. Baya | Carozo | Cítrico
+   n_kg_t                       numeric    todos numericos con decimales
+   p2o5_kg_t                    numeric    todos numericos con decimales
+   k2o_kg_t                     numeric    todos numericos con decimales
+   cao_kg_t                     numeric    todos numericos con decimales
+   mgo_kg_t                     numeric    todos numericos con decimales
+   patron_parcializacion        text       30 de 30 valores no son numero  ej. ESTANDAR | PERENNE | TARDIA
+   confianza                    text       30 de 30 valores no son numero  ej. Analogía | Estimado | INIA medido
+   rendimiento_ref_kg_pl        numeric    todos numericos con decimales
+   marco_plantacion             text       30 de 30 valores no son numero  ej. 0.28 × 0.9 | 0.5 × 2.5 | 1.2 × 3.0
+   densidad_pl_ha               integer    todos enteros, max 39683
+   fuente                       text       30 de 30 valores no son numero  ej. Analogía duraznero (misma es | Analogía frambueso (Bol. INI | Analogía fruto seco + Redagr
+   n_g_pl_adulta                numeric    todos numericos con decimales
+   p2o5_g_pl_adulta             numeric    todos numericos con decimales
+   k2o_g_pl_adulta              numeric    todos numericos con decimales
+   cao_g_pl_adulta              numeric    todos numericos con decimales
+   mgo_g_pl_adulta              numeric    todos numericos con decimales
+
+## fact_viabilidad_zona   (FACT_VIABILIDAD_ZONA, 600 filas)
+   clave                        text       600 de 600 valores no son numero  ej. almendro|1 | almendro|10 | almendro|11
+   especie_id                   text       600 de 600 valores no son numero  ej. almendro | arandano | avellano
+   zona_agro_id                 integer    todos enteros, max 20
+   zona_agro                    text       600 de 600 valores no son numero  ej. Arica-Azapa | Chillán-Ñuble | Concepción Costa
+   viabilidad                   text       600 de 600 valores no son numero  ej. NO | RIESGO | SÍ
+
+## fact_labores_mes   (FACT_LABORES_MES, 360 filas)
+   clave                        text       360 de 360 valores no son numero  ej. almendro|1 | almendro|10 | almendro|11
+   especie_id                   text       360 de 360 valores no son numero  ej. almendro | arandano | avellano
+   mes                          text       360 de 360 valores no son numero  ej. Abril | Agosto | Diciembre
+   mes_n                        smallint   todos enteros, max 12
+   labores                      text       360 de 360 valores no son numero  ej. Brotación de cañas nuevas. R | Brotación-floración. Riego r | Brotación. Riego regular. Am
+
+## fact_manejo_estacion   (FACT_MANEJO_ESTACION, 120 filas)
+   especie_id                   text       120 de 120 valores no son numero  ej. almendro | arandano | avellano
+   estacion                     text       120 de 120 valores no son numero  ej. Invierno (Jun-Ago) | Otoño (Mar-May) | Primavera (Sep-Nov)
+   labores                      text       120 de 120 valores no son numero  ej. Brotación de cañas nuevas. R | Brotación-floración. Riego r | Brotación. Riego regular. Am
+
+## fact_plagas   (FACT_PLAGAS, 110 filas)
+   especie_id                   text       110 de 110 valores no son numero  ej. almendro | arandano | avellano
+   plaga_enfermedad             text       110 de 110 valores no son numero  ej. Antracnosis | Araña roja | Arañita roja
+   tipo                         text       110 de 110 valores no son numero  ej. Enfermedad | Plaga
+   sintomas                     text       110 de 110 valores no son numero  ej. Aceitunas con pinchaduras, g | Agujeros redondos en tronco, | Anillos en hojas y frutos de
+   epoca_riesgo                 text       110 de 110 valores no son numero  ej. Ago-Sep | Brotación | Brotación ago-sep
+   control_organico             text       110 de 110 valores no son numero  ej. Aceite mineral | Aceite mineral + jabón | Aceite mineral 2% mensual
+   control_quimico              text       110 de 110 valores no son numero  ej. Abamectina | Arrancar y quemar | Buprofezin
+   causa_y_prevencion           text       110 de 110 valores no son numero  ej. Activos de noche y con humed | Agroseguros: detectado en Ch | Agroseguros: enfermedad MÁS 
+
+## fact_poda   (FACT_PODA, 104 filas)
+   especie_id                   text       104 de 104 valores no son numero  ej. almendro | arandano | avellano
+   n                            smallint   todos enteros, max 6
+   tipo_poda                    text       104 de 104 valores no son numero  ej. Contención de vigor | Desbrote | Deshije de estolones
+   cuando                       text       104 de 104 valores no son numero  ej. Ago (antes de brotación) | Ago-Sep | Año 1-2 invierno
+   que_cortar                   text       104 de 104 valores no son numero  ej. 3-4 ramas en copa abierta o  | Aclarar copa: más luz interi | Chupones
+   herramienta                  text       104 de 104 valores no son numero  ej. A mano | A mano o sierra | A mano o tijera
+   por_que                      text       104 de 104 valores no son numero  ej. Arándano produce en madera d | Cada estolón consume azúcar  | Calibre
+   error_frecuente              text       104 de 104 valores no son numero  ej. Arándano es resistente | Año 1: un brote vertical. Añ | CRÍTICO desinfectar
+   fuente                       text       104 de 104 valores no son numero  ej. Base 20 especies | Base de Conocimiento
+
+## fact_sanidad   (FACT_SANIDAD, 160 filas)
+   especie_id                   text       160 de 160 valores no son numero  ej. almendro | arandano | avellano
+   n                            smallint   todos enteros, max 7
+   problema                     text       160 de 160 valores no son numero  ej. Agalla de corona | Alternaria (manchas) | Antracnosis
+   sintomas                     text       160 de 160 valores no son numero  ej. Aceitunas con pinchaduras, g | Agujeros en tronco, aserrín | Amarillas venas verdes
+   epoca                        text       160 de 160 valores no son numero  ej. Agosto-Septiembre | Brotación | Brotación (Sep)
+   control_organico             text       160 de 160 valores no son numero  ej. Aceite de neem | Aceite de neem + agua a pres | Aceite mineral
+   control_quimico              text       160 de 160 valores no son numero  ej. Abamectina | Arrancar si es grave | Arrancar y quemar
+   prevencion                   text       160 de 160 valores no son numero  ej. 2 generaciones: flor y enver | Aceite ahoga las cochinillas | Aceite es clave
+   fuente                       text       160 de 160 valores no son numero  ej. Base 20 especies | Base de Conocimiento
+
+## fact_consejos   (FACT_CONSEJOS, 211 filas)
+   especie_id                   text       211 de 211 valores no son numero  ej. almendro | arandano | avellano
+   n                            smallint   todos enteros, max 8
+   consejo                      text       211 de 211 valores no son numero  ej. ATENCIÓN: el pomelo interact | Aceite de oliva casero: nece | Algunas variedades dan DOS c
+   fuente                       text       211 de 211 valores no son numero  ej. Base 20 especies | Base de Conocimiento
+
+## fact_fert_organica   (FACT_FERT_ORGANICA, 181 filas)
+   especie_id                   text       181 de 181 valores no son numero  ej. almendro | arandano | avellano
+   n                            smallint   todos enteros, max 9
+   mes                          text       181 de 181 valores no son numero  ej. Abr | Abril | Abril-Mayo
+   que_pasa                     text       181 de 181 valores no son numero  ej. Antes de brotar | Base (plantación) | Brotación
+   fertilizante                 text       181 de 181 valores no son numero  ej. Azufre agrícola + compost ác | Cal agrícola si pH bajo | Cal si pH bajo
+   dosis_por_arbol              text       181 de 181 valores no son numero  ej. 0.5 cda por 20L | 1 cda boro + 2 cdas calcio p | 1 cda cada uno por 20L
+   donde_aplicar                text       181 de 181 valores no son numero  ej. Al pie | Al pie, regar después | Alrededor del tronco, alejad
+   por_que                      text       181 de 181 valores no son numero  ej. Aceite | Aporta reservas de liberació | Aporta reservas para un árbo
+   tipo                         text       181 de 181 valores no son numero  ej. Aplicación | Nota
+   fuente                       text       181 de 181 valores no son numero  ej. Base 20 especies | Base de Conocimiento
+
+## fact_ficha_riego   (FACT_FICHA_RIEGO, 149 filas)
+   especie_id                   text       149 de 149 valores no son numero  ej. almendro | arandano | avellano
+   n                            smallint   todos enteros, max 7
+   etapa                        text       149 de 149 valores no son numero  ej. Brotación | Brotación-floración | Cosecha
+   meses                        text       149 de 149 valores no son numero  ej. Abr-Ago | Abr-Jul | Abr-May
+   frecuencia                   text       149 de 149 valores no son numero  ej. 1-2 veces/semana | Cada 10 días | Cada 10-12 días
+   volumen                      text       149 de 149 valores no son numero  ej. 0.5-1 L/planta | 1-2 L/planta | 1.5-2 L/planta
+   senal_visual                 text       149 de 149 valores no son numero  ej. Aceitunas verdes | Almendras verdes | Avellanas verdes en formació
+   por_que_fisiologico          text       149 de 149 valores no son numero  ej. Acumula reservas para brotar | Almendro florece ANTES que t | Antes de brotar, la vid 'llo
+
+## fact_ficha_fertilizacion   (FACT_FICHA_FERTILIZACION, 149 filas)
+   especie_id                   text       149 de 149 valores no son numero  ej. almendro | arandano | avellano
+   n                            smallint   todos enteros, max 8
+   mes                          text       149 de 149 valores no son numero  ej. Abr | Abr-May | Ago
+   etapa                        text       149 de 149 valores no son numero  ej. Base (plantación) | Brotación | Brotación-floración
+   producto                     text       149 de 149 valores no son numero  ej. Azufre + compost ÁCIDO (aser | Cal si pH < 6.0 | Cal si pH bajo
+   dosis                        text       149 de 149 valores no son numero  ej. 1 kg | 1 kg/m² | 1-2 kg
+   donde                        text       149 de 149 valores no son numero  ej. Al pie | Al pie, regar después | Bajo copa
+   por_que_fisiologico          text       149 de 149 valores no son numero  ej. Aporta reservas de liberació | Aporta reservas para un árbo | Arranque tardío
+
+## fact_sugerencias   (FACT_SUGERENCIAS, 335 filas)
+   especie_id                   text       335 de 335 valores no son numero  ej. almendro | arandano | avellano
+   tipo                         text       335 de 335 valores no son numero  ej. Curso | Producto
+   nombre                       text       335 de 335 valores no son numero  ej. Berries en maceta: frutilla, | Cascador/partidor manual de  | Cobre orgánico / caldo borde
+   etapa_o_nivel                text       335 de 335 valores no son numero  ej. Análisis inicial | Avanzado · 3 semanas | Avanzado · 4 semanas
+   categoria_o_plan             text       335 de 335 valores no son numero  ej. Estructura | Herramienta | Insumo
+   por_que                      text       335 de 335 valores no son numero  ej. Base de la fertilización org | Compra base del huerto; vari | Cosecha da pie a un producto
+
+## fact_clima_zona   (FACT_CLIMA_ZONA, 20 filas)
+   zona_agro_id                 integer    todos enteros, max 20
+   t_max_enero_c                smallint   todos enteros, max 32
+   t_min_julio_c                smallint   todos enteros, max 12
+   t_min_absoluta_c             smallint   todos enteros, max 8
+   t_min_absoluta_nota          text       3 de 3 valores no son numero  ej. INIA jul 2025: -7.6°C Sta Ro | INIA: -5.1°C Cañete | INIA: -5.5°C Humán
+   precipitacion_anual_mm       smallint   todos enteros, max 1800
+   horas_frio_min               smallint   todos enteros, max 1100
+   horas_frio_max               smallint   todos enteros, max 1600
+   heladas_dias_min             smallint   todos enteros, max 40
+   heladas_dias_max             smallint   todos enteros, max 60
+   riesgo_sequia                text       20 de 20 valores no son numero  ej. Alto | Bajo | Bajo-Medio
+   t_media_anual_c              text       columna completamente vacia
+   t_media_mensual_c            text       columna completamente vacia
+   probabilidad_helada_pct      text       columna completamente vacia
+   horas_sol_anual              text       columna completamente vacia
+   nubosidad_pct                text       columna completamente vacia
+   lluvia_invierno_mm           text       columna completamente vacia
+   lluvia_verano_mm             text       columna completamente vacia
+   fuente                       text       20 de 20 valores no son numero  ej. BC › ZONAS AGROMETEOROLÓGICA
+   nota_vacios                  text       20 de 20 valores no son numero  ej. Vacíos: la fuente no trae te
+
+## fact_tareas_mes   (FACT_TAREAS_MES, 240 filas)
+   clave                        text       240 de 240 valores no son numero  ej. almendro|1 | almendro|10 | almendro|11
+   especie_id                   text       240 de 240 valores no son numero  ej. almendro | arandano | caqui
+   mes                          text       240 de 240 valores no son numero  ej. Abril | Agosto | Diciembre
+   mes_n                        smallint   todos enteros, max 12
+   etapa                        text       240 de 240 valores no son numero  ej. Brevas creciendo | Brotación | Brotación (lloro)
+   riego                        text       240 de 240 valores no son numero  ej. Cada 10 días | Cada 10-15 días | Cada 15 días
+   nutricion                    text       240 de 240 valores no son numero  ej. Azufre + compost ácido | Cal pH | Cal si pH
+   sanidad                      text       240 de 240 valores no son numero  ej. Aceite mineral | Aceite preventivo | Antracnosis
+   alerta_tarea                 text       240 de 240 valores no son numero  ej. 1ra cosecha formándose | Abejas polinizan | Aceite
+
+## especies_ficha_bd20   (ESPECIES_FICHA_BD20, 30 filas)
+   especie_id                   text       30 de 30 valores no son numero  ej. almendro | arandano | avellano
+   clima_ideal                  text       20 de 20 valores no son numero  ej. Mediterráneo. Tolera calor i | Mediterráneo: calor seco. To | Mediterráneo: inviernos frío
+   distancia                    text       20 de 20 valores no son numero  ej. 1 a 1.5 metros entre plantas | 2 a 3 metros entre plantas,  | 4 a 5 metros
+   primera_cosecha              text       20 de 20 valores no son numero  ej. 1 a 2 años (rápido) | 2 a 3 años | 2 a 3 años después de planta
+   vida_productiva              text       20 de 20 valores no son numero  ej. 100+ años (olivos milenarios | 15 a 20 años | 20 a 25 años
+   variedades                   text       20 de 20 valores no son numero  ej. Arbequina (aceite, chica), F | Bing (clásica), Lapins (auto | Champion, Smyrna, Pineapple
+   horas_frio                   text       20 de 20 valores no son numero  ej. 100 a 200 horas (pocas) | 100 a 300 horas | 100 a 500 horas
+   polinizacion                 text       20 de 20 valores no son numero  ej. Algunas variedades necesitan | Autofértil | Autofértil (pero produce más
+   tamano_adulto                text       20 de 20 valores no son numero  ej. 1.5 a 2.5 metros (arbusto) | 10 a 15 metros (es un árbol  | 3 a 5 metros
+   cosecha_cuando               text       20 de 20 valores no son numero  ej. Abril (aceitunas verdes mesa | Abril a Junio | Abril a Septiembre según var
+   cosecha_como_saber           text       20 de 20 valores no son numero  ej. Cambio de color completo, su | Color amarillo completo, bri | Color amarillo intenso compl
+   cosecha_tecnica              text       20 de 20 valores no son numero  ej. A mano o con peine/rastrillo | Cosechar CON el cabito (pali | IMPORTANTE: peral se cosecha
+   postcosecha                  text       20 de 20 valores no son numero  ej. Frutos para consumo: dejar 2 | Fuyu: 2-3 semanas mesa, 2 me | Madura en mesa 5-10 días. Re
+   rendimiento_esperado         text       20 de 20 valores no son numero  ej. 10 a 25 kg de almendra con c | 100 a 400 kg por árbol adult | 100 a 400 kg por árbol adult
+
+## especies_bc   (ESPECIES_BC, 30 filas)
+   especie_id                   text       30 de 30 valores no son numero  ej. almendro | arandano | avellano
+   categoria                    text       30 de 30 valores no son numero  ej. Baya | Baya (arbusto caducifolio) | Baya (arbusto vigoroso)
+   dificultad                   text       30 de 30 valores no son numero  ej. Fácil | Fácil-Media | Media
+   zonas_recomendadas           text       30 de 30 valores no son numero  ej. 1-14 SÍ (15,17 RIESGO; 16,18 | 1-19 SÍ (20 RIESGO) | 1-6,8,10,12,13,17 SÍ (resto 
+   horas_frio                   text       27 de 30 valores no son numero  ej. 0 (sin requerimiento) | 100-200 | 100-300
+   temp_minima                  text       30 de 30 valores no son numero  ej. -10°C planta / -2°C a -3°C f | -10°C planta en reposo / -2° | -10°C planta reposo (MUY res
+   temp_maxima                  text       30 de 30 valores no son numero  ej. 30°C | 30°C (estrés sobre 30°C) | 30°C (fruta se raja con calo
+   t_limite_ficha               text       30 de 30 valores no son numero  ej. -1.5°C cuaja | -1.5°C flor, -15°C planta re | -10°C planta (MUY resistente
+   requerimiento_hidrico        text       30 de 30 valores no son numero  ej. Alto | Alto (constante, evitar estr | Alto (crítico en cuaja y lle
+   tipo_suelo                   text       30 de 30 valores no son numero  ej. Amplio rango (arenoso a arci | Amplio rango, buen drenaje,  | Amplio rango, prefiere suelo
+   ph                           text       30 de 30 valores no son numero  ej. 4.5-5.5 (¡el más ácido del c | 5.5-6.5 | 5.8-8.8 (amplio, tolera algo
+   exposicion_solar             text       30 de 30 valores no son numero  ej. Sol pleno | Sol pleno (6-8 h/día) | Sol pleno (mín. 6-8 h/día)
+   epoca_plantacion             text       30 de 30 valores no son numero  ej. Ago-Sep (reposo, antes de br | Jun-Ago (reposo) | Jun-Ago (reposo) o todo el a
+   epoca_cosecha                text       30 de 30 valores no son numero  ej. Abr-Jul (verde mesa abr-may; | Abr-Jun (otoño, último fruto | Abr-Jun (otoño-invierno)
+   distancia_plantacion         text       30 de 30 valores no son numero  ej. 0.5 m entre plantas, 2-2.5 m | 1-1.5 m (ideal para maceta g | 1-1.5 m en espaldera
+   plagas_principales           text       30 de 30 valores no son numero  ej. Avispa taladro (Scolytus amy | Barrenador (Curculio nucum); | Barrenador del granado
+   enfermedades_principales     text       30 de 30 valores no son numero  ej. Antracnosis; Pudrición de ra | Bacteriosis (Xanthomonas); C | Botrytis (moho gris); Oídio;
+   nivel_mantenimiento          text       30 de 30 valores no son numero  ej. Alto (estructura fuerte, pod | Alto (manejo de riego/drenaj | Alto (portainjerto, poliniza
+   tiempo_hasta_produccion      text       30 de 30 valores no son numero  ej. 10-15 meses (¡la más rápida  | 2-3 años | 2-3 meses tras plantación
+   rendimiento_esperado         text       30 de 30 valores no son numero  ej. 1-2.5 kg/planta | 10-25 kg almendra con cáscar | 100-400 kg/árbol adulto
+   compatible_patio             text       30 de 30 valores no son numero  ej. Limitado (necesita espacio g | Limitado (solo franja coster | Limitado (solo patios/parcel
+   compatible_maceta            text       30 de 30 valores no son numero  ej. Con portainjerto enanizante  | Limitado | Limitado (maceta grande)
+   observaciones                text       30 de 30 valores no son numero  ej. 94% de la superficie naciona | Acidificar suelo con azufre  | Chile es el principal produc
+   referencias                  text       30 de 30 valores no son numero  ej. Agroseguros Informe Ciruelo  | Bol. INIA 282; CIREN Quillot | Bol. INIA 282; CIREN Quillot
+   ficha_fuente                 text       30 de 30 valores no son numero  ej. Fuente: Agroseguros Informe  | Fuente: Bol. INIA 160 - Mane | Fuente: Bol. INIA 282 (Cítri
+   ficha_cosecha_cuando         text       30 de 30 valores no son numero  ej. Abr (aceitunas verdes mesa)  | Abr a Jun (cosecha de OTOÑO) | Abr a Sep. Clemenules: abr-j
+   ficha_cosecha_senal          text       30 de 30 valores no son numero  ej. Azul oscuro. Toque suave: si | COSECHAR VERDE FIRME. Suelta | Color amarillo completo, bri
+   ficha_cosecha_tecnica        text       30 de 30 valores no son numero  ej. A mano, con peine/rastrillo  | Cada 2-3 días con la mano se | Cada 3-4 días, con guantes s
+   ficha_postcosecha            text       30 de 30 valores no son numero  ej. Fuyu: 2-3 sem mesa, 2 meses  | Gala: 2-4 sem mesa, 2-3 mese | Madura a temperatura ambient
+   ficha_rendimiento            text       30 de 30 valores no son numero  ej. 1-2.5 kg/planta | 10-25 kg almendra con cáscar | 100-400 kg/árbol adulto
+
+==============================================================================
+COLUMNAS SOSPECHOSAS (casi todas numericas pero tipadas como texto)
+==============================================================================
+   dim_etapas.kc_referencial: 7/8 valores son numericos pero la columna quedo en text
+   cat_fert_tecnico.solubilidad_g_l: 9/11 valores son numericos pero la columna quedo en text
+
+Las columnas en text conservan lo que hay. Las celdas sueltas del Excel
+no se corrigen a mano: se importan y se reportan.

@@ -1,0 +1,9 @@
+# dim_edad_nutricion: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_EDAD_NUTRICION del Excel. 3 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+edad_nutricion_id,tramo,anos_min,anos_max,factor_nutricion
+PLA,Plantación (1-2 años),1,2,0.3
+FOR,Formación (3-4 años),3,4,0.6
+ADU,Adulta (5+ años),5,,1

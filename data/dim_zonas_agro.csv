@@ -1,0 +1,26 @@
+# dim_zonas_agro: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_ZONAS_AGRO del Excel. 20 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+zona_agro_id,zona_agro,region,tipo_clima,t_max_enero,t_min_julio,t_min_absoluta,precipitacion_anual_mm,horas_frio,heladas_dias_ano,riesgo_sequia,estacion_agromet
+1,Arica-Azapa,Arica y Parinacota,Desértico costero,27°C,12°C,5°C,1,0-50,Sin heladas,Extremo,Agromet Azapa
+2,Copiapó Valle,Atacama,Desértico interior,31°C,4°C,-3°C,15,100-300,5-15 días,Extremo,Agromet Copiapó
+3,La Serena Costa,Coquimbo,Semiárido costero,24°C,8°C,2°C,80,50-200,0-5 días,Alto,Agromet Pan de Azúcar
+4,Ovalle-Limarí,Coquimbo,Semiárido interior,30°C,3°C,-4°C,100,200-500,10-25 días,Alto,Agromet Ovalle
+5,Valparaíso-Quillota,Valparaíso,Mediterráneo costero,27°C,5°C,-2°C,350,300-600,5-15 días,Medio-Alto,Agromet La Cruz
+6,San Felipe-Los Andes,Valparaíso,Mediterráneo interior,32°C,1°C,-7°C,250,600-900,20-40 días,Medio,Agromet Calle Larga
+7,Santiago Norte,Metropolitana,Mediterráneo central,31°C,1°C,-6°C,300,500-800,15-30 días,Medio,Agromet Pudahuel
+8,Santiago Sur-Buin,Metropolitana,Mediterráneo central,30°C,1°C,-6°C,330,500-900,15-35 días,Medio,Agromet Calera de Tango
+9,Melipilla Costa RM,Metropolitana,Mediterráneo costero int.,29°C,3°C,-4°C,380,400-700,10-25 días,Medio,Agromet Melipilla
+10,Rancagua-Cachapoal,O'Higgins,Mediterráneo central,30°C,1°C,-7°C,420,600-1000,20-40 días,Medio,Agromet Requínoa
+11,Pichilemu Costa,O'Higgins,Mediterráneo costero,23°C,5°C,-1°C,500,400-700,5-15 días,Medio-Bajo,Agromet Pichilemu
+12,Lago Rapel,O'Higgins,Mediterráneo lac.,30°C,2°C,-5°C,450,500-800,15-30 días,Medio,Agromet Las Cabras
+13,Curicó-Teno,Maule,Mediterráneo central,30°C,1°C,-7°C,550,700-1100,25-45 días,Medio,Agromet Curicó
+14,Talca-Linares,Maule,Mediterráneo central-sur,30°C,1°C,-7°C,650,700-1100,25-45 días,Medio-Bajo,Agromet Panguilemo
+15,Chillán-Ñuble,Ñuble,Mediterráneo transición,29°C,1°C,-8°C (INIA jul 2025: -7.6°C Sta Rosa),800,800-1200,30-50 días,Bajo-Medio,Agromet Quilamapu
+16,Los Ángeles,Biobío,Mediterráneo-templado,28°C,1°C,-8°C (INIA: -5.5°C Humán),1000,900-1300,35-55 días,Bajo,Agromet Los Ángeles
+17,Concepción Costa,Biobío,Oceánico templado,23°C,5°C,-5°C (INIA: -5.1°C Cañete),1100,500-800,5-15 días,Bajo,Agromet Concepción
+18,Temuco-Araucanía,Araucanía,Templado lluvioso,25°C,2°C,-8°C,1200,1000-1500,40-60 días,Muy bajo,Agromet Carillanca
+19,Valdivia-Los Ríos,Los Ríos,Templado lluvioso,22°C,3°C,-6°C,1800,1000-1500,30-50 días,Nulo,Agromet Remehue
+20,Osorno-Los Lagos,Los Lagos,Templado lluvioso,21°C,3°C,-5°C,1300,1100-1600,35-55 días,Nulo,Agromet Purranque

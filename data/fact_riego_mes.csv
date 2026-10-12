@@ -1,0 +1,366 @@
+# fact_riego_mes: dominio agronomico importado del Excel maestro.
+# Origen: hoja FACT_RIEGO_MES del Excel. 360 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+clave,especie_id,especie_alias,mes,mes_n,etapa,dias_min,dias_max,litros_min,litros_max,reposo,que_vera,consejo,frecuencia_original,volumen_original
+duraznero|1,duraznero,Duraznero,Enero,1,Maduración,3,4,60,80,false,Frutos cambiando de color,10 días antes de cosechar reducir riego para concentrar sabor,Cada 3-4 días,60-80 litros por árbol
+duraznero|2,duraznero,Duraznero,Febrero,2,Maduración → Postcosecha,5,7,45,60,false,Frutos cambiando de color / Hojas verdes activas,10 días antes de cosechar reducir riego para concentrar sabor / Importante: el árbol guarda reservas para la próxima temporada,Cada 3-4 días / Cada 7-10 días,60-80 litros por árbol / 30-40 litros por árbol
+duraznero|3,duraznero,Duraznero,Marzo,3,Postcosecha,7,10,30,40,false,Hojas verdes activas,Importante: el árbol guarda reservas para la próxima temporada,Cada 7-10 días,30-40 litros por árbol
+duraznero|4,duraznero,Duraznero,Abril,4,Postcosecha,7,10,30,40,false,Hojas verdes activas,Importante: el árbol guarda reservas para la próxima temporada,Cada 7-10 días,30-40 litros por árbol
+duraznero|5,duraznero,Duraznero,Mayo,5,Reposo,15,15,15,20,false,"Sin hojas, ramas firmes","Casi no necesita agua, salvo sequía extrema",Solo si no llueve,15-20 litros por árbol cada 15 días
+duraznero|6,duraznero,Duraznero,Junio,6,Reposo,15,15,15,20,false,"Sin hojas, ramas firmes","Casi no necesita agua, salvo sequía extrema",Solo si no llueve,15-20 litros por árbol cada 15 días
+duraznero|7,duraznero,Duraznero,Julio,7,Reposo,15,15,15,20,false,"Sin hojas, ramas firmes","Casi no necesita agua, salvo sequía extrema",Solo si no llueve,15-20 litros por árbol cada 15 días
+duraznero|8,duraznero,Duraznero,Agosto,8,Reposo,15,15,15,20,false,"Sin hojas, ramas firmes","Casi no necesita agua, salvo sequía extrema",Solo si no llueve,15-20 litros por árbol cada 15 días
+duraznero|9,duraznero,Duraznero,Septiembre,9,Brotación,7,10,20,30,false,Hojas firmes y verdes brillantes,"Empezar suave, no exagerar al principio",Cada 7-10 días,20-30 litros por árbol
+duraznero|10,duraznero,Duraznero,Octubre,10,Brotación → Floración → Cuaja,6,7,30,40,false,Hojas firmes y verdes brillantes / Flores abiertas y firmes / Frutos pequeños del tamaño de una arveja,"Empezar suave, no exagerar al principio / NO mojar las flores, regar solo al suelo / Etapa CRÍTICA: si falta agua se caen los frutos",Cada 7-10 días / Cada 5-7 días / Cada 5 días,20-30 litros por árbol / 30-40 litros por árbol / 40-50 litros por árbol
+duraznero|11,duraznero,Duraznero,Noviembre,11,Cuaja → Crecimiento de fruto,4,5,45,60,false,Frutos pequeños del tamaño de una arveja / Frutos creciendo rápido,"Etapa CRÍTICA: si falta agua se caen los frutos / Mantener humedad constante, sin altibajos",Cada 5 días / Cada 3-5 días,40-50 litros por árbol / 50-70 litros por árbol
+duraznero|12,duraznero,Duraznero,Diciembre,12,Crecimiento de fruto → Maduración,3,4,55,75,false,Frutos creciendo rápido / Frutos cambiando de color,"Mantener humedad constante, sin altibajos / 10 días antes de cosechar reducir riego para concentrar sabor",Cada 3-5 días / Cada 3-4 días,50-70 litros por árbol / 60-80 litros por árbol
+ciruelo|1,ciruelo,Ciruelo,Enero,1,Maduración,3,4,60,70,false,Frutos cambian color,Reducir 7 días antes de cosecha,Cada 3-4 días,60-70 litros por árbol
+ciruelo|2,ciruelo,Ciruelo,Febrero,2,Maduración → Postcosecha,6,7,45,50,false,Frutos cambian color / Hojas verdes activas,Reducir 7 días antes de cosecha / Repone reservas,Cada 3-4 días / Cada 10 días,60-70 litros por árbol / 30 litros por árbol
+ciruelo|3,ciruelo,Ciruelo,Marzo,3,Postcosecha,10,10,30,30,false,Hojas verdes activas,Repone reservas,Cada 10 días,30 litros por árbol
+ciruelo|4,ciruelo,Ciruelo,Abril,4,Postcosecha,10,10,30,30,false,Hojas verdes activas,Repone reservas,Cada 10 días,30 litros por árbol
+ciruelo|5,ciruelo,Ciruelo,Mayo,5,Reposo,20,20,0,0,true,Sin hojas,Casi no riega,Solo si no llueve,Mínimo
+ciruelo|6,ciruelo,Ciruelo,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Casi no riega,Solo si no llueve,Mínimo
+ciruelo|7,ciruelo,Ciruelo,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi no riega,Solo si no llueve,Mínimo
+ciruelo|8,ciruelo,Ciruelo,Agosto,8,Brotación,10,10,20,30,false,Hojas saliendo verdes,Empezar gradual,Cada 10 días,20-30 litros por árbol
+ciruelo|9,ciruelo,Ciruelo,Septiembre,9,Brotación → Floración,8,8,25,30,false,Hojas saliendo verdes / Flores blancas abiertas,Empezar gradual / No regar las flores,Cada 10 días / Cada 7 días,20-30 litros por árbol / 30 litros por árbol
+ciruelo|10,ciruelo,Ciruelo,Octubre,10,Floración → Cuaja,6,7,35,35,false,Flores blancas abiertas / Frutitos verdes pequeños,"No regar las flores / Riego constante, sin estrés",Cada 7 días / Cada 5-7 días,30 litros por árbol / 40 litros por árbol
+ciruelo|11,ciruelo,Ciruelo,Noviembre,11,Cuaja → Crecimiento,4,6,45,50,false,Frutitos verdes pequeños / Frutos creciendo,"Riego constante, sin estrés / Si falta agua, frutos pequeños",Cada 5-7 días / Cada 4-5 días,40 litros por árbol / 50-60 litros por árbol
+ciruelo|12,ciruelo,Ciruelo,Diciembre,12,Crecimiento → Maduración,4,4,55,65,false,Frutos creciendo / Frutos cambian color,"Si falta agua, frutos pequeños / Reducir 7 días antes de cosecha",Cada 4-5 días / Cada 3-4 días,50-60 litros por árbol / 60-70 litros por árbol
+cerezo|1,cerezo,Cerezo,Enero,1,Postcosecha,7,10,40,40,false,Hojas verdes,Recuperación importante,Cada 7-10 días,40 litros
+cerezo|2,cerezo,Cerezo,Febrero,2,Postcosecha,7,10,40,40,false,Hojas verdes,Recuperación importante,Cada 7-10 días,40 litros
+cerezo|3,cerezo,Cerezo,Marzo,3,Postcosecha,7,10,40,40,false,Hojas verdes,Recuperación importante,Cada 7-10 días,40 litros
+cerezo|4,cerezo,Cerezo,Abril,4,Reposo,20,20,0,0,true,Sin hojas,Mínimo,Casi nada,Solo si seco
+cerezo|5,cerezo,Cerezo,Mayo,5,Reposo,20,20,0,0,true,Sin hojas,Mínimo,Casi nada,Solo si seco
+cerezo|6,cerezo,Cerezo,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Mínimo,Casi nada,Solo si seco
+cerezo|7,cerezo,Cerezo,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Mínimo,Casi nada,Solo si seco
+cerezo|8,cerezo,Cerezo,Agosto,8,Brotación,10,10,20,20,false,Hojas brotando,No exagerar,Cada 10 días,20 litros
+cerezo|9,cerezo,Cerezo,Septiembre,9,Brotación → Floración,8,8,25,25,false,Hojas brotando / Flores blancas,No exagerar / NO mojar flor,Cada 10 días / Cada 7 días,20 litros / 30 litros
+cerezo|10,cerezo,Cerezo,Octubre,10,Cuaja → Crecimiento,4,6,45,45,false,Frutitos verdes / Cerezas verdes creciendo,"Crítico para producción / Constante, sin altibajos",Cada 5-7 días / Cada 4-5 días,40 litros / 50 litros
+cerezo|11,cerezo,Cerezo,Noviembre,11,Crecimiento → Pinta y maduración,4,5,45,45,false,Cerezas verdes creciendo / Cerezas cambian color,"Constante, sin altibajos / REDUCIR riego: el exceso parte las cerezas",Cada 4-5 días / Cada 5 días MENOS,50 litros / 40 litros
+cerezo|12,cerezo,Cerezo,Diciembre,12,Pinta y maduración → Postcosecha,6,8,40,40,false,Cerezas cambian color / Hojas verdes,REDUCIR riego: el exceso parte las cerezas / Recuperación importante,Cada 5 días MENOS / Cada 7-10 días,40 litros
+damasco|1,damasco,Damasco,Enero,1,Postcosecha,10,10,30,30,false,Hojas verdes,Recuperación,Cada 10 días,30 litros
+damasco|2,damasco,Damasco,Febrero,2,Postcosecha,10,10,30,30,false,Hojas verdes,Recuperación,Cada 10 días,30 litros
+damasco|3,damasco,Damasco,Marzo,3,Postcosecha,10,10,30,30,false,Hojas verdes,Recuperación,Cada 10 días,30 litros
+damasco|4,damasco,Damasco,Abril,4,Reposo,20,20,0,0,true,Sin hojas,Casi no necesita,Casi nada,Mínimo
+damasco|5,damasco,Damasco,Mayo,5,Reposo,20,20,0,0,true,Sin hojas,Casi no necesita,Casi nada,Mínimo
+damasco|6,damasco,Damasco,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Casi no necesita,Casi nada,Mínimo
+damasco|7,damasco,Damasco,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi no necesita,Casi nada,Mínimo
+damasco|8,damasco,Damasco,Agosto,8,Brotación → Floración,8,8,22,22,false,Hojas saliendo / Flores rosa-blancas,Inicio suave / PELIGRO: heladas tardías,Cada 10 días / Cada 7 días,20 litros / 25 litros
+damasco|9,damasco,Damasco,Septiembre,9,Floración → Cuaja,6,7,30,30,false,Flores rosa-blancas / Frutitos verdes,PELIGRO: heladas tardías / Crítico,Cada 7 días / Cada 5-7 días,25 litros / 35 litros
+damasco|10,damasco,Damasco,Octubre,10,Cuaja → Crecimiento,4,6,40,40,false,Frutitos verdes / Frutos creciendo,Crítico / Constante,Cada 5-7 días / Cada 4-5 días,35 litros / 45 litros
+damasco|11,damasco,Damasco,Noviembre,11,Crecimiento → Maduración,4,4,48,48,false,Frutos creciendo / Cambian a naranja,Constante / Reducir 7 días antes cosecha,Cada 4-5 días / Cada 4 días,45 litros / 50 litros
+damasco|12,damasco,Damasco,Diciembre,12,Maduración → Postcosecha,7,7,40,40,false,Cambian a naranja / Hojas verdes,Reducir 7 días antes cosecha / Recuperación,Cada 4 días / Cada 10 días,50 litros / 30 litros
+nectarino|1,nectarino,Nectarino,Enero,1,Maduración,3,4,60,80,false,Cambio color,Reducir 10 días antes,Cada 3-4 días,60-80 litros
+nectarino|2,nectarino,Nectarino,Febrero,2,Maduración → Postcosecha,5,7,45,60,false,Cambio color / Hojas activas,Reducir 10 días antes / Importante,Cada 3-4 días / Cada 7-10 días,60-80 litros / 30-40 litros
+nectarino|3,nectarino,Nectarino,Marzo,3,Postcosecha,7,10,30,40,false,Hojas activas,Importante,Cada 7-10 días,30-40 litros
+nectarino|4,nectarino,Nectarino,Abril,4,Postcosecha,7,10,30,40,false,Hojas activas,Importante,Cada 7-10 días,30-40 litros
+nectarino|5,nectarino,Nectarino,Mayo,5,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nectarino|6,nectarino,Nectarino,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nectarino|7,nectarino,Nectarino,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nectarino|8,nectarino,Nectarino,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nectarino|9,nectarino,Nectarino,Septiembre,9,Brotación,7,10,20,30,false,Hojas brotando,Inicio suave,Cada 7-10 días,20-30 litros
+nectarino|10,nectarino,Nectarino,Octubre,10,Floración → Cuaja,5,6,35,45,false,Flores rosadas / Frutitos verdes,No mojar flores / Crítico,Cada 5-7 días / Cada 5 días,30-40 litros / 40-50 litros
+nectarino|11,nectarino,Nectarino,Noviembre,11,Cuaja → Crecimiento,4,5,45,60,false,Frutitos verdes / Frutos creciendo,Crítico / Constante,Cada 5 días / Cada 3-5 días,40-50 litros / 50-70 litros
+nectarino|12,nectarino,Nectarino,Diciembre,12,Crecimiento → Maduración,3,4,55,75,false,Frutos creciendo / Cambio color,Constante / Reducir 10 días antes,Cada 3-5 días / Cada 3-4 días,50-70 litros / 60-80 litros
+manzano|1,manzano,Manzano,Enero,1,Crecimiento,5,7,50,70,false,Manzanas creciendo,No falte agua,Cada 5-7 días,50-70 litros
+manzano|2,manzano,Manzano,Febrero,2,Maduración,7,7,50,50,false,Cambio color,Reducir antes cosecha,Cada 7 días,50 litros
+manzano|3,manzano,Manzano,Marzo,3,Maduración,7,7,50,50,false,Cambio color,Reducir antes cosecha,Cada 7 días,50 litros
+manzano|4,manzano,Manzano,Abril,4,Maduración → Postcosecha,8,8,40,40,false,Cambio color / Hojas verdes,Reducir antes cosecha / Reservas,Cada 7 días / Cada 10 días,50 litros / 30 litros
+manzano|5,manzano,Manzano,Mayo,5,Postcosecha,10,10,30,30,false,Hojas verdes,Reservas,Cada 10 días,30 litros
+manzano|6,manzano,Manzano,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo si seco
+manzano|7,manzano,Manzano,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo si seco
+manzano|8,manzano,Manzano,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo si seco
+manzano|9,manzano,Manzano,Septiembre,9,Brotación,10,10,25,25,false,Hojas brotando,Inicio gradual,Cada 10 días,25 litros
+manzano|10,manzano,Manzano,Octubre,10,Floración → Cuaja,7,7,35,35,false,Flores blanco-rosadas / Frutitos verdes,No mojar flores / Constante,Cada 7 días,30 litros / 40 litros
+manzano|11,manzano,Manzano,Noviembre,11,Cuaja → Crecimiento,6,7,45,55,false,Frutitos verdes / Manzanas creciendo,Constante / No falte agua,Cada 7 días / Cada 5-7 días,40 litros / 50-70 litros
+manzano|12,manzano,Manzano,Diciembre,12,Crecimiento,5,7,50,70,false,Manzanas creciendo,No falte agua,Cada 5-7 días,50-70 litros
+peral|1,peral,Peral,Enero,1,Crecimiento,5,7,50,60,false,Peras creciendo,No falte,Cada 5-7 días,50-60 litros
+peral|2,peral,Peral,Febrero,2,Maduración,7,7,50,50,false,Cambio color,Reducir antes cosecha,Cada 7 días,50 litros
+peral|3,peral,Peral,Marzo,3,Maduración,7,7,50,50,false,Cambio color,Reducir antes cosecha,Cada 7 días,50 litros
+peral|4,peral,Peral,Abril,4,Postcosecha,10,10,30,30,false,Hojas activas,Recuperación,Cada 10 días,30 litros
+peral|5,peral,Peral,Mayo,5,Postcosecha,10,10,30,30,false,Hojas activas,Recuperación,Cada 10 días,30 litros
+peral|6,peral,Peral,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo seco
+peral|7,peral,Peral,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo seco
+peral|8,peral,Peral,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo seco
+peral|9,peral,Peral,Septiembre,9,Brotación,10,10,25,25,false,Hojas brotan,Inicio,Cada 10 días,25 litros
+peral|10,peral,Peral,Octubre,10,Floración → Cuaja,7,7,35,35,false,Flores blancas / Pequeños verdes,No mojar / Constante,Cada 7 días,30 litros / 40 litros
+peral|11,peral,Peral,Noviembre,11,Cuaja → Crecimiento,6,7,45,50,false,Pequeños verdes / Peras creciendo,Constante / No falte,Cada 7 días / Cada 5-7 días,40 litros / 50-60 litros
+peral|12,peral,Peral,Diciembre,12,Crecimiento,5,7,50,60,false,Peras creciendo,No falte,Cada 5-7 días,50-60 litros
+membrillo|1,membrillo,Membrillo,Enero,1,Crecimiento,7,7,40,40,false,Membrillos creciendo,Constante,Cada 7 días,40 litros
+membrillo|2,membrillo,Membrillo,Febrero,2,Crecimiento,7,7,40,40,false,Membrillos creciendo,Constante,Cada 7 días,40 litros
+membrillo|3,membrillo,Membrillo,Marzo,3,Maduración,7,10,30,40,false,Cambio color amarillo,Reducir antes cosecha,Cada 7-10 días,30-40 litros
+membrillo|4,membrillo,Membrillo,Abril,4,Maduración,7,10,30,40,false,Cambio color amarillo,Reducir antes cosecha,Cada 7-10 días,30-40 litros
+membrillo|5,membrillo,Membrillo,Mayo,5,Maduración → Postcosecha,11,12,25,30,false,Cambio color amarillo / Hojas activas,Reducir antes cosecha / Recuperación,Cada 7-10 días / Cada 15 días,30-40 litros / 20 litros
+membrillo|6,membrillo,Membrillo,Junio,6,Postcosecha,15,15,20,20,false,Hojas activas,Recuperación,Cada 15 días,20 litros
+membrillo|7,membrillo,Membrillo,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo seco
+membrillo|8,membrillo,Membrillo,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Mínimo,Solo seco
+membrillo|9,membrillo,Membrillo,Septiembre,9,Brotación,10,10,20,20,false,Hojas brotan,Inicio,Cada 10 días,20 litros
+membrillo|10,membrillo,Membrillo,Octubre,10,Floración,7,10,25,25,false,Flores blanco-rosadas,Tolerante,Cada 7-10 días,25 litros
+membrillo|11,membrillo,Membrillo,Noviembre,11,Cuaja,7,7,30,30,false,Frutos pequeños,Estable,Cada 7 días,30 litros
+membrillo|12,membrillo,Membrillo,Diciembre,12,Crecimiento,7,7,40,40,false,Membrillos creciendo,Constante,Cada 7 días,40 litros
+limonero|1,limonero,Limonero,Enero,1,Verano,4,7,50,70,false,Hojas verdes firmes,Crítico,Cada 4-7 días,50-70 litros
+limonero|2,limonero,Limonero,Febrero,2,Verano,4,7,50,70,false,Hojas verdes firmes,Crítico,Cada 4-7 días,50-70 litros
+limonero|3,limonero,Limonero,Marzo,3,Otoño,10,10,30,40,false,Hojas brillantes,Reducir gradual,Cada 10 días,30-40 litros
+limonero|4,limonero,Limonero,Abril,4,Otoño,10,10,30,40,false,Hojas brillantes,Reducir gradual,Cada 10 días,30-40 litros
+limonero|5,limonero,Limonero,Mayo,5,Otoño,10,10,30,40,false,Hojas brillantes,Reducir gradual,Cada 10 días,30-40 litros
+limonero|6,limonero,Limonero,Junio,6,Invierno,15,15,20,30,false,Sin caída de hojas,"Mínimo, cítrico es siempreverde",Cada 15 días si seco,20-30 litros
+limonero|7,limonero,Limonero,Julio,7,Invierno,15,15,20,30,false,Sin caída de hojas,"Mínimo, cítrico es siempreverde",Cada 15 días si seco,20-30 litros
+limonero|8,limonero,Limonero,Agosto,8,Invierno,15,15,20,30,false,Sin caída de hojas,"Mínimo, cítrico es siempreverde",Cada 15 días si seco,20-30 litros
+limonero|9,limonero,Limonero,Septiembre,9,Primavera,7,10,30,40,false,Hojas brillantes,Aumenta gradual,Cada 7-10 días,30-40 litros
+limonero|10,limonero,Limonero,Octubre,10,Primavera,7,10,30,40,false,Hojas brillantes,Aumenta gradual,Cada 7-10 días,30-40 litros
+limonero|11,limonero,Limonero,Noviembre,11,Primavera,7,10,30,40,false,Hojas brillantes,Aumenta gradual,Cada 7-10 días,30-40 litros
+limonero|12,limonero,Limonero,Diciembre,12,Verano,4,7,50,70,false,Hojas verdes firmes,Crítico,Cada 4-7 días,50-70 litros
+naranjo|1,naranjo,Naranjo,Enero,1,Verano,4,7,60,80,false,Hojas firmes,Crítico para fruto,Cada 4-7 días,60-80 litros
+naranjo|2,naranjo,Naranjo,Febrero,2,Verano,4,7,60,80,false,Hojas firmes,Crítico para fruto,Cada 4-7 días,60-80 litros
+naranjo|3,naranjo,Naranjo,Marzo,3,Otoño,10,10,40,40,false,Hojas brillantes,Reducir,Cada 10 días,40 litros
+naranjo|4,naranjo,Naranjo,Abril,4,Otoño,10,10,40,40,false,Hojas brillantes,Reducir,Cada 10 días,40 litros
+naranjo|5,naranjo,Naranjo,Mayo,5,Otoño,10,10,40,40,false,Hojas brillantes,Reducir,Cada 10 días,40 litros
+naranjo|6,naranjo,Naranjo,Junio,6,Invierno,15,15,30,30,false,Hojas firmes,Mínimo,Cada 15 días si seco,30 litros
+naranjo|7,naranjo,Naranjo,Julio,7,Invierno,15,15,30,30,false,Hojas firmes,Mínimo,Cada 15 días si seco,30 litros
+naranjo|8,naranjo,Naranjo,Agosto,8,Invierno,15,15,30,30,false,Hojas firmes,Mínimo,Cada 15 días si seco,30 litros
+naranjo|9,naranjo,Naranjo,Septiembre,9,Primavera,7,10,40,40,false,Hojas brillantes,Aumenta gradual,Cada 7-10 días,40 litros
+naranjo|10,naranjo,Naranjo,Octubre,10,Primavera,7,10,40,40,false,Hojas brillantes,Aumenta gradual,Cada 7-10 días,40 litros
+naranjo|11,naranjo,Naranjo,Noviembre,11,Primavera,7,10,40,40,false,Hojas brillantes,Aumenta gradual,Cada 7-10 días,40 litros
+naranjo|12,naranjo,Naranjo,Diciembre,12,Verano,4,7,60,80,false,Hojas firmes,Crítico para fruto,Cada 4-7 días,60-80 litros
+mandarino|1,mandarino,Mandarino,Enero,1,Verano,4,7,50,60,false,Hojas firmes,Crítico,Cada 4-7 días,50-60 litros
+mandarino|2,mandarino,Mandarino,Febrero,2,Verano,4,7,50,60,false,Hojas firmes,Crítico,Cada 4-7 días,50-60 litros
+mandarino|3,mandarino,Mandarino,Marzo,3,Otoño,10,10,30,30,false,Brillantes,Reducir,Cada 10 días,30 litros
+mandarino|4,mandarino,Mandarino,Abril,4,Otoño,10,10,30,30,false,Brillantes,Reducir,Cada 10 días,30 litros
+mandarino|5,mandarino,Mandarino,Mayo,5,Otoño,10,10,30,30,false,Brillantes,Reducir,Cada 10 días,30 litros
+mandarino|6,mandarino,Mandarino,Junio,6,Invierno,15,15,20,20,false,Firmes,Mínimo,Cada 15 días si seco,20 litros
+mandarino|7,mandarino,Mandarino,Julio,7,Invierno,15,15,20,20,false,Firmes,Mínimo,Cada 15 días si seco,20 litros
+mandarino|8,mandarino,Mandarino,Agosto,8,Invierno,15,15,20,20,false,Firmes,Mínimo,Cada 15 días si seco,20 litros
+mandarino|9,mandarino,Mandarino,Septiembre,9,Primavera,7,10,30,30,false,Hojas brillantes,Inicio,Cada 7-10 días,30 litros
+mandarino|10,mandarino,Mandarino,Octubre,10,Primavera,7,10,30,30,false,Hojas brillantes,Inicio,Cada 7-10 días,30 litros
+mandarino|11,mandarino,Mandarino,Noviembre,11,Primavera,7,10,30,30,false,Hojas brillantes,Inicio,Cada 7-10 días,30 litros
+mandarino|12,mandarino,Mandarino,Diciembre,12,Verano,4,7,50,60,false,Hojas firmes,Crítico,Cada 4-7 días,50-60 litros
+pomelo|1,pomelo,Pomelo,Enero,1,Verano,4,7,70,90,false,Hojas firmes,"Crítico, árbol grande",Cada 4-7 días,70-90 litros
+pomelo|2,pomelo,Pomelo,Febrero,2,Verano,4,7,70,90,false,Hojas firmes,"Crítico, árbol grande",Cada 4-7 días,70-90 litros
+pomelo|3,pomelo,Pomelo,Marzo,3,Otoño,10,10,40,40,false,Brillantes,Reducir,Cada 10 días,40 litros
+pomelo|4,pomelo,Pomelo,Abril,4,Otoño,10,10,40,40,false,Brillantes,Reducir,Cada 10 días,40 litros
+pomelo|5,pomelo,Pomelo,Mayo,5,Otoño,10,10,40,40,false,Brillantes,Reducir,Cada 10 días,40 litros
+pomelo|6,pomelo,Pomelo,Junio,6,Invierno,15,15,30,30,false,Firmes,Mínimo,Cada 15 días si seco,30 litros
+pomelo|7,pomelo,Pomelo,Julio,7,Invierno,15,15,30,30,false,Firmes,Mínimo,Cada 15 días si seco,30 litros
+pomelo|8,pomelo,Pomelo,Agosto,8,Invierno,15,15,30,30,false,Firmes,Mínimo,Cada 15 días si seco,30 litros
+pomelo|9,pomelo,Pomelo,Septiembre,9,Primavera,7,10,40,40,false,Hojas brillantes,Inicio,Cada 7-10 días,40 litros
+pomelo|10,pomelo,Pomelo,Octubre,10,Primavera,7,10,40,40,false,Hojas brillantes,Inicio,Cada 7-10 días,40 litros
+pomelo|11,pomelo,Pomelo,Noviembre,11,Primavera,7,10,40,40,false,Hojas brillantes,Inicio,Cada 7-10 días,40 litros
+pomelo|12,pomelo,Pomelo,Diciembre,12,Verano,4,7,70,90,false,Hojas firmes,"Crítico, árbol grande",Cada 4-7 días,70-90 litros
+nogal|1,nogal,Nogal,Enero,1,Llenado,5,7,100,150,false,"Nueces verdes, llenando","Etapa MÁS CRÍTICA: si falta agua, nuez vacía",Cada 5-7 días,100-150 litros
+nogal|2,nogal,Nogal,Febrero,2,Llenado,5,7,100,150,false,"Nueces verdes, llenando","Etapa MÁS CRÍTICA: si falta agua, nuez vacía",Cada 5-7 días,100-150 litros
+nogal|3,nogal,Nogal,Marzo,3,Maduración,7,10,80,80,false,Cáscara verde se abre,Reducir antes cosecha,Cada 7-10 días,80 litros
+nogal|4,nogal,Nogal,Abril,4,Maduración → Postcosecha,11,12,65,65,false,Cáscara verde se abre / Hojas activas,Reducir antes cosecha / Reservas,Cada 7-10 días / Cada 15 días,80 litros / 50 litros
+nogal|5,nogal,Nogal,Mayo,5,Postcosecha,15,15,50,50,false,Hojas activas,Reservas,Cada 15 días,50 litros
+nogal|6,nogal,Nogal,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nogal|7,nogal,Nogal,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nogal|8,nogal,Nogal,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Casi nada,Solo si seco,Mínimo
+nogal|9,nogal,Nogal,Septiembre,9,Brotación,10,15,40,60,false,Hojas saliendo,Inicio gradual,Cada 10-15 días,40-60 litros
+nogal|10,nogal,Nogal,Octubre,10,Brotación → Floración,10,12,45,60,false,Hojas saliendo / Flores pequeñas,Inicio gradual / No exagerar,Cada 10-15 días / Cada 10 días,40-60 litros / 50-60 litros
+nogal|11,nogal,Nogal,Noviembre,11,Crecimiento fruto,7,10,80,120,false,Nueces verdes creciendo,Etapa crítica: define tamaño nuez,Cada 7-10 días,80-120 litros
+nogal|12,nogal,Nogal,Diciembre,12,Crecimiento fruto,7,10,80,120,false,Nueces verdes creciendo,Etapa crítica: define tamaño nuez,Cada 7-10 días,80-120 litros
+almendro|1,almendro,Almendro,Enero,1,Llenado,7,7,50,50,false,Almendra formándose,Define calidad,Cada 7 días,50 litros
+almendro|2,almendro,Almendro,Febrero,2,Maduración,10,15,30,30,false,Cáscara verde seca,Reducir mucho,Cada 10-15 días,30 litros
+almendro|3,almendro,Almendro,Marzo,3,Maduración,10,15,30,30,false,Cáscara verde seca,Reducir mucho,Cada 10-15 días,30 litros
+almendro|4,almendro,Almendro,Abril,4,Postcosecha-reposo,20,20,0,0,true,Sin hojas,Tolera sequía,Mínimo,Solo seco
+almendro|5,almendro,Almendro,Mayo,5,Postcosecha-reposo,20,20,0,0,true,Sin hojas,Tolera sequía,Mínimo,Solo seco
+almendro|6,almendro,Almendro,Junio,6,Postcosecha-reposo,20,20,0,0,true,Sin hojas,Tolera sequía,Mínimo,Solo seco
+almendro|7,almendro,Almendro,Julio,7,Postcosecha-reposo,20,20,0,0,true,Sin hojas,Tolera sequía,Mínimo,Solo seco
+almendro|8,almendro,Almendro,Agosto,8,Brotación → Floración,10,12,28,28,false,Hojas y flores / Flores blancas masivas,Florece MUY temprano (agosto) / HELADAS: mayor riesgo,Cada 10-15 días / Cada 10 días,25 litros / 30 litros
+almendro|9,almendro,Almendro,Septiembre,9,Brotación → Floración → Cuaja,9,12,32,32,false,Hojas y flores / Flores blancas masivas / Frutitos verdes,Florece MUY temprano (agosto) / HELADAS: mayor riesgo / Crítico,Cada 10-15 días / Cada 10 días / Cada 7-10 días,25 litros / 30 litros / 40 litros
+almendro|10,almendro,Almendro,Octubre,10,Cuaja → Crecimiento,7,10,45,50,false,Frutitos verdes / Almendras verdes,Crítico / Constante,Cada 7-10 días,40 litros / 50-60 litros
+almendro|11,almendro,Almendro,Noviembre,11,Crecimiento,7,10,50,60,false,Almendras verdes,Constante,Cada 7-10 días,50-60 litros
+almendro|12,almendro,Almendro,Diciembre,12,Crecimiento → Llenado,7,8,50,55,false,Almendras verdes / Almendra formándose,Constante / Define calidad,Cada 7-10 días / Cada 7 días,50-60 litros / 50 litros
+higuera|1,higuera,Higuera,Enero,1,Maduración 1ra cosecha,5,7,40,40,false,Brevas madurando (si produce),Brevas = higos de la primera cosecha,Cada 5-7 días,40 litros
+higuera|2,higuera,Higuera,Febrero,2,Maduración 2da cosecha,5,7,40,40,false,Higos madurando,Cosecha principal,Cada 5-7 días,40 litros
+higuera|3,higuera,Higuera,Marzo,3,Maduración 2da cosecha,5,7,40,40,false,Higos madurando,Cosecha principal,Cada 5-7 días,40 litros
+higuera|4,higuera,Higuera,Abril,4,Postcosecha,15,15,20,20,false,Hojas activas,Recuperación,Cada 15 días,20 litros
+higuera|5,higuera,Higuera,Mayo,5,Postcosecha,15,15,20,20,false,Hojas activas,Recuperación,Cada 15 días,20 litros
+higuera|6,higuera,Higuera,Junio,6,Reposo,20,20,0,0,true,Sin hojas,Muy resistente a sequía,Solo si seco,Mínimo
+higuera|7,higuera,Higuera,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Muy resistente a sequía,Solo si seco,Mínimo
+higuera|8,higuera,Higuera,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Muy resistente a sequía,Solo si seco,Mínimo
+higuera|9,higuera,Higuera,Septiembre,9,Brotación,10,15,20,20,false,Hojas grandes saliendo,"Inicio, poco",Cada 10-15 días,20 litros
+higuera|10,higuera,Higuera,Octubre,10,Brotación,10,15,20,20,false,Hojas grandes saliendo,"Inicio, poco",Cada 10-15 días,20 litros
+higuera|11,higuera,Higuera,Noviembre,11,Crecimiento,7,10,30,40,false,Higos formándose,Constante,Cada 7-10 días,30-40 litros
+higuera|12,higuera,Higuera,Diciembre,12,Crecimiento → Maduración 1ra cosecha,6,8,35,40,false,Higos formándose / Brevas madurando (si produce),Constante / Brevas = higos de la primera cosecha,Cada 7-10 días / Cada 5-7 días,30-40 litros / 40 litros
+granado|1,granado,Granado,Enero,1,Crecimiento,5,7,40,50,false,Granadas creciendo,Importante,Cada 5-7 días,40-50 litros
+granado|2,granado,Granado,Febrero,2,Crecimiento,5,7,40,50,false,Granadas creciendo,Importante,Cada 5-7 días,40-50 litros
+granado|3,granado,Granado,Marzo,3,Maduración,7,10,30,40,false,Granadas coloreando,"Reducir: si alterna seco-mojado, se RAJAN",Cada 7-10 días,30-40 litros
+granado|4,granado,Granado,Abril,4,Maduración,7,10,30,40,false,Granadas coloreando,"Reducir: si alterna seco-mojado, se RAJAN",Cada 7-10 días,30-40 litros
+granado|5,granado,Granado,Mayo,5,Maduración → Postcosecha,11,12,25,30,false,Granadas coloreando / Hojas activas,"Reducir: si alterna seco-mojado, se RAJAN / Recuperación",Cada 7-10 días / Cada 15 días,30-40 litros / 20 litros
+granado|6,granado,Granado,Junio,6,Postcosecha,15,15,20,20,false,Hojas activas,Recuperación,Cada 15 días,20 litros
+granado|7,granado,Granado,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Muy resistente sequía,Mínimo,Solo si seco
+granado|8,granado,Granado,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Muy resistente sequía,Mínimo,Solo si seco
+granado|9,granado,Granado,Septiembre,9,Brotación,10,15,20,20,false,Hojas brotando,Inicio suave,Cada 10-15 días,20 litros
+granado|10,granado,Granado,Octubre,10,Brotación,10,15,20,20,false,Hojas brotando,Inicio suave,Cada 10-15 días,20 litros
+granado|11,granado,Granado,Noviembre,11,Floración,7,10,30,30,false,Flores rojas brillantes,"Constante, no altibajos",Cada 7-10 días,30 litros
+granado|12,granado,Granado,Diciembre,12,Floración → Crecimiento,6,8,35,40,false,Flores rojas brillantes / Granadas creciendo,"Constante, no altibajos / Importante",Cada 7-10 días / Cada 5-7 días,30 litros / 40-50 litros
+caqui|1,caqui,Caqui,Enero,1,Crecimiento,5,7,50,60,false,Caquis verdes creciendo,Importante,Cada 5-7 días,50-60 litros
+caqui|2,caqui,Caqui,Febrero,2,Crecimiento,5,7,50,60,false,Caquis verdes creciendo,Importante,Cada 5-7 días,50-60 litros
+caqui|3,caqui,Caqui,Marzo,3,Maduración,7,10,40,40,false,Cambian a naranja,Reducir gradual,Cada 7-10 días,40 litros
+caqui|4,caqui,Caqui,Abril,4,Maduración,7,10,40,40,false,Cambian a naranja,Reducir gradual,Cada 7-10 días,40 litros
+caqui|5,caqui,Caqui,Mayo,5,Maduración,7,10,40,40,false,Cambian a naranja,Reducir gradual,Cada 7-10 días,40 litros
+caqui|6,caqui,Caqui,Junio,6,Postcosecha,15,15,20,20,false,Hojas coloreando,Recuperación,Cada 15 días,20 litros
+caqui|7,caqui,Caqui,Julio,7,Reposo,20,20,0,0,true,Sin hojas,Resistente,Mínimo,Solo si seco
+caqui|8,caqui,Caqui,Agosto,8,Reposo,20,20,0,0,true,Sin hojas,Resistente,Mínimo,Solo si seco
+caqui|9,caqui,Caqui,Septiembre,9,Brotación,10,15,25,25,false,Hojas brotando tarde,Caqui brota TARDE,Cada 10-15 días,25 litros
+caqui|10,caqui,Caqui,Octubre,10,Brotación,10,15,25,25,false,Hojas brotando tarde,Caqui brota TARDE,Cada 10-15 días,25 litros
+caqui|11,caqui,Caqui,Noviembre,11,Floración,7,10,30,30,false,Flores pequeñas,Constante,Cada 7-10 días,30 litros
+caqui|12,caqui,Caqui,Diciembre,12,Crecimiento,5,7,50,60,false,Caquis verdes creciendo,Importante,Cada 5-7 días,50-60 litros
+vid|1,vid,Vid,Enero,1,Envero-maduración,7,10,20,30,false,Uvas cambian color (envero),REDUCIR: exceso diluye sabor,Cada 7-10 días,20-30 litros
+vid|2,vid,Vid,Febrero,2,Envero-maduración,7,10,20,30,false,Uvas cambian color (envero),REDUCIR: exceso diluye sabor,Cada 7-10 días,20-30 litros
+vid|3,vid,Vid,Marzo,3,Maduración final,20,20,0,0,true,Uvas dulces maduras,Cortar riego 15-20 días antes cosecha,Cada 10-15 días o cortar,Mínimo
+vid|4,vid,Vid,Abril,4,Postcosecha-reposo,20,20,0,0,true,"Hojas caen, reposo",Casi nada,Solo si seco,Mínimo
+vid|5,vid,Vid,Mayo,5,Postcosecha-reposo,20,20,0,0,true,"Hojas caen, reposo",Casi nada,Solo si seco,Mínimo
+vid|6,vid,Vid,Junio,6,Postcosecha-reposo,20,20,0,0,true,"Hojas caen, reposo",Casi nada,Solo si seco,Mínimo
+vid|7,vid,Vid,Julio,7,Postcosecha-reposo,20,20,0,0,true,"Hojas caen, reposo",Casi nada,Solo si seco,Mínimo
+vid|8,vid,Vid,Agosto,8,Postcosecha-reposo,20,20,0,0,true,"Hojas caen, reposo",Casi nada,Solo si seco,Mínimo
+vid|9,vid,Vid,Septiembre,9,Brotación,10,10,15,20,false,"Yemas brotan, hojas salen","Inicio suave, sin exceso",Cada 10 días,15-20 litros
+vid|10,vid,Vid,Octubre,10,Crecimiento brotes,7,10,20,30,false,Brotes creciendo rápido,Constante,Cada 7-10 días,20-30 litros
+vid|11,vid,Vid,Noviembre,11,Floración → Cuaja-crecimiento,6,8,28,35,false,Florecitas pequeñas / Grano formándose,NO regar mucho en flor: cae fruto (corrimiento) / Crítico,Cada 7-10 días / Cada 5-7 días,25-30 litros / 30-40 litros
+vid|12,vid,Vid,Diciembre,12,Cuaja-crecimiento,5,7,30,40,false,Grano formándose,Crítico,Cada 5-7 días,30-40 litros
+arandano|1,arandano,Arandano,Enero,1,Maduración,2,3,10,15,false,Frutos azules,Mantener constante,Cada 2-3 días,10-15 litros
+arandano|2,arandano,Arandano,Febrero,2,Maduración → Postcosecha,4,4,9,12,false,Frutos azules / Hojas activas,Mantener constante / Reservas,Cada 2-3 días / Cada 5 días,10-15 litros / 8 litros
+arandano|3,arandano,Arandano,Marzo,3,Postcosecha,5,5,8,8,false,Hojas activas,Reservas,Cada 5 días,8 litros
+arandano|4,arandano,Arandano,Abril,4,Postcosecha,5,5,8,8,false,Hojas activas,Reservas,Cada 5 días,8 litros
+arandano|5,arandano,Arandano,Mayo,5,Reposo,10,15,5,5,false,Hojas caen o rojean,No dejar secar totalmente,Cada 10-15 días,5 litros
+arandano|6,arandano,Arandano,Junio,6,Reposo,10,15,5,5,false,Hojas caen o rojean,No dejar secar totalmente,Cada 10-15 días,5 litros
+arandano|7,arandano,Arandano,Julio,7,Reposo,10,15,5,5,false,Hojas caen o rojean,No dejar secar totalmente,Cada 10-15 días,5 litros
+arandano|8,arandano,Arandano,Agosto,8,Reposo,10,15,5,5,false,Hojas caen o rojean,No dejar secar totalmente,Cada 10-15 días,5 litros
+arandano|9,arandano,Arandano,Septiembre,9,Brotación,3,5,5,10,false,Hojas y flores brotan,Arándano tiene raíces superficiales: riego FRECUENTE,Cada 3-5 días,5-10 litros
+arandano|10,arandano,Arandano,Octubre,10,Floración,3,5,8,10,false,Flores blancas acampanadas,No mojar flores,Cada 3-5 días,8-10 litros
+arandano|11,arandano,Arandano,Noviembre,11,Cuaja-crecimiento,2,3,10,15,false,Frutos verdes-rosados,CRÍTICO: raíz superficial se seca rápido,Cada 2-3 días,10-15 litros
+arandano|12,arandano,Arandano,Diciembre,12,Cuaja-crecimiento → Maduración,2,3,10,15,false,Frutos verdes-rosados / Frutos azules,CRÍTICO: raíz superficial se seca rápido / Mantener constante,Cada 2-3 días,10-15 litros
+olivo|1,olivo,Olivo,Enero,1,Crecimiento,7,10,50,50,false,Aceitunas creciendo,Importante,Cada 7-10 días,50 litros
+olivo|2,olivo,Olivo,Febrero,2,Crecimiento,7,10,50,50,false,Aceitunas creciendo,Importante,Cada 7-10 días,50 litros
+olivo|3,olivo,Olivo,Marzo,3,Envero-maduración,10,15,30,40,false,Cambian verde a negro,Reducir: el estrés hídrico mejora aceite,Cada 10-15 días,30-40 litros
+olivo|4,olivo,Olivo,Abril,4,Envero-maduración,10,15,30,40,false,Cambian verde a negro,Reducir: el estrés hídrico mejora aceite,Cada 10-15 días,30-40 litros
+olivo|5,olivo,Olivo,Mayo,5,Envero-maduración,10,15,30,40,false,Cambian verde a negro,Reducir: el estrés hídrico mejora aceite,Cada 10-15 días,30-40 litros
+olivo|6,olivo,Olivo,Junio,6,Postcosecha,15,20,20,20,false,Hojas activas,Recuperación,Cada 15-20 días,20 litros
+olivo|7,olivo,Olivo,Julio,7,Postcosecha,15,20,20,20,false,Hojas activas,Recuperación,Cada 15-20 días,20 litros
+olivo|8,olivo,Olivo,Agosto,8,Reposo,20,20,0,0,true,Siempreverde,MUY resistente sequía,Mínimo o nada,Solo si extremo
+olivo|9,olivo,Olivo,Septiembre,9,Brotación,15,15,20,30,false,Brotes nuevos claros,Inicio moderado,Cada 15 días,20-30 litros
+olivo|10,olivo,Olivo,Octubre,10,Brotación,15,15,20,30,false,Brotes nuevos claros,Inicio moderado,Cada 15 días,20-30 litros
+olivo|11,olivo,Olivo,Noviembre,11,Floración,10,15,30,30,false,Racimos florales pequeños,"Regar antes de floración, no durante",Cada 10-15 días,30 litros
+olivo|12,olivo,Olivo,Diciembre,12,Cuaja,10,10,40,40,false,Aceitunitas verdes,Importante para cuaja,Cada 10 días,40 litros
+frutilla|1,frutilla,Frutilla,Enero,1,Fructificación y cosecha,2,2,3,4,false,Frutos verdes engordando y tomando color,"Humedad pareja: si se seca y se moja de golpe, la fruta se parte",Cada 2 días,3-4 litros por planta
+frutilla|2,frutilla,Frutilla,Febrero,2,Postcosecha,4,5,2,3,false,Estolones (guías) saliendo por los lados,"Corte los estolones si quiere fruta el año que viene, o enraícelos para nuevas plantas",Cada 4-5 días,2-3 litros por planta
+frutilla|3,frutilla,Frutilla,Marzo,3,Postcosecha,4,5,2,3,false,Estolones (guías) saliendo por los lados,"Corte los estolones si quiere fruta el año que viene, o enraícelos para nuevas plantas",Cada 4-5 días,2-3 litros por planta
+frutilla|4,frutilla,Frutilla,Abril,4,Establecimiento,2,3,2,2,false,Hojas nuevas chicas saliendo del centro,No deje que se seque ni un día: la raíz nueva no alcanza a buscar agua abajo,Cada 2-3 días,1.5-2.5 litros por planta
+frutilla|5,frutilla,Frutilla,Mayo,5,Establecimiento,2,3,2,2,false,Hojas nuevas chicas saliendo del centro,No deje que se seque ni un día: la raíz nueva no alcanza a buscar agua abajo,Cada 2-3 días,1.5-2.5 litros por planta
+frutilla|6,frutilla,Frutilla,Junio,6,Reposo,20,20,0,0,true,"Planta chica, hojas rojizas, sin crecimiento",Riegue apenas: el exceso en invierno pudre la corona,Cada 10-15 días,Solo si no llueve
+frutilla|7,frutilla,Frutilla,Julio,7,Reposo,20,20,0,0,true,"Planta chica, hojas rojizas, sin crecimiento",Riegue apenas: el exceso en invierno pudre la corona,Cada 10-15 días,Solo si no llueve
+frutilla|8,frutilla,Frutilla,Agosto,8,Crecimiento vegetativo,3,4,2,3,false,Hojas nuevas verdes y grandes,Es el momento de aportar compost y renovar el mulch de paja,Cada 3-4 días,2-3 litros por planta
+frutilla|9,frutilla,Frutilla,Septiembre,9,Crecimiento vegetativo,3,4,2,3,false,Hojas nuevas verdes y grandes,Es el momento de aportar compost y renovar el mulch de paja,Cada 3-4 días,2-3 litros por planta
+frutilla|10,frutilla,Frutilla,Octubre,10,Floración,2,3,2,4,false,Flores blancas abiertas,"Riegue al suelo, nunca sobre la flor: el agua en la flor trae botrytis",Cada 2-3 días,2.5-3.5 litros por planta
+frutilla|11,frutilla,Frutilla,Noviembre,11,Fructificación y cosecha,2,2,3,4,false,Frutos verdes engordando y tomando color,"Humedad pareja: si se seca y se moja de golpe, la fruta se parte",Cada 2 días,3-4 litros por planta
+frutilla|12,frutilla,Frutilla,Diciembre,12,Fructificación y cosecha,2,2,3,4,false,Frutos verdes engordando y tomando color,"Humedad pareja: si se seca y se moja de golpe, la fruta se parte",Cada 2 días,3-4 litros por planta
+frambuesa|1,frambuesa,Frambuesa,Enero,1,Fructificación,2,3,20,28,false,"Frutos rojos, cosecha cada 2-3 días","Es la etapa que más agua pide de todo el año; si falta, la fruta sale chica y seca",Cada 2-3 días,20-28 litros por planta
+frambuesa|2,frambuesa,Frambuesa,Febrero,2,Fructificación,2,3,20,28,false,"Frutos rojos, cosecha cada 2-3 días","Es la etapa que más agua pide de todo el año; si falta, la fruta sale chica y seca",Cada 2-3 días,20-28 litros por planta
+frambuesa|3,frambuesa,Frambuesa,Marzo,3,Postcosecha,7,8,10,15,false,Hojas empezando a amarillear,Baje el riego de a poco para que la planta entre bien al invierno,Cada 7-8 días,10-15 litros por planta
+frambuesa|4,frambuesa,Frambuesa,Abril,4,Postcosecha,7,8,10,15,false,Hojas empezando a amarillear,Baje el riego de a poco para que la planta entre bien al invierno,Cada 7-8 días,10-15 litros por planta
+frambuesa|5,frambuesa,Frambuesa,Mayo,5,Reposo,20,20,0,0,true,Cañas sin hojas,Es la época de podar: saque las cañas que ya dieron fruta,Cada 15-20 días,Solo si hay sequía larga
+frambuesa|6,frambuesa,Frambuesa,Junio,6,Reposo,20,20,0,0,true,Cañas sin hojas,Es la época de podar: saque las cañas que ya dieron fruta,Cada 15-20 días,Solo si hay sequía larga
+frambuesa|7,frambuesa,Frambuesa,Julio,7,Reposo,20,20,0,0,true,Cañas sin hojas,Es la época de podar: saque las cañas que ya dieron fruta,Cada 15-20 días,Solo si hay sequía larga
+frambuesa|8,frambuesa,Frambuesa,Agosto,8,Reposo,20,20,0,0,true,Cañas sin hojas,Es la época de podar: saque las cañas que ya dieron fruta,Cada 15-20 días,Solo si hay sequía larga
+frambuesa|9,frambuesa,Frambuesa,Septiembre,9,Brotación,5,6,8,12,false,Brotes nuevos saliendo de la base,Deje solo 6 a 8 cañas por planta y saque el resto,Cada 5-6 días,8-12 litros por planta
+frambuesa|10,frambuesa,Frambuesa,Octubre,10,Crecimiento de cañas,4,5,12,18,false,Cañas creciendo rápido en altura,Amarre las cañas al alambre antes de que se doblen con la fruta,Cada 4-5 días,12-18 litros por planta
+frambuesa|11,frambuesa,Frambuesa,Noviembre,11,Crecimiento de cañas → Floración,4,4,14,19,false,Cañas creciendo rápido en altura / Flores blancas chicas en los laterales,Amarre las cañas al alambre antes de que se doblen con la fruta / No moje la flor: riegue por goteo o al pie,Cada 4-5 días / Cada 3-4 días,12-18 litros por planta / 15-20 litros por planta
+frambuesa|12,frambuesa,Frambuesa,Diciembre,12,Floración → Fructificación,2,4,18,24,false,"Flores blancas chicas en los laterales / Frutos rojos, cosecha cada 2-3 días","No moje la flor: riegue por goteo o al pie / Es la etapa que más agua pide de todo el año; si falta, la fruta sale chica y seca",Cada 3-4 días / Cada 2-3 días,15-20 litros por planta / 20-28 litros por planta
+mora|1,mora,Mora,Enero,1,Fructificación,3,4,25,35,false,Frutos pasando de rojo a negro brillante,Coseche solo las negras opacas: la negra brillante todavía está ácida,Cada 3-4 días,25-35 litros por planta
+mora|2,mora,Mora,Febrero,2,Fructificación,3,4,25,35,false,Frutos pasando de rojo a negro brillante,Coseche solo las negras opacas: la negra brillante todavía está ácida,Cada 3-4 días,25-35 litros por planta
+mora|3,mora,Mora,Marzo,3,Postcosecha,8,10,12,18,false,"Hojas amarillando, cañas maduras",Saque al ras las cañas que fructificaron: no vuelven a dar,Cada 8-10 días,12-18 litros por planta
+mora|4,mora,Mora,Abril,4,Postcosecha,8,10,12,18,false,"Hojas amarillando, cañas maduras",Saque al ras las cañas que fructificaron: no vuelven a dar,Cada 8-10 días,12-18 litros por planta
+mora|5,mora,Mora,Mayo,5,Reposo,20,20,0,0,true,Cañas sin hojas o con pocas,Pode las cañas viejas al ras y deje las nuevas,Cada 15-20 días,Solo si hay sequía larga
+mora|6,mora,Mora,Junio,6,Reposo,20,20,0,0,true,Cañas sin hojas o con pocas,Pode las cañas viejas al ras y deje las nuevas,Cada 15-20 días,Solo si hay sequía larga
+mora|7,mora,Mora,Julio,7,Reposo,20,20,0,0,true,Cañas sin hojas o con pocas,Pode las cañas viejas al ras y deje las nuevas,Cada 15-20 días,Solo si hay sequía larga
+mora|8,mora,Mora,Agosto,8,Reposo,20,20,0,0,true,Cañas sin hojas o con pocas,Pode las cañas viejas al ras y deje las nuevas,Cada 15-20 días,Solo si hay sequía larga
+mora|9,mora,Mora,Septiembre,9,Brotación,6,7,10,15,false,Brotes nuevos vigorosos desde la base,Guíe las cañas nuevas al alambre desde temprano,Cada 6-7 días,10-15 litros por planta
+mora|10,mora,Mora,Octubre,10,Brotación → Crecimiento,6,6,12,18,false,Brotes nuevos vigorosos desde la base / Cañas largas y hojas grandes,Guíe las cañas nuevas al alambre desde temprano / Aporte compost al pie; la mora responde fuerte a la materia orgánica,Cada 6-7 días / Cada 5-6 días,10-15 litros por planta / 15-20 litros por planta
+mora|11,mora,Mora,Noviembre,11,Crecimiento → Floración,4,6,16,22,false,Cañas largas y hojas grandes / Flores blancas o rosadas,Aporte compost al pie; la mora responde fuerte a la materia orgánica / Riegue parejo: la flor con estrés no cuaja,Cada 5-6 días / Cada 4-5 días,15-20 litros por planta / 18-25 litros por planta
+mora|12,mora,Mora,Diciembre,12,Floración,4,5,18,25,false,Flores blancas o rosadas,Riegue parejo: la flor con estrés no cuaja,Cada 4-5 días,18-25 litros por planta
+kiwi|1,kiwi,Kiwi,Enero,1,Cuaja y crecimiento,3,4,90,120,false,Frutos chicos tomando forma,Es el frutal que más agua consume por planta: no lo deje secar ni un día de calor,Cada 3-4 días,90-120 litros por planta
+kiwi|2,kiwi,Kiwi,Febrero,2,Llenado de fruto,3,4,100,130,false,"Frutos creciendo rápido, todavía duros","El calibre se define acá: si falta agua ahora, queda chico para siempre",Cada 3-4 días,100-130 litros por planta
+kiwi|3,kiwi,Kiwi,Marzo,3,Llenado de fruto,3,4,100,130,false,"Frutos creciendo rápido, todavía duros","El calibre se define acá: si falta agua ahora, queda chico para siempre",Cada 3-4 días,100-130 litros por planta
+kiwi|4,kiwi,Kiwi,Abril,4,Cosecha y postcosecha,7,8,50,70,false,"Fruto firme, semilla ya negra por dentro",Coseche firme y madure adentro de la casa con una manzana al lado,Cada 7-8 días,50-70 litros por planta
+kiwi|5,kiwi,Kiwi,Mayo,5,Cosecha y postcosecha,7,8,50,70,false,"Fruto firme, semilla ya negra por dentro",Coseche firme y madure adentro de la casa con una manzana al lado,Cada 7-8 días,50-70 litros por planta
+kiwi|6,kiwi,Kiwi,Junio,6,Reposo,20,20,0,0,true,Parrón sin hojas,Época de poda: es la especie que más poda necesita,Cada 20-25 días,Solo si hay sequía larga
+kiwi|7,kiwi,Kiwi,Julio,7,Reposo,20,20,0,0,true,Parrón sin hojas,Época de poda: es la especie que más poda necesita,Cada 20-25 días,Solo si hay sequía larga
+kiwi|8,kiwi,Kiwi,Agosto,8,Reposo,20,20,0,0,true,Parrón sin hojas,Época de poda: es la especie que más poda necesita,Cada 20-25 días,Solo si hay sequía larga
+kiwi|9,kiwi,Kiwi,Septiembre,9,Brotación,5,6,40,60,false,"Brotes tiernos, muy frágiles al viento",Proteja del viento: el brote nuevo se quiebra solo,Cada 5-6 días,40-60 litros por planta
+kiwi|10,kiwi,Kiwi,Octubre,10,Brotación,5,6,40,60,false,"Brotes tiernos, muy frágiles al viento",Proteja del viento: el brote nuevo se quiebra solo,Cada 5-6 días,40-60 litros por planta
+kiwi|11,kiwi,Kiwi,Noviembre,11,Floración,4,5,60,80,false,Flores blancas grandes y perfumadas,"Necesita una planta macho cada 6 a 8 hembras, o no hay fruta",Cada 4-5 días,60-80 litros por planta
+kiwi|12,kiwi,Kiwi,Diciembre,12,Cuaja y crecimiento,3,4,90,120,false,Frutos chicos tomando forma,Es el frutal que más agua consume por planta: no lo deje secar ni un día de calor,Cada 3-4 días,90-120 litros por planta
+avellano|1,avellano,Avellano,Enero,1,Llenado de nuez,5,7,60,80,false,Avellanas formadas dentro de su capuchón verde,Acá se define el peso del grano: es la etapa crítica de riego,Cada 5-7 días,60-80 litros por árbol
+avellano|2,avellano,Avellano,Febrero,2,Maduración y caída,8,10,40,55,false,Avellanas cayendo solas al suelo,Mantenga el suelo limpio y parejo para juntarlas fácil,Cada 8-10 días,40-55 litros por árbol
+avellano|3,avellano,Avellano,Marzo,3,Maduración y caída,8,10,40,55,false,Avellanas cayendo solas al suelo,Mantenga el suelo limpio y parejo para juntarlas fácil,Cada 8-10 días,40-55 litros por árbol
+avellano|4,avellano,Avellano,Abril,4,Postcosecha,12,15,25,35,false,Hojas amarillas cayendo,Aporte compost antes de que entre el invierno,Cada 12-15 días,25-35 litros por árbol
+avellano|5,avellano,Avellano,Mayo,5,Postcosecha,12,15,25,35,false,Hojas amarillas cayendo,Aporte compost antes de que entre el invierno,Cada 12-15 días,25-35 litros por árbol
+avellano|6,avellano,Avellano,Junio,6,Reposo,20,20,0,0,true,Árbol sin hojas,Época de poda de formación,Cada 20-25 días,Solo si hay sequía larga
+avellano|7,avellano,Avellano,Julio,7,Floración invernal,12,15,20,30,false,Amentos colgando como gusanitos amarillos,"Florece en pleno invierno: acá casi no se riega, la lluvia basta",Cada 12-15 días,20-30 litros por árbol
+avellano|8,avellano,Avellano,Agosto,8,Floración invernal,12,15,20,30,false,Amentos colgando como gusanitos amarillos,"Florece en pleno invierno: acá casi no se riega, la lluvia basta",Cada 12-15 días,20-30 litros por árbol
+avellano|9,avellano,Avellano,Septiembre,9,Crecimiento vegetativo,8,10,35,50,false,Hojas nuevas y brotes creciendo,Saque los chupones de la base o se le transforma en matorral,Cada 8-10 días,35-50 litros por árbol
+avellano|10,avellano,Avellano,Octubre,10,Crecimiento vegetativo,8,10,35,50,false,Hojas nuevas y brotes creciendo,Saque los chupones de la base o se le transforma en matorral,Cada 8-10 días,35-50 litros por árbol
+avellano|11,avellano,Avellano,Noviembre,11,Llenado de nuez,5,7,60,80,false,Avellanas formadas dentro de su capuchón verde,Acá se define el peso del grano: es la etapa crítica de riego,Cada 5-7 días,60-80 litros por árbol
+avellano|12,avellano,Avellano,Diciembre,12,Llenado de nuez,5,7,60,80,false,Avellanas formadas dentro de su capuchón verde,Acá se define el peso del grano: es la etapa crítica de riego,Cada 5-7 días,60-80 litros por árbol
+nispero|1,nispero,Níspero,Enero,1,Verano,6,8,50,65,false,"Árbol verde, madera nueva madurando",El riego de verano prepara la floración de otoño: no lo descuide,Cada 6-8 días,50-65 litros por árbol
+nispero|2,nispero,Níspero,Febrero,2,Verano,6,8,50,65,false,"Árbol verde, madera nueva madurando",El riego de verano prepara la floración de otoño: no lo descuide,Cada 6-8 días,50-65 litros por árbol
+nispero|3,nispero,Níspero,Marzo,3,Verano,6,8,50,65,false,"Árbol verde, madera nueva madurando",El riego de verano prepara la floración de otoño: no lo descuide,Cada 6-8 días,50-65 litros por árbol
+nispero|4,nispero,Níspero,Abril,4,Floración,12,15,25,35,false,"Racimos de flores blancas peludas, en pleno otoño",Florece al revés que todos: la flor pasa el invierno y la fruta sale en primavera,Cada 12-15 días,25-35 litros por árbol
+nispero|5,nispero,Níspero,Mayo,5,Floración,12,15,25,35,false,"Racimos de flores blancas peludas, en pleno otoño",Florece al revés que todos: la flor pasa el invierno y la fruta sale en primavera,Cada 12-15 días,25-35 litros por árbol
+nispero|6,nispero,Níspero,Junio,6,Floración,12,15,25,35,false,"Racimos de flores blancas peludas, en pleno otoño",Florece al revés que todos: la flor pasa el invierno y la fruta sale en primavera,Cada 12-15 días,25-35 litros por árbol
+nispero|7,nispero,Níspero,Julio,7,Crecimiento de fruto,8,10,35,50,false,Frutos verdes chicos en racimo,Ralee el racimo a 3 o 4 frutos si quiere fruta grande,Cada 8-10 días,35-50 litros por árbol
+nispero|8,nispero,Níspero,Agosto,8,Crecimiento de fruto,8,10,35,50,false,Frutos verdes chicos en racimo,Ralee el racimo a 3 o 4 frutos si quiere fruta grande,Cada 8-10 días,35-50 litros por árbol
+nispero|9,nispero,Níspero,Septiembre,9,Maduración y cosecha,6,8,45,60,false,"Frutos amarillo-anaranjados, blandos al tacto",Es el primer fruto del año: coseche cuando suelta fácil,Cada 6-8 días,45-60 litros por árbol
+nispero|10,nispero,Níspero,Octubre,10,Maduración y cosecha,6,8,45,60,false,"Frutos amarillo-anaranjados, blandos al tacto",Es el primer fruto del año: coseche cuando suelta fácil,Cada 6-8 días,45-60 litros por árbol
+nispero|11,nispero,Níspero,Noviembre,11,Postcosecha y brotación,7,9,40,55,false,Brotes nuevos y hojas grandes saliendo,"Pode ahora, justo después de cosechar",Cada 7-9 días,40-55 litros por árbol
+nispero|12,nispero,Níspero,Diciembre,12,Postcosecha y brotación,7,9,40,55,false,Brotes nuevos y hojas grandes saliendo,"Pode ahora, justo después de cosechar",Cada 7-9 días,40-55 litros por árbol
+lucuma|1,lucuma,Lúcuma,Enero,1,Cuaja y crecimiento,6,8,55,75,false,Frutos verdes redondos creciendo,Riegue parejo pero nunca encharque: la raíz se pudre con facilidad,Cada 6-8 días,55-75 litros por árbol
+lucuma|2,lucuma,Lúcuma,Febrero,2,Cuaja y crecimiento,6,8,55,75,false,Frutos verdes redondos creciendo,Riegue parejo pero nunca encharque: la raíz se pudre con facilidad,Cada 6-8 días,55-75 litros por árbol
+lucuma|3,lucuma,Lúcuma,Marzo,3,Maduración,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol,Cada 8-12 días,45-60 litros por árbol
+lucuma|4,lucuma,Lúcuma,Abril,4,Maduración,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol,Cada 8-12 días,45-60 litros por árbol
+lucuma|5,lucuma,Lúcuma,Mayo,5,Maduración,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol,Cada 8-12 días,45-60 litros por árbol
+lucuma|6,lucuma,Lúcuma,Junio,6,Maduración,8,12,45,60,false,"Frutos grandes, piel verde con tinte café",La lúcuma madura lento: puede pasar 9 meses en el árbol,Cada 8-12 días,45-60 litros por árbol
+lucuma|7,lucuma,Lúcuma,Julio,7,Cosecha,12,15,30,45,false,Frutos que se desprenden con facilidad,Coseche firme y déjela madurar en cajón con paja,Cada 12-15 días,30-45 litros por árbol
+lucuma|8,lucuma,Lúcuma,Agosto,8,Cosecha,12,15,30,45,false,Frutos que se desprenden con facilidad,Coseche firme y déjela madurar en cajón con paja,Cada 12-15 días,30-45 litros por árbol
+lucuma|9,lucuma,Lúcuma,Septiembre,9,Floración,8,10,40,55,false,"Flores verdosas chicas, poco llamativas",Necesita calor y nada de heladas; solo prospera en la franja costera norte y centro,Cada 8-10 días,40-55 litros por árbol
+lucuma|10,lucuma,Lúcuma,Octubre,10,Floración,8,10,40,55,false,"Flores verdosas chicas, poco llamativas",Necesita calor y nada de heladas; solo prospera en la franja costera norte y centro,Cada 8-10 días,40-55 litros por árbol
+lucuma|11,lucuma,Lúcuma,Noviembre,11,Floración,8,10,40,55,false,"Flores verdosas chicas, poco llamativas",Necesita calor y nada de heladas; solo prospera en la franja costera norte y centro,Cada 8-10 días,40-55 litros por árbol
+lucuma|12,lucuma,Lúcuma,Diciembre,12,Cuaja y crecimiento,6,8,55,75,false,Frutos verdes redondos creciendo,Riegue parejo pero nunca encharque: la raíz se pudre con facilidad,Cada 6-8 días,55-75 litros por árbol
+palto|1,palto,Palta,Enero,1,Crecimiento de fruto,4,5,90,120,false,"Frutos creciendo rápido, piel verde",Mulch grueso bajo la copa: la raíz de la palta vive en los primeros 30 cm,Cada 4-5 días,90-120 litros por árbol
+palto|2,palto,Palta,Febrero,2,Crecimiento de fruto,4,5,90,120,false,"Frutos creciendo rápido, piel verde",Mulch grueso bajo la copa: la raíz de la palta vive en los primeros 30 cm,Cada 4-5 días,90-120 litros por árbol
+palto|3,palto,Palta,Marzo,3,Maduración,6,8,70,90,false,"Frutos de tamaño final, piel opaca",La palta madura fuera del árbol: coséchela y espere unos días,Cada 6-8 días,70-90 litros por árbol
+palto|4,palto,Palta,Abril,4,Maduración,6,8,70,90,false,"Frutos de tamaño final, piel opaca",La palta madura fuera del árbol: coséchela y espere unos días,Cada 6-8 días,70-90 litros por árbol
+palto|5,palto,Palta,Mayo,5,Maduración,6,8,70,90,false,"Frutos de tamaño final, piel opaca",La palta madura fuera del árbol: coséchela y espere unos días,Cada 6-8 días,70-90 litros por árbol
+palto|6,palto,Palta,Junio,6,Invierno,12,15,35,50,false,"Árbol verde, sin crecimiento visible",Cuide las heladas más que el riego; el exceso de agua fría en invierno mata raíces,Cada 12-15 días,35-50 litros por árbol
+palto|7,palto,Palta,Julio,7,Invierno,12,15,35,50,false,"Árbol verde, sin crecimiento visible",Cuide las heladas más que el riego; el exceso de agua fría en invierno mata raíces,Cada 12-15 días,35-50 litros por árbol
+palto|8,palto,Palta,Agosto,8,Invierno,12,15,35,50,false,"Árbol verde, sin crecimiento visible",Cuide las heladas más que el riego; el exceso de agua fría en invierno mata raíces,Cada 12-15 días,35-50 litros por árbol
+palto|9,palto,Palta,Septiembre,9,Floración,6,8,50,70,false,Miles de flores amarillo-verdosas,Estrés hídrico en flor bota casi toda la cuaja: es el momento más delicado del año,Cada 6-8 días,50-70 litros por árbol
+palto|10,palto,Palta,Octubre,10,Floración,6,8,50,70,false,Miles de flores amarillo-verdosas,Estrés hídrico en flor bota casi toda la cuaja: es el momento más delicado del año,Cada 6-8 días,50-70 litros por árbol
+palto|11,palto,Palta,Noviembre,11,Floración → Cuaja,6,7,60,80,false,"Miles de flores amarillo-verdosas / Frutos chicos como arvejas, con mucha caída natural",Estrés hídrico en flor bota casi toda la cuaja: es el momento más delicado del año / La caída de frutitos es normal: el árbol deja los que puede mantener,Cada 6-8 días / Cada 5-6 días,50-70 litros por árbol / 70-90 litros por árbol
+palto|12,palto,Palta,Diciembre,12,Cuaja → Crecimiento de fruto,4,6,80,105,false,"Frutos chicos como arvejas, con mucha caída natural / Frutos creciendo rápido, piel verde",La caída de frutitos es normal: el árbol deja los que puede mantener / Mulch grueso bajo la copa: la raíz de la palta vive en los primeros 30 cm,Cada 5-6 días / Cada 4-5 días,70-90 litros por árbol / 90-120 litros por árbol
+chirimoya|1,chirimoya,Chirimoya,Enero,1,Cuaja y crecimiento,5,7,60,85,false,Frutos verdes con escamas marcadas,Sombra en las horas de más calor si vive tierra adentro,Cada 5-7 días,60-85 litros por árbol
+chirimoya|2,chirimoya,Chirimoya,Febrero,2,Cuaja y crecimiento,5,7,60,85,false,Frutos verdes con escamas marcadas,Sombra en las horas de más calor si vive tierra adentro,Cada 5-7 días,60-85 litros por árbol
+chirimoya|3,chirimoya,Chirimoya,Marzo,3,Maduración,7,9,50,70,false,"Frutos grandes, escamas que se abren",Coseche firme: madura en dos o tres días dentro de la casa,Cada 7-9 días,50-70 litros por árbol
+chirimoya|4,chirimoya,Chirimoya,Abril,4,Maduración,7,9,50,70,false,"Frutos grandes, escamas que se abren",Coseche firme: madura en dos o tres días dentro de la casa,Cada 7-9 días,50-70 litros por árbol
+chirimoya|5,chirimoya,Chirimoya,Mayo,5,Maduración,7,9,50,70,false,"Frutos grandes, escamas que se abren",Coseche firme: madura en dos o tres días dentro de la casa,Cada 7-9 días,50-70 litros por árbol
+chirimoya|6,chirimoya,Chirimoya,Junio,6,Cosecha y reposo,15,20,20,30,false,"Árbol con pocas hojas, semi caduco",Solo prospera en microclimas costeros protegidos de helada,Cada 15-20 días,20-30 litros por árbol
+chirimoya|7,chirimoya,Chirimoya,Julio,7,Cosecha y reposo,15,20,20,30,false,"Árbol con pocas hojas, semi caduco",Solo prospera en microclimas costeros protegidos de helada,Cada 15-20 días,20-30 litros por árbol
+chirimoya|8,chirimoya,Chirimoya,Agosto,8,Cosecha y reposo,15,20,20,30,false,"Árbol con pocas hojas, semi caduco",Solo prospera en microclimas costeros protegidos de helada,Cada 15-20 días,20-30 litros por árbol
+chirimoya|9,chirimoya,Chirimoya,Septiembre,9,Brotación y floración,7,9,40,60,false,Hojas nuevas y flores carnosas verdes,En huerto de casa conviene polinizar a mano con pincel: sin eso casi no cuaja,Cada 7-9 días,40-60 litros por árbol
+chirimoya|10,chirimoya,Chirimoya,Octubre,10,Brotación y floración,7,9,40,60,false,Hojas nuevas y flores carnosas verdes,En huerto de casa conviene polinizar a mano con pincel: sin eso casi no cuaja,Cada 7-9 días,40-60 litros por árbol
+chirimoya|11,chirimoya,Chirimoya,Noviembre,11,Brotación y floración,7,9,40,60,false,Hojas nuevas y flores carnosas verdes,En huerto de casa conviene polinizar a mano con pincel: sin eso casi no cuaja,Cada 7-9 días,40-60 litros por árbol
+chirimoya|12,chirimoya,Chirimoya,Diciembre,12,Brotación y floración → Cuaja y crecimiento,6,8,50,72,false,Hojas nuevas y flores carnosas verdes / Frutos verdes con escamas marcadas,En huerto de casa conviene polinizar a mano con pincel: sin eso casi no cuaja / Sombra en las horas de más calor si vive tierra adentro,Cada 7-9 días / Cada 5-7 días,40-60 litros por árbol / 60-85 litros por árbol
+papayo_chileno|1,papayo_chileno,Papayo chileno,Enero,1,Floración y cuaja continua,4,5,35,50,false,Flores y frutos de todos los tamaños a la vez,Produce todo el año donde no hiela: siempre tendrá fruta en alguna etapa,Cada 4-5 días,35-50 litros por planta
+papayo_chileno|2,papayo_chileno,Papayo chileno,Febrero,2,Floración y cuaja continua,4,5,35,50,false,Flores y frutos de todos los tamaños a la vez,Produce todo el año donde no hiela: siempre tendrá fruta en alguna etapa,Cada 4-5 días,35-50 litros por planta
+papayo_chileno|3,papayo_chileno,Papayo chileno,Marzo,3,Maduración,6,8,30,40,false,Frutos amarillos y muy aromáticos,Se cosecha amarillo; verde solo sirve para cocinar en almíbar,Cada 6-8 días,30-40 litros por planta
+papayo_chileno|4,papayo_chileno,Papayo chileno,Abril,4,Maduración,6,8,30,40,false,Frutos amarillos y muy aromáticos,Se cosecha amarillo; verde solo sirve para cocinar en almíbar,Cada 6-8 días,30-40 litros por planta
+papayo_chileno|5,papayo_chileno,Papayo chileno,Mayo,5,Maduración,6,8,30,40,false,Frutos amarillos y muy aromáticos,Se cosecha amarillo; verde solo sirve para cocinar en almíbar,Cada 6-8 días,30-40 litros por planta
+papayo_chileno|6,papayo_chileno,Papayo chileno,Junio,6,Invierno,12,15,15,25,false,"Planta parada, frutos madurando lento",Nunca riegue contra el tallo: haga el anillo a 40 cm del cuello,Cada 12-15 días,15-25 litros por planta
+papayo_chileno|7,papayo_chileno,Papayo chileno,Julio,7,Invierno,12,15,15,25,false,"Planta parada, frutos madurando lento",Nunca riegue contra el tallo: haga el anillo a 40 cm del cuello,Cada 12-15 días,15-25 litros por planta
+papayo_chileno|8,papayo_chileno,Papayo chileno,Agosto,8,Invierno,12,15,15,25,false,"Planta parada, frutos madurando lento",Nunca riegue contra el tallo: haga el anillo a 40 cm del cuello,Cada 12-15 días,15-25 litros por planta
+papayo_chileno|9,papayo_chileno,Papayo chileno,Septiembre,9,Crecimiento de primavera,5,6,25,35,false,"Hojas grandes nuevas, crecimiento rápido",Crece muy rápido: aporte compost dos veces al año,Cada 5-6 días,25-35 litros por planta
+papayo_chileno|10,papayo_chileno,Papayo chileno,Octubre,10,Crecimiento de primavera,5,6,25,35,false,"Hojas grandes nuevas, crecimiento rápido",Crece muy rápido: aporte compost dos veces al año,Cada 5-6 días,25-35 litros por planta
+papayo_chileno|11,papayo_chileno,Papayo chileno,Noviembre,11,Crecimiento de primavera,5,6,25,35,false,"Hojas grandes nuevas, crecimiento rápido",Crece muy rápido: aporte compost dos veces al año,Cada 5-6 días,25-35 litros por planta
+papayo_chileno|12,papayo_chileno,Papayo chileno,Diciembre,12,Floración y cuaja continua,4,5,35,50,false,Flores y frutos de todos los tamaños a la vez,Produce todo el año donde no hiela: siempre tendrá fruta en alguna etapa,Cada 4-5 días,35-50 litros por planta

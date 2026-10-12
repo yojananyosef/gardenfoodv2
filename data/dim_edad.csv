@@ -1,0 +1,10 @@
+# dim_edad: dominio agronomico importado del Excel maestro.
+# Origen: hoja DIM_EDAD del Excel. 4 filas.
+# Fuente canonica: este CSV. La migracion SQL se genera desde aqui,
+# no desde el Excel, para que la base se pueda reconstruir sin el archivo.
+# Regenerar: python scripts/generar_base_maestra.py <ruta.xlsx> --import
+edad_n,edad,anos_min,anos_max,factor_litros,factor_dias
+1,Recién plantado (0-1 año),0,1,0.3,0.55
+2,Joven (2-3 años),2,3,0.55,0.75
+3,En producción inicial (4-5 años),4,5,0.8,0.9
+4,Adulto (6 años o más),6,,1,1
