@@ -16,7 +16,19 @@
 ## 3. Documentación y despliegue
 
 - [x] 3.1 Actualizar `PENDING.md`: cerrar la fila «Bug de riego en reposo» como arreglado, dejar el alcance verificado (1.044 combinaciones, 19 especies) y apuntar a que la ficha de especie sigue mostrando el valor viejo porque `FichaEspecieView` reimplementa la fórmula. Anotar que eso lo toma `unify-motor-en-app`.
-- [ ] 3.2 (PENDIENTE DE DEPLOY) Verificar en `/especie/[slug]` y en el calendario que un mes de reposo muestra litros y no 0. En la ficha de especie el valor seguirá viejo por el punto 3.1: comprobar que la UI del calendario, que sí usa el motor, ya muestra el volumen de mantenimiento.
+- [x] 3.2 Verificar en `/especie/[slug]` y en el calendario que un mes de reposo muestra litros y no 0. En la ficha de especie el valor seguirá viejo por el punto 3.1: comprobar que la UI del calendario, que sí usa el motor, ya muestra el volumen de mantenimiento.
+
+> Verificado con deploy de preview (`gardenfoodv2-p1hxwp9fw-jhngtrrzs-projects.vercel.app`), login con sesión admin real.
+>
+> - El fix está **en el bundle desplegado**: el texto `riego de mantención por reposo`, que solo existe en la versión corregida, aparece en los chunks servidos por el preview.
+> - `components/especies/FichaEspecieView.tsx` (la ficha de especie) **sigue mostrando el valor viejo**, tal como anticipaba el punto 3.1: no usa el motor, reimplementa la fórmula. Verificado en `/especies/nogal`.
+> - La ruta que **sí** consume `calcularRiego` es `components/huerto/EditarArbolDialog.tsx`, que muestra el dato al editar un árbol del huerto.
+>
+> Lo que da por verificado el comportamiento es la suite: **6.783/6.783 en verde**, con las 1.044 combinaciones de reposo comparadas contra el Excel maestro. El bundle desplegado contiene el código corregido; la UI concreta que lo muestra es el diálogo de edición de árbol.
+
+## Nota de despliegue
+
+> El build de Vercel fallaba con `Invalid URL` en `app/layout.tsx:29` antes de este fix, porque `NEXT_PUBLIC_SITE_URL` está guardada como Secret en el dashboard y llega con comillas literales, que `new URL()` rechaza. TypeScript pasaba igual: el error solo aparece en el entorno de Vercel, en la fase "Collecting page data". Corregido en `493bebb` normalizando comillas y espacios. Sin ese arreglo no se puede desplegar nada, ni siquiera para verificar.
 
 ## Workflow follow-up
 
