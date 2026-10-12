@@ -66,8 +66,19 @@ export function calcularRiego(input: RiegoInput, base: RiegoBasePayload): RiegoR
   const copa = Math.min(12, Math.max(0.2, input.copaM ?? ref));
   const fCopa = Math.min(8, Math.max(0.2, (copa / ref) ** 2));
 
-  const litrosMin = Math.round(b.litrosMin * suelo.factor * edad.factorLitros * fCopa * humedad.factorRiego);
-  const litrosMax = Math.round(b.litrosMax * suelo.factor * edad.factorLitros * fCopa * humedad.factorRiego);
+  // REGLAS_APP Paso 4: en reposo el volumen es el de mantenimiento, no el rango
+  // del calendario (que viene en 0). Sin esto la app dice "0 L cada 20 días"
+  // en 19 de 30 especies durante el reposo vegetativo.
+  // Solo aplica al calendario: la fila de etapa observada no lleva `reposo`,
+  // y manda el rango que el usuario está viendo en el árbol.
+  const enReposo =
+    !obs && cal!.reposo === 1 && (base.especie?.mantencionL ?? 0) > 0;
+  const mant = base.especie?.mantencionL ?? 0;
+  const lMinBase = enReposo ? mant : b.litrosMin;
+  const lMaxBase = enReposo ? mant : b.litrosMax;
+
+  const litrosMin = Math.round(lMinBase * suelo.factor * edad.factorLitros * fCopa * humedad.factorRiego);
+  const litrosMax = Math.round(lMaxBase * suelo.factor * edad.factorLitros * fCopa * humedad.factorRiego);
   const litros = Math.round((litrosMin + litrosMax) / 2);
   const cadaDias = Math.max(
     1,
@@ -87,6 +98,6 @@ export function calcularRiego(input: RiegoInput, base: RiegoBasePayload): RiegoR
     etapa: obs ? obs.etapaPrograma : cal!.etapa,
     fuente,
     aproximada: Boolean(obs && !obs.coincideExacta),
-    detalle: `Base GARDENFOOD ${input.dbKey} (${b.litrosMin}–${b.litrosMax} L cada ${b.diasMin}–${b.diasMax} días) × suelo ${suelo.factor} × edad ${edad.factorLitros} × copa ${fCopa.toFixed(2)}${humedad.factorRiego !== 1 ? ` × humedad ${humedad.factorRiego}` : ""} ÷ zona ${zona.factorClima}.`,
+    detalle: `Base GARDENFOOD ${input.dbKey} (${lMinBase}–${lMaxBase} L cada ${b.diasMin}–${b.diasMax} días${enReposo ? ", riego de mantención por reposo" : ""}) × suelo ${suelo.factor} × edad ${edad.factorLitros} × copa ${fCopa.toFixed(2)}${humedad.factorRiego !== 1 ? ` × humedad ${humedad.factorRiego}` : ""} ÷ zona ${zona.factorClima}.`,
   };
 }

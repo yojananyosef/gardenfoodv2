@@ -47,3 +47,7 @@ testsprite_tests/tmp/config.json
 
 # playwright mcp: artefactos de sesión (console-*.log, page-*.yml)
 .playwright-mcp/
+
+# Python (scripts/*.py no empaquetan bytecode en el repo)
+__pycache__/
+*.pyc
