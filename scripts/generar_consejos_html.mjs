@@ -164,8 +164,28 @@ const html = `<!doctype html>
 <main id="main"></main>
 <div class="aviso" id="aviso"></div>
 
-<script>
-const DATOS = ${JSON.stringify(items)};
+<!--
+  Los datos van en un bloque JSON, no en un script ejecutable. Un script con
+  type="application/json" NO se ejecuta, asi que la CSP no lo toca: la pagina
+  tiene script-src 'self' 'nonce-...' 'strict-dynamic', y con strict-dynamic
+  cualquier script inline sin ese nonce queda bloqueado. Por eso la logica va en
+  CONSEJOS-NUEVOS.js, que si entra por 'self'.
+-->
+<script type="application/json" id="datos">${JSON.stringify(items).replace(/</g, "\\u003c")}</script>
+<script src="/CONSEJOS-NUEVOS.js"></script>
+</body>
+</html>`;
+
+const js = `// Logica de la pagina de marcado de consejos.
+//
+// Va en un archivo aparte, y no dentro del HTML, por la CSP: la aplicacion
+// manda script-src 'self' 'nonce-...' 'strict-dynamic', y con strict-dynamic
+// un script inline sin ese nonce queda bloqueado. En desarrollo la CSP es
+// permisiva, asi que esto funcionaba en local y en dev, y se rompia solo en
+// produccion. Un archivo externo entra por 'self'.
+"use strict";
+
+const DATOS = JSON.parse(document.getElementById("datos").textContent);
 const CLAVE = "consejos-nuevos-v1";
 let marcas = {};
 try { marcas = JSON.parse(localStorage.getItem(CLAVE) || "{}"); } catch {}
@@ -329,15 +349,11 @@ for (const e of [...new Set(DATOS.map(x => x.especie))].sort()) {
   sel.appendChild(o);
 }
 pintar();
-</script>
-</body>
-</html>`;
+`;
 
-// En `public/` y no en la raiz: Next solo sirve como archivo estatico lo que
-// esta ahi. Un HTML en la raiz del repo responde con la landing, que es lo que
-// pasaba.
 writeFileSync("public/CONSEJOS-NUEVOS.html", html, "utf8");
-console.log(`public/CONSEJOS-NUEVOS.html generado  ->  /CONSEJOS-NUEVOS.html`);
+writeFileSync("public/CONSEJOS-NUEVOS.js", js, "utf8");
+console.log(`public/CONSEJOS-NUEVOS.html + .js generados  ->  /CONSEJOS-NUEVOS.html`);
 console.log(`   ${items.length} consejos en ${new Set(items.map(i => i.especie)).size} especies`);
 console.log(`   con pariente en el legacy: ${items.filter(i => i.legacy).length}`);
 console.log(`   sin nada parecido: ${items.filter(i => !i.legacy).length}`);
