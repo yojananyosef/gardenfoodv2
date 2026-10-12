@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/dialog";
 import { actualizarArbol, eliminarArbol } from "@/lib/huerto/actions";
 import { mesEnChile } from "@/lib/climate/alertas";
-import { buscarComuna, getEspeciePorDbKey } from "@/lib/agronomy";
+import { getEspeciePorDbKey } from "@/lib/agronomy";
 import { calcularRiego } from "@/lib/riego/calc";
+import type { ZonaRiegoId } from "@/lib/riego/datos";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
 import type { RiegoBasePayload } from "@/lib/riego/actions";
 import { cn } from "@/lib/utils";
@@ -78,7 +79,7 @@ export function EditarArbolDialog({
   const [humedad, setHumedad] = useState("2");
   const [etapaCodigo, setEtapaCodigo] = useState("");
   const [sueloPerfil, setSueloPerfil] = useState<string | null>(null);
-  const [zonaPerfil, setZonaPerfil] = useState<number | null>(null);
+  const [zonaRiegoPerfil, setZonaRiegoPerfil] = useState<ZonaRiegoId>("C1");
   const [base, setBase] = useState<RiegoBasePayload | null>(null);
   const [pending, startTransition] = useTransition();
   // Los detalles parten expandidos solo si el árbol ya tiene datos.
@@ -110,8 +111,19 @@ export function EditarArbolDialog({
         if (!active) return;
         if (data?.tipo_suelo) setSueloPerfil(data.tipo_suelo as string);
         if (data?.comuna) {
-          const match = buscarComuna(data.comuna as string);
-          if (match) setZonaPerfil(match.zonaId);
+          // La zona de riego sale de `dim_comunas` preguntando solo esa comuna.
+          // Antes venía de `zonaRiegoDeZonaId()`, que traducía el número de
+          // zona con `if` anidados y estimaba mal en las comunas de borde:
+          // dentro de una misma zona hay comunas con clima de riego distinto,
+          // y la tabla lo sabe por comuna. Una fila, no las 346.
+          const { data: filaZona } = await supabase
+            .from("dim_comunas")
+            .select("zona_riego_id")
+            .ilike("comuna", data.comuna as string)
+            .maybeSingle();
+          if (active && filaZona?.zona_riego_id) {
+            setZonaRiegoPerfil(filaZona.zona_riego_id as ZonaRiegoId);
+          }
         }
       } catch {
         // Sin perfil: la vista previa usa valores de referencia.
@@ -150,7 +162,7 @@ export function EditarArbolDialog({
       {
         dbKey: especie,
         mes: mesEnChile(),
-        zonaId: zonaPerfil,
+        zonaRiego: zonaRiegoPerfil,
         suelo: (sueloPerfil as "G" | "MG" | "M" | "F" | null) ?? null,
         edadN: edadN ? Number(edadN) : null,
         copaM: copaNum !== null && Number.isFinite(copaNum) ? copaNum : null,
@@ -160,7 +172,7 @@ export function EditarArbolDialog({
       },
       base,
     );
-  }, [base, especie, zonaPerfil, sueloPerfil, edadN, copaM, humedad, etapaCodigo, caudalLH]);
+  }, [base, especie, zonaRiegoPerfil, sueloPerfil, edadN, copaM, humedad, etapaCodigo, caudalLH]);
 
   function guardar() {
     startTransition(async () => {

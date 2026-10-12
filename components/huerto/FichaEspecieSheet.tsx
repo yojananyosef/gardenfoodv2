@@ -1,21 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FichaEspecieView } from "@/components/especies/FichaEspecieView";
 import { getEspeciePorDbKey, getFicha, urlFichaEspecie } from "@/lib/agronomy";
+import type { ComunaCatalogo } from "@/lib/agronomy/catalogo";
+import { createClient } from "@/lib/supabase/client";
+
+/**
+ * El catálogo de comunas se pide al abrir el sheet, no antes.
+ *
+ * En la página de la ficha lo carga el servidor y llega por props, pero acá
+ * sería otra cosa: `BotonFichaEspecie` se usa en muchas pantallas y el sheet
+ * casi siempre está cerrado. Pasarlo por props obligaría a bajar 346 filas en
+ * cada una aunque nadie lo abra. Se leen de `dim_comunas` cuando se abre, que
+ * tiene lectura pública para anon.
+ *
+ * Sigue habiendo una sola fuente: la tabla. Esto no duplica el catálogo, solo
+ * decide cuándo traerlo.
+ */
+function useComunasAlAbrir(): ComunaCatalogo[] | null {
+  const [comunas, setComunas] = useState<ComunaCatalogo[] | null>(null);
+  useEffect(() => {
+    let active = true;
+    const supabase = createClient();
+    void supabase
+      .from("dim_comunas")
+      .select("comuna, region, zona_agro_id, zona_riego_id, macrozona_id")
+      .then(({ data }) => {
+        if (!active || !data) return;
+        setComunas(
+          data.map((r) => ({
+            comuna: r.comuna as string,
+            region: r.region as string,
+            zonaId: Number(r.zona_agro_id ?? 7),
+            zonaRiegoId: (r.zona_riego_id as string) || "C1",
+            macrozonaId: (r.macrozona_id as string) || "",
+            zonaAgroId: String(r.zona_agro_id ?? ""),
+          })),
+        );
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+  return comunas;
+}
 
 function ContenidoFicha({ dbKey }: { dbKey: string }) {
   const especie = getEspeciePorDbKey(dbKey);
   const ficha = getFicha(dbKey);
+  const comunas = useComunasAlAbrir();
   if (!especie || !ficha) {
     return <p className="text-sm text-muted-foreground">No encontramos la ficha de esta especie.</p>;
+  }
+  if (!comunas) {
+    return <p className="text-sm text-muted-foreground">Cargando ficha…</p>;
   }
   // En /huerto el usuario está autenticado: contenido completo, sin lock.
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <FichaEspecieView especie={especie} ficha={ficha} locked={false} />
+      <FichaEspecieView especie={especie} ficha={ficha} locked={false} comunas={comunas} />
       <Link
         href={urlFichaEspecie(dbKey)}
         className="text-center text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"

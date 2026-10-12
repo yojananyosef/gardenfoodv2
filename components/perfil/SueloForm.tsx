@@ -7,9 +7,8 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { actualizarSuelo } from "@/lib/auth/actions";
-import { PASOS_CINTA, TIPOS_SUELO, type SueloId } from "@/lib/riego/datos";
-import { obtenerRiegoTablas } from "@/lib/riego/client-cache";
-import type { RiegoSueloRow } from "@/lib/riego/actions";
+import { PASOS_CINTA, type SueloId } from "@/lib/riego/datos";
+import type { SueloCatalogo } from "@/lib/agronomy/catalogo";
 import { IlustracionCinta, IlustracionPaso } from "./IlustracionesSuelo";
 import { cn } from "@/lib/utils";
 
@@ -20,13 +19,6 @@ const SUELO_COLOR: Record<SueloId, string> = {
   F: "#5E3A2A",
 };
 
-const SENSACION: Record<SueloId, string> = {
-  G: "No forma cinta: se desarma. Arenoso, deja granos sueltos en los dedos.",
-  MG: "Cinta corta de menos de 2,5 cm que se corta sola. Áspera al frotarla mojada.",
-  M: "Cinta de 2,5 a 5 cm. Ni muy áspera ni muy jabonosa al frotarla.",
-  F: "Cinta larga de más de 5 cm, sin cortarse. Plástica como greda.",
-};
-
 type SueloVista = {
   id: SueloId;
   nombre: string;
@@ -35,17 +27,6 @@ type SueloVista = {
   sensacion: string;
   manejo: string;
 };
-
-function vistaEstatica(): SueloVista[] {
-  return TIPOS_SUELO.map((t) => ({
-    id: t.id,
-    nombre: t.nombre,
-    tecnico: t.tecnico,
-    guarda: t.guardaMm,
-    sensacion: t.sensacion,
-    manejo: "",
-  }));
-}
 
 function TarjetaSuelo({
   suelo,
@@ -112,20 +93,57 @@ function TarjetaSuelo({
 export function SueloForm() {
   const router = useRouter();
   const [suelo, setSuelo] = useState<SueloId | null>(null);
-  const [suelosDB, setSuelosDB] = useState<RiegoSueloRow[] | null>(null);
   const [cargando, setCargando] = useState(true);
   const [pending, startTransition] = useTransition();
   const [quizAbierto, setQuizAbierto] = useState(false);
   // 0..5 = pasos de la cinta, 6 = elección del resultado.
   const [paso, setPaso] = useState(0);
 
+  // El catálogo se pide a `dim_suelos` desde el navegador en vez de llegar por
+  // props. La página de perfil es un componente cliente (tiene el diálogo de
+  // privacidad y el selector de tema), así que no hay servidor al que pedirle
+  // el catálogo, y son 4 filas: el roundtrip no compensa un refactor de la
+  // página. Para las 346 comunas, que sí pesan, el catálogo lo carga el
+  // servidor y llega por props (`getComunas`).
+  //
+  // Antes este componente tenía tres copias del mismo dato: `TIPOS_SUELO`, el
+  // `SENSACION` local de arriba, y la fila de `gf_riego_suelos`. Las tres
+  // convivían y `SENSACION` era la única que conocía `como_se_siente`, porque
+  // la vista `gf_riego_suelos` no expone esa columna.
+  const [suelos, setSuelos] = useState<SueloCatalogo[]>([]);
+
   useEffect(() => {
     let active = true;
-    obtenerRiegoTablas()
-      .then((t) => {
-        if (active) setSuelosDB(t.suelos);
-      })
-      .catch(() => {});
+    void import("@/lib/supabase/client").then(({ createClient }) =>
+      createClient()
+        .from("dim_suelos")
+        .select(
+          "suelo_id, suelo, nombres_usda, agua_min_mm_m, agua_max_mm_m, factor_suelo, como_se_siente, como_manejarlo",
+        )
+        .order("factor_suelo")
+        .then(({ data }) => {
+          if (!active || !data) return;
+          setSuelos(
+            data.map((r) => ({
+              id: r.suelo_id as string,
+              nombre: r.suelo as string,
+              tecnico: (r.nombres_usda as string) || "",
+              factor: Number(r.factor_suelo ?? 1),
+              aguaMinMm: Number(r.agua_min_mm_m ?? 0),
+              aguaMaxMm: Number(r.agua_max_mm_m ?? 0),
+              sensacion: (r.como_se_siente as string) || "",
+              manejo: (r.como_manejarlo as string) || "",
+            })),
+          );
+        }),
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
     (async () => {
       const supabase = (await import("@/lib/supabase/client")).createClient();
       const {
@@ -146,15 +164,14 @@ export function SueloForm() {
     };
   }, []);
 
-  const vista: SueloVista[] =
-    suelosDB?.map((s) => ({
-      id: s.clave as SueloId,
+  const vista: SueloVista[] = suelos.map((s) => ({
+      id: s.id as SueloId,
       nombre: s.nombre,
       tecnico: s.tecnico,
       guarda: `${s.aguaMinMm}–${s.aguaMaxMm} L/m²`,
-      sensacion: SENSACION[s.clave as SueloId] ?? "",
+      sensacion: s.sensacion,
       manejo: s.manejo,
-    })) ?? vistaEstatica();
+    }));
 
   function guardar(id: SueloId, origen: "quiz" | "manual") {
     setSuelo(id);

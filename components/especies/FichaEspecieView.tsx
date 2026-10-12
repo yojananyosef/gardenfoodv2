@@ -23,7 +23,8 @@ import { usePerfilZona } from "@/hooks/usePerfilZona";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
 import { type FichaEspecie, type Especie, getFenologia, getConsejos, getMacrozona, ZONAS } from "@/lib/agronomy";
-import { zonaRiegoDeZonaId, type SueloId } from "@/lib/riego/datos";
+import type { SueloId, ZonaRiegoId } from "@/lib/riego/datos";
+import type { ComunaCatalogo } from "@/lib/agronomy/catalogo";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
 import { calcularRiego } from "@/lib/riego/calc";
 import type { RiegoBasePayload } from "@/lib/riego/actions";
@@ -162,7 +163,7 @@ function TabCalendario({ cal }: { cal: FichaEspecie["cal"] }) {
 
 const MESES_LARGOS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"] as const;
 
-function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; especieNombre: string; sueloId: SueloId | null; zonaId: number }) {
+function TabRiego({ dbKey, especieNombre, sueloId, zonaRiegoId }: { dbKey: string; especieNombre: string; sueloId: SueloId | null; zonaRiegoId: ZonaRiegoId }) {
   const [base, setBase] = useState<RiegoBasePayload | null>(null);
   const [baseKey, setBaseKey] = useState<string | null>(null);
   const [error, setError] = useState(false);
@@ -204,7 +205,7 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
   // sustituían un factor ausente por el promedio y lo pintaban como real.
   const suelo = base?.suelos.find((t) => t.clave === (sueloId ?? "M"));
   const edad = base?.edades.find((e) => e.n === edadN);
-  const zonaClave = zonaRiegoDeZonaId(zonaId);
+  const zonaClave = zonaRiegoId;
   const zonaRiego = base?.zonas.find((z) => z.clave === zonaClave);
 
   const faltaSuelo = !base || !suelo;
@@ -580,15 +581,23 @@ export function FichaEspecieView({
   especie,
   ficha,
   locked = false,
+  comunas,
 }: {
   especie: Especie;
   ficha: FichaEspecie;
   locked?: boolean;
+  /**
+   * Catálogo de comunas que carga el servidor (`getComunas()`). Antes la zona
+   * de riego salía de `zonaRiegoDeZonaId()`, un `if` sobre el número de zona
+   * que estimaba mal en las comunas de borde. Con el catálogo la sabe la
+   * tabla, por comuna.
+   */
+  comunas: ComunaCatalogo[];
 }) {
   // Una sola lectura de comuna y suelo para toda la ficha. Antes cada tab que
   // necesitaba la zona hacía su propia consulta, y `NutricionGuia` además la
   // congelaba en un inicializador de estado (ver `fix-vincular-perfil-zona`).
-  const { zonaId, sueloId, esDefault } = usePerfilZona();
+  const { zonaId, zonaRiegoId, sueloId, esDefault } = usePerfilZona(comunas);
   const ref = useTrackedView<HTMLDivElement>({ name: "VIEW_FICHA", especieId: especie.slug });
 
   return (
@@ -661,7 +670,7 @@ export function FichaEspecieView({
             </div>
 
             <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
-            <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaId={zonaId} /></TabsContent>
+            <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaRiegoId={zonaRiegoId} /></TabsContent>
             <TabsContent value="nutricion"><NutricionGuia dbKey={especie.dbKey} especieNombre={especie.nombre} zonaId={zonaId} esDefault={esDefault} /></TabsContent>
             <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
             <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { resolverZonaDeComuna } from "@/lib/agronomy";
-import type { SueloId } from "@/lib/riego/datos";
+import { indicePorComuna, normalizar, type ComunaCatalogo } from "@/lib/agronomy/catalogo";
+import type { SueloId, ZonaRiegoId } from "@/lib/riego/datos";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -22,6 +23,15 @@ import { createClient } from "@/lib/supabase/client";
 export interface PerfilZona {
   /** Zona agroclimática, con fallback a la zona neutra si no hay comuna. */
   zonaId: number;
+  /**
+   * Zona de riego de la comuna, tal como la guarda `dim_comunas`.
+   *
+   * Antes venía de `zonaRiegoDeZonaId()`, que traducía el número de zona con
+   * `if` anidados y por eso estimaba mal en las comunas de borde: dentro de
+   * una misma zona hay comunas con clima de riego distinto. Ver
+   * `tests/zona-riego-catalogo.test.ts`.
+   */
+  zonaRiegoId: ZonaRiegoId;
   /** Tipo de suelo del perfil, o null si no lo tiene definido. */
   sueloId: SueloId | null;
   comuna: string | null;
@@ -46,14 +56,21 @@ export function sueloDesdeValor(valor: string | null | undefined): SueloId | nul
 /** Zona neutra mientras la consulta no ha resuelto, para no romper el render. */
 const INICIAL: PerfilZona = {
   zonaId: resolverZonaDeComuna(null).zonaId,
+  zonaRiegoId: "C1",
   sueloId: null,
   comuna: null,
   cargando: true,
   esDefault: true,
 };
 
-export function usePerfilZona(): PerfilZona {
+/**
+ * `comunas` lo carga el servidor (`getComunas()`) y llega por props: son 346
+ * filas con lectura pública, pero bajarlas desde el navegador en cada ficha es
+ * un roundtrip y ~40 KB de payload que el servidor ya tenía.
+ */
+export function usePerfilZona(comunas: ComunaCatalogo[]): PerfilZona {
   const [estado, setEstado] = useState<PerfilZona>(INICIAL);
+  const indice = useMemo(() => indicePorComuna(comunas), [comunas]);
 
   useEffect(() => {
     let active = true;
@@ -73,8 +90,10 @@ export function usePerfilZona(): PerfilZona {
         .maybeSingle();
       if (!active) return;
       const comuna = (fila?.comuna as string | null) ?? null;
+      const deCatalogo = comuna ? indice.get(normalizar(comuna)) : undefined;
       setEstado({
         ...resolverZonaDeComuna(comuna),
+        zonaRiegoId: (deCatalogo?.zonaRiegoId as ZonaRiegoId) ?? "C1",
         sueloId: sueloDesdeValor(fila?.tipo_suelo as string | null),
         cargando: false,
       });
@@ -95,7 +114,7 @@ export function usePerfilZona(): PerfilZona {
       window.removeEventListener("focus", cargar);
       document.removeEventListener("visibilitychange", alVolverVisible);
     };
-  }, []);
+  }, [indice]);
 
   return estado;
 }

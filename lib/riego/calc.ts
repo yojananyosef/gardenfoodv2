@@ -9,15 +9,21 @@
  * La función no lee nada por sí sola: la base entra por parámetro
  * (ver getRiegoBase en ./actions). Sin base no hay cálculo.
  */
-import { BALDE_L, zonaRiegoDeZonaId, type SueloId, type ZonaRiegoId } from "./datos";
+import { BALDE_L, type SueloId, type ZonaRiegoId } from "./datos";
 import type { RiegoBasePayload } from "./actions";
 
 export interface RiegoInput {
   dbKey: string;
   /** 1..12. Con desfase de zona se corre solo. */
   mes: number;
-  zonaId?: number | null;
-  zonaRiego?: ZonaRiegoId | null;
+  /**
+   * Zona de riego de la comuna del usuario. **Obligatoria**: antes caía a
+   * `zonaRiegoDeZonaId()`, que traducía el número de zona con `if` anidados y
+   * por lo tanto estimaba mal en las comunas de borde. La relación por comuna
+   * vive en `dim_comunas`, y un default silencioso escondía que el dato
+   * faltaba. Sin zona no hay cálculo.
+   */
+  zonaRiego: ZonaRiegoId;
   suelo?: SueloId | null;
   /** 1..4 según tabla C del Excel (1 recién plantado … 4 adulto). */
   edadN?: number | null;
@@ -48,7 +54,7 @@ export function calcularRiego(input: RiegoInput, base: RiegoBasePayload): RiegoR
   const mes = Math.min(12, Math.max(1, Math.round(input.mes)));
   const suelo = base.suelos.find((t) => t.clave === (input.suelo ?? "M"));
   const edad = base.edades.find((e) => e.n === (input.edadN ?? 4));
-  const zonaId: ZonaRiegoId = input.zonaRiego ?? zonaRiegoDeZonaId(input.zonaId);
+  const zonaId = input.zonaRiego;
   const zona = base.zonas.find((z) => z.clave === zonaId);
   const humedad = base.niveles.find((n) => n.nivel === (input.humedad ?? 2));
   if (!suelo || !edad || !zona || !humedad) return null;

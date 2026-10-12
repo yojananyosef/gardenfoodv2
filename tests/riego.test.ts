@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calcularRiego } from "@/lib/riego/calc";
-import { zonaRiegoDeZonaId } from "@/lib/riego/datos";
+
 import type { RiegoBasePayload } from "@/lib/riego/actions";
 
 /**
@@ -49,17 +49,10 @@ function payloadBase(): RiegoBasePayload {
   };
 }
 
-describe("zonaRiegoDeZonaId", () => {
-  it("mapea norte, valle, sur y austral", () => {
-    expect(zonaRiegoDeZonaId(2)).toBe("N1");
-    expect(zonaRiegoDeZonaId(3)).toBe("N2");
-    expect(zonaRiegoDeZonaId(7)).toBe("C1");
-    expect(zonaRiegoDeZonaId(12)).toBe("C1"); // Rapel
-    expect(zonaRiegoDeZonaId(14)).toBe("S1");
-    expect(zonaRiegoDeZonaId(20)).toBe("S2"); // Osorno-Aysén-Magallanes
-    expect(zonaRiegoDeZonaId(null)).toBe("C1");
-  });
-});
+// La traducción zona agroclimática → zona de riego ya no vive en el código.
+// Ahora sale de `dim_comunas`, que la sabe por comuna. La cobertura de esa
+// equivalencia está en `tests/zona-riego-catalogo.test.ts`, con el detalle de
+// las 4 zonas donde el `if` estimaba y el catálogo acierta.
 
 describe("calcularRiego (base Excel)", () => {
   it("caso dorado: duraznero enero, C1, franco, adulto 2m, punto de riego", () => {
