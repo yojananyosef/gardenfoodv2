@@ -1704,9 +1704,6 @@ export type Database = {
         "device_id": string
         "event_category": string
         "event_name": string
-        "comuna": string | null
-        "region": string | null
-        "zona_agroclimatica": string | null
         "gps_lat": number | null
         "gps_lng": number | null
         "gps_accuracy_meters": number | null
@@ -1727,9 +1724,6 @@ export type Database = {
         "device_id": string
         "event_category": string
         "event_name": string
-        "comuna"?: string | null
-        "region"?: string | null
-        "zona_agroclimatica"?: string | null
         "gps_lat"?: number | null
         "gps_lng"?: number | null
         "gps_accuracy_meters"?: number | null
@@ -1750,9 +1744,6 @@ export type Database = {
         "device_id"?: string | null
         "event_category"?: string | null
         "event_name"?: string | null
-        "comuna"?: string | null
-        "region"?: string | null
-        "zona_agroclimatica"?: string | null
         "gps_lat"?: number | null
         "gps_lng"?: number | null
         "gps_accuracy_meters"?: number | null
