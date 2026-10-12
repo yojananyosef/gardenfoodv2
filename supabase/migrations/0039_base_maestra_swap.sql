@@ -254,7 +254,7 @@ select
     codigo_etapa as codigo,
     etapa as etapa_programa,
     meses_originales as meses_originales,
-    coincide_exacto as coincide_exacta,
+    case when t.coincide_exacto = 'Sí' then true else false end as coincide_exacta,
     dias_min as dias_min,
     dias_max as dias_max,
     litros_min as litros_min,
@@ -293,7 +293,7 @@ grant select on public.gf_riego_etapas to anon, authenticated;
 -- gf_riego_especies -> dim_especies. Mapeo explicito, no select *.
 create view public._swap_gf_riego_especies with (security_invoker = on) as
 select
-    especie as especie,
+    alias_riego as especie,
     nombre_en_excel_riego as excel_nombre,
     nombre_cientifico as nombre_cientifico,
     grupo as grupo,

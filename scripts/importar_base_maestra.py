@@ -404,11 +404,13 @@ def gen_create(datos):
         lineas = []
         for c in columnas:
             t = tipos.get(c, "text")
-            extra = " primary key" if c in pks else ""
             chk = CHECKS.get(tabla, {}).get(c)
-            if chk:
-                extra += f" check ({chk})"
+            extra = f" check ({chk})" if chk else ""
             lineas.append(f"    {c} {t}{extra}")
+        # La PK va como constraint de tabla, no en la columna: una PK
+        # compuesta con `primary key` en cada columna es un error en Postgres
+        # ("multiple primary keys are not allowed").
+        lineas.append(f"    constraint {tabla}_pkey primary key ({', '.join(pks)})")
         ddl.append(",\n".join(lineas))
         ddl.append(");")
         ddl.append("")
@@ -423,10 +425,43 @@ def gen_create(datos):
     return ddl, fks
 
 
+def orden_insercion(datos):
+    """Ordena por dependencia de FK, no por nombre de tabla.
+
+    Agrupar por prefijo (dim_, cat_, fact_) NO alcanza: `dim_comunas` es una
+    dimension y referencia a `dim_zonas_riego`, que tambien lo es y va despues
+    en el diccionario. Postgres exige que el padre este insertado antes que la
+    hija, y las FK no son DEFERRABLE.
+
+    Es un orden topologico: la tabla va despues de todas las que referencia.
+    """
+    cols_por_tabla = {t: c for _h, t, _f, c, _ti, _d in datos}
+    deps = {}
+    for tabla, columnas in cols_por_tabla.items():
+        referenciadas = {d for _c, d in fks_de(tabla, columnas) if d in cols_por_tabla}
+        # fact_nutrientes_anual y fact_clima_zona son a la vez PK y FK: no
+        # dependen de si mismas.
+        deps[tabla] = referenciadas - {tabla}
+
+    orden, puestas = [], set()
+    while len(orden) < len(deps):
+        # Las que ya tienen todos sus padres puestos. Orden alfabetico dentro
+        # del lote para que la salida sea determinista.
+        lote = sorted(t for t, d in deps.items()
+                      if t not in puestas and d <= puestas)
+        if not lote:
+            raise ValueError(f"ciclo de FK entre tablas: {sorted(set(deps) - puestas)}")
+        for t in lote:
+            orden.append(t)
+            puestas.add(t)
+    por_tabla = {t: i for i, t in enumerate(orden)}
+    return sorted(datos, key=lambda d: por_tabla[d[1]])
+
+
 def gen_inserts(datos):
     """Los insert salen de los CSV versionados, no del Excel."""
     out = []
-    for _hoja, tabla, _filas, columnas, _tipos, _d in datos:
+    for _hoja, tabla, _filas, columnas, tipos, _d in orden_insercion(datos):
         ruta = os.path.join(OUT_DIR, f"{tabla}.csv")
         with open(ruta, newline="", encoding="utf-8") as fh:
             lineas = [l for l in fh if not l.startswith("#")]
@@ -436,8 +471,15 @@ def gen_inserts(datos):
         out.append(f"insert into public.{tabla} ({cols_sql}) values")
         vals = []
         for f in filas:
-            vs = ", ".join(sql_lit(f.get(c, "") or "") for c in columnas)
-            vals.append(f"    ({vs})")
+            vs = []
+            for c in columnas:
+                v = f.get(c, "") or ""
+                # Celda vacia del Excel -> NULL, en cualquier tipo de columna.
+                # Postgres rechaza '' para integer, y '' como clave foranea
+                # viola la FK porque es un valor que no existe en el padre.
+                # Una celda vacia dice "no hay dato", no "el dato es vacio".
+                vs.append(sql_lit(v) if v != "" else "null")
+            vals.append(f"    ({', '.join(vs)})")
         out.append(",\n".join(vals) + ";")
         out.append("")
     return out

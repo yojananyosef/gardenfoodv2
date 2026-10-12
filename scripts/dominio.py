@@ -137,7 +137,11 @@ TABLAS_VIEJAS = {
         ("litros_max",       "litros_max"),
     ]),
     "gf_riego_especies": ("dim_especies", [
-        ("especie",            "especie"),
+        # `especie` de la tabla vieja es el dbKey ("Arandano", "Avellano
+        # Europeo", "Níspero Japonés"), no el nombre humano de `dim_especies`
+        # ("Arándano", "Avellano", "Níspero"). Es el mismo criterio que usan
+        # gf_riego_mensual y gf_riego_etapas: la app busca por alias.
+        ("especie",            "alias_riego"),
         ("excel_nombre",       "nombre_en_excel_riego"),
         ("nombre_cientifico",  "nombre_cientifico"),
         ("grupo",              "grupo"),
@@ -178,6 +182,12 @@ FK_EXPLICITAS = {
 #   `calc.ts` compara `reposo === 1`. Sin el cast, la vista devolveria true y
 #   el arreglo del reposo seeria roto en silencio.
 #
+# - `gf_riego_etapas.coincide_exacta` es boolean con solo true/false, pero el
+#   Excel tiene TRES estados: "Sí" (189 filas), "Aproximada" (21) y "No". La
+#   tabla vieja conflacionaba "Aproximada" con "No". La tabla nueva conserva
+#   la distincion, que es una mejora, pero la vista tiene que reproducir el
+#   comportamiento viejo para no cambiar lo que ve la app.
+#
 # - `gf_riego_kc.kc` es numeric y tiene NULL para la etapa CAL. El Excel usa
 #   "—" como centinela de "sin dato", que en una columna numerica solo pudo
 #   terminar en NULL. `nullif` devuelve esa misma NULL sin tirar el centinela:
@@ -186,8 +196,11 @@ FK_EXPLICITAS = {
 # La entrada es (columna_vieja, columna_nueva, expresion_sql_opcional). Con
 # expresion, la vista emite esa expresion en vez de la columna.
 EMULDA = "\u2014"
+SI = "S\u00ed"
 
 CASTS_VISTA = {
     ("gf_riego_mensual", "reposo"): "t.reposo::int",
+    ("gf_riego_etapas", "coincide_exacta"):
+        f"case when t.coincide_exacto = '{SI}' then true else false end",
     ("gf_riego_kc", "kc"): f"nullif(t.kc_referencial, '{EMULDA}')::numeric",
 }
