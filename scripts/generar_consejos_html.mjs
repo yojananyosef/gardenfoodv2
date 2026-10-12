@@ -333,8 +333,11 @@ pintar();
 </body>
 </html>`;
 
-writeFileSync("CONSEJOS-NUEVOS.html", html, "utf8");
-console.log(`CONSEJOS-NUEVOS.html generado`);
+// En `public/` y no en la raiz: Next solo sirve como archivo estatico lo que
+// esta ahi. Un HTML en la raiz del repo responde con la landing, que es lo que
+// pasaba.
+writeFileSync("public/CONSEJOS-NUEVOS.html", html, "utf8");
+console.log(`public/CONSEJOS-NUEVOS.html generado  ->  /CONSEJOS-NUEVOS.html`);
 console.log(`   ${items.length} consejos en ${new Set(items.map(i => i.especie)).size} especies`);
 console.log(`   con pariente en el legacy: ${items.filter(i => i.legacy).length}`);
 console.log(`   sin nada parecido: ${items.filter(i => !i.legacy).length}`);

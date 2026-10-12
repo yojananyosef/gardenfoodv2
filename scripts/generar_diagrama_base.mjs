@@ -395,8 +395,10 @@ lo que no esté en ella.</p>
 </body>
 </html>`;
 
-writeFileSync("ESQUEMA.html", html, "utf8");
-console.log("ESQUEMA.md y ESQUEMA.html generados");
+// En `public/` y no en la raiz, por lo mismo que CONSEJOS-NUEVOS.html: un HTML
+// en la raiz del repo no lo sirve Next.
+writeFileSync("public/ESQUEMA.html", html, "utf8");
+console.log("ESQUEMA.md (raiz, lo dibuja GitHub) y public/ESQUEMA.html (-> /ESQUEMA.html)");
 console.log(`   ${tablas.length} tablas · ${vistas.length} vistas · ${fks.length} FKs · ${totalFilas} filas`);
 console.log(`   nucleo agronomico: ${nucleo.length} tablas`);
 console.log(`   usuario/telemetria: ${usuario.length} tablas`);
