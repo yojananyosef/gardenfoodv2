@@ -91,9 +91,73 @@ eso cada punto se comprueba antes de hacerse, aunque parezca obvio.
 
 ## 10.5 Los dos vocabularios de edad
 
-- [ ] 10.5.1 Listar los dos vocabularios completos y sus solapamientos. `gf_arboles.edad_clase` usa `recien`/`joven`/`inicial`/`adulto`; `gf_riego_edad.nombre` usa los rotulos largos («Recién plantado (0-1 año)»...). `dim_edad` existe y tiene 4 filas.
-- [ ] 10.5.2 Anotar los `edad_clase` que no mapean a ninguna fila de `dim_edad` antes de cambiar nada.
-- [ ] 10.5.3 Migración `0042` con la FK de `gf_arboles.edad_clase` a `dim_edad`. Si el mapeo no es 1:1, agregar una tabla de equivalencia en vez de forzar la FK.
+- [x] 10.5.1 Listar los dos vocabularios completos y sus solapamientos. **Eran tres, no dos** — ver abajo.
+- [x] 10.5.2 Anotar los valores sin mapear antes de cambiar nada: **no hay datos**. Los 150 árboles tienen la columna en NULL.
+- [x] 10.5.3 Migración `0041`: `gf_arboles.edad_n` + FK a `dim_edad`, y se tira `edad_clase`.
+
+### Eran tres vocabularios, y el tercero no estaba en ninguna tabla
+
+| Dónde | Valores |
+|---|---|
+| `dim_edad.edad_n` | `1`–`4` — canónico, del Excel |
+| `dim_edad.edad` | `"Recién plantado (0-1 año)"`… — el rótulo largo |
+| `gf_arboles.edad_clase` | `"recien"`, `"joven"`, `"inicial"`, `"adulto"` |
+
+Y un cuarto, invisible para la base: **dos mapas escritos a mano** en
+`components/huerto/EditarArbolDialog.tsx` que traducían en ambos sentidos entre
+el número y el código. Ese era el único que nadie podía ver mirando el esquema.
+
+Lo que fijó el diseño: **el selector del diálogo ya usaba 1..4**, porque leía
+`gf_riego_edad`. Solo el almacenamiento pasaba por los códigos, y ahí estaban los
+mapas. Guardar `edad_n` los deja de necesitar.
+
+`EdadArbol` quedó como `number`, no como `1 | 2 | 3 | 4`. La columna es integer
+y PostgREST devuelve `number`, así que el union obligaba a castear en cada
+lectura para no mentir. El rango lo garantizan el `z.number().int().min(1).max(4)`
+del action y la FK, que están validadas.
+
+## Me equivoqué de orden y tumbé /huerto
+
+**Esto es lo importante de la 10.5, y no la migración.**
+
+La `0041` hizo tres cosas en una transacción: agregar `edad_n`, rellenarla y
+**tirar `edad_clase`**. Tirarla ahí fue el error. Producción corría el código
+viejo, que hace:
+
+```
+lib/huerto/data.ts:99   select "... created_at, edad_clase, copa_m, ..."
+```
+
+Con la columna ausente, PostgREST devolvió error, `getArboles` volvió vacío y
+**`/huerto` pasó de 28 árboles a 0**. Ninguna de las páginas tiró error 500: la
+app respondió bien con una lista vacía, que es peor.
+
+La `0042` devolvió la columna y `/huerto` volvió a 28 en minutos. Después:
+desplegar el código nuevo (`mro5jpz33`), verificar con 28 árboles, y recién
+entonces la `0043` borra la columna de verdad.
+
+**La regla que sale de esto:** un cambio de esquema que rompe código en
+producción **no se parte en dos migraciones**. O se despliega el código antes de
+migrar, o el cambio va junto. La tarea 10.1 lo decía explícito para los RPC de
+admin ("en la misma migración, no antes") y yo escribí esa tarea, y después no lo
+apliqué a mi propio caso.
+
+El orden correcto para cualquier `drop column` es:
+
+1. Agregar lo nuevo, sin quitar lo viejo.
+2. Cambiar el código para leer lo nuevo.
+3. Desplegar y verificar en producción.
+4. Recién entonces, quitar lo viejo.
+
+### Verificación de 10.5
+
+| | |
+|---|---|
+| `gf_arboles` | `edad_n (integer)` + `gf_arboles_edad_n_fkey` validada |
+| `edad_clase` | ya no existe |
+| Árboles | 150, todos en `NULL` como estaban |
+| Producción | `/huerto` 28 árboles, `/perfil`, `/calendario` y `/cosechas` sin falla |
+| `tsc` / `eslint` / tests / build | 0 / 0 / 6.804 / correcto |
 
 ## 10.2 Enums (menos los de pagos)
 
