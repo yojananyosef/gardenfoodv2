@@ -18,6 +18,10 @@
           "--browser",
           "chromium"
         ]
+      },
+      "supabase": {
+        "type": "remote",
+        "url": "https://mcp.supabase.com/mcp"
       }
     }
   }

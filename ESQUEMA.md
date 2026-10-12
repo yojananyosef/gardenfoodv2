@@ -2,7 +2,7 @@
 
 > Generado con `scripts/generar_diagrama_base.mjs` leyendo el esquema real.
 >
-> **48 tablas · 8 vistas · 6.828 filas · 46 claves foráneas · 4 enums**
+> **48 tablas · 8 vistas · 6.856 filas · 46 claves foráneas · 4 enums**
 
 ## Cómo leer esto
 
@@ -67,9 +67,9 @@ graph TD
 
 ```mermaid
 graph TD
-  gf_analytics_events["gf_analytics_events<br/><small>1696 filas · 1 FK</small>"]
+  gf_analytics_events["gf_analytics_events<br/><small>1722 filas · 1 FK</small>"]
   gf_aplicaciones["gf_aplicaciones<br/><small>3 filas · 3 FK</small>"]
-  gf_arboles["gf_arboles<br/><small>150 filas · 3 FK</small>"]
+  gf_arboles["gf_arboles<br/><small>151 filas · 3 FK</small>"]
   gf_cron_config["gf_cron_config<br/><small>1 filas · 0 FK</small>"]
   gf_cultivos["gf_cultivos<br/><small>3 filas · 1 FK</small>"]
   gf_huertos["gf_huertos<br/><small>22 filas · 1 FK</small>"]
@@ -79,7 +79,7 @@ graph TD
   gf_subscriptions["gf_subscriptions<br/><small>13 filas · 1 FK</small>"]
   gf_tareas["gf_tareas<br/><small>10 filas · 1 FK</small>"]
   gf_user_audiences["gf_user_audiences<br/><small>2 filas · 1 FK</small>"]
-  gf_user_consents["gf_user_consents<br/><small>40 filas · 1 FK</small>"]
+  gf_user_consents["gf_user_consents<br/><small>41 filas · 1 FK</small>"]
   perfiles["perfiles<br/><small>6 filas · 1 FK</small>"]
 ```
 
