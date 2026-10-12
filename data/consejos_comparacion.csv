@@ -1,0 +1,212 @@
+especie,consejo_base,n_base,fuente,coincide_exacta_con_legacy,casi_igual_con_legacy,similitud,decision_sugerida,consejo_legacy_se_queda
+Olivo,"Olivo es para toda la vida: vive 100+ años, plante uno y sus nietos lo disfrutarán.",1,Base 20 especies,SI,no,,REEMPLAZA_LEGACY,Olivo es para TODA LA VIDA: vive 100+ años. Plante uno y sus nietos lo disfrutarán.
+Olivo,"NUNCA plante donde antes hubo tomate, papa o pimiento: Verticilium mata el olivo.",2,Base 20 especies,no,SI,0.64,REVISAR_CASI_DUPLICADO,"NUNCA plantar donde hubo tomate, papa, pimiento o berenjena: Verticilium del suelo mata al olivo."
+Olivo,"Boro foliar en floración es CRÍTICO: sin boro, la cuaja cae dramáticamente.",3,Base 20 especies,no,no,,NUEVO,
+Olivo,"Olivo tiene vecería: un año produce mucho, al siguiente poco. La poda atenúa esto.",4,Base 20 especies,no,SI,0.62,REVISAR_CASI_DUPLICADO,"Olivo tiene VECERÍA (alternancia): un año mucho, otro poco. Poda de aclareo atenúa esto."
+Olivo,Para aceitunas de mesa: cosechar verdes y curar en salmuera (agua + sal + aromáticas).,5,Base 20 especies,no,SI,0.64,REVISAR_CASI_DUPLICADO,Para aceitunas de mesa: cosechar VERDES y curar en salmuera (8% sal + laurel) por 2-6 meses.
+Olivo,"Aceite de oliva casero: necesita prensa, pero es posible con aceitunas maduras.",6,Base 20 especies,no,SI,0.50,REVISAR_CASI_DUPLICADO,El aceite de oliva casero necesita 5-8 kg de aceitunas por litro.
+Olivo,"Arbequina es la mejor variedad para aceite en espacio pequeño: árbol chico, mucho aceite.",7,Base 20 especies,no,SI,0.91,REVISAR_CASI_DUPLICADO,"Arbequina: mejor variedad para aceite en espacio pequeño. Árbol chico, mucho aceite, autofértil."
+Olivo,"Olivo tolera sequía, calor, suelos pobres: es uno de los frutales más resistentes del planeta.",8,Base 20 especies,no,no,,NUEVO,
+Arándano,pH ÁCIDO es la regla N°1: sin suelo ácido (4.5-5.5) el arándano MUERE. Mida pH antes de plantar.,1,Base 20 especies,no,no,,NUEVO,
+Arándano,"NUNCA use cal, ceniza, guano de gallina o estiércol fresco: suben pH y matan al arándano.",2,Base 20 especies,no,SI,0.70,REVISAR_CASI_DUPLICADO,"NUNCA aplicar cal, ceniza ni guano de gallina: suben el pH y matan al arándano."
+Arándano,"Use mulch ácido siempre: aserrín de pino, corteza de pino, hojas de pino.",3,Base 20 especies,no,SI,0.45,REVISAR_CASI_DUPLICADO,Mulch ácido PERMANENTE: aserrín o corteza de pino. Descomponiéndose mantiene el pH bajo.
+Arándano,Plante 2+ variedades: mejor polinización = frutos más grandes.,4,Base 20 especies,no,no,,NUEVO,
+Arándano,Riego FRECUENTE pero POCO: raíces superficiales se secan rápido.,5,Base 20 especies,no,no,,NUEVO,
+Arándano,El arándano congelado es excelente: congele el exceso de cosecha.,6,Base 20 especies,no,no,,NUEVO,
+Arándano,Drosophila suzukii es la nueva plaga devastadora: trampas de vinagre de manzana.,7,Base 20 especies,no,no,,NUEVO,
+Arándano,En macetón con sustrato ácido funciona perfecto para patios y terrazas.,8,Base 20 especies,no,no,,NUEVO,
+Caqui,HAY DOS TIPOS de caqui: Fuyu (se come duro como manzana) y Hachiya (se come blando como gelatina). PREGUNTE en vivero.,1,Base 20 especies,no,SI,0.77,REVISAR_CASI_DUPLICADO,"HAY DOS TIPOS: Fuyu (comer DURO, como manzana) y Hachiya (comer BLANDO, como gelatina). Pregunte en vivero."
+Caqui,Si come un Hachiya antes de madurar: la boca se le pega (astringente). ESPERE a que esté blando.,2,Base 20 especies,no,no,,NUEVO,
+Caqui,Para quitar astringencia rápido: ponga los caquis en una bolsa con manzanas o bananas maduras.,3,Base 20 especies,no,no,,NUEVO,
+Caqui,Caqui brota MUY TARDE: no se preocupe si en septiembre aún parece muerto.,4,Base 20 especies,no,SI,0.60,REVISAR_CASI_DUPLICADO,"Caqui brota MUY TARDE (octubre): si en septiembre parece muerto, es normal. No lo arranque."
+Caqui,Es muy ornamental en otoño: hojas rojas espectaculares.,5,Base 20 especies,no,SI,0.71,REVISAR_CASI_DUPLICADO,Muy ornamental en otoño: hojas rojas espectaculares antes de caer.
+Caqui,Madera frágil: ralee frutos para evitar quiebre de ramas.,6,Base 20 especies,no,no,,NUEVO,
+Caqui,Tolera variedad de climas: desde frío hasta subtropical.,7,Base 20 especies,no,no,,NUEVO,
+Caqui,Caqui deshidratado (Hoshigaki) es una delicatessen japonesa.,8,Base 20 especies,no,SI,0.63,REVISAR_CASI_DUPLICADO,"Caqui deshidratado (Hoshigaki): delicatessen japonesa, se masajea diariamente 4-6 semanas."
+Limonero,"Limonero es PERFECTO para principiantes: produce mucho, vive muchos años, requiere poco cuidado.",1,Base 20 especies,no,no,,NUEVO,
+Limonero,"NO PLANTE en zonas con heladas fuertes: -3°C lo daña, -5°C lo mata.",2,Base 20 especies,no,no,,NUEVO,
+Limonero,"Si vive en zona fría, plántelo en macetón grande y guárdelo en invierno.",3,Base 20 especies,no,no,,NUEVO,
+Limonero,Cochinilla es la peor plaga: aplique aceite mineral mensual.,4,Base 20 especies,no,no,,NUEVO,
+Limonero,Si las hojas se ven amarillas con venas verdes: falta hierro. Aplique sulfato ferroso.,5,Base 20 especies,no,no,,NUEVO,
+Limonero,Pinte el tronco con cal blanca: protege del sol fuerte.,6,Base 20 especies,no,no,,NUEVO,
+Limonero,"Limonero es siempre verde: las hojas son la 'fábrica' del árbol, NO se las saque.",7,Base 20 especies,no,no,,NUEVO,
+Limonero,"Variedad Meyer es semi-dulce, ideal para postres.",8,Base 20 especies,no,SI,0.55,REVISAR_CASI_DUPLICADO,"Variedad Meyer: semi-dulce, tolera -4°C, ideal para zona central protegida."
+Nogal,Nogal necesita MUCHO espacio: 10 metros mínimo de otros árboles. NO lo plante cerca de la casa.,1,Base 20 especies,no,no,,NUEVO,
+Nogal,Boro y zinc son los micronutrientes más importantes: aplique foliar en octubre.,2,Base 20 especies,no,no,,NUEVO,
+Nogal,"Chandler es la variedad más plantada del mundo: excelente calidad, producción alta.",3,Base 20 especies,no,no,,NUEVO,
+Nogal,Necesita polinizador: plante Chandler + Franquette o Serr para asegurar cosecha.,4,Base 20 especies,no,no,,NUEVO,
+Nogal,Seque las nueces bien antes de guardar: húmedas se enmohecen rápido.,5,Base 20 especies,no,no,,NUEVO,
+Nogal,Nogal produce juglona (sustancia tóxica): NO plante hortalizas bajo su copa.,6,Base 20 especies,no,SI,0.70,REVISAR_CASI_DUPLICADO,Nogal produce JUGLONA: NO plantar hortalizas bajo la copa (les es tóxica).
+Nogal,Si la nuez está vacía o negra: faltó agua en enero-febrero.,7,Base 20 especies,no,SI,0.80,REVISAR_CASI_DUPLICADO,Si la nuez está vacía o negra: faltó agua en enero-febrero (etapa de llenado).
+Nogal,Un nogal adulto puede producir 100+ años. Es una inversión para generaciones.,8,Base 20 especies,no,no,,NUEVO,
+Vid,"La vid NECESITA estructura: parrón, pérgola o espaldera. Sin soporte crece por el suelo.",1,Base 20 especies,no,no,,NUEVO,
+Vid,Poda invernal es OBLIGATORIA cada año: sin poda no hay fruta de calidad.,2,Base 20 especies,no,SI,0.67,REVISAR_CASI_DUPLICADO,"PODA INVERNAL OBLIGATORIA cada julio: sin poda, la vid no produce fruta de calidad (Bol. INIA 383)."
+Vid,Oidio es la peor enfermedad: azufre preventivo cada 15 días desde brotación.,3,Base 20 especies,no,SI,0.58,REVISAR_CASI_DUPLICADO,"Oidio = enemigo N°1: azufre preventivo cada 15 días desde brotación. Sin azufre, pierde la cosecha."
+Vid,SIEMPRE plante vid INJERTADA sobre portainjerto: protege de Filoxera (insecto de raíz).,4,Base 20 especies,no,SI,0.55,REVISAR_CASI_DUPLICADO,SIEMPRE plantar vid injertada sobre portainjerto americano: protege de Filoxera.
+Vid,Para uva más dulce: reduzca riego y racimos.,5,Base 20 especies,no,no,,NUEVO,
+Vid,El parrón domiciliario es tradición chilena: sombra en verano + uva para la mesa.,6,Base 20 especies,no,SI,0.75,REVISAR_CASI_DUPLICADO,El parrón domiciliario da sombra en verano + uva para la mesa.
+Vid,Para hacer pasas: cosechar maduras y secar al sol 7-10 días.,7,Base 20 especies,no,no,,NUEVO,
+Vid,Si quiere uva sin pepa: Crimson Seedless o Thompson.,8,Base 20 especies,no,no,,NUEVO,
+Almendro,"El almendro florece MUY TEMPRANO (agosto): si su zona tiene heladas en agosto-septiembre, plante Guara o Tuono (floración tardía).",1,Base 20 especies,no,SI,0.77,REVISAR_CASI_DUPLICADO,"Florece en agosto: si su zona tiene heladas en ago-sep, plante Guara o Tuono (floración tardía)."
+Almendro,"Variedad Guara es autofértil: no necesita polinizador, ideal para jardines.",2,Base 20 especies,no,SI,0.70,REVISAR_CASI_DUPLICADO,Guara es AUTOFÉRTIL: no necesita polinizador. Ideal para jardines con un solo árbol.
+Almendro,El almendro tolera la sequía mejor que casi cualquier frutal: ideal para zonas secas.,3,Base 20 especies,no,no,,NUEVO,
+Almendro,"Floración del almendro es espectacular: blanca masiva, muy ornamental.",4,Base 20 especies,no,SI,0.71,REVISAR_CASI_DUPLICADO,La floración del almendro (agosto) es espectacular: blanca y masiva.
+Almendro,Si las almendras están vacías: faltó polinización o agua.,5,Base 20 especies,no,no,,NUEVO,
+Almendro,Almendras amargas SON TÓXICAS (contienen cianuro): no confundir variedades.,6,Base 20 especies,no,no,,NUEVO,
+Almendro,Almendro no tolera suelos encharcados: se muere rápido.,7,Base 20 especies,no,no,,NUEVO,
+Almendro,Un almendro productivo necesita verano caluroso y seco.,8,Base 20 especies,no,no,,NUEVO,
+Cerezo,El cerezo es exigente: NO lo plante en suelos pesados o con agua estancada (se muere en 2 años).,1,Base 20 especies,no,no,,NUEVO,
+Cerezo,"Variedades autofértiles (Lapins, Stella) son ideales si tiene espacio para un solo árbol.",2,Base 20 especies,no,no,,NUEVO,
+Cerezo,"Mallas anti-pájaros: invierta en buenas mallas, sin ellas perderá 50-80% de la cosecha.",3,Base 20 especies,no,no,,NUEVO,
+Cerezo,La partidura por lluvia es el mayor problema: aplique calcio foliar y cubra con plástico si llueve cerca de cosecha.,4,Base 20 especies,no,no,,NUEVO,
+Cerezo,Poda en VERANO post-cosecha es mejor que en invierno: menos riesgo de cancrosis bacteriana.,5,Base 20 especies,no,no,,NUEVO,
+Cerezo,Cerezo en injerto enano (Gisela) cabe en patios y produce en 3 años.,6,Base 20 especies,no,no,,NUEVO,
+Cerezo,"Coseche en la mañana fresca, las cerezas duran más.",7,Base 20 especies,no,no,,NUEVO,
+Cerezo,Si las cerezas saben amargas: faltó agua durante el crecimiento o le falta sol.,8,Base 20 especies,no,no,,NUEVO,
+Ciruelo,"Las ciruelas japonesas (Santa Rosa, Black Amber) son más fáciles que las europeas (D'Agen).",1,Base 20 especies,no,no,,NUEVO,
+Ciruelo,"Si planta para deshidratar, elija D'Agen: es la mejor del mundo para ciruela seca.",2,Base 20 especies,no,SI,0.50,REVISAR_CASI_DUPLICADO,D'Agen es la mejor ciruela del mundo para deshidratar: alta en azúcar y pectina.
+Ciruelo,Algunas variedades necesitan polinizador: pregunte en el vivero antes de comprar.,3,Base 20 especies,no,no,,NUEVO,
+Ciruelo,"El ciruelo es generoso: una vez establecido, produce mucho con poco cuidado.",4,Base 20 especies,no,no,,NUEVO,
+Ciruelo,No deje frutos en el árbol después de cosecha: atraen mosca y monilia.,5,Base 20 especies,no,no,,NUEVO,
+Ciruelo,"Si las ramas se quiebran de tantos frutos, ralee más fuerte el próximo año.",6,Base 20 especies,no,no,,NUEVO,
+Ciruelo,Pinte el tronco con cal en invierno: previene grietas por sol y entrada de plagas.,7,Base 20 especies,no,no,,NUEVO,
+Ciruelo,Las ciruelas caídas al suelo son ideales para hacer mermelada (si están sanas).,8,Base 20 especies,no,no,,NUEVO,
+Damasco,"El damasco florece MUY temprano (agosto): si vive en zona con heladas tardías, plante variedades como Goldcot que florecen más tarde.",1,Base 20 especies,no,no,,NUEVO,
+Damasco,"Para protegerlo de heladas: pinte tronco de blanco, ponga bidones de agua bajo el árbol, use riego por aspersión durante la helada.",2,Base 20 especies,no,no,,NUEVO,
+Damasco,Damasco es de vida más corta que otros frutales: 20-25 años máximo.,3,Base 20 especies,no,no,,NUEVO,
+Damasco,"Si el árbol no produce: probablemente la flor se quemó por helada, no es problema del árbol.",4,Base 20 especies,no,no,,NUEVO,
+Damasco,Variedad Tilton es muy productiva y aguanta heladas mejor.,5,Base 20 especies,no,no,,NUEVO,
+Damasco,Damasco deshidratado al sol es delicia: cosechar maduros y secar en mallas con sol y aire.,6,Base 20 especies,no,no,,NUEVO,
+Damasco,El carozo (cuesco) del damasco contiene ALMENDRA AMARGA con cianuro: NO comer.,7,Base 20 especies,no,SI,0.60,REVISAR_CASI_DUPLICADO,El carozo del damasco contiene amigdalina (cianuro): NO comer la almendra interior.
+Damasco,Los damascos caídos son ideales para mermelada y compota.,8,Base 20 especies,no,no,,NUEVO,
+Duraznero,El durazno produce en ramas del año anterior: SIEMPRE necesita poda anual.,1,Base 20 especies,no,no,,NUEVO,
+Duraznero,Pinte el tronco con cal blanca en invierno: protege del sol fuerte y de bichos que entran por la corteza.,2,Base 20 especies,no,no,,NUEVO,
+Duraznero,"Coloque mulch (paja, hojas secas) bajo el árbol: ahorra agua y mejora el suelo.",3,Base 20 especies,no,no,,NUEVO,
+Duraznero,Si las hojas se ven amarillas con venas verdes: falta hierro. Aplique sulfato ferroso.,4,Base 20 especies,no,no,,NUEVO,
+Duraznero,Riego por goteo es ideal: ahorra 50% de agua y evita enfermedades.,5,Base 20 especies,no,no,,NUEVO,
+Duraznero,Plante caléndulas y albahaca alrededor: alejan plagas naturalmente.,6,Base 20 especies,no,no,,NUEVO,
+Duraznero,Si nunca floreció: probablemente no le dieron suficientes horas de frío en invierno.,7,Base 20 especies,no,no,,NUEVO,
+Duraznero,"Después de cada cosecha, agradezca al árbol con compost: es como una buena comida después de un esfuerzo.",8,Base 20 especies,no,no,,NUEVO,
+Granado,"El granado es RESISTENTE: tolera sequía, salinidad, suelos pobres, calor extremo.",1,Base 20 especies,no,no,,NUEVO,
+Granado,El rajado es el mayor problema: riegue PAREJO sin altibajos (sequía → lluvia = rajado).,2,Base 20 especies,no,no,,NUEVO,
+Granado,Las flores rojas son espectaculares: es ornamental y productivo.,3,Base 20 especies,SI,no,,REEMPLAZA_LEGACY,Las flores rojas son espectaculares: es ornamental Y productivo.
+Granado,"Quite los hijuelos de la base cada invierno: si no, se vuelve arbusto desordenado.",4,Base 20 especies,no,SI,0.45,REVISAR_CASI_DUPLICADO,"Quitar hijuelos de la base CADA INVIERNO: si no, se vuelve matorral improductivo."
+Granado,"Para sacar los granos fácil: corte la corona, haga cortes superficiales, sumérjalo en agua y separe.",5,Base 20 especies,no,no,,NUEVO,
+Granado,Granada dura MESES entera en refrigerador: cosecha y guarde.,6,Base 20 especies,no,no,,NUEVO,
+Granado,"Variedad Wonderful: la más plantada del mundo, excelente calidad.",7,Base 20 especies,no,no,,NUEVO,
+Granado,El jugo de granada es un superalimento: antioxidantes potentísimos.,8,Base 20 especies,no,no,,NUEVO,
+Higuera,Higuera es probablemente el frutal MÁS FÁCIL del mundo: crece casi sin cuidado.,1,Base 20 especies,no,no,,NUEVO,
+Higuera,Produce en 1-2 años: rápida gratificación.,2,Base 20 especies,no,SI,1.00,REVISAR_CASI_DUPLICADO,Produce en 1-2 años: gratificación rápida.
+Higuera,Algunas variedades dan DOS cosechas: brevas (diciembre) e higos (febrero-marzo).,3,Base 20 especies,no,SI,0.55,REVISAR_CASI_DUPLICADO,Brown Turkey y Kadota dan DOS cosechas: brevas (diciembre) e higos (febrero-marzo).
+Higuera,El higo fresco no dura: coma rápido o deshidrate al sol.,4,Base 20 especies,no,no,,NUEVO,
+Higuera,El látex blanco de la higuera IRRITA la piel: use guantes al cosechar y podar.,5,Base 20 especies,no,SI,0.75,REVISAR_CASI_DUPLICADO,El látex IRRITA la piel: use guantes al cosechar y podar.
+Higuera,"Higuera tolera suelos pésimos, sequía y abandono.",6,Base 20 especies,no,no,,NUEVO,
+Higuera,Si quiere higos más grandes: riegue en crecimiento y pode despuntando.,7,Base 20 especies,no,no,,NUEVO,
+Higuera,Higuera en macetón funciona bien: controla el tamaño y puede moverla.,8,Base 20 especies,no,no,,NUEVO,
+Mandarino,"Mandarino es perfecto para patios chicos: árbol pequeño, productivo, fruta deliciosa.",1,Base 20 especies,no,no,,NUEVO,
+Mandarino,"Variedad Clemenules: la mejor sin semillas, fácil de pelar.",2,Base 20 especies,no,SI,0.50,REVISAR_CASI_DUPLICADO,"Clemenules: sin semillas, fácil de pelar, la más popular de Chile."
+Mandarino,Resiste mejor el frío que naranjo: hasta -4°C en reposo.,3,Base 20 especies,no,no,,NUEVO,
+Mandarino,Las mandarinas se cosechan ANTES que las naranjas: cosecha temprana.,4,Base 20 especies,no,no,,NUEVO,
+Mandarino,Si las mandarinas se rajan en el árbol: exceso de agua tras sequía. Riegue parejo.,5,Base 20 especies,no,no,,NUEVO,
+Mandarino,Cochinilla y pulgón son las plagas principales: aceite mineral mensual.,6,Base 20 especies,no,no,,NUEVO,
+Mandarino,Los frutos pueden quedarse semanas en el árbol sin perder calidad.,7,Base 20 especies,no,no,,NUEVO,
+Mandarino,Pinte tronco con cal blanca.,8,Base 20 especies,no,no,,NUEVO,
+Manzano,"Manzano necesita polinizador: si tiene espacio, plante 2 variedades distintas que florezcan a la vez.",1,Base 20 especies,no,no,,NUEVO,
+Manzano,"Variedades enanas (M9, M27) caben en patios chicos y producen rápido (2-3 años).",2,Base 20 especies,no,SI,0.78,REVISAR_CASI_DUPLICADO,Variedades enanas (portainjerto M9) producen en 2-3 años y caben en patios chicos.
+Manzano,Calcio foliar mensual desde noviembre: PREVIENE Bitter Pit (manchas marrones que arruinan la fruta guardada).,3,Base 20 especies,no,SI,0.57,REVISAR_CASI_DUPLICADO,Calcio foliar MENSUAL (noviembre a febrero) previene el Bitter Pit (manchas marrones en poscosecha).
+Manzano,"Carpocapsa es la peor plaga: sin trampas y manejo, perderá 50-80% de cosecha.",4,Base 20 especies,no,no,,NUEVO,
+Manzano,La manzana mejora su sabor unas semanas después de cosechada (en frío).,5,Base 20 especies,no,SI,0.70,REVISAR_CASI_DUPLICADO,La manzana mejora sabor semanas después de cosechada: almidón → azúcar en el frío.
+Manzano,"Si nunca floreció: puede faltar frío invernal, polinizador, o fertilizar de más con nitrógeno.",6,Base 20 especies,no,no,,NUEVO,
+Manzano,Pinte tronco con cal blanca en invierno.,7,Base 20 especies,no,no,,NUEVO,
+Manzano,"Manzano es generoso: una vez establecido, dura décadas produciendo.",8,Base 20 especies,no,no,,NUEVO,
+Membrillo,"Membrillo es uno de los frutales MÁS FÁCILES: tolerante, generoso, requiere mínimo cuidado.",1,Base 20 especies,no,no,,NUEVO,
+Membrillo,"NO se come crudo: es duro y áspero. Se usa para mermelada, dulce de membrillo, jalea, codoñate.",2,Base 20 especies,no,no,,NUEVO,
+Membrillo,El aroma del membrillo perfuma toda la casa: ponga frutos maduros en un canasto.,3,Base 20 especies,no,no,,NUEVO,
+Membrillo,Es autofértil: con un solo árbol tendrá producción.,4,Base 20 especies,no,no,,NUEVO,
+Membrillo,Tolera suelos pesados y húmedos mejor que otros frutales.,5,Base 20 especies,no,no,,NUEVO,
+Membrillo,Florece muy bonito en primavera: es ornamental y productivo.,6,Base 20 especies,no,no,,NUEVO,
+Membrillo,Si las hojas se ven con manchas oscuras: aplicar caldo bordelés.,7,Base 20 especies,no,no,,NUEVO,
+Membrillo,"Una vez establecido, vive 50+ años con muy poco cuidado.",8,Base 20 especies,no,no,,NUEVO,
+Naranjo,Naranjo es ideal para zona templada-cálida. NO en zonas con heladas fuertes.,1,Base 20 especies,no,no,,NUEVO,
+Naranjo,La flor del naranjo (azahar) perfuma todo el jardín en primavera.,2,Base 20 especies,SI,no,,REEMPLAZA_LEGACY,La flor del naranjo (azahar) perfuma todo el jardín en primavera.
+Naranjo,"Variedad Washington Navel: la mejor de mesa, sin pepas, dulce.",3,Base 20 especies,no,no,,NUEVO,
+Naranjo,"Variedad Valencia: ideal para jugo, madura en verano.",4,Base 20 especies,no,no,,NUEVO,
+Naranjo,La naranja puede quedarse en el árbol semanas: cosecha gradual.,5,Base 20 especies,no,SI,0.56,REVISAR_CASI_DUPLICADO,La naranja puede quedarse semanas en el árbol sin perder calidad.
+Naranjo,Cochinilla es enemigo principal: aceite mineral mensual.,6,Base 20 especies,no,no,,NUEVO,
+Naranjo,Pinte el tronco con cal blanca: previene grietas por sol.,7,Base 20 especies,no,no,,NUEVO,
+Naranjo,Si las hojas se ven amarillas con venas verdes: falta hierro.,8,Base 20 especies,no,no,,NUEVO,
+Nectarino,El nectarino es un durazno sin pelusa: se cuida igual que el durazno.,1,Base 20 especies,no,no,,NUEVO,
+Nectarino,Es más sensible a la cloca que el durazno: aplique cobre preventivo en julio-agosto.,2,Base 20 especies,no,SI,0.78,REVISAR_CASI_DUPLICADO,Más sensible a cloca que el durazno: cobre preventivo en julio-agosto es OBLIGATORIO.
+Nectarino,Variedades de pulpa amarilla son más aromáticas; las blancas son más dulces.,3,Base 20 especies,no,no,,NUEVO,
+Nectarino,Pinte el tronco con cal blanca en invierno.,4,Base 20 especies,no,no,,NUEVO,
+Nectarino,Coloque mulch (paja) bajo el árbol: ahorra agua y mejora suelo.,5,Base 20 especies,no,no,,NUEVO,
+Nectarino,Riego por goteo es ideal.,6,Base 20 especies,no,no,,NUEVO,
+Nectarino,Ralee bien: nectarino tiene tendencia a producir mucho fruto pequeño.,7,Base 20 especies,no,no,,NUEVO,
+Nectarino,Cosechar 1-2 días antes de madurar completo: aguantan más en mesa.,8,Base 20 especies,no,no,,NUEVO,
+Peral,El peral se cosecha VERDE FIRME y madura en casa: no espere a que madure en el árbol.,1,Base 20 especies,no,no,,NUEVO,
+Peral,Necesita polinizador: plante al menos 2 variedades distintas (ej: Packham's + Williams).,2,Base 20 especies,no,no,,NUEVO,
+Peral,"Fuego bacteriano es el peor enemigo: si ve brotes 'quemados', corte 30 cm más abajo y desinfecte tijera con alcohol entre cortes.",3,Base 20 especies,no,no,,NUEVO,
+Peral,Variedades de pera asiática (Nashi) son crocantes y se cosechan maduras.,4,Base 20 especies,no,no,,NUEVO,
+Peral,Carpocapsa también ataca peras: trampas desde octubre.,5,Base 20 especies,no,no,,NUEVO,
+Peral,Peral es de vida muy larga: 50+ años produciendo.,6,Base 20 especies,no,no,,NUEVO,
+Peral,"Si las peras se ven con piel marrón rugosa (russet): es genético en algunas variedades, no es enfermedad.",7,Base 20 especies,no,no,,NUEVO,
+Peral,Pinte el tronco con cal blanca en invierno.,8,Base 20 especies,no,no,,NUEVO,
+Pomelo,Pomelo necesita ESPACIO: es de los cítricos más grandes (hasta 10 metros).,1,Base 20 especies,no,SI,0.45,REVISAR_CASI_DUPLICADO,Pomelo necesita MUCHO ESPACIO: hasta 6-10 metros. Plante lejos de construcciones.
+Pomelo,Mejor sabor en invierno: la fruta gana dulzor con el frío.,2,Base 20 especies,no,no,,NUEVO,
+Pomelo,"Variedad Star Ruby: rosada, dulce, sin pepas. Marsh: blanca, clásica.",3,Base 20 especies,no,no,,NUEVO,
+Pomelo,Pomelo aguanta más tiempo en el árbol: cosecha gradual.,4,Base 20 especies,no,no,,NUEVO,
+Pomelo,Si vive en zona muy cálida sin invierno: el sabor puede ser muy amargo.,5,Base 20 especies,no,no,,NUEVO,
+Pomelo,"ATENCIÓN: el pomelo interactúa con muchos medicamentos. Si toma medicación, consulte.",6,Base 20 especies,no,SI,0.45,REVISAR_CASI_DUPLICADO,"ATENCIÓN MÉDICA: el pomelo interactúa con muchos medicamentos (estatinas, antihistamínicos)."
+Pomelo,Cochinilla y aceite mineral son la pareja inseparable del cítrico.,7,Base 20 especies,no,no,,NUEVO,
+Pomelo,Pomelo es generoso: una cosecha alimenta a muchos.,8,Base 20 especies,no,no,,NUEVO,
+Palto,El riesgo mayor no es la sequía: es el exceso de agua y el mal drenaje (Phytophthora cinnamomi),1,Base de Conocimiento,no,no,,NUEVO,
+Palto,Nunca plantes en un sitio donde se acumule agua después de llover,2,Base de Conocimiento,no,no,,NUEVO,
+Palto,Protege el tronco joven del viento: la raíz superficial ancla poco al árbol,3,Base de Conocimiento,no,no,,NUEVO,
+Palto,Es normal ver una floración masiva con muy poca fruta cuajada (0.1-0.3%): no indica un problema,4,Base de Conocimiento,no,no,,NUEVO,
+Palto,Elige un sitio libre de heladas fuertes: el daño en flor ocurre ya a -1°C,5,Base de Conocimiento,no,no,,NUEVO,
+Palto,Huerto adulto en plena producción: 12.000-13.000 m³ de agua/ha/año (Bol. INIA 160),6,Base de Conocimiento,no,no,,NUEVO,
+Frutilla,Renueva las plantas cada 2-3 años: el rendimiento baja notoriamente después,1,Base de Conocimiento,no,SI,0.78,REVISAR_CASI_DUPLICADO,Renueva las plantas cada 2-3 años: el rendimiento cae notoriamente después de la 3.ª temporada.
+Frutilla,El mulch (paja o film plástico) es la diferencia entre fruta limpia y fruta podrida,2,Base de Conocimiento,no,SI,0.58,REVISAR_CASI_DUPLICADO,"Mulch permanente (paja, film negro): la diferencia entre frutilla limpia y frutilla podrida."
+Frutilla,"Riego por goteo, nunca por aspersión sobre el follaje: reduce Botrytis drásticamente",3,Base de Conocimiento,no,SI,1.00,REVISAR_CASI_DUPLICADO,"Riego por goteo, NUNCA aspersión sobre el follaje: reduce Botrytis drásticamente."
+Frutilla,En maceta o jardinera colgante funciona igual de bien que en el suelo,4,Base de Conocimiento,no,no,,NUEVO,
+Frutilla,Cosecha frecuente (cada 2-3 días) estimula la formación de más flores,5,Base de Conocimiento,no,SI,0.88,REVISAR_CASI_DUPLICADO,Cosechar CADA 2-3 días: la cosecha frecuente estimula la formación de más flores.
+Kiwi,Necesitas una planta macho por cada 5-8 hembras (o un injerto mixto) para que haya polinización,1,Base de Conocimiento,no,no,,NUEVO,
+Kiwi,"Instala una estructura de parrón o pérgola resistente antes de plantar, no después",2,Base de Conocimiento,no,no,,NUEVO,
+Kiwi,El Psa (cancro bacteriano) es el riesgo mayor: compra siempre plantas certificadas libres de Psa,3,Base de Conocimiento,no,no,,NUEVO,
+Kiwi,Se cosecha firme y se deja madurar junto a una manzana (acelera maduración por etileno),4,Base de Conocimiento,no,SI,0.46,REVISAR_CASI_DUPLICADO,Cosechar firme en abril y dejar madurar en casa con una manzana (etileno acelera maduración).
+Kiwi,Excelente para cubrir una pérgola de patio: da sombra en verano y fruta en otoño,5,Base de Conocimiento,no,no,,NUEVO,
+Avellano,"Necesita bastante espacio: no es ideal para patios pequeños, mejor en parcela",1,Base de Conocimiento,no,no,,NUEVO,
+Avellano,Florece en pleno invierno (jul-ago): elige un sitio protegido de heladas fuertes,2,Base de Conocimiento,no,no,,NUEVO,
+Avellano,Planta al menos 2 variedades para asegurar buena polinización cruzada,3,Base de Conocimiento,no,no,,NUEVO,
+Avellano,Chile es el principal productor mundial fuera del hemisferio norte (polo Biobío-Araucanía),4,Base de Conocimiento,no,no,,NUEVO,
+Avellano,Nunca lo plantes en suelo calcáreo o de mal drenaje: es muy sensible a asfixia radicular,5,Base de Conocimiento,no,no,,NUEVO,
+Chirimoya,La polinización manual con pincel es casi obligatoria para buena producción,1,Base de Conocimiento,no,no,,NUEVO,
+Chirimoya,Solo apto en la franja costera libre de heladas (Coquimbo-Valparaíso),2,Base de Conocimiento,no,no,,NUEVO,
+Chirimoya,Protege el tronco joven de sol y viento los primeros años,3,Base de Conocimiento,no,no,,NUEVO,
+Chirimoya,Es de las especies más exigentes del catálogo: reserva para huertos con experiencia previa,4,Base de Conocimiento,no,no,,NUEVO,
+Chirimoya,El polo productivo nacional está en La Serena-Ovalle-Quillota,5,Base de Conocimiento,no,no,,NUEVO,
+Frambuesa,Elige variedades remontantes (ej. Heritage) si quieres poda simple: corte total anual,1,Base de Conocimiento,no,no,,NUEVO,
+Frambuesa,"El tutorado no es opcional: sin él, la cosecha se pierde en el suelo",2,Base de Conocimiento,no,no,,NUEVO,
+Frambuesa,"En maceta grande (40-50 L) también produce bien, ideal para patios chicos",3,Base de Conocimiento,no,no,,NUEVO,
+Frambuesa,Riego por goteo evita mojar el fruto y reduce Botrytis en cosecha,4,Base de Conocimiento,no,no,,NUEVO,
+Frambuesa,Cosecha frecuente evita que el fruto sobremadure y atraiga Drosophila,5,Base de Conocimiento,no,no,,NUEVO,
+Lúcuma,"Fruto emblemático andino, muy apreciado en repostería (helados, tortas)",1,Base de Conocimiento,no,no,,NUEVO,
+Lúcuma,"Árbol grande: solo para patios amplios o parcelas, no apto para espacios reducidos",2,Base de Conocimiento,no,no,,NUEVO,
+Lúcuma,Solo viable en la franja costera libre de heladas de Coquimbo-Valparaíso,3,Base de Conocimiento,no,no,,NUEVO,
+Lúcuma,Se cosecha firme (como palta) y madura fuera del árbol en unos días,4,Base de Conocimiento,no,no,,NUEVO,
+Lúcuma,"Muy tolerante a sequía una vez establecida, pero crece más rápido con riego regular",5,Base de Conocimiento,no,no,,NUEVO,
+Mora,Elige siempre variedades sin espina para patio (ej. Thornfree),1,Base de Conocimiento,no,no,,NUEVO,
+Mora,Instala una espaldera firme desde el inicio: el vigor de la planta la supera rápido si no,2,Base de Conocimiento,no,no,,NUEVO,
+Mora,Es la baya más productiva y de menor exigencia de cuidados del catálogo,3,Base de Conocimiento,no,no,,NUEVO,
+Mora,Mantén distancia de otros cultivos: sus raíces y brotes son muy invasivos,4,Base de Conocimiento,no,no,,NUEVO,
+Mora,Cosecha apenas madura: el fruto pasado atrae mosca de la fruta,5,Base de Conocimiento,no,no,,NUEVO,
+Níspero,Es de los frutales más rústicos y fáciles del catálogo: casi no requiere manejo sanitario,1,Base de Conocimiento,no,no,,NUEVO,
+Níspero,Florece en invierno: en zonas con heladas fuertes elige un sitio protegido,2,Base de Conocimiento,no,no,,NUEVO,
+Níspero,También funciona como árbol ornamental de hoja perenne todo el año,3,Base de Conocimiento,no,SI,0.45,REVISAR_CASI_DUPLICADO,"Árbol ornamental: hoja perenne grande y brillante, atractivo todo el año."
+Níspero,Protege los frutos con malla si hay muchas aves en el sector,4,Base de Conocimiento,no,no,,NUEVO,
+Níspero,No apto para el sur de Chile: necesita clima mediterráneo sin heladas invernales severas,5,Base de Conocimiento,no,no,,NUEVO,
+Papayo chileno,Es la especie de más rápida producción del catálogo: primeros frutos en 10-15 meses,1,Base de Conocimiento,no,no,,NUEVO,
+Papayo chileno,Extremadamente sensible a heladas: solo para la franja costera libre de heladas (Coquimbo-Valparaíso),2,Base de Conocimiento,no,no,,NUEVO,
+Papayo chileno,Vida productiva corta (4-8 años): planifica renovación periódica,3,Base de Conocimiento,no,no,,NUEVO,
+Papayo chileno,"Protege del viento fuerte, su tallo es semi-herbáceo y frágil",4,Base de Conocimiento,no,no,,NUEVO,
+Papayo chileno,Fruto nativo de Chile de alto potencial gastronómico y funcional (antioxidantes),5,Base de Conocimiento,no,no,,NUEVO,
