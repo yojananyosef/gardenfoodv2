@@ -22,8 +22,12 @@ const fraunces = Fraunces({
   axes: ["opsz", "SOFT", "WONK"],
 });
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://gardenfoodv2.vercel.app";
+// Las variables de entorno de Vercel llegan con comillas literales cuando se
+// guardan así en el dashboard; `new URL('"https://..."')` lanza Invalid URL y
+// tumba el build entero en "Collecting page data". Se normalizan comillas y
+// espacios antes de construir la URL.
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gardenfoodv2.vercel.app";
+const SITE_URL = rawSiteUrl.trim().replace(/^["']|["']$/g, "");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
