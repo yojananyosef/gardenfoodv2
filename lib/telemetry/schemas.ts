@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TELEMETRY_CATEGORIES, TELEMETRY_EVENT_NAMES } from "@/types";
 
 const geoContextSchema = z
   .object({
@@ -27,13 +28,21 @@ export const telemetryEventSchema = z
     // Opcional: clientes sin identidad durable la omiten; el servidor resuelve
     // por escalera (cookie first-party → nuevo identificador).
     deviceId: z.string().min(1).max(200).optional(),
-    category: z.enum([
-      "PRODUCT_USAGE",
-      "AD_INTERACTION",
-      "CMP_CONSENT",
-      "COMMERCE_INTENT",
-    ]),
-    name: z.string().min(1).max(100),
+    category: z.enum(TELEMETRY_CATEGORIES),
+    /**
+     * El nombre se valida contra el vocabulario, no contra su longitud.
+     *
+     * Antes era `z.string().min(1).max(100)`, que dejaba pasar cualquier cosa:
+     * un nombre mal escrito llegaba a la base como texto y se descubría meses
+     * después, cuando un total del panel no cuadraba. Las 6 filas que quedaron
+     * fuera del dominio de la Fase 10.2 salieron de ahí.
+     *
+     * Con el enum en `gf_analytics_events.event_name` (migración 0044), esto
+     * deja de ser teórico: sin esta validación, un nombre nuevo mal escrito
+     * haría fallar el insert con un error de Postgres en vez de un mensaje de
+     * validación en el cliente.
+     */
+    name: z.enum(TELEMETRY_EVENT_NAMES),
     especieId: z.string().max(120).nullish(),
     dwellTimeMs: z.number().int().nonnegative().max(24 * 60 * 60 * 1000).nullish(),
     scrollDepthPercent: z.number().int().min(0).max(100).nullish(),

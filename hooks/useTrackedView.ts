@@ -1,13 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { TelemetryEventCategory } from "@/types";
+import type { TelemetryEventCategory, TelemetryEventName } from "@/types";
 import { trackEvent } from "@/lib/telemetry/tracker";
 import { useDwellTime } from "@/hooks/useDwellTime";
 import { useScrollDepth } from "@/hooks/useScrollDepth";
 
 export interface TrackedViewOptions {
-  name: string;
+  /**
+   * El nombre del evento, del vocabulario cerrado de `TELEMETRY_EVENT_NAMES`.
+   *
+   * Antes era `string`, que dejaba pasar cualquier cosa. Por eso se
+   * acumularon nombres que no existen en el dominio (ver la Fase 10.2). Con el enum
+   * en `gf_analytics_events.event_name`, un nombre invalido no puede llegar ni al
+   * cliente ni a la base: rompe al compilar.
+   */
+  name: TelemetryEventName;
   category?: TelemetryEventCategory;
   especieId?: string;
   payload?: Record<string, unknown>;

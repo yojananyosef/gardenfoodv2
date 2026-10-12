@@ -161,10 +161,81 @@ El orden correcto para cualquier `drop column` es:
 
 ## 10.2 Enums (menos los de pagos)
 
-- [ ] 10.2.1 Verificar los valores reales de cada columna antes del cast, y anotarlos. Los del plan: `event_category` PRODUCT_USAGE/AD_INTERACTION/CMP_CONSENT/COMMERCE_INTENT, `event_name` con 9 valores, `screen` con 4, `payment_status` con 4.
-- [ ] 10.2.2 Migración `0043` con los 4 `create type ... as enum` y los `alter column ... type ... using`.
-- [ ] 10.2.3 Si algun valor real esta fuera del dominio, **no** ampliar el enum en silencio: reportarlo primero. Un enum es unaDecision de dominio, y ampliarlo para que el cast pase la convierte en decoracion.
-- [ ] 10.2.4 `gf_subscription_plans.tier` queda fuera a proposito. Ver la seccion «Lo que no entra» del proposal.
+- [x] 10.2.1 Verificar los valores reales de cada columna antes del cast, y anotarlos.
+- [x] 10.2.2 Migración `0044` con los 4 `create type ... as enum` y los `alter column ... type ... using`.
+- [x] 10.2.3 **Salieron 6 valores fuera del dominio. No se amplió el enum.** Se tradujeron, abajo.
+- [x] 10.2.4 `gf_subscription_plans.tier` queda fuera a propósito.
+
+### Los 6 valores fuera del dominio, y por qué no se amplió el enum
+
+`gf_analytics_events.event_name` tenía 6 filas que no cabían en el vocabulario:
+
+| Valor v0 | Filas | Fecha | → actual |
+|---|---|---|---|
+| `ad_impression` | 2 | 2026-08-16 | `AD_IMPRESSION` |
+| `especie_view` | 3 | 16 y 17 de agosto | `VIEW_FICHA` |
+| `crop_search` | 1 | 2026-08-16 | `SEARCH_INP` |
+
+Las 6 son de los **dos primeros días de telemetría**, con los nombres de la
+taxonomía v0, que se estandarizó al día siguiente. **Ampliar el enum para que el
+cast pasara habría sido justo lo que este punto busca evitar**: dejar el enum
+decorado, con nombres que ya nadie emite, y que el error de un nombre mal
+escrito volviera a ser invisible.
+
+Se tradujeron en vez de borrarse, así que no se pierde nada: `VIEW_FICHA` pasó de
+199 a 202, `AD_IMPRESSION` de 10 a 12, `SEARCH_INP` de 0 a 1. Total 1.647,
+igual que antes.
+
+**El tercero es una inferencia y queda dicho:** `crop_search` traía
+`payload {"query": "tomate cherry"}` y categoría `COMMERCE_INTENT`, o sea una
+búsqueda de cultivo, y `SEARCH_INP` es el único evento de búsqueda del dominio.
+Si alguien prefiere que esas filas cuenten como otro evento, el `update` está
+aislado en la migración y se cambia en un segundo.
+
+### La puerta abierta que el enum iba a encontrar
+
+`telemetryEventSchema` validaba la **categoría** con `z.enum` pero el **nombre**
+como `z.string().min(1).max(100)`: cualquier string pasaba. De ahí salieron esas
+6 filas. Y de paso, `CMP_CONSENT_GRANTED`, `CMP_CONSENT_UPDATED` y `SEARCH_INP`
+seguían declarados en el vocabulario sin que nadie los emitiera nunca.
+
+Con el enum en la base eso ya no era teórico: un nombre mal escrito haría fallar
+el insert con un error de Postgres. Así que antes de aplicar:
+
+- `name` pasa a `z.enum(TELEMETRY_EVENT_NAMES)` y `category` usa
+  `TELEMETRY_CATEGORIES`, para que la validación viva donde ya estaba.
+- `useTrackedView` recibe `name: TelemetryEventName` en vez de `string`, así que
+  un nombre inválido rompe al compilar y no al insertar.
+
+### La política RLS bloqueó el cast, dos veces
+
+`cannot alter type of a column used in a policy definition`. La culpable es
+`Public read paid active sponsorships`, cuyo `using` era
+`payment_status = 'paid'::text`: un texto contra un enum no empata, así que
+además de quitarla había que reponerla con el cast correcto.
+
+El primer intento falló en silencio y dio la impresión de que el problema era
+otro: el `drop policy if exists` iba con el nombre compuesto
+`gf_sponsorships.Public read paid active sponsorships`, que **no existe**. El
+nombre real no lleva el prefijo de la tabla. Como era `if exists`, no dio error:
+no hizo nada, y el `alter` siguió viendo la dependencia.
+
+Por eso `scripts/listar_politicas_rls.mjs` imprime el nombre tal cual, y
+`scripts/diagnosticar_bloqueo_enum.mjs` lee `pg_policy` en vez de `pg_policies`,
+que filtra por privilegios y por eso no mostraba todo.
+
+### Verificación de 10.2
+
+| | |
+|---|---|
+| Enums | 0 → **4**: `telem_event_category`, `telem_event_name`, `sponsorship_screen`, `sponsorship_payment_status` |
+| Filas fuera del dominio | 0 |
+| Default de `payment_status` | repuesto como `'unpaid'::sponsorship_payment_status` |
+| Política RLS | repuesta, ahora con `'paid'::sponsorship_payment_status` |
+| Anónimo lee `gf_sponsorships` | 1 fila, la `paid` — la RLS filtra |
+| Anónimo inserta nombre inválido | **rechazado**: `invalid input value for enum telem_event_name: "NO_EXISTE"` |
+| Anónimo inserta nombre válido | aceptado, y la fila de prueba se borró (1.647) |
+| `tsc` / `eslint` / tests / build | 0 / 0 / 6.804 / correcto |
 
 ## 10.1 Columnas desnormalizadas en la tabla de mayor volumen
 

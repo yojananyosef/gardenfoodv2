@@ -2488,7 +2488,10 @@ export type Database = {
       }
     }
     Enums: {
-      never: never
+      sponsorship_payment_status: "unpaid" | "pending" | "paid" | "failed"
+      sponsorship_screen: "explorar" | "huerto" | "ficha" | "calendario"
+      telem_event_category: "PRODUCT_USAGE" | "AD_INTERACTION" | "CMP_CONSENT" | "COMMERCE_INTENT"
+      telem_event_name: "VIEW_FICHA" | "PAGE_VIEW" | "CALCULATOR_SUBMIT" | "AD_IMPRESSION" | "AD_CLICK" | "SEARCH_INP" | "CMP_CONSENT_GRANTED" | "CMP_CONSENT_UPDATED" | "INPUT_QUOTE"
     }
     CompositeTypes: {
       never: never
