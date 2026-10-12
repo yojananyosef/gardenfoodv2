@@ -2,7 +2,12 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { DiagramaEsquema, type ModeloEsquema } from "@/components/DiagramaEsquema";
 
-export const dynamic = "force-static";
+/**
+ * Sin `force-static`: la CSP lleva un nonce por request y el proxy lo pasa en
+ * `x-nonce`. Una pagina estatica se hornea en el build sin nonce y despues CSP
+ * le bloquea todos los scripts: se ve pero no se puede arrastrar ni hacer zoom.
+ */
+export const dynamic = "force-dynamic";
 
 /**
  * Diagrama de la base de datos, en `/esquema`.
