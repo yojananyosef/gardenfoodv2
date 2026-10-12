@@ -1,0 +1,3695 @@
+{
+  "generado": "2026-10-12T20:37:41.047Z",
+  "tablas": [
+    {
+      "tabla": "cat_fert_casero",
+      "familia": "cat",
+      "filas": 11,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "producto",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "etiqueta",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p_pct",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k_pct",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "calcio_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "magnesio_pct",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "g_por_cucharada",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "se_reparte",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "como_pedirlo_y_cuidar",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "cat_fert_tecnico",
+      "familia": "cat",
+      "filas": 29,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "producto_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "tipo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fertilizante",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p2o5_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k2o_pct",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cao_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mgo_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "s_pct",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "reaccion_ph",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "apto_organico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "solubilidad_g_l",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "para_que_y_cuidados",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_comunas",
+      "familia": "dim",
+      "filas": 346,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "comuna_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "comuna",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cut",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "region",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "zona_riego_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_zonas_riego"
+        },
+        {
+          "nombre": "origen_zona_riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "macrozona_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_macrozonas"
+        },
+        {
+          "nombre": "origen_macrozona",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "criterio_asignacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "zona_agro_id",
+          "tipo": "integer",
+          "pk": false,
+          "fk": "dim_zonas_agro"
+        },
+        {
+          "nombre": "origen_zona_agro",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "zona_agro_propuesta_id",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo_clima",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "heladas",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "riesgo_sequia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "restricciones_huerto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nota_cut",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_edad",
+      "familia": "dim",
+      "filas": 4,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "edad_n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "edad",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "anos_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "anos_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_litros",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_dias",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_edad_nutricion",
+      "familia": "dim",
+      "filas": 3,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "edad_nutricion_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "tramo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "anos_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "anos_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_nutricion",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_especies",
+      "familia": "dim",
+      "filas": 30,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nombre_cientifico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "grupo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "alias_riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nombre_en_excel_riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "alias_nutricion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "alias_bd20",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tiene_ficha_bd20",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "origen_programa_riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "riego_mantencion_l",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "copa_ref_m",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "suelo_preferido",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ph_ideal",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ph_min",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ph_max",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "rendimiento_ref_kg_pl",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "marco_plantacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "densidad_pl_ha",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "patron_parcializacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "confianza_nutricion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente_nutricion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nota_critica_nutricion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "foliar_epoca",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "foliar_tejido",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_etapas",
+      "familia": "dim",
+      "filas": 8,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "codigo_etapa",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "lo_que_ve",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "kc_referencial",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_humedad",
+      "familia": "dim",
+      "filas": 5,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "humedad_n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "nivel",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "pct_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "pct_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_riego",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_control",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "que_significa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "se_ve_gruesa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "se_ve_mod_gruesa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "se_ve_media",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "se_ve_fina",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_macrozonas",
+      "familia": "dim",
+      "filas": 6,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "macrozona_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "macrozona",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_n",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_p2o5",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_k2o",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_cao",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_mgo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "parcialidades_min_ano",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "por_que",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_meses",
+      "familia": "dim",
+      "filas": 12,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "mes_n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "mes",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "abrev",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_parcializacion",
+      "familia": "dim",
+      "filas": 20,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "patron",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nutriente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "brotacion_a_cuaja",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cuaja_a_cosecha",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "postcosecha",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "rango_inia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dentro_rango",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "que_significa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_suelos",
+      "familia": "dim",
+      "filas": 4,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "suelo_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "suelo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nombres_usda",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "agua_min_mm_m",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "agua_max_mm_m",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_suelo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "como_se_siente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "como_manejarlo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_zonas_agro",
+      "familia": "dim",
+      "filas": 20,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "zona_agro_id",
+          "tipo": "integer",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "zona_agro",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "region",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo_clima",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_max_enero",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_min_julio",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_min_absoluta",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "precipitacion_anual_mm",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "horas_frio",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "heladas_dias_ano",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "riesgo_sequia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "estacion_agromet",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "dim_zonas_riego",
+      "familia": "dim",
+      "filas": 11,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "zona_riego_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "zona_riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "donde_queda",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "eto_verano_mm_dia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "factor_clima",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "desfase_meses",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "que_significa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "eto_verano_min",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "eto_verano_max",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "especies_bc",
+      "familia": "especies",
+      "filas": 30,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "categoria",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dificultad",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "zonas_recomendadas",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "horas_frio",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "temp_minima",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "temp_maxima",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_limite_ficha",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "requerimiento_hidrico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo_suelo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ph",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "exposicion_solar",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "epoca_plantacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "epoca_cosecha",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "distancia_plantacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "plagas_principales",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "enfermedades_principales",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nivel_mantenimiento",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tiempo_hasta_produccion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "rendimiento_esperado",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "compatible_patio",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "compatible_maceta",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "observaciones",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "referencias",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ficha_fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ficha_cosecha_cuando",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ficha_cosecha_senal",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ficha_cosecha_tecnica",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ficha_postcosecha",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ficha_rendimiento",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "especies_ficha_bd20",
+      "familia": "especies",
+      "filas": 30,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "clima_ideal",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "distancia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "primera_cosecha",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "vida_productiva",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "variedades",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "horas_frio",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "polinizacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tamano_adulto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cosecha_cuando",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cosecha_como_saber",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cosecha_tecnica",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "postcosecha",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "rendimiento_esperado",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_clima_zona",
+      "familia": "fact",
+      "filas": 20,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "zona_agro_id",
+          "tipo": "integer",
+          "pk": true,
+          "fk": "dim_zonas_agro"
+        },
+        {
+          "nombre": "t_max_enero_c",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_min_julio_c",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_min_absoluta_c",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_min_absoluta_nota",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "precipitacion_anual_mm",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "horas_frio_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "horas_frio_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "heladas_dias_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "heladas_dias_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "riesgo_sequia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_media_anual_c",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "t_media_mensual_c",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "probabilidad_helada_pct",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "horas_sol_anual",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nubosidad_pct",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "lluvia_invierno_mm",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "lluvia_verano_mm",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nota_vacios",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_consejos",
+      "familia": "fact",
+      "filas": 211,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "consejo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_fenologia",
+      "familia": "fact",
+      "filas": 180,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "macrozona_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_macrozonas"
+        },
+        {
+          "nombre": "macrozona",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "viable",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "brotacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "floracion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cuaja",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cosecha",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cosecha_inicio",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cosecha_fin",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "meses_despierta",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "meses_engorda",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "meses_recupera",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "veces_ano_suelo",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "veces_ano_goteo",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nota",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "caida_hojas",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nota_fenologia_bc",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_fert_organica",
+      "familia": "fact",
+      "filas": 181,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "mes",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "que_pasa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fertilizante",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dosis_por_arbol",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "donde_aplicar",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "por_que",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_fert_programa",
+      "familia": "fact",
+      "filas": 786,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "macrozona_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_macrozonas"
+        },
+        {
+          "nombre": "sistema",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "periodo_n",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "periodo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "meses",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "veces",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "frecuencia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ca_producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ca_g_cada_vez",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ca_veces",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ca_g_periodo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mg_producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mg_g_cada_vez",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mg_veces",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mg_g_periodo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k_producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k_g_cada_vez",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k_veces",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k_g_periodo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p_producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p_g_cada_vez",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p_veces",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p_g_periodo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_g_cada_vez",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_veces",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_g_periodo",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_ficha_fertilizacion",
+      "familia": "fact",
+      "filas": 149,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "mes",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "etapa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dosis",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "donde",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "por_que_fisiologico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_ficha_riego",
+      "familia": "fact",
+      "filas": 149,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "etapa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "meses",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "frecuencia",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "volumen",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "senal_visual",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "por_que_fisiologico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_labores_mes",
+      "familia": "fact",
+      "filas": 360,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "mes",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mes_n",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": "dim_meses"
+        },
+        {
+          "nombre": "labores",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_manejo_estacion",
+      "familia": "fact",
+      "filas": 120,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "estacion",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "labores",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_nutrientes_anual",
+      "familia": "fact",
+      "filas": 30,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "especie_alias",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "categoria",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_kg_t",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p2o5_kg_t",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k2o_kg_t",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cao_kg_t",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mgo_kg_t",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "patron_parcializacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "confianza",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "rendimiento_ref_kg_pl",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "marco_plantacion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "densidad_pl_ha",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "n_g_pl_adulta",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "p2o5_g_pl_adulta",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "k2o_g_pl_adulta",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cao_g_pl_adulta",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mgo_g_pl_adulta",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_plagas",
+      "familia": "fact",
+      "filas": 110,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "plaga_enfermedad",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "tipo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "sintomas",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "epoca_riesgo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "control_organico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "control_quimico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "causa_y_prevencion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_poda",
+      "familia": "fact",
+      "filas": 104,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "tipo_poda",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cuando",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "que_cortar",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "herramienta",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "por_que",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "error_frecuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_riego_etapa",
+      "familia": "fact",
+      "filas": 210,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "codigo_etapa",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_etapas"
+        },
+        {
+          "nombre": "etapa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "meses_originales",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "coincide_exacto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dias_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dias_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "litros_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "litros_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "reposo",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "que_vera",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consejo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_riego_mes",
+      "familia": "fact",
+      "filas": 360,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "especie_alias",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mes",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mes_n",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": "dim_meses"
+        },
+        {
+          "nombre": "etapa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dias_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dias_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "litros_min",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "litros_max",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "reposo",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "que_vera",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consejo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "frecuencia_original",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "volumen_original",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_sanidad",
+      "familia": "fact",
+      "filas": 160,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "n",
+          "tipo": "smallint",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "problema",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "sintomas",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "epoca",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "control_organico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "control_quimico",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "prevencion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fuente",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_sugerencias",
+      "familia": "fact",
+      "filas": 335,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": true,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "tipo",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "nombre",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "etapa_o_nivel",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "categoria_o_plan",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "por_que",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_tareas_mes",
+      "familia": "fact",
+      "filas": 240,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "mes",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "mes_n",
+          "tipo": "smallint",
+          "pk": false,
+          "fk": "dim_meses"
+        },
+        {
+          "nombre": "etapa",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nutricion",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "sanidad",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "alerta_tarea",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "fact_viabilidad_zona",
+      "familia": "fact",
+      "filas": 600,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "clave",
+          "tipo": "text",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": "dim_especies"
+        },
+        {
+          "nombre": "zona_agro_id",
+          "tipo": "integer",
+          "pk": false,
+          "fk": "dim_zonas_agro"
+        },
+        {
+          "nombre": "zona_agro",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "viabilidad",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "razon",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_analytics_events",
+      "familia": "gf",
+      "filas": 1698,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "session_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "device_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "event_category",
+          "tipo": "USER-DEFINED",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "event_name",
+          "tipo": "USER-DEFINED",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "gps_lat",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "gps_lng",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "gps_accuracy_meters",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "especie_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "dwell_time_ms",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "scroll_depth_percent",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ad_unit_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ad_partner_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "payload",
+          "tipo": "jsonb",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "device_metadata",
+          "tipo": "jsonb",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "client_timestamp",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "comuna",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "region",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "zona_agroclimatica",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_aplicaciones",
+      "familia": "gf",
+      "filas": 3,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "arbol_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "gf_arboles"
+        },
+        {
+          "nombre": "especie",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "territorio_huerto_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "gf_huertos"
+        },
+        {
+          "nombre": "momento",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "producto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "gramos",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "creado_en",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_arboles",
+      "familia": "gf",
+      "filas": 150,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "especie",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cantidad",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "fecha_plantacion",
+          "tipo": "date",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "observaciones",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "huerto_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "gf_huertos"
+        },
+        {
+          "nombre": "pos_x",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "pos_y",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "copa_m",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "metodo_riego",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "caudal_l_h",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "edad_n",
+          "tipo": "integer",
+          "pk": false,
+          "fk": "dim_edad"
+        }
+      ]
+    },
+    {
+      "tabla": "gf_cron_config",
+      "familia": "gf",
+      "filas": 1,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "boolean",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "refresh_endpoint",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "refresh_token",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "app_base_url",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cron_secret",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_cultivos",
+      "familia": "gf",
+      "filas": 3,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "especie",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cantidad",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_huertos",
+      "familia": "gf",
+      "filas": 22,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "nombre",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "terreno_geojson",
+          "tipo": "jsonb",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "superficie_m2",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_registro",
+      "familia": "gf",
+      "filas": 1,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "fecha",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "especie",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nota",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "produccion_kg",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_sponsorships",
+      "familia": "gf",
+      "filas": 1,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "ad_unit_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ad_partner_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "screen",
+          "tipo": "USER-DEFINED",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "title",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "description",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cta_url",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cta_label",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "image_url",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "active",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "sort_order",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "amount",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "payment_status",
+          "tipo": "USER-DEFINED",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "provider_token",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "provider_payment_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "paid_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "targeting",
+          "tipo": "jsonb",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_subscription_plans",
+      "familia": "gf",
+      "filas": 6,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "provider",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tier",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "interval",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "provider_plan_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "active",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_subscriptions",
+      "familia": "gf",
+      "filas": 13,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "provider_customer_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "provider_subscription_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "plan",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "interval",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "status",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "current_period_start",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "current_period_end",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "trial_end",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "cancel_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "paid_via",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "terminos_aceptados_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "terminos_aceptados_version",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_tareas",
+      "familia": "gf",
+      "filas": 10,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "fecha",
+          "tipo": "date",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "especie",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "texto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "origen_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "estado",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_user_audiences",
+      "familia": "gf",
+      "filas": 2,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "perfiles"
+        },
+        {
+          "nombre": "commercial_segments",
+          "tipo": "ARRAY",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "purchasing_power_tier",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "last_active_phenology_stage",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "primary_interest_crop",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "total_ad_impressions",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "total_ad_clicks",
+          "tipo": "integer",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "gf_user_consents",
+      "familia": "gf",
+      "filas": 40,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "uuid",
+          "pk": false,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "device_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consent_string",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consent_personalized_ads",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consent_precise_geo",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consent_third_party_sharing",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consent_device_linking",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "legitimate_interest_opposed",
+          "tipo": "boolean",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "consent_timestamp",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "expires_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "ip_address",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "user_agent",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "tabla": "perfiles",
+      "familia": "gf",
+      "filas": 6,
+      "descripcion": null,
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "uuid",
+          "pk": true,
+          "fk": "auth.users"
+        },
+        {
+          "nombre": "email",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "nombre",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "region",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "comuna",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "zona_agroclimatica",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "superficie_m2",
+          "tipo": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo_huerto",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "plan",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "payment_provider",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "subscription_id",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "subscription_status",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "updated_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "terreno_geojson",
+          "tipo": "jsonb",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "huerto_modo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "asistente_completado_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "tipo_suelo",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "suelo_origen",
+          "tipo": "text",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "nombre": "suelo_at",
+          "tipo": "timestamp with time zone",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    }
+  ]
+}
