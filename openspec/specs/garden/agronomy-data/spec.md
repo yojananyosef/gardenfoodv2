@@ -83,7 +83,7 @@ The system SHALL expose `duraznero` as the free catalog sample (`ESPECIE_MUESTRA
 
 ### Requirement: El motor de riego se verifica contra la calculadora de referencia
 
-El motor de riego SHALL tener una suite automatizada que lo compare, combinación por combinación, contra los resultados precalculados de la calculadora de referencia del Excel maestro. La comparación SHALL cubrir litros y días por árbol para las condiciones de referencia: árbol adulto, copa de referencia, suelo Media y humedad en punto de riego.
+El motor de riego SHALL tener una suite automatizada que lo compare, combinación por combinación, contra los resultados precalculados de la calculadora de referencia del Excel maestro. La comparación SHALL cubrir litros y días por árbol para las condiciones de referencia: árbol adulto, copa de referencia, suelo Media y humedad en punto de riego. Toda superficie que muestre un volumen de riego al usuario, incluida la ficha de especie, SHALL obtener ese número del motor y SHALL NOT mantener una copia de la fórmula.
 
 #### Scenario: Una combinación correcta pasa
 

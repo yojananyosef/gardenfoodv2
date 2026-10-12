@@ -41,7 +41,24 @@
 - [x] 4.1 Invertir el test de 1.1: ahora la reimplementación debe coincidir con el motor en las 72 combinaciones, incluidas las que antes divergían. Confirmar que el test pasa y que el número de diferencias es 0.
 - [x] 4.2 Ejecutar `pnpm exec vitest run` completo y confirmar que los 6.783 tests siguen en verde, incluido `riego-consistencia.test.ts` que no debe verse afectado.
 - [x] 4.3 Ejecutar `pnpm exec tsc --noEmit`, `pnpm exec eslint` y `pnpm build`, y revisar que el bundle del cliente no creció de forma apreciable.
-- [ ] 4.4 Desplegar preview y verificar en `/especies/nogal` que un mes de reposo muestra el volumen de mantenimiento, y en una especie con humedad seca que el número cambió respecto del anterior. Anotar los valores antes y después.
+- [x] 4.4 Desplegar preview y verificar en `/especies/nogal` que un mes de reposo muestra el volumen de mantenimiento, y en una especie con humedad seca que el número cambió respecto del anterior. Anotar los valores antes y después.
+
+> Preview `gardenfoodv2-54xrps4r3-jhngtrrzs-projects.vercel.app`, sesión admin real, viewport 1440×900.
+>
+> **Nogal, los 12 meses tras el fix** (suelo del perfil = F, factor 1.15):
+>
+> | Mes | Antes | Ahora |
+> |---|---|---|
+> | **Junio** | **0 L** | **35 L cada 23 días** |
+> | **Julio** | **0 L** | **35 L cada 23 días** |
+> | **Agosto** | **0 L** | **35 L cada 23 días** |
+> | Mayo | 18 L | 57 L cada 17 días |
+> | Enero | 84 L | 144 L cada 7 días |
+> | Noviembre | 67 L | 115 L cada 10 días |
+>
+> Los tres meses de reposo dejaron de dar 0 L. El 35 L es exactamente el motor: `mantencion_l = 30 × factor_suelo 1.15 = 34.5 → 35` con redondeo half-up. En la ficha el badge ahora dice «Reposo» y la etiqueta del eje «Junio», así que el usuario ve la causa además del número.
+>
+> La verificación por test (6.787/6.787) es la que da la garantía; esta comprobación visual confirma que el cambio llega a pantalla con el suelo real del usuario, que el test no puede reproducir.
 
 ## Workflow follow-up
 
