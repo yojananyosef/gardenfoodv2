@@ -1664,6 +1664,7 @@ export type Database = {
         "zona_agro_id": number | null
         "zona_agro": string | null
         "viabilidad": string | null
+        "razon": string | null
         }
         Insert: {
         "clave": string
@@ -1671,6 +1672,7 @@ export type Database = {
         "zona_agro_id"?: number | null
         "zona_agro"?: string | null
         "viabilidad"?: string | null
+        "razon"?: string | null
         }
         Update: {
         "clave"?: string | null
@@ -1678,6 +1680,7 @@ export type Database = {
         "zona_agro_id"?: number | null
         "zona_agro"?: string | null
         "viabilidad"?: string | null
+        "razon"?: string | null
         }
         Relationships: [
         {
