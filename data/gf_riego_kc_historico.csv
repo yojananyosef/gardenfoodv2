@@ -1,0 +1,14 @@
+# Volcado previo a borrar la tabla (Fase 10.3 del plan).
+# El contenido sigue vivo en dim_etapas: mismas 8 etapas, mismo Kc, misma
+# descripcion. Ver scripts/comparar_kc_con_dim_etapas.mjs.
+# CAL tiene kc vacio porque la columna vieja era numeric y la hoja traia un
+# guion; en dim_etapas.kc_referencial (text) el guion se conserva.
+codigo,descripcion,kc
+BRO,Yemas hinchadas o brotes nuevos saliendo,0.45
+CAL,Prefiero que lo decida el calendario del mes,
+CRE,"Frutos creciendo, todavía verdes y duros",0.9
+CUA,"Frutos recién cuajados, del tamaño de una arveja",0.7
+FLO,En flor,0.55
+MAD,"Frutos tomando color, madurando o en cosecha",0.85
+POS,"Ya cosechó, el árbol sigue con hojas",0.65
+REP,"Sin hojas, o parado sin crecer (invierno)",0.2
