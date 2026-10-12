@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
 import { z } from "zod";
+import type { PerfilUpdate } from "@/lib/supabase/tipos";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
   const parsed = PatchSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-  const update: Record<string, unknown> = {};
+  const update: PerfilUpdate = {};
   if (parsed.data.plan) update.plan = parsed.data.plan;
   if (parsed.data.subscription_status) update.subscription_status = parsed.data.subscription_status;
   if (Object.keys(update).length === 0) return NextResponse.json({ error: "No fields" }, { status: 400 });

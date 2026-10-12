@@ -11,6 +11,7 @@ import {
   type TerrenoFeature,
 } from "@/lib/huerto/terreno";
 import { FREE_LIMITS, puedeAgregarArbol, puedeAgregarHuerto } from "@/lib/payments/plans";
+import type { HuertoUpdate } from "@/lib/supabase/tipos";
 import {
   PLANO_MAX_ARBOLES,
   disponerEnMatriz,
@@ -137,7 +138,7 @@ export async function actualizarHuerto(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "No autenticado." };
 
-  const patch: Record<string, unknown> = {};
+  const patch: HuertoUpdate = {};
 
   if (input.nombre !== undefined) {
     const nombreParsed = NOMBRE_HUERTO.safeParse(input.nombre);

@@ -71,8 +71,8 @@ export async function POST(request: Request) {
     scroll_depth_percent: event.scrollDepthPercent ?? null,
     ad_unit_id: event.adUnitId ?? null,
     ad_partner_id: event.adPartnerId ?? null,
-    payload: (event.payload ?? {}) as Record<string, unknown>,
-    device_metadata: (event.deviceMetadata ?? {}) as Record<string, unknown>,
+    payload: event.payload ?? {},
+    device_metadata: event.deviceMetadata ?? {},
     client_timestamp: event.clientTimestamp,
   }));
 

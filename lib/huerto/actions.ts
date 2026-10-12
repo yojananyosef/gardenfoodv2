@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import type { ArbolUpdate } from "@/lib/supabase/tipos";
 import { ESPECIES } from "@/lib/agronomy";
 import {
   FREE_LIMITS,
@@ -321,7 +322,7 @@ export async function actualizarArbol(
     if (!huerto) return { error: "Ese huerto no existe en tu mapa." };
   }
 
-  const patch: Record<string, unknown> = {};
+  const patch: ArbolUpdate = {};
   if (parsed.especie !== undefined) patch.especie = parsed.especie;
   if (parsed.cantidad !== undefined) patch.cantidad = parsed.cantidad;
   if (parsed.fechaPlantacion !== undefined) patch.fecha_plantacion = parsed.fechaPlantacion;

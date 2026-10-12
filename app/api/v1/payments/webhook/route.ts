@@ -7,6 +7,7 @@ import {
 import { mapPreapprovalStatus } from "@/lib/payments/preapproval";
 import { verifyMercadoPagoSignature } from "@/lib/payments/signature";
 import type { PaymentStatus } from "@/lib/payments/types";
+import type { PatrocinioUpdate, PerfilUpdate } from "@/lib/supabase/tipos";
 
 export const dynamic = "force-dynamic";
 
@@ -120,7 +121,7 @@ async function handlePayment(
   if (error || !sponsorship) return NextResponse.json({ ok: true });
   if (sponsorship.payment_status === "paid") return NextResponse.json({ ok: true });
 
-  const update: Record<string, unknown> = { payment_status: status };
+  const update: PatrocinioUpdate = { payment_status: status };
   if (status === "paid") {
     update.provider_payment_id = paymentId;
     update.paid_at = new Date().toISOString();
@@ -223,7 +224,7 @@ async function applySubscription(
     console.error("[payments/webhook] subscription update failed", subError);
   }
 
-  const profileUpdate: Record<string, unknown> = {
+  const profileUpdate: PerfilUpdate = {
     subscription_status: sub,
     subscription_id: subscriptionId,
     payment_provider: "mercadopago",

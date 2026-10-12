@@ -64,6 +64,21 @@ export function isPaidTier(plan: string | null | undefined): plan is PlanTier {
   return !!plan && (PAID_TIERS as string[]).includes(plan);
 }
 
+const BILLING_INTERVALS: BillingInterval[] = ["monthly", "yearly"];
+
+/**
+ * `gf_subscriptions.interval` es texto, no un enum: puede traer cualquier cosa.
+ * Sin esto, un valor sujo llega a `planAmount` y devuelve el precio mensual
+ * (porque `interval === "yearly"` es false), o sea que el endpoint cobra bien y
+ * muestra el monto del otro periodo.
+ *
+ * El enum de `interval` seria la solucion de raiz, pero esa migration espera a
+ * Flow, igual que la de `tier`.
+ */
+export function isBillingInterval(value: string | null | undefined): value is BillingInterval {
+  return !!value && (BILLING_INTERVALS as string[]).includes(value);
+}
+
 export type PlanAcceso = PlanTier | "gratuito" | "admin";
 
 export const FREE_LIMITS = {

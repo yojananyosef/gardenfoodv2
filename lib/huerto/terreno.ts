@@ -6,12 +6,30 @@ export type PuntoMapa = { lat: number; lng: number };
 
 export type TerrenoFeature = {
   type: "Feature";
-  properties: Record<string, unknown>;
+  /**
+   * Objetivo JSON, no `Record<string, unknown>`.
+   *
+   * La columna es `jsonb`, asi que lo que se guarda tiene que ser serializable.
+   * Con `unknown` el schema aceptaba funciones, `undefined` y referencias
+   * circulares, que llegan a Postgres y revientan el insert (o se guardan
+   * distinto de lo que el cliente cree). `TerrenoJson` obliga a que el valor
+   * sea JSON de verdad, que es lo que la columna puede guardar.
+   */
+  properties: TerrenoJson;
   geometry: {
     type: "Polygon";
     coordinates: TerrenoPolygonCoordinates;
   };
 };
+
+/** Subconjunto de JSON que puede vivir dentro de un objeto de properties. */
+export type TerrenoJson =
+  | string
+  | number
+  | boolean
+  | null
+  | TerrenoJson[]
+  | { [key: string]: TerrenoJson };
 
 export const TERRENO_MAX_AREA_M2 = 10_000_000;
 export const TERRENO_MAX_POSICIONES_ANILLO = 500;
@@ -76,7 +94,9 @@ const anilloSchema = z
 export const terrenoFeatureSchema = z
   .object({
     type: z.literal("Feature"),
-    properties: z.record(z.string(), z.unknown()).default({}),
+    // `z.json()` y no `z.record(z.string(), z.unknown())`: el destino es una
+    // columna jsonb y lo que entre tiene que ser serializable.
+    properties: z.record(z.string(), z.json()).default({}),
     geometry: z.object({
       type: z.literal("Polygon"),
       coordinates: z.array(anilloSchema).min(1).max(5),

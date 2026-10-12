@@ -48,7 +48,10 @@ export const telemetryEventSchema = z
     scrollDepthPercent: z.number().int().min(0).max(100).nullish(),
     adUnitId: z.string().max(120).nullish(),
     adPartnerId: z.string().max(120).nullish(),
-    payload: z.record(z.string(), z.unknown()).nullish(),
+    // `z.json()` y no `z.unknown()`: `payload` termina en una columna jsonb.
+    // Con `unknown` el schema aceptaba funciones y referencias circulares, que
+    // se descubren recien en el insert de Postgres.
+    payload: z.record(z.string(), z.json()).nullish(),
     deviceMetadata: deviceMetadataSchema.nullish(),
     clientTimestamp: z.iso.datetime({ offset: true }),
     geo: geoContextSchema.nullish(),

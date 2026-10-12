@@ -1716,6 +1716,9 @@ export type Database = {
         "device_metadata": Json | null
         "client_timestamp": string
         "created_at": string | null
+        "comuna": string | null
+        "region": string | null
+        "zona_agroclimatica": string | null
         }
         Insert: {
         "id"?: string | null
@@ -1736,6 +1739,9 @@ export type Database = {
         "device_metadata"?: Json | null
         "client_timestamp": string
         "created_at"?: string | null
+        "comuna"?: string | null
+        "region"?: string | null
+        "zona_agroclimatica"?: string | null
         }
         Update: {
         "id"?: string
@@ -1756,6 +1762,9 @@ export type Database = {
         "device_metadata"?: Json | null
         "client_timestamp"?: string | null
         "created_at"?: string | null
+        "comuna"?: string | null
+        "region"?: string | null
+        "zona_agroclimatica"?: string | null
         }
         Relationships: []
       }

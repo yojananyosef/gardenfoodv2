@@ -108,7 +108,7 @@ export default async function AdminUsuariosPage({
                   <Badge variant={u.plan === "admin" ? "default" : "secondary"}>{u.plan}</Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {u.nombre ?? "—"} · {u.region ?? "—"} · {u.comuna ?? "—"} · zona {zona?.nombre ?? "—"} · {u.subscription_status ?? "—"} · {new Date(u.created_at).toLocaleDateString("es-CL")}
+                  {u.nombre ?? "—"} · {u.region ?? "—"} · {u.comuna ?? "—"} · zona {zona?.nombre ?? "—"} · {u.subscription_status ?? "—"} · {u.created_at ? new Date(u.created_at).toLocaleDateString("es-CL") : "—"}
                 </div>
                 <UserDetail userId={u.id} email={u.email} />
               </div>

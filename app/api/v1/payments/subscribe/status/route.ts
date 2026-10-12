@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mercadoPagoProvider } from "@/lib/payments/mercadopago";
 import { mapPreapprovalStatus } from "@/lib/payments/preapproval";
-import { planAmount } from "@/lib/payments/plans";
+import { planAmount, isPaidTier, isBillingInterval } from "@/lib/payments/plans";
+import type { PerfilUpdate } from "@/lib/supabase/tipos";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,25 @@ export async function POST() {
 
   const { sub, grantsAccess } = mapPreapprovalStatus(statusResult.status);
 
+  // `gf_subscriptions.plan` es texto, no un enum, asi que puede traer cualquier
+  // cosa. Antes se pasaba tal cual a `perfiles.plan` (concediendo un plan que
+  // no existe) y a `planAmount`, que hace `getPlan` y **lanza** si el tier no
+  // esta en PLANS: con un plan sucio, este endpoint devolvia 500 en vez de
+  // responder. El enum de `tier` lo resuelve de raiz, pero esa migration espera
+  // a Flow; mientras tanto, el guard evita las dos cosas.
+  const planValido = isPaidTier(draft.plan) ? draft.plan : null;
+  const intervaloValido = isBillingInterval(draft.interval) ? draft.interval : null;
+  if (draft.plan && !planValido) {
+    console.error(
+      `[payments/subscribe/status] plan desconocido en gf_subscriptions: ${draft.plan}`,
+    );
+  }
+  if (draft.interval && !intervaloValido) {
+    console.error(
+      `[payments/subscribe/status] interval desconocido en gf_subscriptions: ${draft.interval}`,
+    );
+  }
+
   const { error: updateError } = await admin
     .from("gf_subscriptions")
     .update({
@@ -60,13 +80,14 @@ export async function POST() {
     console.error("[payments/subscribe/status] update failed", updateError);
   }
 
-  const profileUpdate: Record<string, unknown> = {
+  const profileUpdate: PerfilUpdate = {
     subscription_status: sub,
     subscription_id: draft.provider_subscription_id,
     payment_provider: "mercadopago",
   };
   // Solo `authorized` concede el plan; pending/cancelled/paused/desconocido no.
-  if (grantsAccess) profileUpdate.plan = draft.plan;
+  // Y solo si el plan es uno de los tres que existen.
+  if (grantsAccess && planValido) profileUpdate.plan = planValido;
   else if (sub === "canceled") profileUpdate.plan = "gratuito";
 
   const { error: profileError } = await admin
@@ -79,10 +100,10 @@ export async function POST() {
 
   return NextResponse.json({
     status: sub,
-    grantsAccess,
+    grantsAccess: grantsAccess && planValido !== null,
     subscriptionId: draft.provider_subscription_id,
     plan: draft.plan,
     interval: draft.interval,
-    monto: planAmount(draft.plan, draft.interval),
+    monto: planValido && intervaloValido ? planAmount(planValido, intervaloValido) : 0,
   });
 }
