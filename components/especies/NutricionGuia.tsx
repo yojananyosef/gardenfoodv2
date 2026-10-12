@@ -41,7 +41,7 @@ import {
   REPOSO_MOMENTO,
   guiaRegional,
   medidaCasera,
-  regionDelPerfil,
+  regionDeZona,
   regionesGuia,
   textoGramos,
   type GuiaRegional,
@@ -535,12 +535,20 @@ export function regionVisible(
 export function NutricionGuia({
   dbKey,
   especieNombre,
-  zonaId,
+  region: regionZona,
   esDefault,
 }: {
   dbKey: string;
   especieNombre: string;
-  zonaId: number;
+  /**
+   * Región de la zona del usuario, o `null`.
+   *
+   * Antes este componente recibía `zonaId` y la región salía de
+   * `ZONAS[zonaId].region`. Como las zonas ahora vienen de `dim_zonas_agro` y
+   * viajan por props, recibe la región ya resuelta en vez del id: es el dato
+   * que realmente usa, y el id solo servía de trampolín.
+   */
+  region: string | null;
   /**
    * `true` cuando la zona viene del fallback y no de una comuna del perfil.
    * Sin esto, un visitante sin comuna caería en Santiago-RM y la ficha le
@@ -556,7 +564,7 @@ export function NutricionGuia({
   // un `useState(() => regionInicial(...))` congela lo que llegó en el montaje,
   // y como el perfil se resuelve después, la región quedaba en la zona neutra
   // para siempre.
-  const regionPerfil = esDefault ? null : regionDelPerfil(dbKey, zonaId);
+  const regionPerfil = esDefault ? null : regionDeZona(dbKey, regionZona);
   const { region, desdeElPerfil } = regionVisible(
     regionPerfil,
     regionesGuia()[2],

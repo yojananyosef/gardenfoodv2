@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ZONAS } from "@/lib/agronomy/zonas";
+import { ZONAS } from "./helpers/zonas-desde-csv";
 import { centroideDe, centroideDeZona, puntoDeConsulta } from "@/lib/agronomy/centroides";
 import {
   agruparAlertas,

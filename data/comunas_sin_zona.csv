@@ -1,0 +1,218 @@
+comuna,region,zona_riego_id,zona_agro_id_legacy,region_legacy
+Putre,Arica y Parinacota,P1,1,Arica y Parinacota
+General Lagos,Arica y Parinacota,P1,1,Arica y Parinacota
+Iquique,Tarapacá,N2,1,Tarapacá
+Alto Hospicio,Tarapacá,N2,1,Tarapacá
+Pozo Almonte,Tarapacá,N1,1,Tarapacá
+Camiña,Tarapacá,N1,1,Tarapacá
+Colchane,Tarapacá,P1,1,Tarapacá
+Huara,Tarapacá,N1,1,Tarapacá
+Pica,Tarapacá,N1,1,Tarapacá
+Antofagasta,Antofagasta,N2,2,Antofagasta
+Mejillones,Antofagasta,N2,2,Antofagasta
+Sierra Gorda,Antofagasta,N1,2,Antofagasta
+Taltal,Antofagasta,N2,2,Antofagasta
+Calama,Antofagasta,N1,2,Antofagasta
+Ollagüe,Antofagasta,P1,2,Antofagasta
+San Pedro de Atacama,Antofagasta,P1,2,Antofagasta
+Tocopilla,Antofagasta,N2,2,Antofagasta
+María Elena,Antofagasta,N1,2,Antofagasta
+Caldera,Atacama,N2,2,Atacama
+Chañaral,Atacama,N2,2,Atacama
+Diego de Almagro,Atacama,N1,2,Atacama
+Andacollo,Coquimbo,N1,4,Coquimbo
+Canela,Coquimbo,N2,4,Coquimbo
+Punitaqui,Coquimbo,N1,4,Coquimbo
+Río Hurtado,Coquimbo,N1,4,Coquimbo
+Concón,Valparaíso,C2,5,Valparaíso
+Juan Fernández,Valparaíso,C2,5,Valparaíso
+Puchuncaví,Valparaíso,C2,5,Valparaíso
+Quintero,Valparaíso,C2,5,Valparaíso
+Isla de Pascua,Valparaíso,C2,5,Valparaíso
+Rinconada,Valparaíso,C1,6,Valparaíso
+Papudo,Valparaíso,N2,5,Valparaíso
+Zapallar,Valparaíso,N2,5,Valparaíso
+Calera,Valparaíso,C1,5,Valparaíso
+Nogales,Valparaíso,C1,5,Valparaíso
+San Antonio,Valparaíso,C2,5,Valparaíso
+Algarrobo,Valparaíso,C2,5,Valparaíso
+Cartagena,Valparaíso,C2,5,Valparaíso
+El Quisco,Valparaíso,C2,5,Valparaíso
+El Tabo,Valparaíso,C2,5,Valparaíso
+Santo Domingo,Valparaíso,C2,5,Valparaíso
+Santa María,Valparaíso,C1,6,Valparaíso
+Cerrillos,Metropolitana de Santiago,C1,8,Metropolitana
+Cerro Navia,Metropolitana de Santiago,C1,8,Metropolitana
+Conchalí,Metropolitana de Santiago,C1,8,Metropolitana
+El Bosque,Metropolitana de Santiago,C1,8,Metropolitana
+Estación Central,Metropolitana de Santiago,C1,8,Metropolitana
+Huechuraba,Metropolitana de Santiago,C1,8,Metropolitana
+Independencia,Metropolitana de Santiago,C1,8,Metropolitana
+La Cisterna,Metropolitana de Santiago,C1,8,Metropolitana
+La Granja,Metropolitana de Santiago,C1,8,Metropolitana
+La Pintana,Metropolitana de Santiago,C1,8,Metropolitana
+La Reina,Metropolitana de Santiago,C1,8,Metropolitana
+Lo Barnechea,Metropolitana de Santiago,C1,8,Metropolitana
+Lo Espejo,Metropolitana de Santiago,C1,8,Metropolitana
+Lo Prado,Metropolitana de Santiago,C1,8,Metropolitana
+Macul,Metropolitana de Santiago,C1,8,Metropolitana
+Pedro Aguirre Cerda,Metropolitana de Santiago,C1,8,Metropolitana
+Peñalolén,Metropolitana de Santiago,C1,8,Metropolitana
+Pudahuel,Metropolitana de Santiago,C1,7,Metropolitana
+Quilicura,Metropolitana de Santiago,C1,8,Metropolitana
+Quinta Normal,Metropolitana de Santiago,C1,8,Metropolitana
+Recoleta,Metropolitana de Santiago,C1,8,Metropolitana
+Renca,Metropolitana de Santiago,C1,8,Metropolitana
+San Joaquín,Metropolitana de Santiago,C1,8,Metropolitana
+San Miguel,Metropolitana de Santiago,C1,8,Metropolitana
+San Ramón,Metropolitana de Santiago,C1,8,Metropolitana
+Vitacura,Metropolitana de Santiago,C1,8,Metropolitana
+San José de Maipo,Metropolitana de Santiago,P1,8,Metropolitana
+Alhué,Metropolitana de Santiago,C1,9,Metropolitana
+San Pedro,Metropolitana de Santiago,C1,9,Metropolitana
+El Monte,Metropolitana de Santiago,C1,8,Metropolitana
+Padre Hurtado,Metropolitana de Santiago,C1,8,Metropolitana
+Codegua,O'Higgins,C1,10,O'Higgins
+Coinco,O'Higgins,C1,10,O'Higgins
+Doñihue,O'Higgins,C1,12,O'Higgins
+Malloa,O'Higgins,C1,10,O'Higgins
+Mostazal,O'Higgins,C1,10,O'Higgins
+Olivar,O'Higgins,C1,10,O'Higgins
+Pichidegua,O'Higgins,C1,10,O'Higgins
+Quinta de Tilcoco,O'Higgins,C1,10,O'Higgins
+San Vicente,O'Higgins,C1,10,O'Higgins
+La Estrella,O'Higgins,C2,11,O'Higgins
+Litueche,O'Higgins,C2,11,O'Higgins
+Navidad,O'Higgins,C2,11,O'Higgins
+Paredones,O'Higgins,C2,11,O'Higgins
+Chépica,O'Higgins,C1,10,O'Higgins
+Lolol,O'Higgins,C1,11,O'Higgins
+Nancagua,O'Higgins,C1,10,O'Higgins
+Palmilla,O'Higgins,C1,10,O'Higgins
+Peralillo,O'Higgins,C1,10,O'Higgins
+Placilla,O'Higgins,C1,10,O'Higgins
+Pumanque,O'Higgins,C1,11,O'Higgins
+Constitución,Maule,C2,14,Maule
+Curepto,Maule,C2,14,Maule
+Empedrado,Maule,C2,14,Maule
+Maule,Maule,S1,14,Maule
+Pelarco,Maule,S1,14,Maule
+Pencahue,Maule,S1,14,Maule
+Río Claro,Maule,S1,14,Maule
+San Rafael,Maule,S1,14,Maule
+Chanco,Maule,C2,14,Maule
+Pelluhue,Maule,C2,14,Maule
+Hualañé,Maule,C1,13,Maule
+Licantén,Maule,C2,13,Maule
+Rauco,Maule,C1,13,Maule
+Vichuquén,Maule,C2,13,Maule
+Retiro,Maule,S1,14,Maule
+Villa Alegre,Maule,S1,14,Maule
+Yerbas Buenas,Maule,S1,14,Maule
+San Ignacio,Ñuble,S1,15,Ñuble
+Ninhue,Ñuble,S1,15,Ñuble
+Portezuelo,Ñuble,S1,15,Ñuble
+Ránquil,Ñuble,S1,15,Ñuble
+Treguaco,Ñuble,C2,15,Ñuble
+Ñiquén,Ñuble,S1,15,Ñuble
+San Fabián,Ñuble,P1,15,Ñuble
+San Nicolás,Ñuble,S1,15,Ñuble
+Florida,Biobío,S1,16,Biobío
+Hualqui,Biobío,S1,17,Biobío
+Lota,Biobío,C2,17,Biobío
+Penco,Biobío,C2,17,Biobío
+San Pedro de la Paz,Biobío,C2,17,Biobío
+Santa Juana,Biobío,S1,16,Biobío
+Talcahuano,Biobío,C2,17,Biobío
+Hualpén,Biobío,C2,17,Biobío
+Lebu,Biobío,S2,17,Biobío
+Arauco,Biobío,S2,17,Biobío
+Contulmo,Biobío,S2,17,Biobío
+Curanilahue,Biobío,S2,17,Biobío
+Los Álamos,Biobío,S2,17,Biobío
+Tirúa,Biobío,S2,17,Biobío
+Antuco,Biobío,P1,16,Biobío
+Laja,Biobío,S1,16,Biobío
+Negrete,Biobío,S1,16,Biobío
+Quilaco,Biobío,S1,16,Biobío
+Quilleco,Biobío,S1,16,Biobío
+San Rosendo,Biobío,S1,16,Biobío
+Santa Bárbara,Biobío,S1,16,Biobío
+Tucapel,Biobío,S1,16,Biobío
+Alto Biobío,Biobío,P1,16,Biobío
+Carahue,La Araucanía,S2,18,Araucanía
+Cunco,La Araucanía,S2,18,Araucanía
+Curarrehue,La Araucanía,P1,18,Araucanía
+Galvarino,La Araucanía,S2,18,Araucanía
+Gorbea,La Araucanía,S2,18,Araucanía
+Loncoche,La Araucanía,S2,18,Araucanía
+Melipeuco,La Araucanía,P1,18,Araucanía
+Nueva Imperial,La Araucanía,S2,18,Araucanía
+Perquenco,La Araucanía,S2,18,Araucanía
+Pitrufquén,La Araucanía,S2,18,Araucanía
+Saavedra,La Araucanía,S2,18,Araucanía
+Teodoro Schmidt,La Araucanía,S2,18,Araucanía
+Toltén,La Araucanía,S2,18,Araucanía
+Cholchol,La Araucanía,S2,18,Araucanía
+Collipulli,La Araucanía,S1,18,Araucanía
+Curacautín,La Araucanía,P1,18,Araucanía
+Ercilla,La Araucanía,S2,18,Araucanía
+Lonquimay,La Araucanía,P1,18,Araucanía
+Los Sauces,La Araucanía,S2,18,Araucanía
+Lumaco,La Araucanía,S2,18,Araucanía
+Purén,La Araucanía,S2,18,Araucanía
+Renaico,La Araucanía,S1,18,Araucanía
+Traiguén,La Araucanía,S2,18,Araucanía
+Corral,Los Ríos,S2,19,Los Ríos
+Lanco,Los Ríos,S2,19,Los Ríos
+Los Lagos,Los Ríos,S2,19,Los Ríos
+Máfil,Los Ríos,S2,19,Los Ríos
+Mariquina,Los Ríos,S2,19,Los Ríos
+Panguipulli,Los Ríos,S2,19,Los Ríos
+Lago Ranco,Los Ríos,S2,19,Los Ríos
+Calbuco,Los Lagos,S2,20,Los Lagos
+Cochamó,Los Lagos,S2,20,Los Lagos
+Fresia,Los Lagos,S2,20,Los Lagos
+Los Muermos,Los Lagos,S2,20,Los Lagos
+Llanquihue,Los Lagos,S2,20,Los Lagos
+Maullín,Los Lagos,S2,20,Los Lagos
+Castro,Los Lagos,S2,20,Los Lagos
+Ancud,Los Lagos,S2,20,Los Lagos
+Chonchi,Los Lagos,S2,20,Los Lagos
+Curaco de Vélez,Los Lagos,S2,20,Los Lagos
+Dalcahue,Los Lagos,S2,20,Los Lagos
+Puqueldón,Los Lagos,S2,20,Los Lagos
+Queilén,Los Lagos,S2,20,Los Lagos
+Quellón,Los Lagos,S2,20,Los Lagos
+Quemchi,Los Lagos,S2,20,Los Lagos
+Quinchao,Los Lagos,S2,20,Los Lagos
+Puerto Octay,Los Lagos,S2,20,Los Lagos
+Puyehue,Los Lagos,S2,20,Los Lagos
+Río Negro,Los Lagos,S2,20,Los Lagos
+San Juan de la Costa,Los Lagos,S2,20,Los Lagos
+San Pablo,Los Lagos,S2,20,Los Lagos
+Chaitén,Los Lagos,S2,20,Los Lagos
+Futaleufú,Los Lagos,S2,20,Los Lagos
+Hualaihué,Los Lagos,S2,20,Los Lagos
+Palena,Los Lagos,S2,20,Los Lagos
+Coyhaique,Aysén,S2,20,Aysén
+Lago Verde,Aysén,S2,20,Aysén
+Aysén,Aysén,S2,20,Aysén
+Cisnes,Aysén,S2,20,Aysén
+Guaitecas,Aysén,S2,20,Aysén
+Cochrane,Aysén,S2,20,Aysén
+O'Higgins,Aysén,S2,20,Aysén
+Tortel,Aysén,S2,20,Aysén
+Río Ibáñez,Aysén,S2,20,Aysén
+Chile Chico,Aysén,S2,20,Aysén
+Punta Arenas,Magallanes,S2,20,Magallanes
+Laguna Blanca,Magallanes,S2,20,Magallanes
+Río Verde,Magallanes,S2,20,Magallanes
+San Gregorio,Magallanes,S2,20,Magallanes
+Cabo de Hornos,Magallanes,S2,20,Magallanes
+Antártica,Magallanes,S2,20,Magallanes
+Porvenir,Magallanes,S2,20,Magallanes
+Primavera,Magallanes,S2,20,Magallanes
+Timaukel,Magallanes,S2,20,Magallanes
+Natales,Magallanes,S2,,
+Torres del Paine,Magallanes,S2,20,Magallanes

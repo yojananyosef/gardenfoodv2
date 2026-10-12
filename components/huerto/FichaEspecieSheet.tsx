@@ -5,7 +5,12 @@ import Link from "next/link";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FichaEspecieView } from "@/components/especies/FichaEspecieView";
 import { getEspeciePorDbKey, getFicha, urlFichaEspecie } from "@/lib/agronomy";
-import type { ComunaCatalogo } from "@/lib/agronomy/catalogo";
+import {
+  numeroDeCelda,
+  rangoLegible,
+  type ComunaCatalogo,
+  type ZonaCatalogo,
+} from "@/lib/agronomy/catalogo";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -20,8 +25,9 @@ import { createClient } from "@/lib/supabase/client";
  * Sigue habiendo una sola fuente: la tabla. Esto no duplica el catálogo, solo
  * decide cuándo traerlo.
  */
-function useComunasAlAbrir(): ComunaCatalogo[] | null {
+function useCatalogosAlAbrir(): { comunas: ComunaCatalogo[] | null; zonas: ZonaCatalogo[] | null } {
   const [comunas, setComunas] = useState<ComunaCatalogo[] | null>(null);
+  const [zonas, setZonas] = useState<ZonaCatalogo[] | null>(null);
   useEffect(() => {
     let active = true;
     const supabase = createClient();
@@ -34,10 +40,38 @@ function useComunasAlAbrir(): ComunaCatalogo[] | null {
           data.map((r) => ({
             comuna: r.comuna as string,
             region: r.region as string,
-            zonaId: Number(r.zona_agro_id ?? 7),
+            // `null` y no `?? 7`: la tabla tiene 217 comunas sin zona y
+            // disfrazarlas de zona 7 haría que la ficha mostrara Santiago
+            // Norte como si fuera su zona. Ver `catalogo.ts`.
+            zonaId: r.zona_agro_id == null ? null : Number(r.zona_agro_id),
             zonaRiegoId: (r.zona_riego_id as string) || "C1",
             macrozonaId: (r.macrozona_id as string) || "",
             zonaAgroId: String(r.zona_agro_id ?? ""),
+          })),
+        );
+      });
+    void supabase
+      .from("dim_zonas_agro")
+      .select(
+        "zona_agro_id, zona_agro, region, tipo_clima, t_max_enero, t_min_julio, t_min_absoluta, precipitacion_anual_mm, horas_frio, heladas_dias_ano, riesgo_sequia, estacion_agromet",
+      )
+      .order("zona_agro_id")
+      .then(({ data }) => {
+        if (!active || !data) return;
+        setZonas(
+          data.map((r) => ({
+            id: Number(r.zona_agro_id),
+            nombre: (r.zona_agro as string) ?? "",
+            region: (r.region as string) ?? "",
+            clima: (r.tipo_clima as string) ?? "",
+            txMax: numeroDeCelda(r.t_max_enero),
+            tnMin: numeroDeCelda(r.t_min_julio),
+            pp: numeroDeCelda(r.precipitacion_anual_mm),
+            hf: rangoLegible(r.horas_frio),
+            heladas: rangoLegible(r.heladas_dias_ano),
+            sequia: (r.riesgo_sequia as string) ?? "",
+            tMinAbsoluta: numeroDeCelda(r.t_min_absoluta),
+            estacion: (r.estacion_agromet as string) ?? "",
           })),
         );
       });
@@ -45,23 +79,23 @@ function useComunasAlAbrir(): ComunaCatalogo[] | null {
       active = false;
     };
   }, []);
-  return comunas;
+  return { comunas, zonas };
 }
 
 function ContenidoFicha({ dbKey }: { dbKey: string }) {
   const especie = getEspeciePorDbKey(dbKey);
   const ficha = getFicha(dbKey);
-  const comunas = useComunasAlAbrir();
+  const { comunas, zonas } = useCatalogosAlAbrir();
   if (!especie || !ficha) {
     return <p className="text-sm text-muted-foreground">No encontramos la ficha de esta especie.</p>;
   }
-  if (!comunas) {
+  if (!comunas || !zonas) {
     return <p className="text-sm text-muted-foreground">Cargando ficha…</p>;
   }
   // En /huerto el usuario está autenticado: contenido completo, sin lock.
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <FichaEspecieView especie={especie} ficha={ficha} locked={false} comunas={comunas} />
+      <FichaEspecieView especie={especie} ficha={ficha} locked={false} comunas={comunas} zonas={zonas} />
       <Link
         href={urlFichaEspecie(dbKey)}
         className="text-center text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"

@@ -4,7 +4,8 @@ import { describe, expect, it } from "vitest";
 import { regionVisible } from "@/components/especies/NutricionGuia";
 import { sueloDesdeValor } from "@/hooks/usePerfilZona";
 import { getZonaIdDeComuna, resolverZonaDeComuna } from "@/lib/agronomy";
-import { regionDelPerfil, guiaRegional } from "@/lib/agronomy/fertilizacion";
+import { regionDeZona, guiaRegional } from "@/lib/agronomy/fertilizacion";
+import { ZONAS } from "./helpers/zonas-desde-csv";
 
 /**
  * La zona del perfil tiene que poder distinguir «la comuna del usuario» de
@@ -56,24 +57,24 @@ describe("resolverZonaDeComuna", () => {
  * consulte el perfil por su cuenta, y ese es un invariante de estructura.
  */
 /**
- * `regionDelPerfil` es el corazón del fix: antes devolvía siempre una región,
+ * `regionDeZona` es el corazón del fix: antes devolvía siempre una región,
  * saltando a la primera que tuviera programa cuando la del perfil no la tenía.
  * El calendario se repintaba con los meses de otra zona y el pie decía que
  * venía del perfil.
  */
-describe("regionDelPerfil", () => {
+describe("regionDeZona", () => {
   it("devuelve la región de la guía que cubre la comuna", () => {
     // zona 7 = Santiago Norte, región Metropolitana.
-    expect(regionDelPerfil("Duraznero", 7)).toBe("Santiago-RM");
+    expect(regionDeZona("Duraznero", ZONAS[7].region)).toBe("Santiago-RM");
     // zona 16 = Los Ángeles Interior, Biobío.
-    expect(regionDelPerfil("Duraznero", 16)).toBe("Transición (Ñuble-Biobío)");
+    expect(regionDeZona("Duraznero", ZONAS[16].region)).toBe("Transición (Ñuble-Biobío)");
   });
 
   it("devuelve null cuando la guía no cubre esa combinación", () => {
     // Duraznero no tiene programa en el Sur (Araucanía-Los Lagos): zona 18.
-    expect(regionDelPerfil("Duraznero", 18)).toBeNull();
+    expect(regionDeZona("Duraznero", ZONAS[18].region)).toBeNull();
     // Arándano no tiene programa en el Norte: zona 2 (Copiapó Valle).
-    expect(regionDelPerfil("Arándano", 2)).toBeNull();
+    expect(regionDeZona("Arándano", ZONAS[2].region)).toBeNull();
   });
 
   it("no se salta a otra región para tapar el vacío", () => {
@@ -81,7 +82,7 @@ describe("regionDelPerfil", () => {
     // devolvía la primera región con programa y la ficha la hacía pasar por la
     // del usuario. Ahora devuelve null y lo que se muestra al usuario es el
     // vacío, no el programa de Santiago.
-    expect(regionDelPerfil("Duraznero", 18)).toBeNull();
+    expect(regionDeZona("Duraznero", ZONAS[18].region)).toBeNull();
     // Y la guía confirma que en el Sur efectivamente no hay programa para
     // duraznero, o sea que el null es un hecho y no un fallo de la resolución.
     expect(guiaRegional("Duraznero", "Sur (Araucanía-Los Lagos)", "suelo")).toBeNull();
@@ -89,8 +90,8 @@ describe("regionDelPerfil", () => {
   });
 
   it("no lanza con una especie que no existe en el catálogo de la guía", () => {
-    expect(() => regionDelPerfil("Frutilla de cana", 7)).not.toThrow();
-    expect(regionDelPerfil("Frutilla de cana", 7)).toBeNull();
+    expect(() => regionDeZona("Frutilla de cana", ZONAS[7].region)).not.toThrow();
+    expect(regionDeZona("Frutilla de cana", ZONAS[7].region)).toBeNull();
   });
 });
 
@@ -128,13 +129,13 @@ describe("la región visible viene siempre del perfil", () => {
 
   it("cambia de región al cambiar de comuna", () => {
     // Dos renderes con zonas distintas, como pasar por /perfil entre medio.
-    const antes = regionVisible(regionDelPerfil("Duraznero", 7), REGION_POR_DEFECTO, false);
-    const despues = regionVisible(regionDelPerfil("Duraznero", 16), REGION_POR_DEFECTO, false);
+    const antes = regionVisible(regionDeZona("Duraznero", ZONAS[7].region), REGION_POR_DEFECTO, false);
+    const despues = regionVisible(regionDeZona("Duraznero", ZONAS[16].region), REGION_POR_DEFECTO, false);
     expect(antes.region).toBe("Santiago-RM");
     expect(despues.region).toBe("Transición (Ñuble-Biobío)");
 
     // Y si la nueva comuna no tiene guía, no inventa una región.
-    const sinGuia = regionVisible(regionDelPerfil("Duraznero", 18), REGION_POR_DEFECTO, false);
+    const sinGuia = regionVisible(regionDeZona("Duraznero", ZONAS[18].region), REGION_POR_DEFECTO, false);
     expect(sinGuia.region).toBeNull();
   });
 });

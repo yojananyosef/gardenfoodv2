@@ -5,8 +5,8 @@ import {
   ESPECIES,
   MESES,
   getZonaIdDeComuna,
-  getZonaDeComuna,
 } from "@/lib/agronomy";
+import { getZonaDeComuna } from "@/lib/agronomy/catalogos";
 import {
   fenologiaPorEspecie,
   regionGuiaDeRegion,
@@ -33,7 +33,7 @@ export default async function EspeciesIndex() {
   ]);
 
   const zonaId = getZonaIdDeComuna(perfil?.comuna ?? undefined);
-  const region = zonaId != null ? getZonaDeComuna(perfil?.comuna)?.region ?? null : null;
+  const region = zonaId != null ? (await getZonaDeComuna(perfil?.comuna))?.region ?? null : null;
   const regionGuia = regionGuiaDeRegion(region);
   const porEspecie = new Map<string, number>();
   for (const a of arboles) {

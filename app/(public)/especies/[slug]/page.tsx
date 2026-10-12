@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { FichaEspecieView } from "@/components/especies/FichaEspecieView";
 import { esMuestraGratuis, getEspeciePorSlug, getFicha } from "@/lib/agronomy";
-import { getComunas } from "@/lib/agronomy/catalogos";
+import { getComunas, getZonas } from "@/lib/agronomy/catalogos";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function EspeciePage({
@@ -26,9 +26,13 @@ export default async function EspeciePage({
   // lectura pública, y bajarlas desde el navegador en cada ficha sería un
   // roundtrip que el servidor ya tenía. La ficha necesita la zona de riego de
   // la comuna del visitante, que antes salía de un `if` sobre el número de zona.
-  const comunas = await getComunas();
+  //
+  // Las zonas van por props por lo mismo, y son solo 20 filas. Antes eran un
+  // `Record` a nivel de módulo y las tabs «Fenología» e «Info» lo leían sin
+  // pedir nada.
+  const [comunas, zonas] = await Promise.all([getComunas(), getZonas()]);
 
   return (
-    <FichaEspecieView especie={especie} ficha={ficha} locked={locked} comunas={comunas} />
+    <FichaEspecieView especie={especie} ficha={ficha} locked={locked} comunas={comunas} zonas={zonas} />
   );
 }

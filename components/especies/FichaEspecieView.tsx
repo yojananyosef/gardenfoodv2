@@ -19,12 +19,13 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { NutricionGuia } from "@/components/especies/NutricionGuia";
+import { useMemo } from "react";
 import { usePerfilZona } from "@/hooks/usePerfilZona";
 import { useTrackedView } from "@/hooks/useTrackedView";
 import { cn } from "@/lib/utils";
-import { type FichaEspecie, type Especie, getFenologia, getConsejos, getMacrozona, ZONAS } from "@/lib/agronomy";
+import { type FichaEspecie, type Especie, getFenologia, getConsejos, getMacrozona } from "@/lib/agronomy";
+import { indicePorZona, type ComunaCatalogo, type ZonaCatalogo } from "@/lib/agronomy/catalogo";
 import type { SueloId, ZonaRiegoId } from "@/lib/riego/datos";
-import type { ComunaCatalogo } from "@/lib/agronomy/catalogo";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
 import { calcularRiego } from "@/lib/riego/calc";
 import type { RiegoBasePayload } from "@/lib/riego/actions";
@@ -438,12 +439,12 @@ function parseMesRange(s: string): number[] | null {
   return [...Array.from({ length: 12 - a + 1 }, (_, i) => a + i), ...Array.from({ length: b }, (_, i) => i + 1)];
 }
 
-function TabFenologia({ dbKey, ficha, zonaId }: { dbKey: string; ficha: FichaEspecie; zonaId: number }) {
+function TabFenologia({ dbKey, ficha, zonaId, zona }: { dbKey: string; ficha: FichaEspecie; zonaId: number; zona: ZonaCatalogo | null }) {
   // La zona llega resuelta desde `FichaEspecieView`: esta tab tenía su propia
   // consulta a `perfiles`, la segunda de la ficha, y solo se refrescaba al
   // cambiar de especie. Con deps `[dbKey]` el cambio de comuna tampoco la
   // actualizaba.
-  const zonaNombre = ZONAS[zonaId]?.nombre ?? null;
+  const zonaNombre = zona?.nombre ?? null;
   const entrada = getFenologia(dbKey, zonaId);
   if (!entrada) return <p className="text-sm text-muted-foreground">Sin datos para tu zona {zonaNombre ? `(${zonaNombre})` : ""}.</p>;
 
@@ -452,9 +453,9 @@ function TabFenologia({ dbKey, ficha, zonaId }: { dbKey: string; ficha: FichaEsp
      otra gente: la fila que importa es la propia, y leerla entre cinco más
      obligaba a buscarla.
 
-     El match es por `MACROZONA_MAP` y no por `ZONAS[zonaId].nombre`: las filas
+     El match es por `MACROZONA_MAP` y no por el nombre de la zona: las filas
      de `ficha.fenologia` están etiquetadas por macrozona («Santiago-RM»,
-     «Transición»…) mientras `ZONAS` nombra la zona fina («Santiago Sur - Buin»).
+     «Transición»…) mientras `dim_zonas_agro` nombra la zona fina («Santiago Sur - Buin»).
      Comparar ambos strings nunca coincidía, así que el resaltado de la fila
      del usuario no se veía nunca y la fila propia salía como cualquier otra. */
   const macrozona = getMacrozona(zonaId);
@@ -565,8 +566,7 @@ function TabConsejos({ dbKey }: { dbKey: string }) {
   );
 }
 
-function TabInfo({ ficha, zonaId }: { ficha: FichaEspecie; zonaId: number }) {
-  const zona = ZONAS[zonaId] ?? null;
+function TabInfo({ ficha, zona }: { ficha: FichaEspecie; zona: ZonaCatalogo | null }) {
   return (
     <div className="grid gap-4 lg:grid-cols-12">
       <Card className="rounded-2xl lg:col-span-8"><CardHeader><CardTitle className="flex items-center gap-2"><Info className="size-4" /> Botánica</CardTitle></CardHeader><CardContent><Descripcion desc={ficha.desc} /></CardContent></Card>
@@ -582,6 +582,7 @@ export function FichaEspecieView({
   ficha,
   locked = false,
   comunas,
+  zonas,
 }: {
   especie: Especie;
   ficha: FichaEspecie;
@@ -593,11 +594,24 @@ export function FichaEspecieView({
    * tabla, por comuna.
    */
   comunas: ComunaCatalogo[];
+  /**
+   * Las 20 zonas de `dim_zonas_agro`, también por props y por el mismo motivo.
+   *
+   * Antes eran un `Record` a nivel de módulo (`ZONAS`), que se podía importar
+   * desde cualquier componente cliente sin pedir nada. Al venir de la base eso
+   * ya no es posible, y son 20 filas: bajarlas dos veces, una en la ficha y
+   * otra en el sheet, no justificaba la vuelta al roundtrip.
+   */
+  zonas: ZonaCatalogo[];
 }) {
   // Una sola lectura de comuna y suelo para toda la ficha. Antes cada tab que
   // necesitaba la zona hacía su propia consulta, y `NutricionGuia` además la
   // congelaba en un inicializador de estado (ver `fix-vincular-perfil-zona`).
   const { zonaId, zonaRiegoId, sueloId, esDefault } = usePerfilZona(comunas);
+  // Las tabs que muestran nombre, clima y temperaturas necesitan el objeto
+  // completo, no solo el id. `getFenologia` y `getMacrozona` siguen con el id.
+  const zonasPorId = useMemo(() => indicePorZona(zonas), [zonas]);
+  const zona = zonasPorId.get(zonaId) ?? null;
   const ref = useTrackedView<HTMLDivElement>({ name: "VIEW_FICHA", especieId: especie.slug });
 
   return (
@@ -671,13 +685,13 @@ export function FichaEspecieView({
 
             <TabsContent value="calendario"><TabCalendario cal={ficha.cal} /></TabsContent>
             <TabsContent value="riego"><TabRiego dbKey={especie.dbKey} especieNombre={especie.nombre} sueloId={sueloId} zonaRiegoId={zonaRiegoId} /></TabsContent>
-            <TabsContent value="nutricion"><NutricionGuia dbKey={especie.dbKey} especieNombre={especie.nombre} zonaId={zonaId} esDefault={esDefault} /></TabsContent>
+            <TabsContent value="nutricion"><NutricionGuia dbKey={especie.dbKey} especieNombre={especie.nombre} region={zona?.region ?? null} esDefault={esDefault} /></TabsContent>
             <TabsContent value="sanidad"><TabSanidad san={ficha.san} /></TabsContent>
             <TabsContent value="poda"><TabPoda poda={ficha.poda} /></TabsContent>
             <TabsContent value="cosecha"><TabCosecha cos={ficha.cos} /></TabsContent>
-            <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} zonaId={zonaId} /></TabsContent>
+            <TabsContent value="fenologia"><TabFenologia dbKey={especie.dbKey} ficha={ficha} zonaId={zonaId} zona={zona} /></TabsContent>
             <TabsContent value="consejos"><TabConsejos dbKey={especie.dbKey} /></TabsContent>
-            <TabsContent value="info"><TabInfo ficha={ficha} zonaId={zonaId} /></TabsContent>
+            <TabsContent value="info"><TabInfo ficha={ficha} zona={zona} /></TabsContent>
           </Tabs>
         );
 

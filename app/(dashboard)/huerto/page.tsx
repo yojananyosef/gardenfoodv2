@@ -36,8 +36,9 @@ import {
   getEspeciesPorZona,
   getZonaIdDeComuna,
 } from "@/lib/agronomy";
+import { ZONA_NEUTRA_ID } from "@/lib/agronomy/catalogo";
 import { getArboles, getHuertos, getPerfil, getTareasDelDia } from "@/lib/huerto/data";
-import { getZonaDeComuna } from "@/lib/agronomy";
+import { getZonaDeComuna } from "@/lib/agronomy/catalogos";
 import { createClient } from "@/lib/supabase/server";
 import { TiraPronostico } from "@/components/huerto/TiraPronostico";
 import { AlertasClimaticas } from "@/components/huerto/AlertasClimaticas";
@@ -76,14 +77,14 @@ export default async function HuertoPage() {
     getActiveSponsorships("huerto", user.id),
   ]);
 
-  const zona = getZonaDeComuna(perfil?.comuna);
+  const zona = await getZonaDeComuna(perfil?.comuna);
   // Pronóstico real por la comuna del perfil, con el perfil de zona como
   // respaldo. `climaDePerfil` ya resuelve la cadena entera, así que esta
   // pantalla no necesita saber de respaldos.
   const clima = await climaDePerfil(perfil?.comuna);
   const alertas = clima?.alertas ?? [];
 
-  const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? 7;
+  const zonaId = getZonaIdDeComuna(perfil?.comuna) ?? ZONA_NEUTRA_ID;
   const recom = getEspeciesPorZona(zonaId);
   // Segunda línea del card Cultivos: aporta valor sin repetir el conteo
   // del título (N especies · M árboles) ni el «en plano» ya eliminado.

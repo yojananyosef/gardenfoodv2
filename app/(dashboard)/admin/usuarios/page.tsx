@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { getZonaDeComuna } from "@/lib/agronomy";
+import { getZonaIdDeComuna } from "@/lib/agronomy";
+import { ZONA_NEUTRA_ID, indicePorZona } from "@/lib/agronomy/catalogo";
+import { getZonas } from "@/lib/agronomy/catalogos";
 import { UserDetail } from "@/components/admin/UserDetailDrawer";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +49,11 @@ export default async function AdminUsuariosPage({
   if (params.comuna) q = q.ilike("comuna", `%${params.comuna}%`);
   if (params.email) q = q.ilike("email", `%${params.email}%`);
   const { data, error, count } = await q;
+
+  // Las zonas se cargan una vez por página, no por usuario: el listado hace
+  // `getZonaDeComuna` dentro de un `.map`, y awaited en cada fila serían N
+  // esperas para el mismo catálogo de 20 filas.
+  const zonasPorId = indicePorZona(await getZonas());
 
   const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -91,7 +98,9 @@ export default async function AdminUsuariosPage({
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {(data ?? []).map((u) => {
-            const zona = getZonaDeComuna((u as { comuna: string | null }).comuna);
+            const zona = zonasPorId.get(
+              getZonaIdDeComuna((u as { comuna: string | null }).comuna) ?? ZONA_NEUTRA_ID,
+            ) ?? null;
             return (
               <div key={u.id} className="flex flex-col gap-2 rounded-lg border p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">

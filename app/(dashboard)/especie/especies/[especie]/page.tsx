@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BotonLoEche } from "@/components/especie/BotonLoEche";
-import { ESPECIES, getZonaIdDeComuna, getZonaDeComuna } from "@/lib/agronomy";
+import { ESPECIES, getZonaIdDeComuna } from "@/lib/agronomy";
+import { getZonaDeComuna } from "@/lib/agronomy/catalogos";
 import {
   cosechaTipicaAdulta,
   fenologiaPorEspecie,
@@ -67,7 +68,7 @@ export default async function FichaEspecie(props: {
   ]);
 
   const zonaId = getZonaIdDeComuna(perfil?.comuna ?? undefined);
-  const region = zonaId != null ? getZonaDeComuna(perfil?.comuna)?.region ?? null : null;
+  const region = zonaId != null ? (await getZonaDeComuna(perfil?.comuna))?.region ?? null : null;
   const regionGuia = regionGuiaDeRegion(region);
 
   const programa =

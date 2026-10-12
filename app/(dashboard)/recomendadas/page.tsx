@@ -1,5 +1,6 @@
 import { RecomendacionesView } from "@/components/recomendaciones/RecomendacionesView";
-import { getEspeciesPorZona, getZonaDeComuna, getZonaIdDeComuna } from "@/lib/agronomy";
+import { getEspeciesPorZona, getZonaIdDeComuna } from "@/lib/agronomy";
+import { getZonaDeComuna } from "@/lib/agronomy/catalogos";
 import { getPerfil } from "@/lib/huerto/data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,7 +11,7 @@ export default async function RecomendadasPage() {
   const perfil = await getPerfil(user.id);
   const comuna = perfil?.comuna ?? null;
   const zonaId = getZonaIdDeComuna(comuna ?? undefined);
-  const zona = getZonaDeComuna(comuna);
+  const zona = await getZonaDeComuna(comuna);
   const fallback = !zonaId && !!comuna;
   // getZonaDeComuna already falls back to zone 7 if unknown; for stats we need zonaId or 7
   const effectiveZonaId = zonaId ?? 7;

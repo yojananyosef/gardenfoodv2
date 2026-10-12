@@ -1,4 +1,5 @@
-import { resolverZonaDeComuna, getZonaDeComuna } from "@/lib/agronomy";
+import { resolverZonaDeComuna } from "@/lib/agronomy";
+import { getZonaDeComuna } from "@/lib/agronomy/catalogos";
 import { puntoDeConsulta } from "@/lib/agronomy/centroides";
 import {
   hoyLocal,
@@ -261,7 +262,7 @@ export async function climaDePerfil(
   umbralHelada: number;
 } | null> {
   const { zonaId, esDefault } = resolverZonaDeComuna(comuna);
-  const zona = getZonaDeComuna(comuna);
+  const zona = await getZonaDeComuna(comuna);
   if (!zona) return null;
 
   const clima = await pronosticoDeComuna(comuna, zonaId);

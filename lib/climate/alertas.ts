@@ -1,4 +1,4 @@
-import type { ZonaClimatica } from "@/lib/agronomy";
+import type { ZonaCatalogo } from "@/lib/agronomy/catalogo";
 
 /**
  * Alertas climáticas a partir del PRONÓSTICO, no del perfil histórico.
@@ -177,7 +177,7 @@ const conDecimal = (n: number) => n.toFixed(1).replace(".", ",");
 /**
  * Umbral de helada de la zona, en °C.
  *
- * `ZonaClimatica` no trae un umbral en grados: trae `tnMin` (la mínima
+ * `ZonaCatalogo` no trae un umbral en grados: trae `tnMin` (la mínima
  * promedio anual) y un string de «días de helada por año». El umbral sale de
  * `tnMin` con un margen, y es el dato que hay que validar con el socio: si
  * queda corto, avisa de heladas donde no las hay; si queda largo, se las come.
@@ -187,7 +187,7 @@ const conDecimal = (n: number) => n.toFixed(1).replace(".", ",");
  * centro de Chile. Si INIA confirma otro número, se cambia acá y en un solo
  * lugar, porque esta función es el único punto donde se decide.
  */
-export function umbralHelada(zona: ZonaClimatica): number {
+export function umbralHelada(zona: ZonaCatalogo): number {
   return zona.tnMin - 3;
 }
 
@@ -229,7 +229,7 @@ export function severidadCalor(max: number): Severidad {
  */
 export function alertasDesdePronostico(
   pronostico: Pronostico | null,
-  zona: ZonaClimatica,
+  zona: ZonaCatalogo,
 ): AlertaClimatica[] {
   if (!pronostico) return [];
   const alertas: AlertaClimatica[] = [];
@@ -363,7 +363,7 @@ export function resumenAlertas(alertas: AlertaClimatica[]): string {
  * `"15"` dentro de `"5–15 días"`, y le daba severidad alta a Copiapó,
  * Quillota, Pichilemu y Concepción.
  */
-export function diasDeHelada(zona: ZonaClimatica): number {
+export function diasDeHelada(zona: ZonaCatalogo): number {
   if (zona.heladas.includes("Sin heladas")) return 0;
   const numeros = zona.heladas.match(/\d+/g);
   if (!numeros?.length) return 0;
@@ -373,7 +373,7 @@ export function diasDeHelada(zona: ZonaClimatica): number {
 /**
  * ¿La zona es de las donde la helada es el riesgo del invierno?
  *
- * `ZonaClimatica` no trae heladas por mes, solo días al año. Las zonas que el
+ * `ZonaCatalogo` no trae heladas por mes, solo días al año. Las zonas que el
  * propio catálogo marca con sequía «Nulo» o «Muy bajo» (Temuco, Valdivia,
  * Osorno: 1200–1800 mm al año) son marítimas, y ahí el string de heladas es
  * demasiado grueso para usarlo como si fueran meses de junio a agosto.
@@ -384,11 +384,11 @@ export function diasDeHelada(zona: ZonaClimatica): number {
  * ASSUMTO SOBRE EL DATASET: usa `sequia` como discriminante. Si INIA manda los
  * datos mensuales de helada, esto se reemplaza por la tabla.
  */
-function zonaHelada(zona: ZonaClimatica): boolean {
+function zonaHelada(zona: ZonaCatalogo): boolean {
   return zona.sequia !== "Nulo" && zona.sequia !== "Muy bajo";
 }
 
-export function alertasEstaticas(zona: ZonaClimatica, mes: number): AlertaClimatica[] {
+export function alertasEstaticas(zona: ZonaCatalogo, mes: number): AlertaClimatica[] {
   const alertas: AlertaClimatica[] = [];
   // Sin fecha real que dar: es un perfil anual, no un pronóstico. Se marca con
   // una fecha vacía y la interfaz lo declara como respaldo.
@@ -449,12 +449,12 @@ export interface ResultadoClima {
   alertas: AlertaClimatica[];
   pronostico: Pronostico | null;
   fuente: FuenteClima;
-  zona: ZonaClimatica;
+  zona: ZonaCatalogo;
 }
 
 export function resolverClima(
   pronostico: Pronostico | null,
-  zona: ZonaClimatica,
+  zona: ZonaCatalogo,
   mes: number,
 ): ResultadoClima {
   if (pronostico && pronostico.dias.length) {

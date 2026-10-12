@@ -368,3 +368,28 @@ const COMUNAS_POR_NOMBRE = new Map<string, ComunaEntry>(
 export function buscarComuna(comuna: string): ComunaEntry | null {
   return COMUNAS_POR_NOMBRE.get(normalizar(comuna)) ?? null;
 }
+
+/**
+ * Nombre de comuna → [zonaId, región].
+ *
+ * Vivía en `lib/agronomy/zonas.ts`, junto con las 20 zonas que se fueron a
+ * `dim_zonas_agro`. Se queda acá porque su fuente es esta lista y no la otra:
+ * mientras `COMUNAS` siga siendo la fuente del mapa comuna→zona, el derivado
+ * también.
+ */
+export const COMUNAS_ZONA: Record<string, [number, string]> = Object.fromEntries(
+  COMUNAS.map((c) => [c.comuna, [c.zonaId, c.region] as [number, string]]),
+);
+
+/**
+ * Zona agroclimática de una comuna, o `null` si no está en el catálogo.
+ *
+ * Devuelve `null` y no la zona neutra a propósito: quien llama necesita poder
+ * distinguir «no tienes comuna» de «tu comuna es la zona 7». Eso lo hace
+ * `resolverZonaDeComuna`, que le pone nombre al `esDefault`.
+ */
+export function getZonaIdDeComuna(comuna?: string | null): number | null {
+  if (!comuna) return null;
+  const entry = COMUNAS_ZONA[comuna];
+  return entry ? entry[0] : null;
+}

@@ -1,11 +1,11 @@
-import { COMUNAS, buscarComuna, type ComunaEntry } from "./comunas";
+import { COMUNAS, buscarComuna, getZonaIdDeComuna, COMUNAS_ZONA, type ComunaEntry } from "./comunas";
 import { CONSEJOS } from "./consejos";
 import { GRUPO_DISTANCIA } from "./distancias";
 import { ESPECIES, type Especie } from "./especies";
 import { FENOLOGIA, MACROZONA_MAP, type FenologiaEntrada } from "./fenologia";
 import { FICHAS, type CalMes, type FichaEspecie } from "./fichas";
 import { VIABILIDAD, type Viabilidad } from "./viabilidad";
-import { COMUNAS_ZONA, ZONAS, type ZonaClimatica } from "./zonas";
+import { ZONA_NEUTRA_ID } from "./catalogo";
 import type { Mes } from "@/lib/fechas";
 
 export type {
@@ -15,9 +15,8 @@ export type {
   FenologiaEntrada,
   FichaEspecie,
   Viabilidad,
-  ZonaClimatica,
 };
-export { COMUNAS, COMUNAS_ZONA, CONSEJOS, ESPECIES, FENOLOGIA, FICHAS, GRUPO_DISTANCIA, MACROZONA_MAP, VIABILIDAD, ZONAS, buscarComuna };
+export { COMUNAS, COMUNAS_ZONA, CONSEJOS, ESPECIES, FENOLOGIA, FICHAS, GRUPO_DISTANCIA, MACROZONA_MAP, VIABILIDAD, buscarComuna, getZonaIdDeComuna };
 
 export { MESES } from "@/lib/fechas";
 export type { Mes } from "@/lib/fechas";
@@ -27,24 +26,10 @@ export type EspeciePorZona = Especie & {
   viabRazon?: string;
 };
 
-const ZONA_FALLBACK_ID = 7;
-
 export const ESPECIE_MUESTRA_GRATIS = "duraznero";
 
 export function esMuestraGratuis(slug: string): boolean {
   return slug === ESPECIE_MUESTRA_GRATIS;
-}
-
-export function getZonaIdDeComuna(comuna?: string | null): number | null {
-  if (!comuna) return null;
-  const entry = COMUNAS_ZONA[comuna];
-  return entry ? entry[0] : null;
-}
-
-export function getZonaDeComuna(comuna?: string | null): ZonaClimatica | null {
-  const zonaId = getZonaIdDeComuna(comuna);
-  if (!zonaId) return ZONAS[ZONA_FALLBACK_ID] ?? null;
-  return ZONAS[zonaId];
 }
 
 export interface ZonaResuelta {
@@ -65,8 +50,13 @@ export interface ZonaResuelta {
 
 /**
  * Resuelve la zona del perfil dejando explícito si salió de la comuna o del
- * fallback. `getZonaDeComuna` sigue existiendo para los ~10 call-sites que
- * solo necesitan el `ZonaClimatica`; lo nuevo es poder distinguir los casos.
+ * fallback.
+ *
+ * Sigue siendo **síncrona** y por eso puede vivir en `index.ts`, que es
+ * client-safe: solo mira `COMUNAS_ZONA`, el mapa comuna→zona que deriva de
+ * `comunas.ts`. Ese mapa todavía no viene de la base, así que no necesita
+ * `await`. Quien necesite el objeto `ZonaCatalogo` (el nombre, el clima, las
+ * temperaturas) usa `getZonaDeComuna()` de `catalogos.ts`, que sí es async.
  */
 export function resolverZonaDeComuna(comuna?: string | null): ZonaResuelta {
   // El string vacío es «sin comuna», no una comuna: sin esto el perfil guardaría
@@ -74,7 +64,7 @@ export function resolverZonaDeComuna(comuna?: string | null): ZonaResuelta {
   const valor = comuna?.trim() ? comuna.trim() : null;
   const desdeCatalogo = getZonaIdDeComuna(valor);
   return {
-    zonaId: desdeCatalogo ?? ZONA_FALLBACK_ID,
+    zonaId: desdeCatalogo ?? ZONA_NEUTRA_ID,
     comuna: valor,
     esDefault: desdeCatalogo == null,
   };

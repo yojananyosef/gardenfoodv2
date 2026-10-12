@@ -11,7 +11,6 @@
  * el ajuste por edad y cosecha del usuario (hoja MI PLAN) vive en ajustePorArbol().
  */
 import seed from "../../supabase/fertilizacion_seed.json";
-import { ZONAS } from "./zonas";
 
 export interface DetallePrograma {
   nutriente: string;
@@ -467,6 +466,11 @@ export function regionesGuia(): string[] {
  * Región de la guía que corresponde a la zona del perfil, o `null` si la guía
  * no cubre esa combinación.
  *
+ * Recibe la **región** y no el id de zona. Antes hacía `ZONAS[zonaId].region`
+ * con el catálogo a nivel de módulo; como las zonas ahora salen de
+ * `dim_zonas_agro` y llegan por props, el que ya tiene la zona resuelta se la
+ * pasa. Menos indirección y un tipo menos en el medio.
+ *
  * Devolver `null` es deliberado. Antes esta función caía a la primera región
  * que tuviera programa para la especie, y la ficha la mostraba como si fuera
  * la del usuario: el calendario se repintaba con los meses y el color de otra
@@ -478,8 +482,8 @@ export function regionesGuia(): string[] {
  * regiones en el seed, así que usar el método activo haría que el estado vacío
  * dependiera de un control que no tiene relación con la pregunta.
  */
-export function regionDelPerfil(especie: string, zonaId: number): string | null {
-  const region = regionGuiaDeRegion(ZONAS[zonaId]?.region);
-  if (region && guiaRegional(especie, region, "suelo")) return region;
+export function regionDeZona(especie: string, region: string | null | undefined): string | null {
+  const guia = regionGuiaDeRegion(region);
+  if (guia && guiaRegional(especie, guia, "suelo")) return guia;
   return null;
 }

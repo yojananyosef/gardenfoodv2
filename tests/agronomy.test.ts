@@ -2,11 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   ESPECIES,
   COMUNAS,
-  ZONAS,
   COMUNAS_ZONA,
   VIABILIDAD,
   FICHAS,
-  getZonaDeComuna,
   getEspeciesPorZona,
   getCalendarioPorMes,
   getTareasDelMes,
@@ -14,6 +12,7 @@ import {
   getViabilidad,
   getMacrozona,
 } from "@/lib/agronomy";
+import { ZONAS, zonaDeComuna } from "./helpers/zonas-desde-csv";
 
 describe("agronomy data layer", () => {
   it("tiene 20 zonas agroclimáticas", () => {
@@ -78,13 +77,18 @@ describe("agronomy data layer", () => {
   });
 
   it("resuelve la zona desde una comuna conocida", () => {
-    expect(getZonaDeComuna("Pirque")?.nombre).toBe("Santiago Sur - Buin");
-    expect(getZonaDeComuna("Rancagua")?.id).toBe(10);
+    // El nombre sale de `dim_zonas_agro` y es «Santiago Sur-Buin», sin
+    // espacios alrededor del guion. Antes venía del TS autogenerado, que
+    // escribía «Santiago Sur - Buin». Es el único texto de zona que cambia
+    // en pantalla, y cambia porque manda el Excel. Ver `tests/zonas-catalogo
+    // .test.ts`, que deja los tres nombres problemáticos anotados.
+    expect(zonaDeComuna("Pirque")?.nombre).toBe("Santiago Sur-Buin");
+    expect(zonaDeComuna("Rancagua")?.id).toBe(10);
   });
 
   it("cae a zona neutra por defecto con comuna desconocida", () => {
-    expect(getZonaDeComuna("Comuna Inventada")).not.toBeNull();
-    expect(getZonaDeComuna(undefined)).not.toBeNull();
+    expect(zonaDeComuna("Comuna Inventada")).not.toBeNull();
+    expect(zonaDeComuna(undefined)).not.toBeNull();
   });
 
   it("muestra la muestra de la matriz de viabilidad", () => {
