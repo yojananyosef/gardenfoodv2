@@ -55,3 +55,17 @@
 - Funnel de 3 capas (anónimo con muestra duraznero / gratuito con límites / pago) — `add-freemium-funnel` (commit `cbfe23e`).
 - P0 seguridad: escalada RLS a admin, self-upgrade vía polling, webhook sin firma/anti-replay, telemetría falsable, consents anónimos world-writable, sponsorships no pagadas públicas, gates admin/checkout, `timingSafeEqual` — `harden-payments-and-rls` (commit `540b891`).
 - Catálogo completo de 346 comunas oficiales (SUBDERE DPA) + selector del landing derivado del catálogo canónico — `complete-comunas-catalog`.
+
+## Decisiones del usuario (2026-10-12)
+
+- **Usuarios reales que NO se tocan**: `johangutierrez@outlook.cl` (28 arboles, 4 huertos) y
+  `pichilemugardenfood@gmail.com` (122 arboles, 18 huertos). Los otros perfiles son
+  cuentas de prueba que quedaron: `admin-e2e-*`, `user-e2e-*`, `comprador.prueba@outlook.com`,
+  `gardenfood.buyer.*`. Cualquier limpieza de datos debe dejar estos dos intactos.
+- **Mercado Pago queda jubilado.** La integracion quedo inconclusa y hay que reemplazarla
+  por **Flow** en el futuro: la API resulto confusa y el codigo quedo full de bugs. Las
+  13 filas de `gf_subscriptions` (11 de ellas basura de prueba de un usuario inexistente,
+  2 canceladas) son de ese intento. **Hoy no hay ninguna suscripcion activa en la base.**
+  Al migrar a Flow, `gf_subscription_plans` hay que rehacerla entera: sus `tier`
+  (`cosecha`, `huertero`, `full`) no coinciden con los valores que usa `perfiles.plan`
+  (`gratuito`, `admin`, `huertero`), que ademas mezcla rol de acceso con tier de pago.
