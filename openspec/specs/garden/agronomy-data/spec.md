@@ -110,7 +110,6 @@ The system SHALL expose `duraznero` as the free catalog sample (`ESPECIE_MUESTRA
 
 # Spec Delta
 
-
 ### Requirement: El motor de riego se verifica contra la calculadora de referencia
 
 El motor de riego SHALL tener una suite automatizada que lo compare, combinación por combinación, contra los resultados precalculados de la calculadora de referencia del Excel maestro. La comparación SHALL cubrir litros y días por árbol para las condiciones de referencia: árbol adulto, copa de referencia, suelo Media y humedad en punto de riego. Toda superficie que muestre un volumen de riego al usuario, incluida la ficha de especie, SHALL obtener ese número del motor y SHALL NOT mantener una copia de la fórmula.
@@ -134,8 +133,6 @@ El fixture de resultados SHALL estar versionado en el repositorio, ser regenerab
 - **WHEN** se regenera el fixture y se recalcula cada fila desde las tablas de riego y especies
 - **THEN** las 6.480 filas coinciden; si alguna no coincide, el fixture se reporta como no confiable en lugar de usarse
 
-
-
 #### Scenario: El redondeo es half-up
 
 - **WHEN** el cálculo produce un valor con exactamente .5
@@ -154,3 +151,80 @@ La tabla de resultados precalculados del Excel SHALL NOT importarse a la base de
 
 - **WHEN** alguien abre el fixture para depurar un fallo
 - **THEN** puede ver de qué hoja y columna del Excel proviene cada campo y con qué comando se regenera
+
+### Requirement: La zona resuelta distingue comuna ausente de comuna válida
+
+La resolución de zona SHALL exponer si la comuna del usuario está efectivamente resuelta en el catálogo o si no hay comuna configurada, de modo que las pantallas dependientes de zona puedan distinguir ambos casos. El valor por defecto SHALL seguir existiendo para que la aplicación no falle, pero SHALL ser identificable por el consumidor en vez de presentarse como la zona real del usuario.
+
+#### Scenario: Comuna válida se marca como resuelta
+
+- **WHEN** el usuario tiene una comuna presente en el catálogo
+- **THEN** la resolución entrega la zona correspondiente marcada como resuelta desde la comuna del usuario
+
+#### Scenario: Comuna ausente se marca como no resuelta
+
+- **WHEN** el usuario no tiene comuna configurada en su perfil
+- **THEN** la resolución entrega la zona por defecto marcada como no resuelta desde la comuna del usuario, para que la interfaz pueda advertirlo
+
+#### Scenario: Comuna desconocida en el catálogo
+
+- **WHEN** el perfil tiene una comuna que no está en el catálogo
+- **THEN** la resolución no falla, entrega la zona por defecto y la marca como no resuelta
+
+### Requirement: Pronóstico meteorológico por día para la comuna del usuario
+
+El sistema SHALL entregar un pronóstico meteorológico para los próximos días de la comuna configurada en el perfil del usuario, con temperatura máxima, temperatura mínima y probabilidad de precipitación por día y fecha. La fuente SHALL ser una que no requiera credencial de API para su uso previsto, y el sistema SHALL distinguir en la respuesta si los datos provienen del pronóstico o del perfil climático histórico de la zona.
+
+#### Scenario: Pronóstico de los próximos días
+
+- **WHEN** el usuario tiene comuna configurada y abre la pestaña Clima
+- **THEN** el sistema muestra la máxima, la mínima y la probabilidad de lluvia de cada uno de los próximos días, con su fecha
+
+#### Scenario: Pronóstico para la comuna del perfil
+
+- **WHEN** el usuario cambia su comuna en el perfil
+- **THEN** el pronóstico que se muestra corresponde a la nueva comuna
+
+#### Scenario: Fuente del pronóstico identificable
+
+- **WHEN** se muestran datos de pronóstico
+- **THEN** la interfaz indica que son pronóstico; cuando solo hay perfil histórico disponible, lo indica como tal y no lo presenta como pronóstico
+
+#### Scenario: Pronóstico no disponible
+
+- **WHEN** la fuente de pronóstico no responde o no hay coordenadas para la comuna
+- **THEN** el sistema sigue funcionando y muestra el perfil climático de la zona como respaldo, declarando que son promedios y no pronóstico
+
+#### Scenario: El respaldo no rompe la pantalla principal
+
+- **WHEN** la fuente de pronóstico falla durante la carga de la pantalla principal
+- **THEN** la pantalla se renderiza igual, sin errores, con el perfil de la zona
+
+### Requirement: Alertas climáticas predictivas y fechadas
+
+Las alertas climáticas SHALL derivarse del pronóstico de los próximos días y SHALL incluir la fecha a la que se refieren, en lugar de dispararse por el mes del calendario ni describir eventos que ya ocurrieron. La severidad de cada alerta SHALL derivarse del valor previsto, no de un promedio anual.
+
+#### Scenario: Helada prevista con fecha
+
+- **WHEN** el pronóstico de los próximos días tiene una temperatura mínima por debajo del umbral de helada de la zona
+- **THEN** el sistema muestra una alerta de riesgo de helada indicando qué día cae por debajo del umbral
+
+#### Scenario: Lluvia prevista con fecha
+
+- **WHEN** el pronóstico supera el umbral de probabilidad de precipitación en alguno de los próximos días
+- **THEN** el sistema muestra una alerta de lluvia indicando el día y la probabilidad
+
+#### Scenario: Alerta sin fecha se considera un defecto
+
+- **WHEN** el sistema muestra una alerta climática
+- **THEN** esta indica a qué día se refiere
+
+#### Scenario: Sin coincidencias en el pronóstico
+
+- **WHEN** ningún día del pronóstico alcanza ningún umbral
+- **THEN** el sistema lo dice de forma explícita y no muestra alertas de relleno ni etiquetas de cobertura vacías
+
+#### Scenario: La severidad responde al valor previsto
+
+- **WHEN** la temperatura mínima prevista cae por debajo del umbral bajo
+- **THEN** la severidad de la alerta de helada refleja ese valor y no un rango de días de helada promedio de la zona

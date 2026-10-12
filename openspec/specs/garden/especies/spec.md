@@ -68,21 +68,21 @@ El asistente de Especies SHALL identificar la especie mediante el patrón de tar
 
 ### Requirement: Programa de fertilización casera por región y método de riego
 
-El sistema SHALL mantener el programa de fertilización (del XLSX «GARDENFOOD_Guia_Fertilizacion_Casera») por especie y región: momentos del año con meses y frecuencia según método de riego (al suelo / por goteo), productos con gramos por aplicación, y ajuste por edad de la planta (joven/adulta). La ficha SHALL mostrar los gramos UNA VEZ convertidos a medidas caseras usando el peso por cucharada del catálogo de fertilizantes (por ejemplo urea ≈ 11 g) y SHALL declarar el criterio «calculado para planta adulta» junto al ajuste aplicado. Los datos SHALL provenir de un módulo de datos estático, versionado en Git con seed reproducible desde el archivo de origen (XLSX), citando la fuente (INIA, Boletín 426) en la ficha.
+El sistema SHALL mantener el programa de fertilización (del XLSX «GARDENFOOD_Guia_Fertilizacion_Casera») por especie y región: momentos del año con meses y frecuencia según método de riego (al suelo / por goteo), productos con gramos por aplicación, y ajuste por edad de la planta (joven/adulta). La ficha SHALL mostrar los gramos UNA VEZ convertidos a medidas caseras usando el peso por cucharada del catálogo de fertilizantes (por ejemplo urea ≈ 11 g) y SHALL declarar el criterio «calculado para planta adulta» junto al ajuste aplicado. Los datos SHALL provenir de un módulo de datos estático, versionado en Git con seed reproducible desde el archivo de origen (XLSX), citando la fuente (INIA, Boletín 426) en la ficha. La elección entre programas SHALL presentarse al usuario por el nombre del fertilizante («granulados» / «solubles») y no por el método de riego.
 
 #### Scenario: Programa al suelo para duraznero adulto en Ñuble
 
-- **WHEN** un usuario con zona de transición (Ñuble-Biobío) y durazneros adultos («ya produce») abre la ficha de Durazno en septiembre y riega al suelo
-- **THEN** el sistema muestra la etapa «cuando engorda la fruta» con los productos y dosis del período convertidos a medidas caseras (cucharadas/tazas según peso por cucharada del producto) y la nota «calculado para planta adulta»
+- **WHEN** un usuario con zona de transición (Ñuble-Biobío) y durazneros adultos («ya produce») abre la ficha de Durazno en septiembre y elige «Fertilizantes granulados»
+- **THEN** el sistema muestra el bloque de meses de ese período con los productos y dosis convertidos a medidas caseras (cucharadas/tazas según peso por cucharada del producto) y la nota «calculado para planta adulta»
 
 #### Scenario: Método de riego cambia la dosis
 
-- **WHEN** el usuario cambia el método de riego de su configuración de «suelo» a «goteo»
-- **THEN** la ficha recalcula con el programa de goteo (aplicaciones más frecuentes y gramos menores por aplicación), sin duplicar la species ni la región
+- **WHEN** el usuario cambia su selección de «Fertilizantes granulados» a «Fertilizantes solubles»
+- **THEN** la ficha recalcula con el programa de goteo (aplicaciones más frecuentes y gramos menores por aplicación), sin duplicar la especie ni la región
 
 #### Scenario: Planta joven recibe ajuste
 
-- **WHEN** el árbol consultado es joven («recién plantada» o «empieza a producir») según la edad guardada del cultivo
+- **WHEN** el árbol consultado es joven («recién plantado» o «empieza a producir») según la edad guardada del cultivo
 - **THEN** la ficha aplica el factor de ajuste del programa y muestra la dosis reducida respectiva al adulto
 
 #### Scenario: Fuente de datos verificable
@@ -112,6 +112,7 @@ El índice de especies SHALL incluir una tarjeta destacada de estilo dashed «¿
 
 - **WHEN** el usuario activa la tarjeta dashed
 - **THEN** se abre el asistente del huerto en el paso de alta de árboles/cultivos (tarjetas de fruta)
+
 ### Requirement: La ficha de especie calcula el riego con el motor único
 
 La ficha de especie SHALL calcular los litros y los días de cada mes llamando al motor de riego de la aplicación, y SHALL NOT reimplementar la fórmula. La ficha SHALL aplicar los mismos factores que el resto de la aplicación: suelo, edad, zona de riego con su desfase, copa, humedad y volumen de mantenimiento en reposo.
@@ -147,3 +148,75 @@ Cuando falte el dato de suelo, edad, zona o humedad, la ficha de especie SHALL i
 #### Scenario: Sin datos supuestos
 - **WHEN** se inspecciona la ficha
 - **THEN** no contiene valores por defecto asumidos para suelo, edad, zona o humedad
+
+### Requirement: Los bloques de dosis se identifican por sus meses
+
+La ficha SHALL identificar cada bloque de dosis por el rango de meses que cubre, sin mostrar nombres de estado fenológico del tipo «cuando despierta», «cuando engorda la fruta» o «cuando se recupera», ni textos descriptivos que usen esa jerga.
+
+#### Scenario: El título del bloque son los meses
+
+- **WHEN** el usuario abre un bloque de dosis de la ficha
+- **THEN** su título es el rango de meses que cubre ese bloque
+
+#### Scenario: No aparece la jerga fenológica
+
+- **WHEN** se renderiza la tab de nutrición completa
+- **THEN** no aparece en pantalla ningún texto de estado fenológico de los del XLSX
+
+#### Scenario: El calendario sigue describiendo cada mes
+
+- **WHEN** el usuario recorre el calendario de 12 meses con un lector de pantalla
+- **THEN** cada mes queda anunciado con nombre y los meses en que corresponde abonar, sin depender de los títulos eliminados
+
+#### Scenario: La ficha espejo usa el mismo criterio
+
+- **WHEN** el usuario abre la ficha de una especie desde el módulo de huerto, que renderiza el programa por separado
+- **THEN** ese render identifica los bloques por sus meses y tampoco muestra los nombres de estado fenológico
+
+### Requirement: La región de la guía sigue a la comuna del perfil
+
+La región usada para el programa de fertilización SHALL derivarse de la comuna guardada en el perfil del usuario y SHALL recalcularse cuando esa comuna cambie, sin depender del momento en que se abrió la ficha. La región SHALL cambiarse únicamente desde el perfil y la ficha SHALL ofrecer los ajustes que le son propios —la edad del árbol y el tipo de fertilizante— sin exponer un selector de región.
+
+#### Scenario: La región sigue a la comuna del perfil
+
+- **WHEN** el usuario tiene comuna «Rancagua» en su perfil y abre la ficha de una especie
+- **THEN** el programa mostrado corresponde a la región de la guía que cubre Rancagua
+
+#### Scenario: Cambiar la comuna cambia la región
+
+- **WHEN** el usuario cambia su comuna en el perfil a «Los Angeles» y vuelve a la ficha
+- **THEN** el programa mostrado corresponde a la región de la guía de Los Angeles, no a la que se mostraba antes
+
+#### Scenario: La ficha no ofrece cambiar la región
+
+- **WHEN** el usuario está en la pestaña de nutrición de la ficha
+- **THEN** no hay un control para elegir la región, y el pie indica que la región viene de su comuna con un enlace al perfil
+
+#### Scenario: Sin comuna en el perfil
+
+- **WHEN** el usuario no tiene comuna configurada
+- **THEN** la ficha lo dice de forma explícita y ofrece configurar la comuna, en vez de presentar datos de una región por defecto como los de su zona
+
+#### Scenario: Cambiar la comuna desde la ficha
+
+- **WHEN** el usuario cambia su comuna en el perfil y regresa a la ficha sin recargarla
+- **THEN** la ficha refleja la región de la nueva comuna
+
+### Requirement: La ficha no muestra datos de otra región sin decirlo
+
+Cuando la guía de fertilización no tenga programa calibrado para la especie en la región del perfil del usuario, la ficha SHALL mostrar un estado vacío que indique que la guía no cubre esa combinación, en vez de mostrar el programa de otra región.
+
+#### Scenario: Especie sin guía para la comuna
+
+- **WHEN** el usuario tiene comuna en una región donde la guía no tiene programa para la especie que abre
+- **THEN** la ficha indica que no hay guía para esa especie en su zona, sin mostrar el calendario ni las dosis de otra región
+
+#### Scenario: El estado vacío ofrece salida
+
+- **WHEN** se muestra el estado vacío por falta de guía regional
+- **THEN** el usuario puede cambiar su comuna desde ahí mismo, con un enlace al perfil
+
+#### Scenario: El estado vacío no contradice al pie
+
+- **WHEN** la ficha muestra el estado vacío por falta de guía
+- **THEN** no hay ninguna parte de la ficha que afirme que los datos corresponden a una región distinta de la del usuario

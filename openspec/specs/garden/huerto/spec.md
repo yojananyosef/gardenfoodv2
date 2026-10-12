@@ -302,3 +302,54 @@ La vista de edición de un árbol individual (matriz 2D y 3D del plano) SHALL of
 
 - **WHEN** el usuario abre la edición de un árbol desde la vista 3D
 - **THEN** se ofrece el mismo puente a la ficha de especie
+
+### Requirement: Coverage indicators reflect real data
+
+The system SHALL NOT display fixed decorative indicators for weather event types on the Clima tab. Any indicator for a weather event type SHALL appear only when the underlying data contains that type of event.
+
+#### Scenario: Indicator appears only with data
+
+- **WHEN** the forecast yields no rain alert
+- **THEN** no rain indicator is shown
+
+#### Scenario: Indicator appears with data
+
+- **WHEN** the forecast yields a rain alert
+- **THEN** the rain indicator is shown alongside that alert
+
+### Requirement: Acceso directo a los árboles del usuario
+
+La pantalla principal SHALL ofrecer un acceso de un toque al inventario de árboles del usuario. El bloque que muestra el conteo de especies y árboles SHALL ser accionable y SHALL llevar al índice de especies, y el selector de especie activa SHALL estar disponible sin necesidad de entrar en modo de plantado.
+
+#### Scenario: El conteo de árboles lleva al inventario
+
+- **WHEN** el usuario pulsa el bloque con «N especies · M árboles»
+- **THEN** llega al índice de especies donde ve todas sus especies y sus ejemplares
+
+#### Scenario: El selector de especie está siempre disponible
+
+- **WHEN** el usuario está en /huerto sin estar en modo de plantado
+- **THEN** el selector de especie activa está visible y operable con un target táctil de al menos 48 px
+
+#### Scenario: Elegir una especie es un toque desde la pantalla principal
+
+- **WHEN** el usuario quiere empezar a trabajar con una especie concreta
+- **THEN** puede seleccionarla directamente desde la pantalla principal sin recorrer la pantalla ni entrar en un asistente
+
+### Requirement: Proporción entre tamaño de cuadro y tamaño de letra
+
+Los bloques de resumen de /huerto SHALL mantener una proporción legible entre el tamaño de sus cifras y el de sus etiquetas, de modo que ninguna etiqueta quede ilegiblemente pequeña frente a un cuadro grande.
+
+#### Scenario: Las etiquetas del resumen son legibles
+
+- **WHEN** se muestra el bloque de Cultivos o el de Hoy en /huerto
+- **THEN** sus etiquetas se leen sin esfuerzo y la diferencia de tamaño con la cifra no es disproportionada
+
+### Requirement: Menos texto explicativo en la vista por defecto
+
+La pantalla principal SHALL reducir el texto explicativo de sus bloques por defecto, dejando el detalle disponible bajo demanda en lugar de mostrado siempre.
+
+#### Scenario: Los hints largos no ocupan la vista
+
+- **WHEN** el usuario abre /huerto en su estado por defecto
+- **THEN** los textos de ayuda del mapa y de las cards no ocupan varios bloques de la pantalla y quedan disponibles al pedirlo
