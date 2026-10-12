@@ -24,7 +24,7 @@
 - [x] 4.1 `pnpm exec tsc --noEmit` sin errores.
 - [x] 4.2 `pnpm exec eslint` sin errores.
 - [x] 4.3 Suite completa en verde, sin modificar ningún test existente. Los 6.787 tienen que pasar tal cual.
-- [ ] 4.4 `pnpm build`.
+- [x] 4.4 `pnpm build`.
 - [x] 4.5 Preview y verificación con sesión real: `/perfil` (el quiz de suelo tiene que seguir mostrando los 4 tipos con sus factores) y el diálogo de editar un árbol (el número de riego no puede cambiar para la comuna del perfil).
 - [x] 4.6 Anotar en `PENDING.md` que la caché de `riego-base` dura 7 días, para que un cambio de `dim_comunas` que no se vea no se busque en otro lado.
 

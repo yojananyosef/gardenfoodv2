@@ -27,8 +27,13 @@ import {
 export type { ComunaCatalogo, SueloCatalogo, ZonaCatalogo } from "./catalogo";
 export { ZONA_NEUTRA_ID };
 
+import type { Database } from "@/types/database.types";
+
 function createPublicClient() {
-  return createClient(
+  // Tipado contra el esquema real: si una columna se renombra en la base,
+  // el `.select("...")` de abajo deja de compilar en vez de devolver `null`
+  // en runtime. El archivo lo genera `scripts/generar_database_types.mjs`.
+  return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
