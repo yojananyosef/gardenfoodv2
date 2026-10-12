@@ -119,9 +119,8 @@ Hay que decidir, comuna por comuna, en que zona agroclimatica cae.
 
 ## Lo que NO quedo pendiente
 
-- Las **49 combinaciones** de viabilidad que la tabla tiene y el codigo no, y el
-  veredicto de **olivo en la zona 20**: reportados, no tocados. Cambian que especies se
-  recomiendan por zona, y eso es producto.
+- El veredicto de **olivo en la zona 20**: el codigo dice `no` y la base dice `SI`. Es
+  el unico dato en conflicto entre el codigo y la base en todo el catalogo.
 - **Cual fuente de consejos manda**: `fact_consejos` tiene 211 textos de "Base 20
   especies" y el legacy 154, con 1 en comun.
 - Los **3 `especie_id`** donde el codigo y la base no coinciden (`avellano`, `nispero`,

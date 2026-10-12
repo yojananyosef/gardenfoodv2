@@ -311,12 +311,18 @@ Se hizo con los tres catalogos y el resultado cambio el plan:
 | Catalogo | Codigo | Base | Hallazgo |
 |---|---|---|---|
 | especies | 30 | 30 | 29 diferencias de vocabulario en 270 comparaciones |
-| viabilidad | 551 | 600 | **87 combinaciones ausentes** que el codigo nunca tuvo |
+| viabilidad | 600 | 600 | completas: 30 especies x 20 zonas, sin faltantes |
 | consejos | 154 | 211 | **1 de 154 coincide** |
 
-Las 87 de viabilidad no fallan: `lib/agronomy/index.ts` hace
-`if (!viab) continue`, y una entrada ausente hace que la especie simplemente no
-aparezca en las recomendaciones de esa zona.
+La cuenta tiene que hacerse con un parser que no se coma entradas: el primer
+conteo dio 551 y "87 ausentes", y era falso. El regex exigia coma en el cierre de
+cada bloque y el ultimo del array cierra sin coma.
+
+El fallo se propago: el script que poblaba `fact_viabilidad_zona.razon` usaba el
+mismo regex, asi que dejo 49 filas vacias, y el verificador tambien, asi que los
+dos decian "todo bien". **Un verificador que comparte el error con lo que verifica
+no verifica nada.** Hoy son las 600 con su razon, y el parser se cuenta a si
+mismo para que una regresion se vea.
 
 #### Scenario: La tabla tiene mas combinaciones que el codigo
 

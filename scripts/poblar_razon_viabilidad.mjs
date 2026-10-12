@@ -14,6 +14,18 @@
  *
  * Uso: node scripts/poblar_razon_viabilidad.mjs [--dry-run]
  */
+/**
+ * Corta el array por nombre de especie, no por la coma de cierre.
+ *
+ * Antes usaba `/\n  "([^"]+)": \{\n([\s\S]*?)\n  \},/g`, que exige coma en el
+ * cierre. El ultimo bloque del array cierra con `  }` sin coma, y el `.*?` sin
+ *XuYu_HiuUibalado se comia bloques completos. Resultado: contaba 551 entradas
+ * en vez de 600, poblababa 49 de menos, y el verificador que compartia el mismo
+ * regex decia 'todo bien'. Un verificador que tiene el mismo error que lo que
+ * verifica no verifica nada.
+ *
+ * Uso: node scripts/poblar_razon_viabilidad.mjs [--dry-run]
+ */
 import pg from "pg";
 import { readFileSync } from "node:fs";
 
@@ -22,20 +34,23 @@ const m = /DATABASE_URL\s*=\s*"?([^"\r\n]+)"?/.exec(readFileSync(".env.local", "
 const db = new pg.Client({ connectionString: m[1].trim(), ssl: { rejectUnauthorized: false } });
 await db.connect();
 
-// --- leer el array ---
 const vTxt = readFileSync("lib/agronomy/viabilidad.ts", "utf8").replace(/\r\n/g, "\n");
+const inicios = [...vTxt.matchAll(/\n  "([^"]+)": \{/g)];
 const codigo = [];
-for (const b of vTxt.matchAll(/\n  "([^"]+)": \{\n([\s\S]*?)\n  \},/g)) {
-  for (const e of b[2].matchAll(/\n    (\d+): \{ v: "([^"]*)", razon: "((?:[^"\\]|\\.)*)" \}/g)) {
+for (let i = 0; i < inicios.length; i++) {
+  const desde = inicios[i].index;
+  const hasta = i + 1 < inicios.length ? inicios[i + 1].index : vTxt.length;
+  const bloque = vTxt.slice(desde, hasta);
+  for (const e of bloque.matchAll(/\n    (\d+): \{ v: "([^"]*)", razon: "((?:[^"\\]|\\.)*)" \}/g)) {
     codigo.push({
-      dbKey: b[1],
+      dbKey: inicios[i][1],
       zona: Number(e[1]),
       v: e[2],
       razon: JSON.parse(`"${e[3]}"`),
     });
   }
 }
-console.log(`== ${codigo.length} entradas en el array ==`);
+console.log(`== ${codigo.length} entradas en el array (${inicios.length} especies) ==`);
 
 // --- mapear dbKey -> especie_id ---
 const { rows: especies } = await db.query(
