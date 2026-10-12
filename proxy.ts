@@ -21,6 +21,11 @@ const RUTAS_PUBLICAS = [
   "/og.png",
   "/icons",
   "/propuestas",
+  // Pagina de marcado de consejos. Es contenido que la aplicacion ya muestra
+  // al usuario, asi que no agrega nada que no sea publico. Sin esto el proxy la
+  // tomaba por protegida y respondia con el HTML del registro, con status 200:
+  // por el codigo pareceria que funcionaba.
+  "/CONSEJOS-NUEVOS.html",
 ];
 
 export function esRutaProtegida(pathname: string): boolean {
