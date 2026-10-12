@@ -2,7 +2,7 @@
 
 > Generado con `scripts/generar_diagrama_base.mjs` leyendo el esquema real.
 >
-> **48 tablas · 8 vistas · 6.826 filas · 46 claves foráneas · 4 enums**
+> **48 tablas · 8 vistas · 6.828 filas · 46 claves foráneas · 4 enums**
 
 ## Cómo leer esto
 
@@ -67,7 +67,7 @@ graph TD
 
 ```mermaid
 graph TD
-  gf_analytics_events["gf_analytics_events<br/><small>1694 filas · 1 FK</small>"]
+  gf_analytics_events["gf_analytics_events<br/><small>1696 filas · 1 FK</small>"]
   gf_aplicaciones["gf_aplicaciones<br/><small>3 filas · 3 FK</small>"]
   gf_arboles["gf_arboles<br/><small>150 filas · 3 FK</small>"]
   gf_cron_config["gf_cron_config<br/><small>1 filas · 0 FK</small>"]
@@ -111,177 +111,147 @@ dim_comunas {
   text macrozona_id
   text zona_riego_id
   text zona_agro_id
-  int filas 346
 }
 dim_edad {
   text edad_n PK
-  int filas 4
 }
 dim_edad_nutricion {
   text edad_nutricion_id PK
-  int filas 3
 }
 dim_especies {
   text especie_id PK
-  int filas 30
 }
 dim_etapas {
   text codigo_etapa PK
-  int filas 8
 }
 dim_humedad {
   text humedad_n PK
-  int filas 5
 }
 dim_macrozonas {
   text macrozona_id PK
-  int filas 6
 }
 dim_meses {
   text mes_n PK
-  int filas 12
 }
 dim_parcializacion {
   text clave PK
-  int filas 20
 }
 dim_suelos {
   text suelo_id PK
-  int filas 4
 }
 dim_zonas_agro {
   text zona_agro_id PK
-  int filas 20
 }
 dim_zonas_riego {
   text zona_riego_id PK
-  int filas 11
 }
 fact_clima_zona {
   text zona_agro_id PK
-  int filas 20
 }
 fact_consejos {
   text especie_id PK
   text n PK
-  int filas 211
 }
 fact_fenologia {
   text clave PK
   text especie_id
   text macrozona_id
-  int filas 180
 }
 fact_fert_organica {
   text especie_id PK
   text n PK
   text mes PK
-  int filas 181
 }
 fact_fert_programa {
   text clave PK
   text macrozona_id
   text especie_id
-  int filas 786
 }
 fact_ficha_fertilizacion {
   text especie_id PK
   text n PK
-  int filas 149
 }
 fact_ficha_riego {
   text especie_id PK
   text n PK
-  int filas 149
 }
 fact_labores_mes {
   text clave PK
   text mes_n
   text especie_id
-  int filas 360
 }
 fact_manejo_estacion {
   text especie_id PK
   text estacion PK
-  int filas 120
 }
 fact_nutrientes_anual {
   text especie_id PK
-  int filas 30
 }
 fact_plagas {
   text especie_id PK
   text plaga_enfermedad PK
-  int filas 110
 }
 fact_poda {
   text especie_id PK
   text n PK
-  int filas 104
 }
 fact_riego_etapa {
   text clave PK
   text codigo_etapa
   text especie_id
-  int filas 210
 }
 fact_riego_mes {
   text clave PK
   text especie_id
   text mes_n
-  int filas 360
 }
 fact_sanidad {
   text especie_id PK
   text n PK
-  int filas 160
 }
 fact_sugerencias {
   text especie_id PK
   text tipo PK
   text nombre PK
-  int filas 335
 }
 fact_tareas_mes {
   text clave PK
   text especie_id
   text mes_n
-  int filas 240
 }
 fact_viabilidad_zona {
   text clave PK
   text especie_id
   text zona_agro_id
-  int filas 600
 }
-  dim_comunas macrozona_id --> dim_macrozonas
-  dim_comunas zona_riego_id --> dim_zonas_riego
-  dim_comunas zona_agro_id --> dim_zonas_agro
-  fact_clima_zona zona_agro_id --> dim_zonas_agro
-  fact_consejos especie_id --> dim_especies
-  fact_fenologia especie_id --> dim_especies
-  fact_fenologia macrozona_id --> dim_macrozonas
-  fact_fert_organica especie_id --> dim_especies
-  fact_fert_programa macrozona_id --> dim_macrozonas
-  fact_fert_programa especie_id --> dim_especies
-  fact_ficha_fertilizacion especie_id --> dim_especies
-  fact_ficha_riego especie_id --> dim_especies
-  fact_labores_mes mes_n --> dim_meses
-  fact_labores_mes especie_id --> dim_especies
-  fact_manejo_estacion especie_id --> dim_especies
-  fact_nutrientes_anual especie_id --> dim_especies
-  fact_plagas especie_id --> dim_especies
-  fact_poda especie_id --> dim_especies
-  fact_riego_etapa codigo_etapa --> dim_etapas
-  fact_riego_etapa especie_id --> dim_especies
-  fact_riego_mes especie_id --> dim_especies
-  fact_riego_mes mes_n --> dim_meses
-  fact_sanidad especie_id --> dim_especies
-  fact_sugerencias especie_id --> dim_especies
-  fact_tareas_mes especie_id --> dim_especies
-  fact_tareas_mes mes_n --> dim_meses
-  fact_viabilidad_zona especie_id --> dim_especies
-  fact_viabilidad_zona zona_agro_id --> dim_zonas_agro
+  dim_comunas }o--|| dim_macrozonas : "macrozona_id"
+  dim_comunas }o--|| dim_zonas_riego : "zona_riego_id"
+  dim_comunas }o--|| dim_zonas_agro : "zona_agro_id"
+  fact_clima_zona }o--|| dim_zonas_agro : "zona_agro_id"
+  fact_consejos }o--|| dim_especies : "especie_id"
+  fact_fenologia }o--|| dim_especies : "especie_id"
+  fact_fenologia }o--|| dim_macrozonas : "macrozona_id"
+  fact_fert_organica }o--|| dim_especies : "especie_id"
+  fact_fert_programa }o--|| dim_macrozonas : "macrozona_id"
+  fact_fert_programa }o--|| dim_especies : "especie_id"
+  fact_ficha_fertilizacion }o--|| dim_especies : "especie_id"
+  fact_ficha_riego }o--|| dim_especies : "especie_id"
+  fact_labores_mes }o--|| dim_meses : "mes_n"
+  fact_labores_mes }o--|| dim_especies : "especie_id"
+  fact_manejo_estacion }o--|| dim_especies : "especie_id"
+  fact_nutrientes_anual }o--|| dim_especies : "especie_id"
+  fact_plagas }o--|| dim_especies : "especie_id"
+  fact_poda }o--|| dim_especies : "especie_id"
+  fact_riego_etapa }o--|| dim_etapas : "codigo_etapa"
+  fact_riego_etapa }o--|| dim_especies : "especie_id"
+  fact_riego_mes }o--|| dim_especies : "especie_id"
+  fact_riego_mes }o--|| dim_meses : "mes_n"
+  fact_sanidad }o--|| dim_especies : "especie_id"
+  fact_sugerencias }o--|| dim_especies : "especie_id"
+  fact_tareas_mes }o--|| dim_especies : "especie_id"
+  fact_tareas_mes }o--|| dim_meses : "mes_n"
+  fact_viabilidad_zona }o--|| dim_especies : "especie_id"
+  fact_viabilidad_zona }o--|| dim_zonas_agro : "zona_agro_id"
 ```
 
 ## 3. Lo del usuario y la telemetría
@@ -293,77 +263,63 @@ erDiagram
 gf_analytics_events {
   text id PK
   text user_id
-  int filas 1694
 }
 gf_aplicaciones {
   text id PK
   text user_id
   text arbol_id
   text territorio_huerto_id
-  int filas 3
 }
 gf_arboles {
   text id PK
   text user_id
   text edad_n
   text huerto_id
-  int filas 150
 }
 gf_cron_config {
   text id PK
-  int filas 1
 }
 gf_cultivos {
   text id PK
   text user_id
-  int filas 3
 }
 gf_huertos {
   text id PK
   text user_id
-  int filas 22
 }
 gf_registro {
   text id PK
   text user_id
-  int filas 1
 }
 gf_sponsorships {
   text id PK
-  int filas 1
 }
 gf_subscription_plans {
   text id PK
-  int filas 6
 }
 gf_subscriptions {
   text id PK
   text user_id
-  int filas 13
 }
 gf_tareas {
   text id PK
   text user_id
-  int filas 10
 }
 gf_user_audiences {
   text id PK
   text user_id
-  int filas 2
 }
 gf_user_consents {
   text id PK
   text user_id
-  int filas 40
 }
 perfiles {
   text id PK
-  int filas 6
 }
-  gf_aplicaciones arbol_id --> gf_arboles
-  gf_aplicaciones territorio_huerto_id --> gf_huertos
-  gf_arboles huerto_id --> gf_huertos
-  gf_user_audiences user_id --> perfiles
+  gf_aplicaciones }o--|| gf_arboles : "arbol_id"
+  gf_aplicaciones }o--|| gf_huertos : "territorio_huerto_id"
+  gf_arboles }o--|| gf_huertos : "huerto_id"
+  gf_user_audiences }o--|| perfiles : "user_id"
 ```
 
 ## 4. Las 8 vistas
