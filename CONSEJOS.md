@@ -801,7 +801,7 @@ especie para poder decidir si vale la pena recuperarlos.
 ## Las dos diferencias de fondo
 
 1. **La base tiene 8 consejos por especie en casi todas; el legacy, 5.** La base
-   cubre más, y de、统一 manera más parejo.
+   cubre más, y de、 manera más parejo.
 
 2. **La base declara dos fuentes** (`Base de Conocimiento` y `Base 20
    especies`) y varias veces cita la fuente (`Bol. INIA 373`). El legacy es
