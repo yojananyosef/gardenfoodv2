@@ -71,3 +71,61 @@
   Al migrar a Flow, `gf_subscription_plans` hay que rehacerla entera: sus `tier`
   (`cosecha`, `huertero`, `full`) no coinciden con los valores que usa `perfiles.plan`
   (`gratuito`, `admin`, `huertero`), que ademas mezcla rol de acceso con tier de pago.
+
+---
+
+# Cerrado el 2026-10-12: que queda para despues y por que
+
+Tres cosas quedaron fuera de alcance a proposito. Ninguna es Forgotten: cada una tiene
+un motivo y un criterio de cuando retomarla.
+
+## 1. Mercado Pago -> Flow
+
+**Estado**: 0 suscripciones activas. 13 filas en `gf_subscriptions`, 11 de ellas basura de
+prueba de un usuario inexistente.
+
+**Por que no ahora**: no se esta perdiendo nada. Flow es requisito para monetizar, no
+para que la app funcione. Y es la zona mas delicada del codigo (pagos, webhooks, RLS),
+donde un error si cuesta plata. Ademas, las 13 filas que hay que limpiar y el enum de
+`tier` se rehacen **dentro** de esa migracion: hacerlos antes es hacerlos dos veces.
+
+**Que bloquea**: Fase 9.2 (la suscripcion como fuente unica) y el enum de
+`gf_subscription_plans.tier`.
+
+**Cuando**: cuando se quiera cobrar. No antes.
+
+## 2. Licencia de Open-Meteo
+
+**Estado**: el plan gratis **prohíbe uso comercial**. GardenFood vende suscripciones, o
+sea que es uso comercial. Es lo unico con plazo real que no es codigo.
+
+**Por que quedo escrito y no resuelto**: es una decision de negocio. Si hay plan pago,
+se cae solo y no hay nada que hacer. Si no, hay que elegir entre pagar, cambiar de
+proveedor o asumir el riesgo. Ninguna de las tres es mia.
+
+**Cuando**: antes de la proxima campana de captacion. No hace falta hoy, porque no hay
+trafico de produccion que expose.
+
+## 3. Las 217 celdas de `dim_comunas.zona_agro_id`
+
+**Estado**: vacio en 217 de 346 comunas. Es lo que bloquea la tarea 3.2 de
+`catalogos-factores-desde-db`, que es el mapa comuna -> zona.
+
+**Por que no se relleno a mano**: una copia de la base actual seria inventar el dato.
+Hay que decidir, comuna por comuna, en que zona agroclimatica cae.
+
+**Material listo**: `data/comunas_sin_zona.csv` con las 217 y
+`scripts/comunas_sin_zona.py`. Se llena el Excel, se reimporta, y la 3.2 se destraba.
+
+## Lo que NO quedo pendiente
+
+- Las **49 combinaciones** de viabilidad que la tabla tiene y el codigo no, y el
+  veredicto de **olivo en la zona 20**: reportados, no tocados. Cambian que especies se
+  recomiendan por zona, y eso es producto.
+- **Cual fuente de consejos manda**: `fact_consejos` tiene 211 textos de "Base 20
+  especies" y el legacy 154, con 1 en comun.
+- Los **3 `especie_id`** donde el codigo y la base no coinciden (`avellano`, `nispero`,
+  `papayo_chileno`). Se respetan los del codigo porque estan en URLs. Se cambian en el
+  Excel.
+
+Los tres estan en las notas de `openspec/changes/archive/2026-10-12-regla-fuente-de-datos/`.
