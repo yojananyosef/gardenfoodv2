@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { type FichaEspecie, type Especie, getFenologia, getConsejos, getMacrozona, ZONAS } from "@/lib/agronomy";
 import { zonaRiegoDeZonaId, type SueloId } from "@/lib/riego/datos";
 import { obtenerRiegoBase } from "@/lib/riego/client-cache";
+import { calcularRiego } from "@/lib/riego/calc";
 import type { RiegoBasePayload } from "@/lib/riego/actions";
 
 type TabId = "calendario" | "riego" | "nutricion" | "sanidad" | "poda" | "cosecha" | "fenologia" | "consejos" | "info";
@@ -192,38 +193,62 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
   const [edadN, setEdadN] = useState<number>(4);
   // Los 12 meses no salen de golpe: primero el actual y el siguiente.
   const [showAll, setShowAll] = useState(false);
+
+  // El riego se calcula con el motor (`lib/riego/calc.ts`), no con una copia de
+  // la fórmula. Antes esta vista reimplementaba el cálculo y se diferenciaba
+  // del resto de la app en 38 de 72 combinaciones: no aplicaba la humedad, ni
+  // el volumen de mantenimiento en reposo, ni el desfase de la zona de riego.
+  // Ver tests/ficha-riego-paridad.test.ts.
+  //
+  // Los datos faltantes se dicen, no se asumen: antes había cuatro `?? 1` que
+  // sustituían un factor ausente por el promedio y lo pintaban como real.
   const suelo = base?.suelos.find((t) => t.clave === (sueloId ?? "M"));
-  const fv = suelo?.factor ?? 1;
   const edad = base?.edades.find((e) => e.n === edadN);
-  const fLitros = edad?.factorLitros ?? 1;
-  const fDiasEdad = edad?.factorDias ?? 1;
   const zonaClave = zonaRiegoDeZonaId(zonaId);
   const zonaRiego = base?.zonas.find((z) => z.clave === zonaClave);
-  const fc = zonaRiego?.factorClima ?? 1;
-  // La zona y la edad ajustan la frecuencia (días entre riegos), igual que la guía.
-  const factorDias = (fv * fDiasEdad) / fc;
 
-  // 12 filas: cálculo directo, el compilador de React lo memoiza solo.
-  const filas = (base?.mensual ?? []).map((m) => {
-    const lMin = Math.round(m.litrosMin * fv * fLitros);
-    const lMax = Math.round(m.litrosMax * fv * fLitros);
-    const dMin = Math.max(1, Math.round(m.diasMin * factorDias));
-    const dMax = Math.max(1, Math.round(m.diasMax * factorDias));
-    return {
-      ...m,
-      lMin,
-      lMax,
-      lRec: Math.round((lMin + lMax) / 2),
-      dMin,
-      dMax,
-    };
-  });
+  const faltaSuelo = !base || !suelo;
+  const faltaEdad = !base || !edad;
+  const faltaZona = !base || !zonaRiego;
+
+  const filas = !faltaSuelo && !faltaEdad && !faltaZona
+    ? (base!.mensual ?? []).map((m) => {
+        const r = calcularRiego(
+          {
+            dbKey,
+            mes: m.mes,
+            zonaRiego: zonaClave,
+            suelo: suelo!.clave as SueloId,
+            edadN,
+            copaM: base!.especie?.copaRefM ?? 2,
+            // La ficha no ofrece selector de humedad: asume punto de riego.
+            humedad: 2,
+          },
+          base!,
+        );
+        // El motor devuelve null solo si falta la base, ya descartada arriba.
+        return r ? { ...m, ...r, mantencionEnReposo: m.reposo === 1 } : null;
+      }).filter((f): f is NonNullable<typeof f> => f !== null)
+    : [];
 
   if (error) {
     return <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">No se pudo cargar la base de riego de esta especie. Revisa tu conexión e intenta de nuevo.</p>;
   }
   if (!base || cargando) {
     return <p className="text-sm text-muted-foreground">Cargando base de riego…</p>;
+  }
+  if (faltaSuelo || faltaEdad || faltaZona) {
+    const faltan = [
+      faltaSuelo ? "la textura del suelo" : null,
+      faltaEdad ? "el tramo de edad" : null,
+      faltaZona ? "la zona de riego de tu comuna" : null,
+    ].filter(Boolean).join(", ");
+    return (
+      <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">
+        No se puede calcular el riego porque falta {faltan} en la base de datos. No
+        mostramos un valor supuesto: revisa el perfil o inténtalo más tarde.
+      </p>
+    );
   }
 
   // Revelado progresivo de los 12 meses: por defecto el actual y los dos
@@ -243,8 +268,10 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
         puntos={filas.map((f) => ({
           mes: MESES_LARGOS[f.mes - 1].slice(0, 3),
           etapa: `${MESES_LARGOS[f.mes - 1]} · ${f.etapa}`,
-          litros: f.lRec,
-          detalle: `${f.lMin}–${f.lMax} L cada ${f.dMin}–${f.dMax} días`,
+          litros: f.litros,
+          detalle: `${f.litrosMin}–${f.litrosMax} L cada ${f.cadaDias} días${
+            f.mantencionEnReposo ? " (reposo: riego de mantención)" : ""
+          }`,
         }))}
       />
       <div className="flex flex-col gap-4 rounded-2xl border bg-card px-4 py-3 sm:flex-row sm:items-start sm:gap-4">
@@ -267,8 +294,8 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
         </div>
         {sueloId && suelo ? (
           <div className="flex flex-1 flex-col gap-1 text-sm sm:border-l sm:pl-4">
-            <span className="inline-flex items-start gap-1.5 font-semibold"><Droplets className="mt-0.5 size-4 shrink-0 text-primary" /> Cálculo ajustado a suelo {suelo.nombre.toLowerCase()} (×{String(fv).replace(".", ",")}){edad ? ` y a un árbol ${edad.nombre.toLowerCase()}` : ""} (×{String(fLitros).replace(".", ",")})</span>
-            <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(fc).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
+            <span className="inline-flex items-start gap-1.5 font-semibold"><Droplets className="mt-0.5 size-4 shrink-0 text-primary" /> Cálculo ajustado a suelo {suelo.nombre.toLowerCase()} (×{String(suelo.factor).replace(".", ",")}){edad ? ` y a un árbol ${edad.nombre.toLowerCase()}` : ""} (×{String(edad.factorLitros).replace(".", ",")})</span>
+            <span className="text-xs text-muted-foreground">Zona {zonaRiego?.nombre.toLowerCase() ?? "valle central"} · frecuencia ÷{String(zonaRiego.factorClima).replace(".", ",")} · <Link href="/perfil" className="underline underline-offset-2">cambiar en tu perfil</Link></span>
           </div>
         ) : (
           <div className="flex flex-1 flex-col gap-1 text-sm sm:border-l sm:pl-4">
@@ -281,9 +308,9 @@ function TabRiego({ dbKey, especieNombre, sueloId, zonaId }: { dbKey: string; es
       {visibles.map((f) => {
         const active = f.mes === mesActual;
         const baseVol = `${f.litrosMin}–${f.litrosMax} L`;
-        const volAjustado = `${f.lMin}–${f.lMax} L`;
+        const volAjustado = `${f.litros} L`;
         const baseFreq = f.diasMin === f.diasMax ? `Cada ${f.diasMin} días` : `Cada ${f.diasMin}–${f.diasMax} días`;
-        const freqAjustada = f.dMin === f.dMax ? `Cada ${f.dMin} días` : `Cada ${f.dMin}–${f.dMax} días`;
+        const freqAjustada = `Cada ${f.cadaDias} días`;
         return (
           <Card key={f.mes} className={cn("flex flex-col rounded-2xl transition-shadow hover:shadow-sm", active && "border-primary/40 shadow-sm ring-1 ring-primary/10")}>
             <CardHeader className="pb-2">
