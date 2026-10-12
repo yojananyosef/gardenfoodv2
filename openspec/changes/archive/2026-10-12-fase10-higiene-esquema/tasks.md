@@ -239,10 +239,93 @@ que filtra por privilegios y por eso no mostraba todo.
 
 ## 10.1 Columnas desnormalizadas en la tabla de mayor volumen
 
-- [ ] 10.1.1 Confirmar que solo `admin_overview_metrics` y `admin_insights_metrics` las leen, y que ninguna vista mas.
-- [ ] 10.1.2 Cambiar esos dos RPCs para derivar la region desde `perfiles`/`dim_comunas` con join. **En la misma migracion que el `drop`**, no antes: dejarlos rotos entre migraciones rompe el panel de admin.
-- [ ] 10.1.3 Migración `0044` con el `alter table gf_analytics_events drop column` de las 3.
-- [ ] 10.1.4 Verificar que los dos RPCs devuelven lo mismo antes y despues, con los mismos numeros.
+- [x] 10.1.1 **Nadie las lee.** No hay ningún RPC ni vista que use esas columnas. El aviso del plan era falso.
+- [x] 10.1.2 No hizo falta tocar los RPC: no los leían.
+- [x] 10.1.3 Migración `0045` con el `drop` de las 3 columnas.
+- [x] 10.1.4 No aplica: no hay números que comparar porque ningún panel las mostraba.
+
+### El plan fallaba en los dos supuestos, y por eso la migración es un drop
+
+**"Las leen `admin_overview_metrics` y `admin_insights_metrics`". Falso.**
+
+Ninguna de las dos toca esas columnas. Sus únicos usos de
+`gf_analytics_events` son `count(distinct user_id)` y `count(*)` sobre ventanas
+de tiempo. El `top_comunas` de `admin_overview_metrics` sale de
+`gf_cultivos join perfiles`, o sea de `p.comuna`. Ninguna vista las lee.
+
+(El error de partida fue mío: `scripts/checar_geo_de_analytics.mjs` buscaba
+`comuna` en el cuerpo de cada función con una expresión regular, así que
+encontraba el `p.comuna` de `perfiles` y daba un falso positivo.)
+
+**"Son copias de `perfiles` y se derivan por join". Falso.**
+
+Guardan el *dónde* que el cliente reportaba en el momento del evento
+(`lib/telemetry/geo.ts`). De los 1.647:
+
+| | |
+|---|---|
+| Eventos con `comuna` y `region` | 577 |
+| …de eventos **anónimos**, no derivables de nadie | **6** |
+| …con comuna **distinta** de la del perfil | **304** |
+| Eventos con `zona_agroclimatica` | **0** |
+
+El caso más claro: el mismo usuario tiene eventos con `comuna = "Santiago"`
+mientras su perfil dice `"Maipú"`. Agregar el join que pedía el plan no habría
+sido superfluo: **habría reescrito la historia**, cambiando *"dónde se vio esto"*
+por *"dónde vive esta persona hoy"*.
+
+El plan además alegaba *"cardinalidad bajísima (8 y 4 valores) en la tabla de
+mayor volumen"* como argumento a favor. Esa cardinalidad es justamente la prueba
+de que no son datos por evento.
+
+Lo que se pierde, y no es recuperable por join, quedó volcado en
+`data/analytics_geo_historico.csv`: las 6 anónimas y 298 point-in-time. Y nada
+las leía, así que ninguna pantalla cambia.
+
+`idx_events_geo_advanced` arrancaba por `(region, comuna, gps_lat, gps_lng)`; se
+rehace como `idx_events_gps` sobre `(gps_lat, gps_lng)`, que sí sobreviven.
+
+### Verificación de 10.1
+
+| | |
+|---|---|
+| Las 3 columnas | ya no existen |
+| Eventos | 1.647, intactos |
+| Políticas RLS | las 2 de `gf_analytics_events`, sin tocar |
+| Índices | `idx_events_gps` creado |
+| `tsc` / `eslint` / tests / build | 0 / 0 / 6.804 / correcto |
+| Producción | `/huerto` 28 árboles, `/perfil`, `/calendario`, `/admin` sin falla |
+
+## Cómo terminó la Fase 10
+
+| Punto | Qué pasó |
+|---|---|
+| 10.3 | Hecho. 4 tablas y 1 vista sin lectores, eliminadas |
+| 10.4 | **No hizo falta nada.** Las 4 FKs ya existían y validadas |
+| 10.5 | Hecho. La edad es `dim_edad.edad_n`; un vocabulario menos |
+| 10.2 | Hecho. 4 enums. 6 valores fuera del dominio, traducidos |
+| 10.1 | Hecho. 3 columnas fuera, sin tocar ningún RPC porque nadie las leía |
+
+**Dos de los cuatro puntos del plan resultaron no hacer falta, y en los otros
+dos el plan describía mal el estado.** Ninguno se aplicó sin comprobarlo antes.
+
+Las cuatro cosas que quedaron documentadas por el camino, porque son las que
+cuestan un error si se olvidan:
+
+1. **`gf_riego_kc` es una vista, no una tabla** (`drop table` no la borra).
+2. **Un `drop column` se hace después de desplegar**, no antes. Rompí `/huerto`
+   durante unos minutos por hacerlo al revés.
+3. **El nombre de una política RLS no lleva el prefijo de la tabla**, y
+   `drop policy if exists` no avisa cuando no encuentra nada.
+4. **`pg_get_functiondef` falla** si se usa en el `WHERE` sobre funciones que no
+   son la que buscas; hay que filtrar por `prosrc` y leer una por una.
+
+## Fuera de alcance, para cuando toque
+
+- `gf_subscription_plans.tier` y `perfiles.plan`: se rehacen con Flow.
+- Fase 9.2 (suscripción como fuente única): después de Flow.
+- Los 4 errores de tipos de pagos. Los otros 6 (admin, telemetría, huertos) se
+  pueden cerrar ya, en otro change.
 
 ## Fuera de alcance, anotado
 
